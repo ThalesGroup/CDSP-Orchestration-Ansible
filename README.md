@@ -45,7 +45,6 @@ Tested with Python version 3.6
 Install Ansible on your host machine using instructions specific to the OS of the host machine.
 
 Download thalesgroup-ciphertrust-1.0.0.tar.gz from this repository
-* [Ansible](/)
 
 Install the collection using command -
 ```
