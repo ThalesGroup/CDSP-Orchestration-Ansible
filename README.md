@@ -70,7 +70,7 @@ You can call modules by their Fully Qualified Collection Name (FQCN), such as th
 
 ## Run Playbooks
 Sample playbooks provided as part of the repo
-* [Ansible](playbooks/)
+* [Sample Playbooks](playbooks/)
 ```
 ansible-playbook cluster.yml -vv
 ```
