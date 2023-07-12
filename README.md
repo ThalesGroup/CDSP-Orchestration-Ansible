@@ -1,44 +1,46 @@
-# Thales Open Source Template Project
+# Ansible Collection
+For IT admins and DevOps teams who use Red Hat® Ansible® to manage their infrastructure, we have provided Ansible Modules and Playbooks that interfaces with each of the products within the CipherTrust Data Security Platform and IBM Guardium Data Encryption.
 
-Template for creating a new project in the [Thales GitHub organization](https://github.com/ThalesGroup).
+## Ansible version compatibility
+Tested with the Ansible Core 2.12, and 2.13 releases, and the current development version of Ansible. Ansible Core versions before 2.11.0 are not tested.
 
-Each Thales OSS project repository **MUST** contain the following files at the root:
+## Python version compatibility
+Tested with Python version 3.6
 
-- a `LICENSE` which has been chosen in accordance with legal department depending on your needs
+## Installing this collection
+Install Ansible on your host machine using instructions specific to the OS of the host machine.
 
-- a `README.md` outlining the project goals, sponsoring sig, and community contact information, [GitHub tips about README.md](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-readmes)
+Download thales-ciphertrust-1.0.0.tar.gz from this repository
+* [Ansible](/)
 
-- a `CONTRIBUTING.md` outlining how to contribute to the project, how to submit a pull request and an issue
+Install the collection using command -
+```
+ansible-galaxy collection install thales-ciphertrust-1.0.0.tar.gz
+```
 
-- a `SECURITY.md` outlining how the security concerns are handled, [GitHub tips about SECURITY.md](https://docs.github.com/en/github/managing-security-vulnerabilities/adding-a-security-policy-to-your-repository)
+## Using this collection
+You can call modules by their Fully Qualified Collection Name (FQCN), such as thalesgroup.ciphertrust.cm_cluster
 
-Below is an example of the common structure and information expected in a README.
+```
+---
+- name: "Create new cluster"
+  thalesgroup.ciphertrust.cm_cluster:
+    localNode:
+      server_ip: "{{ <IP or FQDN of CipherTrust Manager Server> }}"
+      server_private_ip: "{{ <Private IP of CipherTrust Manager Server...If different from server_ip> }}"
+      server_port: "{{ port number where CipherTrust Manager is listening, defaults to 5432}}"
+      user: "{{ <Admin User of CipherTrust Manager> }}"
+      password: "{{ <Password of Admin User> }}"
+      verify: False
+    op_type: new
+```
 
-**Please keep this structure as is and only fill the content for each section according to your project.**
+## Run Playbooks
+Sample playbooks provided as part of the repo
+* [Ansible](playbooks/)
+```
+ansible-playbook cluster.yml -vv
+```
 
-If you need assistance or have question, please contact oss@thalesgroup.com
-
-## Get started
-
-XXX project purpose it to ...
-
-**Please also add the description into the About section (Description field)**
-
-## Documentation
-
-Documentation is available at [xxx/docs](https://xxx/docs/).
-
-You can use [GitHub pages](https://guides.github.com/features/pages/) to create your documentation.
-
-See an example here : https://github.com/ThalesGroup/ThalesGroup.github.io
-
-**Please also add the documentation URL into the About section (Website field)**
-
-## Contributing
-
-If you are interested in contributing to the XXX project, start by reading the [Contributing guide](/CONTRIBUTING.md).
-
-## License
-
-The chosen license in accordance with legal department must be defined into an explicit [LICENSE](https://github.com/ThalesGroup/template-project/blob/master/LICENSE) file at the root of the repository
-You can also link this file in this README section.
+## Contributing to this collection
+We welcome community contributions to this collection. If you find problems, please open an issue or create a PR against the this repository.
