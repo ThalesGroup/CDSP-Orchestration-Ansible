@@ -1,5 +1,5 @@
 # Ansible Collection
-For IT admins and DevOps teams who use Red Hat® Ansible® to manage their infrastructure, we have provided Ansible Modules and Playbooks that interfaces with each of the products within the CipherTrust Data Security Platform and IBM Guardium Data Encryption.
+For IT admins and DevOps teams who use Red Hat® Ansible® to manage their infrastructure, we have provided Ansible Modules and Playbooks that interface with each of the products within the CipherTrust Data Security Platform and IBM Guardium Data Encryption.
 
 ## Ansible version compatibility
 Tested with the Ansible Core 2.12, and 2.13 releases, and the current development version of Ansible. Ansible Core versions before 2.11.0 are not tested.
@@ -10,12 +10,12 @@ Tested with Python version 3.6
 ## Installing this collection
 Install Ansible on your host machine using instructions specific to the OS of the host machine.
 
-Download thales-ciphertrust-1.0.0.tar.gz from this repository
+Download thalesgroup-ciphertrust-1.0.0.tar.gz from this repository
 * [Ansible](/)
 
 Install the collection using command -
 ```
-ansible-galaxy collection install thales-ciphertrust-1.0.0.tar.gz
+ansible-galaxy collection install thalesgroup-ciphertrust-1.0.0.tar.gz
 ```
 
 ## Using this collection
