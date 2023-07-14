@@ -38,4 +38,4 @@
   - assert:
       that:
         - _result_add is not failed
-        - _result_add.response.message is match("Resource created sucessfully")
+        - _result_add.response.message is match("Resource created successfully")

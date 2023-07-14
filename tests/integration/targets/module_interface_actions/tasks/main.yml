@@ -68,7 +68,7 @@
   - assert:
       that:
         - _result_patch is not failed
-        - _result_patch.response.message is match("Resource updated succesfully")
+        - _result_patch.response.message is match("Resource updated successfully")
 
   ## Validate the interface actions
   - name: "Add Cert to Interface"
@@ -84,7 +84,7 @@
   - assert:
       that:
         - _result_add_cert is not failed
-        - _result_add_cert.response.message is match("Resource updated sucessfully")
+        - _result_add_cert.response.message is match("Resource updated successfully")
 
   - name: "Enable Interface"
     thalesgroup.ciphertrust.interface_actions:
@@ -96,7 +96,7 @@
   - assert:
       that:
         - _result_enable is not failed
-        - _result_enable.response.message is match("Resource created sucessfully")
+        - _result_enable.response.message is match("Resource created successfully")
 
   - name: "Disable Interface"
     thalesgroup.ciphertrust.interface_actions:
@@ -108,7 +108,7 @@
   - assert:
       that:
         - _result_disable is not failed
-        - _result_disable.response.message is match("Resource created sucessfully")
+        - _result_disable.response.message is match("Resource created successfully")
 
   - name: "Restore default TLS Ciphers"
     thalesgroup.ciphertrust.interface_actions:
@@ -120,7 +120,7 @@
   - assert:
       that:
         - _result_restore is not failed
-        - _result_restore.response.message is match("Resource created sucessfully")
+        - _result_restore.response.message is match("Resource created successfully")
 
   - name: "Create CSR"
     thalesgroup.ciphertrust.interface_actions:
@@ -133,7 +133,7 @@
   - assert:
       that:
         - _result_create_csr is not failed
-        - _result_create_csr.response.csr is match("Resource created sucessfully")
+        - _result_create_csr.response.csr is match("Resource created successfully")
 
 #  - name: "Auto Generate Server Certificate"
 #    thalesgroup.ciphertrust.interface_actions:
@@ -145,7 +145,7 @@
 #  - assert:
 #      that:
 #        - _result_autogen is not failed
-#        - _result_autogen.response.message is match("Resource created sucessfully")
+#        - _result_autogen.response.message is match("Resource created successfully")
 
   - name: "Use Certificate"
     thalesgroup.ciphertrust.interface_actions:
@@ -158,4 +158,4 @@
   - assert:
       that:
         - _result_use_cert is not failed
-        - _result_use_cert.response.message is match("Resource created sucessfully")
+        - _result_use_cert.response.message is match("Resource created successfully")

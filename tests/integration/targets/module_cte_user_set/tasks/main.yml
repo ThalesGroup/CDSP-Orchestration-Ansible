@@ -25,15 +25,18 @@
   - assert:
       that:
         - this_node_connection_string is defined
-        - group_name is defined
-        - new_group_name is defined
 
-## Validate the create group module
+## Validate the CTE Resource Set module
 - block:
-  - name: "Create Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Create CTE UserSet"
+    thalesgroup.ciphertrust.cte_user_set:
       op_type: create
-      name: "{{ group_name }}"
+      name: Test_CTE_RS_Ansible
+      users:
+        - uname: ansibleu0
+          uid: 1000
+          gname: rootGroup
+          gid: 1000
       localNode: "{{ this_node_connection_string }}"
     register: _result_create
 
@@ -42,11 +45,19 @@
         - _result_create is not failed
         - _result_create.response.id is string
 
-  - name: "Patch Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Patch CTE UserSet"
+    thalesgroup.ciphertrust.cte_user_set:
       op_type: patch
-      old_name: "{{ group_name }}"
-      name: "{{ new_group_name }}"
+      id: "{{ _result_create.response.id }}"
+      users:
+        - uname: ansibleu0
+          uid: 1000
+          gname: rootGroup
+          gid: 1000
+        - uname: ansibleu1
+          uid: 1001
+          gname: rootGroup
+          gid: 1000
       localNode: "{{ this_node_connection_string }}"
     register: _result_patch
 
@@ -55,58 +66,48 @@
         - _result_patch is not failed
         - _result_patch.response.message is match("Resource updated successfully")
 
-  - name: "Add User to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Add Users to UserSet"
+    thalesgroup.ciphertrust.cte_user_set:
+      op_type: add_user
+      id: "{{ _result_create.response.id }}"
+      users:
+        - uname: ansibleu2
+          uid: 1002
+          gname: rootGroup
+          gid: 1000
       localNode: "{{ this_node_connection_string }}"
     register: _result_add_user
 
   - assert:
       that:
         - _result_add_user is not failed
-        - _result_add_user.response.message is match("Resource created successfully")
+        - _result_add_user.response.message is match("Resource updated successfully")
 
-  - name: "Add Client to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Update user in UserSet"
+    thalesgroup.ciphertrust.cte_user_set:
+      op_type: patch_user
+      id: "{{ _result_create.response.id }}"
+      userIndex: 1
+      uname: ansibleu3
+      uid: 1003
+      gname: rootGroup
+      gid: 1000
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
+    register: _result_upd_user
 
   - assert:
       that:
-        - _result_add_client is not failed
-        - _result_add_client.response.message is match("Resource created successfully")
+        - _result_upd_user is not failed
+        - _result_upd_user.response.message is match("Resource created successfully")
 
-  - name: "Remove User from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Remove User from UserSet"
+    thalesgroup.ciphertrust.cte_user_set:
+      op_type: delete_user
+      id: "{{ _result_create.response.id }}"
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
+    register: _result_del_user
 
   - assert:
       that:
-        - _result_add_user is not failed
-        - _result_add_user.response is match("Resource deleted successfully")
-
-  - name: "Remove Client from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
-
-  - assert:
-      that:
-        - _result_add_client is not failed
-        - _result_add_client.response is match("Resource deleted successfully")
+        - _result_del_user is not failed
+        - _result_del_user.response is match("Resource deleted successfully")

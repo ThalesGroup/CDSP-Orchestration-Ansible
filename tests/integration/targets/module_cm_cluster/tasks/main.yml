@@ -51,4 +51,4 @@
   - assert:
       that:
         - _result_join is not failed
-        - _result_join.response.message is match("Resource created sucessfully")
+        - _result_join.response.message is match("Resource created successfully")

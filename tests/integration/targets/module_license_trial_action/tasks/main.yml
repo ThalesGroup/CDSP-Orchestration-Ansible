@@ -53,7 +53,7 @@
   - assert:
       that:
         - _result_activate is not failed
-        - _result_activate.response.message is match("Resource created sucessfully")
+        - _result_activate.response.message is match("Resource created successfully")
 
   - name: "Deactivate Trial License"
     thalesgroup.ciphertrust.license_trial_action:
@@ -65,4 +65,4 @@
   - assert:
       that:
         - _result_deactivate is not failed
-        - _result_deactivate.response.message is match("Resource created sucessfully")
+        - _result_deactivate.response.message is match("Resource created successfully")

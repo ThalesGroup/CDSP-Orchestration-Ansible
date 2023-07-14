@@ -68,7 +68,7 @@
   - assert:
       that:
         - _result_patch is not failed
-        - _result_patch.response.message is match("Resource updated succesfully")
+        - _result_patch.response.message is match("Resource updated successfully")
 
   - name: "Change Password"
     thalesgroup.ciphertrust.usermgmt_users_save:
@@ -82,7 +82,7 @@
   - assert:
       that:
         - _result_changepw is not failed
-        - _result_changepw.response.message is match("Resource updated succesfully")
+        - _result_changepw.response.message is match("Resource updated successfully")
 
   - name: "Update Self"
     thalesgroup.ciphertrust.usermgmt_users_save:
@@ -94,4 +94,4 @@
   - assert:
       that:
         - _result_patch_self is not failed
-        - _result_patch_self.response.message is match("Resource updated succesfully")
+        - _result_patch_self.response.message is match("Resource updated successfully")

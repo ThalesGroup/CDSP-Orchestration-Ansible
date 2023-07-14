@@ -6,4 +6,7 @@ this_node_connection_string:
   password: <CM_ADMIN_PASSWORD>
   verify: False
 
-license_string: "<LICENSE_STRING>"
+group_name: AnsibleGroup
+new_group_name: NewGroupName
+user_id: "<USER_ID>"
+client_id: "<CLIENT_ID>"

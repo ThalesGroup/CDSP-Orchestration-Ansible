@@ -54,4 +54,4 @@
   - assert:
       that:
         - _result_patch is not failed
-        - _result_patch.response.message is match("Resource updated succesfully")
+        - _result_patch.response.message is match("Resource updated successfully")
