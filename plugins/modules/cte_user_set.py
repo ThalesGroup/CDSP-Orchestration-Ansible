@@ -81,25 +81,25 @@ options:
     name:
       description: Name of the user set
       type: str
-    description
+    description:
       description: Description of the user set
       type: str
-    users
+    users:
       description: List of users to be added to the user set
       type: list
-    gid
+    gid:
       description: Group id of the user which shall be added in user-set
       type: int
-    gname
+    gname:
       description: Group name of the user which shall be added in user-set
       type: str
-    os_domain
+    os_domain:
       description: OS domain name in case of windows environment
       type: str
-    uid
+    uid:
       description: User id of the user which shall be added in user-set
       type: int
-    uname
+    uname:
       description: Name of the user which shall be added in user-set
       type: str
 '''
