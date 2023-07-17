@@ -16,8 +16,8 @@ readme: README.md
 # A list of the collection's content authors. Can be just the name or in the format 'Full Name <email> (url)
 # @nicks:irc/im.site#channel'
 authors:
-- ThalesGroup <ss@thalesgroup.com>
-
+  - ThalesGroup <oss@thalesgroup.com>
+  - Anurag Jain (@anugram)
 
 ### OPTIONAL but strongly recommended
 # A short summary description of the collection
@@ -26,15 +26,25 @@ description: ThalesGroup CipherTrust Data Security Platform Ansible collection t
 # Either a single license or a list of licenses for content inside of a collection. Ansible Galaxy currently only
 # accepts L(SPDX,https://spdx.org/licenses/) licenses. This key is mutually exclusive with 'license_file'
 license:
-- GPL-2.0-or-later
+- MIT
 
 # The path to the license file for the collection. This path is relative to the root of the collection. This key is
 # mutually exclusive with 'license'
-license_file: ''
+license_file: LICENSE
 
 # A list of tags you want to associate with the collection for indexing/searching. A tag name has the same character
 # requirements as 'namespace' and 'name'
-tags: []
+tags:
+  - ciphertrust
+  - secret
+  - data_protection
+  - tokenization
+  - rest_api_data_protection
+  - ciphertrust_data_security_platform
+  - thalesgroup
+  - thales
+  - transparent_encryption
+  - kubernetes_persistent_volume_claim_protection
 
 # Collections that this collection requires to be installed for it to be usable. The key of the dict is the
 # collection label 'namespace.name'. The value is a version range
@@ -43,20 +53,20 @@ tags: []
 dependencies: {}
 
 # The URL of the originating SCM repository
-repository: https://github.com/ThalesGroup
+repository: https://github.com/ThalesGroup/CDSP-Orchestration-Ansible
 
 # The URL to any online docs
-documentation: https://github.com/ThalesGroup
+documentation: https://thalesgroup.github.io/CDSP-Orchestration-Ansible
 
 # The URL to the homepage of the collection/project
-homepage: https://www.thalesgroup.com/
+homepage: https://www.thalesgroup.com
 
 # The URL to the collection issue tracker
-issues: https://github.com/ThalesGroup
+issues: https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/issues
 
 # A list of file glob-like patterns used to filter any files or directories that should not be included in the build
 # artifact. A pattern is matched from the relative path of the file or directory of the collection directory. This
 # uses 'fnmatch' to match the files or directories. Some directories and files like 'galaxy.yml', '*.pyc', '*.retry',
 # and '.git' are always filtered
-build_ignore: []
-
+build_ignore:
+  - .gitignore
