@@ -24,3 +24,4 @@ access_policy_name: AnsibleAccessPolicy
 dpg_policy_name: AnsibleDpgPolicy
 client_profile_name: AnsibleClientProfile
 nae_port_number: 9006
+ca_id: "kylo:kylo:naboo:localca:76c4da32-0953-4c6a-bf77-c5a70314244c"

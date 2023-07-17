@@ -39,7 +39,7 @@
         localNode: "{{ this_node_connection_string }}"
         op_type: create
         port: 9006
-        auto_gen_ca_id: "kylo:kylo:naboo:localca:76c4da32-0953-4c6a-bf77-c5a70314244c"
+        auto_gen_ca_id: "{{ ca_id }}"
         auto_registration: true
         cert_user_field: CN
         interface_type: nae
@@ -47,7 +47,7 @@
         network_interface: all
         trusted_cas:
           local:
-            - "kylo:kylo:naboo:localca:76c4da32-0953-4c6a-bf77-c5a70314244c"
+            - "{{ ca_id }}"
       ignore_errors: true
 
     - name: "Create Character Set"
@@ -135,7 +135,7 @@
         lifetime: 30d
         cert_duration: 730
         max_clients: 200
-        ca_id: "kylo:kylo:naboo:localca:76c4da32-0953-4c6a-bf77-c5a70314244c"
+        ca_id: "{{ ca_id }}"
         nae_iface_port: "{{ nae_port_number }}"
         csr_parameters:
           csr_cn: admin
