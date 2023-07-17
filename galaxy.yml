@@ -23,11 +23,6 @@ authors:
 # A short summary description of the collection
 description: ThalesGroup CipherTrust Data Security Platform Ansible collection to configure various CipherTrust connectors as well as apply policy driven data protection at the time of application orchestration using Ansible. 
 
-# Either a single license or a list of licenses for content inside of a collection. Ansible Galaxy currently only
-# accepts L(SPDX,https://spdx.org/licenses/) licenses. This key is mutually exclusive with 'license_file'
-license:
-- MIT
-
 # The path to the license file for the collection. This path is relative to the root of the collection. This key is
 # mutually exclusive with 'license'
 license_file: LICENSE
