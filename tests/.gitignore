@@ -16,4 +16,4 @@
 #
 
 output/
-integration/targets/*/vars/main.yml
+#integration/targets/*/vars/main.yml
