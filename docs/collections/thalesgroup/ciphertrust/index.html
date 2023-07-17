@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thalesgroup.Ciphertrust &mdash; Ansible collections  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/ansible.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/antsibull-minimal.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/rtd-ethical-ads.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/images/Ansible-Mark-RGB_Black.png"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="thalesgroup.ciphertrust.cckm_aws_custom_keystore module – CCKM module for AWS Custom Key Store" href="cckm_aws_custom_keystore_module.html" />
+    <link rel="prev" title="Collections in the Thalesgroup Namespace" href="../index.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+
+
+
+
+</head>
+
+<body class="wy-body-for-nav"><!-- extra body elements for Ansible beyond RTD Sphinx Theme -->
+
+<div class="DocSite-globalNav ansibleNav">
+  <ul>
+    <li><a href="https://www.ansible.com/ansiblefest" target="_blank">AnsibleFest</a></li>
+    <li><a href="https://www.ansible.com/tower" target="_blank">Products</a></li>
+    <li><a href="https://www.ansible.com/community" target="_blank">Community</a></li>
+    <li><a href="https://www.ansible.com/webinars-training" target="_blank">Webinars & Training</a></li>
+    <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+  </ul>
+</div>
+
+<a class="DocSite-nav" href="/" style="padding-bottom: 30px;">
+
+  <img class="DocSiteNav-logo"
+    src="../../../_static/images/Ansible-Mark-RGB_White.png"
+    alt="Ansible Logo">
+  <div class="DocSiteNav-title">Ansible Collections Documentation</div>
+</a>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Ansible collections
+          </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
+
+<div class="version">
+  
+    
+  
+</div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <label class="sr-only" for="q">Search docs:</label>
+    <input type="text" class="st-default-search-input" id="q" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+  
+              <p class="caption" role="heading"><span class="caption-text">Collections:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Collection Index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Collections in the Thalesgroup Namespace</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Thalesgroup.Ciphertrust</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plugin-index">Plugin Index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plugin indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index_module.html">Index of all Modules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../environment_variables.html">Index of all Collection Environment Variables</a></li>
+</ul>
+<!-- extra nav elements for Ansible beyond RTD Sphinx Theme -->
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Ansible collections</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Collections in the Thalesgroup Namespace</a></li>
+      <li class="breadcrumb-item active">Thalesgroup.Ciphertrust</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <section id="thalesgroup-ciphertrust">
+<span id="plugins-in-thalesgroup-ciphertrust"></span><h1>Thalesgroup.Ciphertrust<a class="headerlink" href="#thalesgroup-ciphertrust" title="Permalink to this heading"></a></h1>
+<p>Collection version 1.0.0</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#description" id="id1">Description</a></p></li>
+<li><p><a class="reference internal" href="#plugin-index" id="id2">Plugin Index</a></p></li>
+</ul>
+</nav>
+<section id="description">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Description</a><a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
+<p>ThalesGroup CipherTrust Data Security Platform Ansible collection to configure various CipherTrust connectors as well as apply policy driven data protection at the time of application orchestration using Ansible.</p>
+<p><strong>Author:</strong></p>
+<ul class="simple">
+<li><p>ThalesGroup &lt;<a class="reference external" href="mailto:ss&#37;&#52;&#48;thalesgroup&#46;com">ss<span>&#64;</span>thalesgroup<span>&#46;</span>com</a>&gt;</p></li>
+</ul>
+<p class="ansible-links">
+  <a href="https://github.com/ThalesGroup" aria-role="button" target="_blank" rel="noopener external">Issue Tracker</a>
+  <a href="https://www.thalesgroup.com/" aria-role="button" target="_blank" rel="noopener external">Homepage</a>
+  <a href="https://github.com/ThalesGroup" aria-role="button" target="_blank" rel="noopener external">Repository (Sources)</a>
+</p><div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="plugin-index">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Plugin Index</a><a class="headerlink" href="#plugin-index" title="Permalink to this heading"></a></h2>
+<p>These are the plugins in the thalesgroup.ciphertrust collection:</p>
+<section id="modules">
+<h3>Modules<a class="headerlink" href="#modules" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="cckm_aws_custom_keystore_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-aws-custom-keystore-module"><span class="std std-ref">cckm_aws_custom_keystore module</span></a> – CCKM module for AWS Custom Key Store</p></li>
+<li><p><a class="reference internal" href="cckm_aws_key_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-aws-key-module"><span class="std std-ref">cckm_aws_key module</span></a> – CCKM module for AWS Keys</p></li>
+<li><p><a class="reference internal" href="cckm_aws_kms_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-aws-kms-module"><span class="std std-ref">cckm_aws_kms module</span></a> – CCKM module for AWS Key Management System</p></li>
+<li><p><a class="reference internal" href="cckm_az_certificate_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-az-certificate-module"><span class="std std-ref">cckm_az_certificate module</span></a> – CCKM module for Azure Certificates</p></li>
+<li><p><a class="reference internal" href="cckm_az_key_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-az-key-module"><span class="std std-ref">cckm_az_key module</span></a> – CCKM module for Azure Keys</p></li>
+<li><p><a class="reference internal" href="cckm_az_secret_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-az-secret-module"><span class="std std-ref">cckm_az_secret module</span></a> – CCKM module for Azure Secrets</p></li>
+<li><p><a class="reference internal" href="cckm_az_vault_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-az-vault-module"><span class="std std-ref">cckm_az_vault module</span></a> – CCKM module for Azure Key Vault</p></li>
+<li><p><a class="reference internal" href="cckm_gcp_ekm_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-gcp-ekm-module"><span class="std std-ref">cckm_gcp_ekm module</span></a> – CCKM module for Google Cloud Platform EKM</p></li>
+<li><p><a class="reference internal" href="cckm_gcp_key_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-gcp-key-module"><span class="std std-ref">cckm_gcp_key module</span></a> – CCKM module for GCP Keys</p></li>
+<li><p><a class="reference internal" href="cckm_gcp_keyring_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-gcp-keyring-module"><span class="std std-ref">cckm_gcp_keyring module</span></a> – CCKM module for GCP KeyRings</p></li>
+<li><p><a class="reference internal" href="cckm_gcp_project_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-gcp-project-module"><span class="std std-ref">cckm_gcp_project module</span></a> – CCKM module for GCP Projects</p></li>
+<li><p><a class="reference internal" href="cckm_gcp_workspace_cse_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-gcp-workspace-cse-module"><span class="std std-ref">cckm_gcp_workspace_cse module</span></a> – CCKM module for GCP Workspace CSE</p></li>
+<li><p><a class="reference internal" href="cckm_sfdc_cloud_organization_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-sfdc-cloud-organization-module"><span class="std std-ref">cckm_sfdc_cloud_organization module</span></a> – CCKM module for SFDC Cloud organization</p></li>
+<li><p><a class="reference internal" href="cckm_sfdc_secret_module.html#ansible-collections-thalesgroup-ciphertrust-cckm-sfdc-secret-module"><span class="std std-ref">cckm_sfdc_secret module</span></a> – CCKM module for SFDC Secrets</p></li>
+<li><p><a class="reference internal" href="cm_cluster_module.html#ansible-collections-thalesgroup-ciphertrust-cm-cluster-module"><span class="std std-ref">cm_cluster module</span></a> – Create or join CipherTrust Manager node cluster</p></li>
+<li><p><a class="reference internal" href="cm_regtoken_module.html#ansible-collections-thalesgroup-ciphertrust-cm-regtoken-module"><span class="std std-ref">cm_regtoken module</span></a> – Create or update registration token</p></li>
+<li><p><a class="reference internal" href="cm_resource_delete_module.html#ansible-collections-thalesgroup-ciphertrust-cm-resource-delete-module"><span class="std std-ref">cm_resource_delete module</span></a> – Delete CipherTrust Manager resource using ID</p></li>
+<li><p><a class="reference internal" href="cm_resource_get_id_from_name_module.html#ansible-collections-thalesgroup-ciphertrust-cm-resource-get-id-from-name-module"><span class="std std-ref">cm_resource_get_id_from_name module</span></a> – Get CipherTrust Manager resource ID from resource name</p></li>
+<li><p><a class="reference internal" href="connection_manager_aws_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-aws-module"><span class="std std-ref">connection_manager_aws module</span></a> – Manage connections to the AWS cloud</p></li>
+<li><p><a class="reference internal" href="connection_manager_azure_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-azure-module"><span class="std std-ref">connection_manager_azure module</span></a> – Manage connections to the Azure cloud</p></li>
+<li><p><a class="reference internal" href="connection_manager_elasticsearch_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-elasticsearch-module"><span class="std std-ref">connection_manager_elasticsearch module</span></a> – Manage Elasticsearch log forwarder connections</p></li>
+<li><p><a class="reference internal" href="connection_manager_google_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-google-module"><span class="std std-ref">connection_manager_google module</span></a> – Manage connections to the Google Cloud Platform (GCP) cloud</p></li>
+<li><p><a class="reference internal" href="connection_manager_hadoop_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-hadoop-module"><span class="std std-ref">connection_manager_hadoop module</span></a> – Manage connections to the Hadoop servers</p></li>
+<li><p><a class="reference internal" href="connection_manager_ldap_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-ldap-module"><span class="std std-ref">connection_manager_ldap module</span></a> – Manage connections to an Identity Provider(IdP) which support LDAP specifications</p></li>
+<li><p><a class="reference internal" href="connection_manager_loki_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-loki-module"><span class="std std-ref">connection_manager_loki module</span></a> – Manage Loki log forwarder connections</p></li>
+<li><p><a class="reference internal" href="connection_manager_luna_hsm_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-luna-hsm-module"><span class="std std-ref">connection_manager_luna_hsm module</span></a> – Manage connections to the Luna Network HSM HA or non-HA</p></li>
+<li><p><a class="reference internal" href="connection_manager_oidc_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-oidc-module"><span class="std std-ref">connection_manager_oidc module</span></a> – Manage connections to an Identity Provider(IdP) which support OIDC specifications</p></li>
+<li><p><a class="reference internal" href="connection_manager_oracle_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-oracle-module"><span class="std std-ref">connection_manager_oracle module</span></a> – Manage Oracle Cloud Infrastructure connections</p></li>
+<li><p><a class="reference internal" href="connection_manager_salesforce_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-salesforce-module"><span class="std std-ref">connection_manager_salesforce module</span></a> – Manage connections to the Salesforce cloud</p></li>
+<li><p><a class="reference internal" href="connection_manager_sap_data_custodian_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-sap-data-custodian-module"><span class="std std-ref">connection_manager_sap_data_custodian module</span></a> – Manage SAP Data Custodian connections</p></li>
+<li><p><a class="reference internal" href="connection_manager_scp_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-scp-module"><span class="std std-ref">connection_manager_scp module</span></a> – Manage SCP connections to external systems</p></li>
+<li><p><a class="reference internal" href="connection_manager_smb_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-smb-module"><span class="std std-ref">connection_manager_smb module</span></a> – Manage connections to file shares using the Server Message Block (SMB) protocol</p></li>
+<li><p><a class="reference internal" href="connection_manager_syslog_module.html#ansible-collections-thalesgroup-ciphertrust-connection-manager-syslog-module"><span class="std std-ref">connection_manager_syslog module</span></a> – Manage syslog log forwarder connections</p></li>
+<li><p><a class="reference internal" href="cte_client_module.html#ansible-collections-thalesgroup-ciphertrust-cte-client-module"><span class="std std-ref">cte_client module</span></a> – Manage CTE clients</p></li>
+<li><p><a class="reference internal" href="cte_client_group_module.html#ansible-collections-thalesgroup-ciphertrust-cte-client-group-module"><span class="std std-ref">cte_client_group module</span></a> – Manage CTE client groups</p></li>
+<li><p><a class="reference internal" href="cte_csi_storage_group_module.html#ansible-collections-thalesgroup-ciphertrust-cte-csi-storage-group-module"><span class="std std-ref">cte_csi_storage_group module</span></a> – Manage CTE CSI Storage Group</p></li>
+<li><p><a class="reference internal" href="cte_policy_save_module.html#ansible-collections-thalesgroup-ciphertrust-cte-policy-save-module"><span class="std std-ref">cte_policy_save module</span></a> – Manage policies as collection of rules that govern data access and encryption</p></li>
+<li><p><a class="reference internal" href="cte_process_set_module.html#ansible-collections-thalesgroup-ciphertrust-cte-process-set-module"><span class="std std-ref">cte_process_set module</span></a> – Create and manage CTE process-sets</p></li>
+<li><p><a class="reference internal" href="cte_resource_set_module.html#ansible-collections-thalesgroup-ciphertrust-cte-resource-set-module"><span class="std std-ref">cte_resource_set module</span></a> – Create and manage CTE resource-sets</p></li>
+<li><p><a class="reference internal" href="cte_signature_set_module.html#ansible-collections-thalesgroup-ciphertrust-cte-signature-set-module"><span class="std std-ref">cte_signature_set module</span></a> – Create and manage CTE Signature Sets</p></li>
+<li><p><a class="reference internal" href="cte_user_set_module.html#ansible-collections-thalesgroup-ciphertrust-cte-user-set-module"><span class="std std-ref">cte_user_set module</span></a> – Create and manage CTE user-sets</p></li>
+<li><p><a class="reference internal" href="domain_save_module.html#ansible-collections-thalesgroup-ciphertrust-domain-save-module"><span class="std std-ref">domain_save module</span></a> – Create or manage domains</p></li>
+<li><p><a class="reference internal" href="dpg_access_policy_save_module.html#ansible-collections-thalesgroup-ciphertrust-dpg-access-policy-save-module"><span class="std std-ref">dpg_access_policy_save module</span></a> – Manage DPG access policies governing data access</p></li>
+<li><p><a class="reference internal" href="dpg_character_set_save_module.html#ansible-collections-thalesgroup-ciphertrust-dpg-character-set-save-module"><span class="std std-ref">dpg_character_set_save module</span></a> – Create and manage DPG character-sets</p></li>
+<li><p><a class="reference internal" href="dpg_client_profile_save_module.html#ansible-collections-thalesgroup-ciphertrust-dpg-client-profile-save-module"><span class="std std-ref">dpg_client_profile_save module</span></a> – Manage DPG client profile</p></li>
+<li><p><a class="reference internal" href="dpg_masking_format_save_module.html#ansible-collections-thalesgroup-ciphertrust-dpg-masking-format-save-module"><span class="std std-ref">dpg_masking_format_save module</span></a> – Manage masking formats for DPG</p></li>
+<li><p><a class="reference internal" href="dpg_policy_save_module.html#ansible-collections-thalesgroup-ciphertrust-dpg-policy-save-module"><span class="std std-ref">dpg_policy_save module</span></a> – Manage DPG execution behavior for REST URLs and associated encryption parameters</p></li>
+<li><p><a class="reference internal" href="dpg_protection_policy_save_module.html#ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module"><span class="std std-ref">dpg_protection_policy_save module</span></a> – Manage DPG protection policies governing crypto operations</p></li>
+<li><p><a class="reference internal" href="dpg_user_set_save_module.html#ansible-collections-thalesgroup-ciphertrust-dpg-user-set-save-module"><span class="std std-ref">dpg_user_set_save module</span></a> – Create and manage DPG user-sets</p></li>
+<li><p><a class="reference internal" href="group_add_remove_object_module.html#ansible-collections-thalesgroup-ciphertrust-group-add-remove-object-module"><span class="std std-ref">group_add_remove_object module</span></a> – Add or remove user or client from group</p></li>
+<li><p><a class="reference internal" href="group_save_module.html#ansible-collections-thalesgroup-ciphertrust-group-save-module"><span class="std std-ref">group_save module</span></a> – Create or update groups</p></li>
+<li><p><a class="reference internal" href="interface_actions_module.html#ansible-collections-thalesgroup-ciphertrust-interface-actions-module"><span class="std std-ref">interface_actions module</span></a> – Perform operations on CipherTrust Manager interface</p></li>
+<li><p><a class="reference internal" href="interface_save_module.html#ansible-collections-thalesgroup-ciphertrust-interface-save-module"><span class="std std-ref">interface_save module</span></a> – Create or update an interface or service CipherTrust Manager is hosting</p></li>
+<li><p><a class="reference internal" href="license_create_module.html#ansible-collections-thalesgroup-ciphertrust-license-create-module"><span class="std std-ref">license_create module</span></a> – Add a license to CipherTrust Manager</p></li>
+<li><p><a class="reference internal" href="license_trial_action_module.html#ansible-collections-thalesgroup-ciphertrust-license-trial-action-module"><span class="std std-ref">license_trial_action module</span></a> – Activate or deactivate CipherTrust Manager trial license</p></li>
+<li><p><a class="reference internal" href="license_trial_get_module.html#ansible-collections-thalesgroup-ciphertrust-license-trial-get-module"><span class="std std-ref">license_trial_get module</span></a> – Retrieve trial license ID if available</p></li>
+<li><p><a class="reference internal" href="licensing_lockdata_get_module.html#ansible-collections-thalesgroup-ciphertrust-licensing-lockdata-get-module"><span class="std std-ref">licensing_lockdata_get module</span></a> – Get license lockdata used to get license code</p></li>
+<li><p><a class="reference internal" href="usermgmt_users_save_module.html#ansible-collections-thalesgroup-ciphertrust-usermgmt-users-save-module"><span class="std std-ref">usermgmt_users_save module</span></a> – Create and manage users in CipherTrust Manager</p></li>
+<li><p><a class="reference internal" href="vault_keys2_op_module.html#ansible-collections-thalesgroup-ciphertrust-vault-keys2-op-module"><span class="std std-ref">vault_keys2_op module</span></a> – Perform operations on keys</p></li>
+<li><p><a class="reference internal" href="vault_keys2_save_module.html#ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module"><span class="std std-ref">vault_keys2_save module</span></a> – Create or update keys in CipherTrust Manager managed vault</p></li>
+</ul>
+<div class="toctree-wrapper compound">
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>List of <a class="reference internal" href="../../index.html#list-of-collections"><span class="std std-ref">collections</span></a> with docs hosted here.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          
+
+<footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Collections in the Thalesgroup Namespace" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cckm_aws_custom_keystore_module.html" class="btn btn-neutral float-right" title="thalesgroup.ciphertrust.cckm_aws_custom_keystore module – CCKM module for AWS Custom Key Store" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ansible contributors.</p>
+  </div>
+
+  
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script><!-- extra footer elements for Ansible beyond RTD Sphinx Theme -->
+
+</body>
+</html>
