@@ -25,16 +25,100 @@
   - assert:
       that:
         - this_node_connection_string is defined
-        - group_name is defined
-        - new_group_name is defined
 
-## Validate the create group module
+## Validate the CTE Policy management module
+- name: "Get User ID from Name"
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ this_node_connection_string }}"
+    query_param: username
+    query_param_value: admin
+    resource_type: users
+  register: user
+
+- name: "Create Key"
+  thalesgroup.ciphertrust.vault_keys2_save:
+    op_type: create
+    name: "AnsibleCTEKey"
+    algorithm: "AES"
+    size: 256
+    undeletable: false
+    unexportable: false
+    usageMask: 76
+    meta:
+      ownerId: "{{ user['response']['id'] }}"
+      permissions:
+        DecryptWithKey:
+          - "CTE Clients"
+        EncryptWithKey:
+          - "CTE Clients"
+        ExportKey:
+          - "CTE Clients"
+        MACVerifyWithKey:
+          - "CTE Clients"
+        MACWithKey:
+          - "CTE Clients"
+        ReadKey:
+          - "CTE Clients"
+        SignVerifyWithKey:
+          - "CTE Clients"
+        SignWithKey:
+          - "CTE Clients"
+        UseKey:
+          - "CTE Clients"
+      cte:
+        persistent_on_client: true
+        encryption_mode: CBC
+        cte_versioned: false
+    xts: false
+    localNode: "{{ this_node_connection_string }}"
+  register: key
+
 - block:
-  - name: "Create Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Create CTE ResourceSet"
+    thalesgroup.ciphertrust.cte_resource_set:
       op_type: create
-      name: "{{ group_name }}"
+      name: Test_CTE_RS_Ansible
+      type: Directory
+      description: "Created via Ansible"
+      resources:
+        - directory: "/home/ansible"
+          file: "*"
+          include_subfolders: true
+          hdfs: false
       localNode: "{{ this_node_connection_string }}"
+    register: _result_create_rs
+
+  - assert:
+      that:
+        - _result_create is not failed
+        - _result_create.response.id is string
+
+- block:
+  - name: "Create CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: create
+      localNode: "{{ this_node_connection_string }}"
+      name: Ansible-CTE-Policy
+      description: "Created via Ansible"
+      never_deny: false
+      metadata:
+        restrict_update: false
+      security_rules:
+        - action: key_op
+          effect: "permit,applykey"
+          partial_match: true
+        - resource_set_id: "{{ _result_create_rs['response']['id'] }}"
+          exclude_resource_set: false
+          partial_match: true
+          action: all_ops
+          effect: "permit,audit,applykey"
+      policy_type: Standard
+      key_rules:
+        - key_id: "{{ key['response']['id'] }}"
+          resource_set_id: "{{ _result_create_rs['response']['id'] }}"
+      data_transform_rules:
+        - key_id: "{{ key['response']['id'] }}"
+          resource_set_id: "{{ _result_create_rs['response']['id'] }}"
     register: _result_create
 
   - assert:
@@ -42,11 +126,11 @@
         - _result_create is not failed
         - _result_create.response.id is string
 
-  - name: "Patch Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Patch CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
       op_type: patch
-      old_name: "{{ group_name }}"
-      name: "{{ new_group_name }}"
+      policy_id: "{{ _result_create.response.id }}"
+      description: "Updated by Ansible"
       localNode: "{{ this_node_connection_string }}"
     register: _result_patch
 
@@ -55,58 +139,64 @@
         - _result_patch is not failed
         - _result_patch.response.message is match("Resource updated successfully")
 
-  - name: "Add User to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
+- block:
+  - name: "Create another CTE ResourceSet for updating CTE policy"
+    thalesgroup.ciphertrust.cte_resource_set:
+      op_type: create
+      name: Test_CTE_RS_Ansible_02
+      type: Directory
+      description: "Created via Ansible"
+      resources:
+        - directory: "/home/dummy"
+          file: "*"
+          include_subfolders: true
+          hdfs: false
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
+    register: _result_create_rs_dummy
 
   - assert:
       that:
-        - _result_add_user is not failed
-        - _result_add_user.response.message is match("Resource created successfully")
+        - _result_create_rs_dummy is not failed
+        - _result_create_rs_dummy.response.id is string
 
-  - name: "Add Client to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
-
-  - assert:
-      that:
-        - _result_add_client is not failed
-        - _result_add_client.response.message is match("Resource created successfully")
-
-  - name: "Remove User from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
+  - name: "Add data transformation rule to CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: add_data_transfer_rule
+      policy_id: "{{ _result_create.response.id }}"
+      key_id: "{{ key['response']['id'] }}"
+      resource_set_id: "{{ _result_create_rs_dummy['response']['id'] }}"
+    register: _result_patch_add_dtx_rule
 
   - assert:
       that:
-        - _result_add_user is not failed
-        - _result_add_user.response is match("Resource deleted successfully")
+        - _result_patch_add_dtx_rule is not failed
+        - _result_patch_add_dtx_rule.response.message is match("Resource updated successfully")
 
-  - name: "Remove Client from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
+  - name: "Add key rule to CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: add_key_rule
+      policy_id: "{{ _result_create.response.id }}"
+      key_id: "{{ key['response']['id'] }}"
+      resource_set_id: "{{ _result_create_rs_dummy['response']['id'] }}"
+    register: _result_patch_add_key_rule
 
   - assert:
       that:
-        - _result_add_client is not failed
-        - _result_add_client.response is match("Resource deleted successfully")
+        - _result_patch_add_key_rule is not failed
+        - _result_patch_add_key_rule.response.message is match("Resource updated successfully")
+
+  - name: "Add security rule to CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: add_security_rule
+      policy_id: "{{ _result_create.response.id }}"
+      resource_set_id: "{{ _result_create_rs_dummy['response']['id'] }}"
+      exclude_resource_set: false
+      partial_match: true
+      action: all_ops
+      effect: "permit,audit,applykey"
+    register: _result_patch_add_sec_rule
+
+  - assert:
+      that:
+        - _result_patch_add_sec_rule is not failed
+        - _result_patch_add_sec_rule.response.message is match("Resource updated successfully")

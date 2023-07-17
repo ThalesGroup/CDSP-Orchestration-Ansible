@@ -25,15 +25,16 @@
   - assert:
       that:
         - this_node_connection_string is defined
-        - group_name is defined
-        - new_group_name is defined
 
-## Validate the create group module
+## Validate the CTE Client module
 - block:
-  - name: "Create Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Create CTE Client"
+    thalesgroup.ciphertrust.cte_client:
       op_type: create
-      name: "{{ group_name }}"
+      name: "CTE-Client-Ansible"
+      description: "Created via Ansible"
+      communication_enabled: false
+      client_type: FS
       localNode: "{{ this_node_connection_string }}"
     register: _result_create
 
@@ -42,11 +43,13 @@
         - _result_create is not failed
         - _result_create.response.id is string
 
-  - name: "Patch Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Patch Client"
+    thalesgroup.ciphertrust.cte_client:
       op_type: patch
-      old_name: "{{ group_name }}"
-      name: "{{ new_group_name }}"
+      id: "{{ _result_create['response']['id'] }}"
+      registration_allowed: true
+      description: "Updated via Ansible"
+      enabled_capabilities: LDT
       localNode: "{{ this_node_connection_string }}"
     register: _result_patch
 
@@ -55,58 +58,54 @@
         - _result_patch is not failed
         - _result_patch.response.message is match("Resource updated successfully")
 
-  - name: "Add User to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Get CTE Policy ID from Name"
+    thalesgroup.ciphertrust.cm_resource_get_id_from_name:
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
+      query_param: "name"
+      query_param_value: Ansible-CTE-Policy
+      resource_type: "cte-client"
+    register: ctePolicy
+  
+  - name: "Add Guard Points to the CTE Client"
+    thalesgroup.ciphertrust.cte_client:
+      op_type: add_guard_point
+      id: "{{ _result_create['response']['id'] }}"
+      guard_paths:
+        - "/opt/path1/"
+      guard_point_params:
+        guard_point_type: directory_auto
+        policy_id: "{{ ctePolicy['response']['id'] }}"
+        automount_enabled: true
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_add_gp
 
   - assert:
       that:
-        - _result_add_user is not failed
-        - _result_add_user.response.message is match("Resource created successfully")
+        - _result_add_gp is not failed
+        - _result_add_gp.response.message is match("Resource created successfully")
 
-  - name: "Add Client to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Un-enroll CTE Client"
+    thalesgroup.ciphertrust.cte_client:
+      op_type: unenroll
+      name: "CTE-Client-Ansible"
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
+    register: _result_unenroll
 
   - assert:
       that:
-        - _result_add_client is not failed
-        - _result_add_client.response.message is match("Resource created successfully")
+        - _result_unenroll is not failed
+        - _result_unenroll.response.message is match("Resource created successfully")
 
-  - name: "Remove User from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Delete a CTE Client with ID"
+    thalesgroup.ciphertrust.cte_client:
+      op_type: delete_id
+      id: "{{ _result_create['response']['id'] }}"
+      del_client: true
+      force_del_client: true
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
+    register: _result_delete
 
   - assert:
       that:
-        - _result_add_user is not failed
-        - _result_add_user.response is match("Resource deleted successfully")
-
-  - name: "Remove Client from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
-
-  - assert:
-      that:
-        - _result_add_client is not failed
-        - _result_add_client.response is match("Resource deleted successfully")
+        - _result_delete is not failed
+        - _result_delete.response.message is match("Resource updated successfully")

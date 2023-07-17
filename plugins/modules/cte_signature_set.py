@@ -21,7 +21,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import createSignatureSet, updateSignatureSet, addSignatureToSet, deleteSignatureInSetById, sendSignAppRequest, querySignAppRequest, cancelSignAppRequest
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import createSignatureSet, updateSignatureSet, addSignatureToSet, deleteSignatureInSetById, sendSignAppRequest, querySignAppRequest, cancelSignAppRequest, getSignatureFromSetByFilter
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
 
 DOCUMENTATION = '''
@@ -68,7 +68,7 @@ options:
           default: false
     op_type:
       description: Operation to be performed
-      choices: [create, patch, add_signature, delete_signature, sign_app, query_sign_app, cancel_sign_app]
+      choices: [create, patch, add_signature, get_signature, delete_signature, sign_app, query_sign_app, cancel_sign_app]
       required: true
       type: str
     id:
@@ -176,6 +176,7 @@ argument_spec = dict(
       'create', 
       'patch', 
       'add_signature',
+      'get_signature',
       'delete_signature',
       'sign_app',
       'query_sign_app',
@@ -188,6 +189,8 @@ argument_spec = dict(
     source_list=dict(type='list', element='str'),
     signatures=dict(type='list', element='dict', options=_signature),
     client_id=dict(type='str'),
+    hash_value=dict(type='str'),
+    file_name=dict(type='str'),
 )
 
 def validate_parameters(cte_signature_set_module):
@@ -200,6 +203,7 @@ def setup_module_object():
             ['op_type', 'create', ['name']],
             ['op_type', 'patch', ['id']],
             ['op_type', 'add_signature', ['id', 'signatures']],
+            ['op_type', 'get_signature', ['id']],
             ['op_type', 'delete_signature', ['id', 'signature_id']],
             ['op_type', 'sign_app', ['id', 'client_id']],
             ['op_type', 'query_sign_app', ['id', 'client_id']],
@@ -259,6 +263,21 @@ def main():
           node=module.params.get('localNode'),
           id=module.params.get('id'),
           signatures=module.params.get('signatures'),
+        )
+        result['response'] = response
+      except CMApiException as api_e:
+        if api_e.api_error_code:
+          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+      except AnsibleCMException as custom_e:
+        module.fail_json(msg=custom_e.message)
+
+    elif module.params.get('op_type') == 'get_signature':
+      try:
+        response = getSignatureFromSetByFilter(
+          node=module.params.get('localNode'),
+          id=module.params.get('id'),
+          hash_value=module.params.get('hash_value'),
+          file_name=module.params.get('file_name'),
         )
         result['response'] = response
       except CMApiException as api_e:

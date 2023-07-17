@@ -26,12 +26,12 @@
       that:
         - this_node_connection_string is defined
 
-## Validate the CTE Resource Set module
+## Validate the CTE User Set module
 - block:
   - name: "Create CTE UserSet"
     thalesgroup.ciphertrust.cte_user_set:
       op_type: create
-      name: Test_CTE_RS_Ansible
+      name: Test_CTE_US_Ansible
       users:
         - uname: ansibleu0
           uid: 1000

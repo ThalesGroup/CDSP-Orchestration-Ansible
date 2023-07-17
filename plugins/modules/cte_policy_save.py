@@ -26,7 +26,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 
 DOCUMENTATION = '''
 ---
-module: dpg_policy_save
+module: cte_policy_save
 short_description: Manage policies as collection of rules that govern data access and encryption
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with CTE Policy API
@@ -197,7 +197,7 @@ options:
 
 EXAMPLES = '''
 - name: "Create CTE Policy"
-  thalesgroup.ciphertrust.dpg_policy_save:
+  thalesgroup.ciphertrust.cte_policy_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"
@@ -227,12 +227,10 @@ EXAMPLES = '''
     data_transform_rules:
       - key_id: CTE_standard_pol_key
         resource_set_id: RS-Ans-001
-    name: Ansible-CTE-Policy-001
-    description: "Created using Ansible"
   register: policy
 
 - name: "Add new data transformation rule to a CTE Policy"
-  thalesgroup.ciphertrust.dpg_policy_save:
+  thalesgroup.ciphertrust.cte_policy_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"
@@ -248,7 +246,7 @@ EXAMPLES = '''
   register: datatxrule
 
 - name: "Delete a data transformation rule from a CTE Policy"
-  thalesgroup.ciphertrust.dpg_policy_save:
+  thalesgroup.ciphertrust.cte_policy_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"

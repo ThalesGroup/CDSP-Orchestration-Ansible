@@ -10,7 +10,7 @@ import os
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData, DeleteWithoutData
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData, DeleteWithoutData, GETIdByQueryParam
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
 
 def is_json(myjson):
@@ -382,6 +382,21 @@ def addSignatureToSet(**kwargs):
             payload=payload,
             cm_node=kwargs['node'],
             cm_api_endpoint="transparent-encryption/signaturesets/" + kwargs['id'] + "/addsignatures",
+        )
+        return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise
+
+def getSignatureFromSetByFilter(**kwargs):
+    try:
+        response = GETIdByQueryParam(
+            cm_node=kwargs['node'],
+            param='file_name',
+            value=kwargs['file_name'],
+            id="id",
+            cm_api_endpoint="transparent-encryption/signaturesets/" + kwargs['id'] + "/signatures",
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:

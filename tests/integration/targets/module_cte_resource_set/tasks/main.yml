@@ -25,15 +25,20 @@
   - assert:
       that:
         - this_node_connection_string is defined
-        - group_name is defined
-        - new_group_name is defined
 
-## Validate the create group module
+## Validate the CTE Resource Set module
 - block:
-  - name: "Create Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Create CTE ResourceSet"
+    thalesgroup.ciphertrust.cte_resource_set:
       op_type: create
-      name: "{{ group_name }}"
+      name: Test_CTE_RS_Ansible
+      type: Directory
+      description: "Created via Ansible"
+      resources:
+        - directory: "/home/ansible"
+          file: "*"
+          include_subfolders: true
+          hdfs: false
       localNode: "{{ this_node_connection_string }}"
     register: _result_create
 
@@ -42,11 +47,20 @@
         - _result_create is not failed
         - _result_create.response.id is string
 
-  - name: "Patch Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Patch CTE ResourceSet"
+    thalesgroup.ciphertrust.cte_resource_set:
       op_type: patch
-      old_name: "{{ group_name }}"
-      name: "{{ new_group_name }}"
+      id: "{{ _result_create.response.id }}"
+      description: "Updated via Ansible"
+      resources:
+        - directory: "/home/ansible"
+          file: "*"
+          include_subfolders: true
+          hdfs: false
+        - directory: "/home/dummy"
+          file: "*"
+          include_subfolders: true
+          hdfs: false
       localNode: "{{ this_node_connection_string }}"
     register: _result_patch
 
@@ -55,58 +69,52 @@
         - _result_patch is not failed
         - _result_patch.response.message is match("Resource updated successfully")
 
-  - name: "Add User to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Add Resources to ResourceSet"
+    thalesgroup.ciphertrust.cte_resource_set:
+      op_type: add_resource
+      id: "{{ _result_create.response.id }}"
+      resources:
+        - directory: "/home/dummy1"
+          file: "*"
+          include_subfolders: true
+          hdfs: false
+        - directory: "/home/dummy2"
+          file: "*"
+          include_subfolders: true
+          hdfs: false
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
+    register: _result_add_resource
 
   - assert:
       that:
-        - _result_add_user is not failed
-        - _result_add_user.response.message is match("Resource created successfully")
+        - _result_add_resource is not failed
+        - _result_add_resource.response.message is match("Resource updated successfully")
 
-  - name: "Add Client to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Update Resource in ResourceSet"
+    thalesgroup.ciphertrust.cte_resource_set:
+      op_type: patch_resource
+      id: "{{ _result_create.response.id }}"
+      resourceIndex: 2
+      directory: "/home/dummy3"
+      file: "*"
+      hdfs: false
+      include_subfolders: true
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
+    register: _result_upd_resource
 
   - assert:
       that:
-        - _result_add_client is not failed
-        - _result_add_client.response.message is match("Resource created successfully")
+        - _result_upd_resource is not failed
+        - _result_upd_resource.response.message is match("Resource updated successfully")
 
-  - name: "Remove User from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Remove Resource from ResourceSet"
+    thalesgroup.ciphertrust.cte_resource_set:
+      op_type: delete_resource
+      id: "{{ _result_create.response.id }}"
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
+    register: _result_del_resource
 
   - assert:
       that:
-        - _result_add_user is not failed
-        - _result_add_user.response is match("Resource deleted successfully")
-
-  - name: "Remove Client from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
-
-  - assert:
-      that:
-        - _result_add_client is not failed
-        - _result_add_client.response is match("Resource deleted successfully")
+        - _result_del_resource is not failed
+        - _result_del_resource.response is match("Resource deleted successfully")

@@ -25,15 +25,16 @@
   - assert:
       that:
         - this_node_connection_string is defined
-        - group_name is defined
-        - new_group_name is defined
 
-## Validate the create group module
+## Validate the CTE Signature Set module
 - block:
-  - name: "Create Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Create CTE SignatureSet"
+    thalesgroup.ciphertrust.cte_signature_set:
       op_type: create
-      name: "{{ group_name }}"
+      name: Test_CTE_SS_Ansible
+      description: "Created via Ansible"
+      source_list:
+        - "/usr/bin"
       localNode: "{{ this_node_connection_string }}"
     register: _result_create
 
@@ -42,11 +43,14 @@
         - _result_create is not failed
         - _result_create.response.id is string
 
-  - name: "Patch Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Patch CTE SignatureSet"
+    thalesgroup.ciphertrust.cte_signature_set:
       op_type: patch
-      old_name: "{{ group_name }}"
-      name: "{{ new_group_name }}"
+      id: "{{ _result_create.response.id }}"
+      users:
+        source_list:
+          - "/usr/bin"
+          - "/usr/sbin"
       localNode: "{{ this_node_connection_string }}"
     register: _result_patch
 
@@ -55,58 +59,42 @@
         - _result_patch is not failed
         - _result_patch.response.message is match("Resource updated successfully")
 
-  - name: "Add User to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Add Signatures to SignatureSet"
+    thalesgroup.ciphertrust.cte_signature_set:
+      op_type: add_signature
+      id: "{{ _result_create.response.id }}"
+      signatures:
+        - file_name: "/bin/cat"
+          hash_value: 05A9E97F7B0D5638A2FFBC1E53A31E44D36251BA35BA8A1556E569D3C8D9B497
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
+    register: _result_add_signature
 
   - assert:
       that:
-        - _result_add_user is not failed
-        - _result_add_user.response.message is match("Resource created successfully")
+        - _result_add_signature is not failed
+        - _result_add_signature.response.message is match("Resource updated successfully")
 
-  - name: "Add Client to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
+  - name: "Get Signature ID from SignatureSet"
+    thalesgroup.ciphertrust.cte_signature_set:
+      op_type: get_signature
+      id: "{{ _result_create.response.id }}"
+      file_name: "/bin/cat"
+    register: _result_get_signature
 
   - assert:
       that:
-        - _result_add_client is not failed
-        - _result_add_client.response.message is match("Resource created successfully")
+        - _result_get_signature is not failed
+        - _result_get_signature.response.id is string
 
-  - name: "Remove User from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Remove Signature from SignatureSet"
+    thalesgroup.ciphertrust.cte_signature_set:
+      op_type: delete_signature
+      id: "{{ _result_create.response.id }}"
+      signature_id: _result_get_signature.response.id
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
+    register: _result_del_signature
 
   - assert:
       that:
-        - _result_add_user is not failed
-        - _result_add_user.response is match("Resource deleted successfully")
-
-  - name: "Remove Client from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
-
-  - assert:
-      that:
-        - _result_add_client is not failed
-        - _result_add_client.response is match("Resource deleted successfully")
+        - _result_del_signature is not failed
+        - _result_del_signature.response is match("Resource deleted successfully")
