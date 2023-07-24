@@ -30,12 +30,21 @@ def getJwt(host, username, password, auth_domain_path):
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     auth_url='https://' + host + '/api/v1/auth/tokens'
-    auth_payload = {
+
+    if auth_domain_path != None:
+      auth_payload = {
         "grant_type":"password",
         "username":username,
         "password":password,
         "auth_domain_path": auth_domain_path,
-    }
+      }
+    else:
+      auth_payload = {
+        "grant_type":"password",
+        "username":username,
+        "password":password,
+      }
+
     response = requests.post(auth_url, json=auth_payload, verify=False)
     return response.json()["jwt"]
 
@@ -478,21 +487,11 @@ def CMAPIObject(cm_api_user=None, cm_api_pwd=None, cm_url=None, cm_api_endpoint=
     """Create a Ciphertrust Manager (CM) client"""
     session=dict()
     session["url"] = 'https://' + cm_url + '/api/v1/' + cm_api_endpoint
-    if auth_domain_path != None:
-      # handling this for as-a-service at this moment 
-      token = getJwt(
-        host=cm_url,
-        grant_type="password",
-        username=cm_api_user,
-        password=cm_api_pwd,
-        auth_domain_path=auth_domain_path
-      )
-    else:
-      token = getJwt(
-        host=cm_url,
-        grant_type="password",
-        username=cm_api_user,
-        password=cm_api_pwd
-      )
+    token = getJwt(
+      host=cm_url,
+      username=cm_api_user,
+      password=cm_api_pwd,
+      auth_domain_path=auth_domain_path
+    )
     session["headers"] = {"Content-Type": "application/json; charset=utf-8","Authorization": "Bearer " + token,}
     return session
