@@ -31,7 +31,7 @@ def getJwt(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["host"] and value != None:
+        if key not in ["host", "verify"] and value != None:
             request[key] = value
 
     payload = json.dumps(request)
