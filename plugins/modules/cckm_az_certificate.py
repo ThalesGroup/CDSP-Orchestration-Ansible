@@ -172,11 +172,17 @@ _azure_param_policy_secret_prop = dict(
   contentType=dict(type='str', options=['application/x-pkcs12', 'application/x-pem-file']),
 )
 
+_azure_param_policy_attribute = dict(
+  nbf=dict(type='int'),
+  exp=dict(type='int'),
+  enabled=dict(type='bool'),
+)
+
 _azure_param_policy = dict(
   issuer=dict(type='dict', options=_azure_param_policy_issuer),
   key_props=dict(type='dict', options=_azure_param_policy_key_prop),
   x509_props=dict(type='dict', options=_azure_param_policy_x509_prop),
-  attributes=dict(type='dict', options=_schema_less),
+  attributes=dict(type='dict', options=_azure_param_policy_attribute),
   lifetime_actions=dict(type='list', element='dict', options=_azure_param_policy_lifetime_action),
   secret_props=dict(type='dict', options=_azure_param_policy_secret_prop),
 )
