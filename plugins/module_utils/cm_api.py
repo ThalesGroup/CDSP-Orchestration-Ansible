@@ -454,18 +454,18 @@ def GETIdByQueryParam(param=None, value=None, cm_node=None, cm_api_endpoint=None
       raise AnsibleCMException(message="ErrorPath: cm_api >> " + err)
 
 #def CMAPIObject(cm_api_user=None, cm_api_pwd=None, cm_url=None, cm_api_endpoint=None, verify=None):
-def CMAPIObject(cm, api):
+def CMAPIObject(cm, api, verify=None):
     """Create a Ciphertrust Manager (CM) client"""
     session=dict()
     session["url"] = 'https://' + cm["server_ip"] + '/api/v1/' + api
-    if cm['tenant_id'] != None:
+    if cm['auth_domain_path'] != None:
       # handling this for as-a-service at this moment 
       token = getJwt(
         host=cm["server_ip"],
         grant_type="password",
         username=cm["user"],
         password=cm["password"],
-        auth_domain_path="/" + cm['tenant_id'] + "/"
+        auth_domain_path=cm["auth_domain_path"]
       )
     else:
       token = getJwt(
