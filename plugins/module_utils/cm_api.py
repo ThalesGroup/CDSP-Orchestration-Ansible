@@ -26,23 +26,17 @@ def is_json(myjson):
     return False
   return True
 
-def getJwt(**kwargs):
+def getJwt(host, username, password, auth_domain_path):
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    request = {}
 
-    for key, value in kwargs.items():
-        if key not in ["host", "verify"] and value != None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    auth_url='https://' + kwargs['host'] + '/api/v1/auth/tokens'
-    #auth_payload = {
-    #    "grant_type":"password",
-    #    "username":username,
-    #    "password":password,
-    #}
-    response = requests.post(auth_url, json=payload, verify=False)
+    auth_url='https://' + host + '/api/v1/auth/tokens'
+    auth_payload = {
+        "grant_type":"password",
+        "username":username,
+        "password":password,
+        "auth_domain_path": auth_domain_path,
+    }
+    response = requests.post(auth_url, json=auth_payload, verify=False)
     return response.json()["jwt"]
 
 # This will never return the ID
@@ -82,7 +76,10 @@ def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
     pattern_2xx = re.compile(r'20[0-9]')
     pattern_4xx = re.compile(r'40[0-9]')
     cmSessionObject = CMAPIObject(
-        cm=node,
+        cm_api_user=node["user"],
+        cm_api_pwd=node["password"],
+        cm_url=node["server_ip"],
+        auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
         verify=False,
       )
@@ -136,7 +133,10 @@ def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
     pattern_2xx = re.compile(r'20[0-9]')
     pattern_4xx = re.compile(r'40[0-9]')
     cmSessionObject = CMAPIObject(
-      cm=node,
+      cm_api_user=node["user"],
+      cm_api_pwd=node["password"],
+      cm_url=node["server_ip"],
+      auth_domain_path=node["auth_domain_path"],
       cm_api_endpoint=cm_api_endpoint,
       verify=False,
     )
@@ -183,7 +183,10 @@ def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
     pattern_2xx = re.compile(r'20[0-9]')
     pattern_4xx = re.compile(r'40[0-9]')
     cmSessionObject = CMAPIObject(
-        cm=node,
+        cm_api_user=node["user"],
+        cm_api_pwd=node["password"],
+        cm_url=node["server_ip"],
+        auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
         verify=False,
       )
@@ -228,7 +231,10 @@ def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
     pattern_2xx = re.compile(r'20[0-9]')
     pattern_4xx = re.compile(r'40[0-9]')
     cmSessionObject = CMAPIObject(
-        cm=node,
+        cm_api_user=node["user"],
+        cm_api_pwd=node["password"],
+        cm_url=node["server_ip"],
+        auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
         verify=False,
       )
@@ -274,7 +280,10 @@ def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
     pattern_2xx = re.compile(r'20[0-9]')
     pattern_4xx = re.compile(r'40[0-9]')
     cmSessionObject = CMAPIObject(
-      cm=node,
+      cm_api_user=node["user"],
+      cm_api_pwd=node["password"],
+      cm_url=node["server_ip"],
+      auth_domain_path=node["auth_domain_path"],
       cm_api_endpoint=cm_api_endpoint,
       verify=False,
     )
@@ -315,7 +324,10 @@ def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
     pattern_2xx = re.compile(r'20[0-9]')
     pattern_4xx = re.compile(r'40[0-9]')
     cmSessionObject = CMAPIObject(
-        cm=node,
+        cm_api_user=node["user"],
+        cm_api_pwd=node["password"],
+        cm_url=node["server_ip"],
+        auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
         verify=False,
       )
@@ -351,7 +363,10 @@ def GETData(cm_node=None, cm_api_endpoint=None):
   # Create the session object
   node = ast.literal_eval(cm_node)
   cmSessionObject = CMAPIObject(
-    cm=node,
+    cm_api_user=node["user"],
+    cm_api_pwd=node["password"],
+    cm_url=node["server_ip"],
+    auth_domain_path=node["auth_domain_path"],
     cm_api_endpoint=cm_api_endpoint,
     verify=False,
   )
@@ -388,7 +403,10 @@ def GETData(cm_node=None, cm_api_endpoint=None):
 def GETIdByName(name=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
     cmSessionObject = CMAPIObject(
-        cm=cm_node,
+        cm_api_user=cm_node["user"],
+        cm_api_pwd=cm_node["password"],
+        cm_url=cm_node["server_ip"],
+        auth_domain_path=cm_node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
         verify=False,
       )
@@ -411,8 +429,11 @@ def GETIdByQueryParam(param=None, value=None, cm_node=None, cm_api_endpoint=None
     # Create the session object
     node = ast.literal_eval(cm_node)
     cmSessionObject = CMAPIObject(
-      cm=node,
-      api=cm_api_endpoint,
+      cm_api_user=node["user"],
+      cm_api_pwd=node["password"],
+      cm_url=node["server_ip"],
+      auth_domain_path=node["auth_domain_path"],
+      cm_api_endpoint=cm_api_endpoint,
       verify=False,
     )
 
@@ -453,26 +474,25 @@ def GETIdByQueryParam(param=None, value=None, cm_node=None, cm_api_endpoint=None
     except requests.exceptions.RequestException as err:
       raise AnsibleCMException(message="ErrorPath: cm_api >> " + err)
 
-#def CMAPIObject(cm_api_user=None, cm_api_pwd=None, cm_url=None, cm_api_endpoint=None, verify=None):
-def CMAPIObject(cm, api, verify=None):
+def CMAPIObject(cm_api_user=None, cm_api_pwd=None, cm_url=None, cm_api_endpoint=None, auth_domain_path=None, verify=None):
     """Create a Ciphertrust Manager (CM) client"""
     session=dict()
-    session["url"] = 'https://' + cm["server_ip"] + '/api/v1/' + api
-    if cm['auth_domain_path'] != None:
+    session["url"] = 'https://' + cm_url + '/api/v1/' + cm_api_endpoint
+    if auth_domain_path != None:
       # handling this for as-a-service at this moment 
       token = getJwt(
-        host=cm["server_ip"],
+        host=cm_url,
         grant_type="password",
-        username=cm["user"],
-        password=cm["password"],
-        auth_domain_path=cm["auth_domain_path"]
+        username=cm_api_user,
+        password=cm_api_pwd,
+        auth_domain_path=auth_domain_path
       )
     else:
       token = getJwt(
-        host=cm["server_ip"],
+        host=cm_url,
         grant_type="password",
-        username=cm["user"],
-        password=cm["password"]
+        username=cm_api_user,
+        password=cm_api_pwd
       )
     session["headers"] = {"Content-Type": "application/json; charset=utf-8","Authorization": "Bearer " + token,}
     return session
