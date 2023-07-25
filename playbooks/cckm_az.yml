@@ -23,6 +23,23 @@
       - vars/cckm.yml
 
     tasks:
+    # Create Azure Connection
+    - name: "Add Azure connection"
+      thalesgroup.ciphertrust.connection_manager_azure:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "{{ connection_name }}"
+        products:
+          - cckm
+        client_secret: "{{ client_secret }}"
+        cloud_name: AzureCloud
+        client_id: "{{ client_id }}"
+        tenant_id: "{{ tenant_id }}"
+
+    - name: Pause for 30 seconds
+      ansible.builtin.pause:
+        seconds: 30
+
     # Add vault for CCKM
     - name: "Add Azure Vault"
       thalesgroup.ciphertrust.cckm_az_vault:

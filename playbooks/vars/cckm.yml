@@ -13,10 +13,13 @@ this_node_connection_string:
   auth_domain_path: "{{ this_node_tenant_id }}"
   verify: False
 
-subscription_id: <az-subscription-id>
-tenant_id: <az-tenant-id>
-vault_name: ansible-cckm
-resource_group_name: <az-rg-name>
+subscription_id: <AZURE_SUBSCRIPTION_ID>
+tenant_id: <AZURE_TENANT_ID>
+vault_name: <VAULT_NAME>
+resource_group_name: <RG_NAME>
 az_location: eastus
 secret_name: ansible-secret
 connection_name: ansible
+client_secret: <CLIENT_SECRET>
+client_id: <CLIENT_ID>
+tenant_id: <TENANT_ID>
