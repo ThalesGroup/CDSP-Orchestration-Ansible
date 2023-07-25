@@ -22,4 +22,3 @@ secret_name: ansible-secret
 connection_name: ansible
 client_secret: <CLIENT_SECRET>
 client_id: <CLIENT_ID>
-tenant_id: <TENANT_ID>
