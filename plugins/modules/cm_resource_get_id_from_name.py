@@ -130,6 +130,10 @@ _arr_resource_type_choices = [
     'cte-client-group',
     'csigroup',
     'cte-client',
+    'azure-key-vault',
+    'azure-secret',
+    'azure-certificate',
+    'azure-key',
 ]
 _arr_query_param_choices = [
     'name',
@@ -220,6 +224,18 @@ def main():
         query_id='id'
     elif resource_type == "csigroup":
         endpoint='transparent-encryption/csigroups'
+        query_id='id'
+    elif resource_type == "azure-key-vault":
+        endpoint='cckm/azure/vaults'
+        query_id='id'
+    elif resource_type == "azure-secret":
+        endpoint='cckm/azure/secrets'
+        query_id='id'
+    elif resource_type == "azure-certificate":
+        endpoint='cckm/azure/certificates'
+        query_id='id'
+    elif resource_type == "azure-key":
+        endpoint='cckm/azure/keys'
         query_id='id'
     else:
         module.fail_json(msg='resource_type not supported yet')
