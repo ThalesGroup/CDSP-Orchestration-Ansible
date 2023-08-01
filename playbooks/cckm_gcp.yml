@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 ---
-  - name: "Sample playbook to test CCKM Azure functionality"
+  - name: "Sample playbook to test CCKM GCP functionality"
     hosts: localhost
     connection: local
 
@@ -23,63 +23,51 @@
       - vars/cckm.yml
 
     tasks:
-    # Create Azure Connection
-    - name: "Add Azure connection"
-      thalesgroup.ciphertrust.connection_manager_azure:
+    # Create GCP Connection
+    - name: "Add Google connection"
+      thalesgroup.ciphertrust.connection_manager_google:
         localNode: "{{ this_node_connection_string }}"
         op_type: create
-        name: "{{ connection_name }}"
+        name: "{{ gcp_conn_name }}"
         products:
           - cckm
-        client_secret: "{{ client_secret }}"
-        cloud_name: AzureCloud
-        client_id: "{{ client_id }}"
-        tenant_id: "{{ tenant_id }}"
+        key_file: "{{ key_file_data }}"
+        cloud_name: gcp
 
     - name: Pause for 30 seconds
       ansible.builtin.pause:
         seconds: 30
 
-    # Add vault for CCKM
-    - name: "Add Azure Vault"
-      thalesgroup.ciphertrust.cckm_az_vault:
+    # Add GCP project
+    - name: "Add GCP Project"
+      thalesgroup.ciphertrust.cckm_gcp_keyring:
         localNode: "{{ this_node_connection_string }}"
         op_type: create
-        connection: "{{ connection_name }}"
-        subscription_id: "{{ subscription_id }}"
-        vaults:
-          - name: "{{ vault_name }}"
-            location: "{{ az_location }}"
-            azure_vault_id: "/subscriptions/{{ subscription_id }}/resourceGroups/{{ resource_group_name }}/providers/Microsoft.KeyVault/vaults/{{ vault_name }}"
-            type: "Microsoft.KeyVault/vaults"
-            properties:
-              tenantId: "{{ tenant_id }}"
-              sku:
-                family: A
-                name: Standard
-              vaultUri: "https://{{ vault_name }}.vault.azure.net/"
-              enableSoftDelete: true
-              softDeleteRetentionInDays: 7
-              enableRbacAuthorization: true
+        project_id: "{{ project_id }}"
+        connection: "{{ gcp_conn_name }}"
 
-    - name: "Get Vault ID from its name"
-      thalesgroup.ciphertrust.cm_resource_get_id_from_name:
-        localNode: "{{ this_node_connection_string }}"
-        query_param: "name"
-        query_param_value: "{{ vault_name }}::{{ subscription_id }}"
-        resource_type: "azure-key-vault"
-      register: vault
-
-    # Create secret on vault
-    - name: "Create secret on AZ KV"
-      thalesgroup.ciphertrust.cckm_az_secret:
+    # Add Keyring for CCKM
+    - name: "Add GCP Keyring"
+      thalesgroup.ciphertrust.cckm_gcp_keyring:
         localNode: "{{ this_node_connection_string }}"
         op_type: create
-        azure_param:
-          value: "{{ connection_name }}"
-        key_vault: "{{ vault['response']['id'] }}"
-        secret_name: "{{ secret_name }}"
-      register: secret
+        connection: "{{ gcp_conn_name }}"
+        project_id: "{{ project_id }}"
+        key_rings: "{{ key_rings }}"
+
+    # Add Key to Keyring for CCKM
+    - name: "Add GCP Key"
+      thalesgroup.ciphertrust.cckm_gcp_key:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        key_ring: "{{ key_ring }}"
+        gcp_key_params:
+          key_name: "{{ key_name }}"
+          purpose: ENCRYPT_DECRYPT
+          protection_level: SOFTWARE
+          algorithm: GOOGLE_SYMMETRIC_ENCRYPTION
+          labels:
+            isakey: yes
 
     - name: Debug Vault Output
       debug: var=vault

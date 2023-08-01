@@ -13,6 +13,7 @@ this_node_connection_string:
   auth_domain_path: "{{ this_node_tenant_id }}"
   verify: False
 
+# Azure vars
 subscription_id: <AZURE_SUBSCRIPTION_ID>
 tenant_id: <AZURE_TENANT_ID>
 vault_name: <VAULT_NAME>
@@ -22,3 +23,14 @@ secret_name: ansible-secret
 connection_name: ansible
 client_secret: <CLIENT_SECRET>
 client_id: <CLIENT_ID>
+
+# GCP vars
+key_file_data: "<JSON_KEY_DATA>"
+gcp_conn_name: ansible-gcp
+gcp_region: us-east1
+project_id: <GCP_PROJECT_ID>
+key_rings:
+  - name: "projects/{{ project_id }}/locations/{{ gcp_region }}/keyRings/ansible"
+
+key_ring: "projects/{{ project_id }}/locations/{{ gcp_region }}/keyRings/ansible"
+key_name: ansible_generated_key
