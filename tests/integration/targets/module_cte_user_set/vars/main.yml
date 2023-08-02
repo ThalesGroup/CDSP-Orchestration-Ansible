@@ -5,3 +5,28 @@ this_node_connection_string:
   user: <CM_ADMIN_USERNAME>
   password: <CM_ADMIN_PASSWORD>
   verify: False
+
+user_set_name: ansible_user_set
+initial_users_list:
+  - uname: user1
+    uid: 1000
+    gname: rootGroup
+    gid: 1000
+updated_users_list:
+  - uname: user1
+    uid: 1000
+    gname: rootGroup
+    gid: 1000
+  - uname: user2
+    uid: 1001
+    gname: rootGroup
+    gid: 1000
+add_user_to_set:
+  - uname: user3
+    uid: 1002
+    gname: rootGroup
+    gid: 1000
+user_index_to_be_updated: 1
+username_to_be_updated: user4
+uid_to_be_updated: 1003
+user_index_to_be_deleted: 1

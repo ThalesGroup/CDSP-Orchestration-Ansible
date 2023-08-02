@@ -5,3 +5,6 @@ this_node_connection_string:
   user: <CM_ADMIN_USERNAME>
   password: <CM_ADMIN_PASSWORD>
   verify: False
+
+signature_set_name: ansible_sign_set
+process_set_name: ansible_process_set

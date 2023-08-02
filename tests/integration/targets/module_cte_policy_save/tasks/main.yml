@@ -1,18 +1,6 @@
 ---
 # (c) 2023 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#  http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 
 ####################################################################
@@ -77,7 +65,7 @@
   - name: "Create CTE ResourceSet"
     thalesgroup.ciphertrust.cte_resource_set:
       op_type: create
-      name: Test_CTE_RS_Ansible
+      name: Ansible_RES_SET_1
       type: Directory
       description: "Created via Ansible"
       resources:
@@ -86,12 +74,12 @@
           include_subfolders: true
           hdfs: false
       localNode: "{{ this_node_connection_string }}"
-    register: _result_create_rs
+    register: _result_create_rs_1
 
   - assert:
       that:
-        - _result_create is not failed
-        - _result_create.response.id is string
+        - _result_create_rs is not failed
+        - _result_create_rs.response.id is string
 
 - block:
   - name: "Create CTE Policy"
@@ -143,28 +131,48 @@
   - name: "Create another CTE ResourceSet for updating CTE policy"
     thalesgroup.ciphertrust.cte_resource_set:
       op_type: create
-      name: Test_CTE_RS_Ansible_02
+      name: Ansible_RES_SET_2
       type: Directory
       description: "Created via Ansible"
       resources:
-        - directory: "/home/dummy"
+        - directory: "/home/user1"
           file: "*"
           include_subfolders: true
           hdfs: false
       localNode: "{{ this_node_connection_string }}"
-    register: _result_create_rs_dummy
+    register: _result_create_rs_2
 
   - assert:
       that:
-        - _result_create_rs_dummy is not failed
-        - _result_create_rs_dummy.response.id is string
+        - _result_create_rs_2 is not failed
+        - _result_create_rs_2.response.id is string
+
+  - block:
+    - name: "Create yet another CTE ResourceSet for other op_types"
+      thalesgroup.ciphertrust.cte_resource_set:
+        op_type: create
+        name: Ansible_RES_SET_3
+        type: Directory
+        description: "Created via Ansible"
+        resources:
+          - directory: "/home/user2"
+            file: "*"
+            include_subfolders: true
+            hdfs: false
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_create_rs_3
+
+  - assert:
+      that:
+        - _result_create_rs_3 is not failed
+        - _result_create_rs_3.response.id is string
 
   - name: "Add data transformation rule to CTE Policy"
     thalesgroup.ciphertrust.cte_policy_save:
       op_type: add_data_transfer_rule
       policy_id: "{{ _result_create.response.id }}"
       key_id: "{{ key['response']['id'] }}"
-      resource_set_id: "{{ _result_create_rs_dummy['response']['id'] }}"
+      resource_set_id: "{{ _result_create_rs_2['response']['id'] }}"
     register: _result_patch_add_dtx_rule
 
   - assert:
@@ -177,7 +185,7 @@
       op_type: add_key_rule
       policy_id: "{{ _result_create.response.id }}"
       key_id: "{{ key['response']['id'] }}"
-      resource_set_id: "{{ _result_create_rs_dummy['response']['id'] }}"
+      resource_set_id: "{{ _result_create_rs_2['response']['id'] }}"
     register: _result_patch_add_key_rule
 
   - assert:
@@ -189,7 +197,7 @@
     thalesgroup.ciphertrust.cte_policy_save:
       op_type: add_security_rule
       policy_id: "{{ _result_create.response.id }}"
-      resource_set_id: "{{ _result_create_rs_dummy['response']['id'] }}"
+      resource_set_id: "{{ _result_create_rs_2['response']['id'] }}"
       exclude_resource_set: false
       partial_match: true
       action: all_ops
@@ -200,3 +208,84 @@
       that:
         - _result_patch_add_sec_rule is not failed
         - _result_patch_add_sec_rule.response.message is match("Resource updated successfully")
+
+  - name: "Patch data transformation rule to CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: patch_data_transfer_rule
+      policy_id: "{{ _result_create.response.id }}"
+      dataTxRuleId: "{{ _result_patch_add_dtx_rule['response']['id'] }}"
+      key_id: "{{ key['response']['id'] }}"
+      resource_set_id: "{{ _result_create_rs_3['response']['id'] }}"
+    register: _result_patch_upd_dtx_rule
+
+  - assert:
+      that:
+        - _result_patch_upd_dtx_rule is not failed
+        - _result_patch_upd_dtx_rule.response.message is match("Resource updated successfully")
+
+  - name: "Patch key rule to CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: patch_key_rule
+      policy_id: "{{ _result_create.response.id }}"
+      keyRuleId: "{{ _result_patch_add_key_rule['response']['id'] }}"
+      key_id: "{{ key['response']['id'] }}"
+      resource_set_id: "{{ _result_create_rs_3['response']['id'] }}"
+    register: _result_patch_upd_key_rule
+
+  - assert:
+      that:
+        - _result_patch_upd_key_rule is not failed
+        - _result_patch_upd_key_rule.response.message is match("Resource updated successfully")
+
+  - name: "Patch security rule to CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: patch_security_rule
+      policy_id: "{{ _result_create.response.id }}"
+      securityRuleId: "{{ _result_patch_add_sec_rule['response']['id'] }}"
+      resource_set_id: "{{ _result_create_rs_3['response']['id'] }}"
+      exclude_resource_set: false
+      partial_match: true
+      action: all_ops
+      effect: "permit,audit,applykey"
+    register: _result_patch_upd_sec_rule
+
+  - assert:
+      that:
+        - _result_patch_upd_sec_rule is not failed
+        - _result_patch_upd_sec_rule.response.message is match("Resource updated successfully")
+
+  - name: "Remove data transformation rule from CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: remove_data_transfer_rule
+      policy_id: "{{ _result_create.response.id }}"
+      dataTxRuleId: "{{ _result_patch_add_dtx_rule['response']['id'] }}"
+    register: _result_patch_del_dtx_rule
+
+  - assert:
+      that:
+        - _result_patch_del_dtx_rule is not failed
+        - _result_patch_del_dtx_rule.response.message is match("Resource deleted successfully")
+
+  - name: "Remove key rule from CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: remove_key_rule
+      policy_id: "{{ _result_create.response.id }}"
+      keyRuleId: "{{ _result_patch_add_key_rule['response']['id'] }}"
+    register: _result_patch_del_key_rule
+
+  - assert:
+      that:
+        - _result_patch_del_key_rule is not failed
+        - _result_patch_del_key_rule.response.message is match("Resource deleted successfully")
+
+  - name: "Remove security rule from CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: remove_security_rule
+      policy_id: "{{ _result_create.response.id }}"
+      securityRuleId: "{{ _result_patch_add_sec_rule['response']['id'] }}"
+    register: _result_patch_del_sec_rule
+
+  - assert:
+      that:
+        - _result_patch_del_sec_rule is not failed
+        - _result_patch_del_sec_rule.response.message is match("Resource deleted successfully")
