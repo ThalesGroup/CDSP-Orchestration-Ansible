@@ -19,16 +19,16 @@
   thalesgroup.ciphertrust.cm_resource_get_id_from_name:
     localNode: "{{ this_node_connection_string }}"
     query_param: username
-    query_param_value: admin
+    query_param_value: "{{ username }}"
     resource_type: users
   register: user
 
 - name: "Create Key"
   thalesgroup.ciphertrust.vault_keys2_save:
     op_type: create
-    name: "AnsibleCTEKey"
-    algorithm: "AES"
-    size: 256
+    name: "{{ keyName }}"
+    algorithm: "{{ keyAlgo }}"
+    size: "{{ keySize }}"
     undeletable: false
     unexportable: false
     usageMask: 76
@@ -65,11 +65,11 @@
   - name: "Create CTE ResourceSet"
     thalesgroup.ciphertrust.cte_resource_set:
       op_type: create
-      name: Ansible_RES_SET_1
+      name: "{{ resource_set_1 }}"
       type: Directory
       description: "Created via Ansible"
       resources:
-        - directory: "/home/ansible"
+        - directory: "{{ resource_set_1_dir_path }}"
           file: "*"
           include_subfolders: true
           hdfs: false
@@ -86,7 +86,7 @@
     thalesgroup.ciphertrust.cte_policy_save:
       op_type: create
       localNode: "{{ this_node_connection_string }}"
-      name: Ansible-CTE-Policy
+      name: "{{ cte_policy_name }}"
       description: "Created via Ansible"
       never_deny: false
       metadata:
@@ -131,11 +131,11 @@
   - name: "Create another CTE ResourceSet for updating CTE policy"
     thalesgroup.ciphertrust.cte_resource_set:
       op_type: create
-      name: Ansible_RES_SET_2
+      name: "{{ resource_set_2 }}"
       type: Directory
       description: "Created via Ansible"
       resources:
-        - directory: "/home/user1"
+        - directory: "{{ resource_set_2_dir_path }}"
           file: "*"
           include_subfolders: true
           hdfs: false
@@ -151,11 +151,11 @@
     - name: "Create yet another CTE ResourceSet for other op_types"
       thalesgroup.ciphertrust.cte_resource_set:
         op_type: create
-        name: Ansible_RES_SET_3
+        name: "{{ resource_set_3 }}"
         type: Directory
         description: "Created via Ansible"
         resources:
-          - directory: "/home/user2"
+          - directory: "{{ resource_set_3_dir_path }}"
             file: "*"
             include_subfolders: true
             hdfs: false

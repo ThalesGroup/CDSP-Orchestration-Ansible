@@ -173,7 +173,7 @@ _configuration = dict(
     asymmetric_key_cache_enabled=dict(type='bool', default=True),
     log_level=dict(type='str', options=['ERROR', 'WARN', 'INFO', 'DEBUG'], default='WARN'),
     log_rotation=dict(type='str', options=['None', 'Daily', 'Weekly', 'Monthly', 'Size'], default='Daily'),
-    log_size_limit=dict(type='int', default=100000),
+    log_size_limit=dict(type='str', default='100k'),
     log_type=dict(type='str', options=['Console', 'File', 'Multi', 'Syslog'], default='Console'),
     key_non_exportable_policy=dict(type='bool', default=False),
     connection_timeout=dict(type='int', default=60000),
