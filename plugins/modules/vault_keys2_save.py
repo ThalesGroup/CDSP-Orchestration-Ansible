@@ -620,6 +620,7 @@ _meta = dict(
     ownerId=dict(type='str', required=False),
     permissions=dict(type='dict', options=_permission),
     cte=dict(type='dict', options=_cte),
+    versionedKey=dict(type='bool'),
 )
 _schema_less = dict()
 _hkdfParam = dict(
