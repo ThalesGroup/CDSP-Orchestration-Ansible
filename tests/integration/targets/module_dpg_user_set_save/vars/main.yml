@@ -1,0 +1,10 @@
+this_node_connection_string: "{{ cm_connection_string }}"
+
+# Vars for module_group_save
+user_set_name: AnsibleIntegrationTest_UserSet
+user_set_description: "Created via Ansible"
+user_set_users:
+  - "AnsibleIntegrationTest_User1"
+updated_user_set_users:
+  - "AnsibleIntegrationTest_User1"
+  - "AnsibleIntegrationTest_User2"

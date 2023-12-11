@@ -95,3 +95,15 @@
       that:
         - _result_patch_self is not failed
         - _result_patch_self.response.message is match("Resource updated successfully")
+
+  - name: "Delete User ID"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ user_id }}"
+      resource_type: "users"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_user
+
+  - assert:
+      that:
+        - _result_delete_user is not failed
+        - _result_delete_user.response.message is match("Resource deletion succesful")

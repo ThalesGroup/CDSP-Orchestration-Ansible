@@ -1,0 +1,10 @@
+this_node_connection_string: "{{ cm_connection_string }}"
+
+# Vars for module_group_save
+char_set_name: AnsibleIntegrationTest_CharSet
+char_set_encoding: "UTF-8"
+char_set_range:
+  - "0-1F"
+updated_char_set_range:
+  - "0-1F"
+  - "AF-100"
