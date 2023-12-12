@@ -94,6 +94,7 @@
   - name: "Patch Access Policy"
     thalesgroup.ciphertrust.dpg_access_policy_save:
       op_type: patch
+      localNode: "{{ this_node_connection_string }}"
       policy_id: "{{ ap_id }}"
       name: "{{ ap_name_upd }}"
       description: "Updated via Ansible"
@@ -136,6 +137,7 @@
 
   - name: "Delete UserSet in Access Policy"
     thalesgroup.ciphertrust.dpg_access_policy_save:
+      localNode: "{{ this_node_connection_string }}"
       policy_id: "{{ ap_id }}"
       policy_user_set_id: "{{ user_set2_id }}"
     register: _result_update_ap_delete_user_set
