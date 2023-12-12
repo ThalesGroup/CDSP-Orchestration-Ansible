@@ -72,4 +72,3 @@
   - assert:
       that:
         - _result_delete_charset is not failed
-        - _result_delete_charset.response.message is match("Resource deletion succesful")

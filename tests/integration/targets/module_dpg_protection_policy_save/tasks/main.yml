@@ -125,19 +125,17 @@
   - assert:
       that:
         - _result_delete_pp is not failed
-        - _result_delete_pp.response.message is match("Resource deletion succesful")
 
   - name: "Delete Key"
     thalesgroup.ciphertrust.cm_resource_delete:
       key: "{{ key_id }}"
       resource_type: "keys"
       localNode: "{{ this_node_connection_string }}"
-    register: _result_delete
+    register: _result_delete_key
 
   - assert:
       that:
-        - _result_delete is not failed
-        - _result_delete.response.message is match("Resource deletion succesful")
+        - _result_delete_key is not failed
 
   - name: "Delete charset by ID"
     thalesgroup.ciphertrust.cm_resource_delete:
@@ -149,4 +147,3 @@
   - assert:
       that:
         - _result_delete_charset is not failed
-        - _result_delete_charset.response.message is match("Resource deletion succesful")

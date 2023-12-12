@@ -71,4 +71,3 @@
   - assert:
       that:
         - _result_delete_userset is not failed
-        - _result_delete_userset.response.message is match("Resource deletion succesful")

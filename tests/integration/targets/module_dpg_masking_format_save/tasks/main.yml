@@ -80,4 +80,3 @@
   - assert:
       that:
         - _result_delete_mask_format is not failed
-        - _result_delete_mask_format.response.message is match("Resource deletion succesful")

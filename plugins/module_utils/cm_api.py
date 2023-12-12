@@ -304,12 +304,12 @@ def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
           raise CMApiException(message="Error deleting resource < " + response["codeDesc"] + " >", api_error_code=response.status_code)
         else:
           __ret = {
-            "message": "Resource deletion successful",
+            "message": "Resource deleted successfully",
           }
       else:
         if pattern_2xx.search(str(response)):
           __ret = {
-            "message": "Resource deletion successful",
+            "message": "Resource deleted successfully",
             "status_code": str(response)
           }
         elif pattern_4xx.search(str(response)):
