@@ -11,7 +11,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import createAccessPolicy, updateAccessPolicy
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import createAccessPolicy, updateAccessPolicy, accessPolicyAddUserSet, accessPolicyUpdateUserSet, accessPolicyDeleteUserSet
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
 
 DOCUMENTATION = '''
@@ -59,7 +59,7 @@ options:
           default: false     
     op_type:
       description: Operation to be performed
-      choices: [create, patch]
+      choices: [create, patch, add-user-set, update-user-set, delete-user-set]
       required: true
       type: str
     policy_id:
@@ -103,6 +103,22 @@ options:
         user_set_id:
           description: User set to which the policy is applied.
           type: str
+    error_replacement_value:
+      description: Value to be revealed if the type is 'Error Replacement Value'
+      type: str
+    masking_format_id:
+      description: Masking format used to reveal if the type is 'Masked Value'
+      type: str
+    reveal_type:
+      description: Value using which data should be revealed
+      choices: [Error Replacement Value, Masked Value, Ciphertext, Plaintext]
+      type: str
+    user_set_id:
+      description: User set to which the policy is applied.
+      type: str
+    policy_user_set_id:
+      description: Update or delete the user set in an Access Policy
+      type: str
 '''
 
 EXAMPLES = '''
@@ -134,6 +150,7 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
     op_type: patch
+    policy_id: accessPolicyID
     name: DemoAccessPolicyUPD
     description: "Updated via Ansible"
     default_reveal_type: Plaintext
@@ -150,7 +167,7 @@ _user_set_policy = dict(
     user_set_id=dict(type='str'),
 )
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch'], required=True),
+    op_type=dict(type='str', options=['create', 'patch', 'add-user-set', 'update-user-set', 'delete-user-set'], required=True),
     policy_id=dict(type='str'),
     default_error_replacement_value=dict(type='str'),
     default_masking_format_id=dict(type='str'),
@@ -158,6 +175,13 @@ argument_spec = dict(
     description=dict(type='str'),
     name=dict(type='str'),
     user_set_policy=dict(type='list', element='dict', options=_user_set_policy),
+    #op_type = add-user-set
+    error_replacement_value=dict(type='str'),
+    masking_format_id=dict(type='str'),
+    reveal_type=dict(type='str', options=['Error Replacement Value', 'Masked Value', 'Ciphertext', 'Plaintext']),
+    user_set_id=dict(type='str'),
+    #op_type = update-user-set or delete-user-set
+    policy_user_set_id=dict(type='str'),
 )
 
 def validate_parameters(dpg_access_policy_module):
@@ -168,6 +192,8 @@ def setup_module_object():
         argument_spec=argument_spec,
         required_if=(
             ['op_type', 'patch', ['policy_id']],
+            ['op_type', 'update-user-set', ['policy_user_set_id']],
+            ['op_type', 'delete-user-set', ['policy_user_set_id']],
             ['default_reveal_type', 'Error Replacement Value' ,['default_error_replacement_value']],
             ['default_reveal_type', 'Masked Value' ,['default_masking_format_id']]
         ),
@@ -218,6 +244,54 @@ def main():
           description=module.params.get('description'),
           name=module.params.get('name'),
           user_set_policy=module.params.get('user_set_policy'),
+        )
+        result['response'] = response
+      except CMApiException as api_e:
+        if api_e.api_error_code:
+          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+      except AnsibleCMException as custom_e:
+        module.fail_json(msg=custom_e.message)
+
+    elif module.params.get('op_type') == 'add-user-set':
+      try:
+        response = accessPolicyAddUserSet(
+          node=module.params.get('localNode'),
+          policy_id=module.params.get('policy_id'),
+          error_replacement_value=module.params.get('error_replacement_value'),
+          masking_format_id=module.params.get('masking_format_id'),
+          reveal_type=module.params.get('reveal_type'),
+          user_set_id=module.params.get('user_set_id'),
+        )
+        result['response'] = response
+      except CMApiException as api_e:
+        if api_e.api_error_code:
+          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+      except AnsibleCMException as custom_e:
+        module.fail_json(msg=custom_e.message)
+
+    elif module.params.get('op_type') == 'update-user-set':
+      try:
+        response = accessPolicyUpdateUserSet(
+          node=module.params.get('localNode'),
+          policy_id=module.params.get('policy_id'),
+          policy_user_set_id=module.params.get('policy_user_set_id'),
+          error_replacement_value=module.params.get('error_replacement_value'),
+          masking_format_id=module.params.get('masking_format_id'),
+          reveal_type=module.params.get('reveal_type'),
+        )
+        result['response'] = response
+      except CMApiException as api_e:
+        if api_e.api_error_code:
+          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+      except AnsibleCMException as custom_e:
+        module.fail_json(msg=custom_e.message)
+
+    elif module.params.get('op_type') == 'delete-user-set':
+      try:
+        response = accessPolicyDeleteUserSet(
+          node=module.params.get('localNode'),
+          policy_id=module.params.get('policy_id'),
+          policy_user_set_id=module.params.get('policy_user_set_id'),
         )
         result['response'] = response
       except CMApiException as api_e:

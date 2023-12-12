@@ -1,0 +1,13 @@
+this_node_connection_string: "{{ cm_connection_string }}"
+
+user_set1_name: AnsibleIntegrationTest_UserSet1
+user_set1_description: "Created via Ansible"
+user_set1_users:
+  - "AnsibleIntegrationTest_User1"
+user_set2_name: AnsibleIntegrationTest_UserSet2
+user_set2_description: "Created via Ansible"
+user_set2_users:
+  - "AnsibleIntegrationTest_User2"
+
+ap_name: AnsibleIntegrationTest_AP
+ap_name_upd: AnsibleIntegrationTest_AP_UPD

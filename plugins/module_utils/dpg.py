@@ -16,7 +16,7 @@ import urllib3
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData, POSTWithoutData
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData, POSTWithoutData, DELETEByNameOrId
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
 
 def is_json(myjson):
@@ -67,6 +67,67 @@ def updateAccessPolicy(**kwargs):
       cm_api_endpoint="data-protection/access-policies/" + kwargs['policy_id'],
     )
     return ast.literal_eval(str(response))
+  except CMApiException as api_e:
+    raise
+  except AnsibleCMException as custom_e:
+    raise
+
+def accessPolicyAddUserSet(**kwargs):
+  #Add UserSet to DPG Access Policy
+  request = {}
+
+  for key, value in kwargs.items():
+    if key not in ["node", "policy_id"] and value != None:
+      request[key] = value
+
+  payload = json.dumps(request)
+
+  try:
+    response = POSTData(
+      payload=payload,
+      cm_node=kwargs['node'],
+      cm_api_endpoint="data-protection/access-policies/" + kwargs['policy_id'] + "/user-set",
+    )
+    return ast.literal_eval(str(response))
+  except CMApiException as api_e:
+    raise
+  except AnsibleCMException as custom_e:
+    raise
+
+def accessPolicyUpdateUserSet(**kwargs):
+  # Update userSet in access policy
+  request = {}
+
+  for key, value in kwargs.items():
+    if key not in ["node", "policy_id", "policy_user_set_id"] and value != None:
+      request[key] = value
+
+  payload = json.dumps(request)
+
+  try:
+    response = PATCHData(
+      payload=payload,
+      cm_node=kwargs['node'],
+      cm_api_endpoint="data-protection/access-policies/" + kwargs['policy_id'] + "/user-set/" + kwargs['policy_user_set_id'],
+    )
+    return ast.literal_eval(str(response))
+  except CMApiException as api_e:
+    raise
+  except AnsibleCMException as custom_e:
+    raise
+  
+def accessPolicyDeleteUserSet(**kwargs):
+  result = dict(
+    changed=False,
+  )
+  endpoint="data-protection/access-policies/" + kwargs['policy_id'] + "/user-set"
+  try:
+    response = DELETEByNameOrId(
+        key=kwargs['policy_user_set_id'],
+        cm_node=kwargs['node'],
+        cm_api_endpoint=endpoint
+    )
+    result['response'] = response
   except CMApiException as api_e:
     raise
   except AnsibleCMException as custom_e:

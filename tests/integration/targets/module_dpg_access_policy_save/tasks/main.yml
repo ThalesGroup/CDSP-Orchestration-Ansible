@@ -1,0 +1,178 @@
+---
+# (c) 2023 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+
+## Verify that integration_config was specified
+- block:
+  - assert:
+      that:
+        - this_node_connection_string is defined
+        - user_set1_name is defined
+        - user_set1_description is defined
+        - user_set1_users is defined
+        - user_set2_name is defined
+        - user_set2_description is defined
+        - user_set2_users is defined
+        - ap_name is defined
+        - ap_name_upd is defined
+
+- block:
+  - name: "Create UserSet1"
+    thalesgroup.ciphertrust.dpg_user_set_save:
+      op_type: create
+      name: "{{ user_set1_name }}"
+      description: "{{ user_set1_description }}"
+      localNode: "{{ this_node_connection_string }}"
+      users: "{{ user_set1_users }}"
+    register: _result_create_user_set1
+
+  - assert:
+      that:
+        - _result_create_user_set1 is not failed
+        - _result_create_user_set1.response.id is string
+
+  - name: "Save user set ID"
+    set_fact:
+      user_set1_id: "{{ _result_create_user_set1.response.id }}"
+
+  - name: "Create UserSet2"
+    thalesgroup.ciphertrust.dpg_user_set_save:
+      op_type: create
+      name: "{{ user_set2_name }}"
+      description: "{{ user_set2_description }}"
+      localNode: "{{ this_node_connection_string }}"
+      users: "{{ user_set2_users }}"
+    register: _result_create_user_set2
+
+  - assert:
+      that:
+        - _result_create_user_set2 is not failed
+        - _result_create_user_set2.response.id is string
+
+  - name: "Save user set ID"
+    set_fact:
+      user_set2_id: "{{ _result_create_user_set2.response.id }}"
+
+  - name: "Create Access Policy"
+    thalesgroup.ciphertrust.dpg_access_policy_save:
+      localNode: "{{ this_node_connection_string }}"
+      op_type: create
+      name: "{{ ap_name }}"
+      default_reveal_type: "Ciphertext"
+      user_set_policy:
+        - reveal_type: Plaintext
+          user_set_id: "{{ user_set1_id }}"
+    register: _result_create_ap
+
+  - assert:
+      that:
+        - _result_create_ap is not failed
+        - _result_create_ap.response.id is string
+
+  - name: "Save access policy ID"
+    set_fact:
+      ap_id: "{{ _result_create_ap.response.id }}"
+
+  - name: "Patch Access Policy"
+    thalesgroup.ciphertrust.dpg_access_policy_save:
+      op_type: patch
+      policy_id: "{{ ap_id }}"
+      name: "{{ ap_name_upd }}"
+      description: "Updated via Ansible"
+      default_reveal_type: Plaintext
+    register: _result_patch_ap
+
+  - assert:
+      that:
+        - _result_patch_ap is not failed
+        - _result_patch_ap.response.message is match("Resource updated successfully")
+
+  - name: "Add UserSet to Access Policy"
+    thalesgroup.ciphertrust.dpg_access_policy_save:
+      policy_id: "{{ ap_id }}"
+      reveal_type: Plaintext
+      user_set_id: "{{ user_set1_id }}"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_update_ap_add_user_set
+
+  - assert:
+      that:
+        - _result_update_ap_add_user_set is not failed
+        - _result_update_ap_add_user_set.response.id is string  
+
+  - name: "Save access policy user set ID"
+    set_fact:
+      user_set2_id: "{{ _result_update_ap_add_user_set.response.id }}"
+
+  - name: "Update UserSet in Access Policy"
+    thalesgroup.ciphertrust.dpg_access_policy_save:
+      policy_id: "{{ ap_id }}"
+      policy_user_set_id: "{{ user_set2_id }}"
+      reveal_type: Plaintext
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_update_ap_update_user_set
+
+  - assert:
+      that:
+        - _result_update_ap_update_user_set is not failed
+
+  - name: "Delete UserSet in Access Policy"
+    thalesgroup.ciphertrust.dpg_access_policy_save:
+      policy_id: "{{ ap_id }}"
+      policy_user_set_id: "{{ user_set2_id }}"
+    register: _result_update_ap_delete_user_set
+
+  - assert:
+      that:
+        - _result_update_ap_delete_user_set is not failed
+
+  - name: "Delete Access Policy"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ ap_id }}"
+      resource_type: "access-policies"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_ap
+
+  - assert:
+      that:
+        - _result_delete_ap is not failed
+
+  - name: "Delete UserSet 1"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ user_set1_id }}"
+      resource_type: "user-sets"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_user_set
+
+  - assert:
+      that:
+        - _result_delete_user_set is not failed
+
+  - name: "Delete UserSet 2"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ user_set2_id }}"
+      resource_type: "user-sets"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_user_set
+
+  - assert:
+      that:
+        - _result_delete_user_set is not failed
