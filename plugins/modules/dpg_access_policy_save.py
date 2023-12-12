@@ -16,7 +16,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 
 DOCUMENTATION = '''
 ---
-module: domain_save
+module: dpg_access_policy_save
 short_description: Manage DPG access policies governing data access
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with DPG Access Policy API
@@ -116,6 +116,13 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
     op_type: create
+    name: DemoAccessPolicy
+    default_reveal_type: "Ciphertext"
+    user_set_policy:
+      - reveal_type: Plaintext
+        user_set_id: UserSetID
+      - reveal_type: Ciphertext
+        user_set_id: UserSetID
 
 - name: "Patch Access Policy"
   thalesgroup.ciphertrust.dpg_access_policy_save:
@@ -127,6 +134,9 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
     op_type: patch
+    name: DemoAccessPolicyUPD
+    description: "Updated via Ansible"
+    default_reveal_type: Plaintext
 '''
 
 RETURN = '''

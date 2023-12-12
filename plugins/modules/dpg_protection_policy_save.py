@@ -16,7 +16,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 
 DOCUMENTATION = '''
 ---
-module: domain_save
+module: dpg_protection_policy_save
 short_description: Manage DPG protection policies governing crypto operations
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with domains management API
@@ -95,10 +95,18 @@ options:
       choices: [SHA1, SHA256, None]
       required: false
       type: str
+    disable_versioning:
+      description: If set to true, versioning is not maintained for the protection policies. The default value is false.
+      required: false
+      type: bool
+    use_external_versioning:
+      description: If set to true, external versioning is enabled for the protection policy. The version details are stored in a separate external parameter. The default value is false.
+      required: false
+      type: bool
 '''
 
 EXAMPLES = '''
-- name: "Create Access Policy"
+- name: "Create Protection Policy"
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
@@ -107,9 +115,17 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
+    algorithm: "AES/CBC/PKCS5Padding"
+    key: CM_KEY_ID
+    name: DemoProtectionPolicy
+    character_set_id: CHAR_SET_ID
+    iv: 16
+    tweak: 1628462495815733
+    tweak_algorithm: SHA1
 
-- name: "Patch Access Policy"
+- name: "Patch Protection Policy"
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
@@ -118,7 +134,10 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: patch
+    tweak: 1628462495815733
+    tweak_algorithm: SHA256
 '''
 
 RETURN = '''
@@ -136,6 +155,8 @@ argument_spec = dict(
     iv=dict(type='str'),
     tweak=dict(type='str'),
     tweak_algorithm=dict(type='str', options=['SHA1', 'SHA256', 'None']),
+    disable_versioning=dict(type='bool'),
+    use_external_versioning=dict(type='bool'),
 )
 
 def validate_parameters(dpg_protection_policy_module):
@@ -173,11 +194,13 @@ def main():
           algorithm=module.params.get('algorithm'),
           key=module.params.get('key'),
           name=module.params.get('name'),
-          allow_single_char_input=module.params.get('allow_single_char_input'),
+          allow_single_char_input=module.params.get('allow_single_char_input'), #Parameter not applicable with CM v2.12
           character_set_id=module.params.get('character_set_id'),
           iv=module.params.get('iv'),
           tweak=module.params.get('tweak'),
           tweak_algorithm=module.params.get('tweak_algorithm'),
+          disable_versioning=module.params.get('disable_versioning'), #Parameter added in CM v2.12
+          use_external_versioning=module.params.get('use_external_versioning'), #Parameter added in CM v2.12
         )
         result['response'] = response
       except CMApiException as api_e:
@@ -193,7 +216,7 @@ def main():
           policy_name=module.params.get('policy_name'),
           algorithm=module.params.get('algorithm'),
           key=module.params.get('key'),
-          allow_single_char_input=module.params.get('allow_single_char_input'),
+          allow_single_char_input=module.params.get('allow_single_char_input'), #Parameter not applicable with CM v2.12
           character_set_id=module.params.get('character_set_id'),
           iv=module.params.get('iv'),
           tweak=module.params.get('tweak'),

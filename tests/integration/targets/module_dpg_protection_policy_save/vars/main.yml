@@ -1,0 +1,18 @@
+this_node_connection_string: "{{ cm_connection_string }}"
+
+# Vars for module_group_save
+pp_algorithm: "AES/CBC/PKCS5Padding"
+pp_name: AnsibleIntegrationTest_PP
+#pp_allow_single_char_input: 
+#pp_allow_single_char_input_upd: 
+pp_iv: 16
+pp_tweak: 1628462495815733
+pp_tweak_algorithm: SHA1
+key_name: AnsibleIntegrationTest_Key
+key_algo: aes
+key_len: 2048
+usage_mask: 3145740
+char_set_name: AnsibleIntegrationTest_CharSet
+char_set_encoding: "UTF-8"
+char_set_range:
+  - "0-1F"
