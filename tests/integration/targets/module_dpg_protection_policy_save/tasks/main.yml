@@ -104,6 +104,7 @@
   - name: "Patch Protection Policy"
     thalesgroup.ciphertrust.dpg_protection_policy_save:
       op_type: patch
+      policy_name: "{{ pp_name }}"
       #allow_single_char_input: "{{ pp_allow_single_char_input_upd }}"
       tweak_algorithm: SHA256
       localNode: "{{ this_node_connection_string }}"
