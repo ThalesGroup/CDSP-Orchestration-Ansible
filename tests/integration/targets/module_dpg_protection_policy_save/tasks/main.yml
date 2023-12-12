@@ -29,7 +29,7 @@
         - pp_name is defined
         #- pp_allow_single_char_input is defined
         #- pp_allow_single_char_input_upd is defined
-        #- pp_iv is defined
+        - pp_iv is defined
         - pp_tweak is defined
         - pp_tweak_algorithm is defined
         - key_name is defined
@@ -84,7 +84,7 @@
       algorithm: "{{ pp_algorithm }}"
       key: "{{ key_id }}"
       name: "{{ pp_name }}"
-      allow_single_char_input: "{{ pp_allow_single_char_input }}"
+      #allow_single_char_input: "{{ pp_allow_single_char_input }}"
       character_set_id: "{{ char_set_id }}"
       iv: "{{ pp_iv }}"
       tweak: 1628462495815733
@@ -104,8 +104,8 @@
   - name: "Patch Protection Policy"
     thalesgroup.ciphertrust.dpg_protection_policy_save:
       op_type: patch
-      allow_single_char_input: "{{ pp_allow_single_char_input_upd }}"
-      policy_name: "{{ pp_name }}"
+      #allow_single_char_input: "{{ pp_allow_single_char_input_upd }}"
+      tweak_algorithm: SHA256
       localNode: "{{ this_node_connection_string }}"
     register: _result_patch
 

@@ -10,7 +10,7 @@ pp_tweak: 1628462495815733
 pp_tweak_algorithm: SHA1
 key_name: AnsibleIntegrationTest_Key
 key_algo: aes
-key_len: 2048
+key_len: 256
 usage_mask: 3145740
 char_set_name: AnsibleIntegrationTest_CharSet
 char_set_encoding: "UTF-8"
