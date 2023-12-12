@@ -108,6 +108,7 @@
 
   - name: "Add UserSet to Access Policy"
     thalesgroup.ciphertrust.dpg_access_policy_save:
+      op_type: add-user-set
       policy_id: "{{ ap_id }}"
       reveal_type: Plaintext
       user_set_id: "{{ user_set1_id }}"
@@ -125,6 +126,7 @@
 
   - name: "Update UserSet in Access Policy"
     thalesgroup.ciphertrust.dpg_access_policy_save:
+      op_type: update-user-set
       policy_id: "{{ ap_id }}"
       policy_user_set_id: "{{ user_set2_id }}"
       reveal_type: Plaintext
@@ -137,6 +139,7 @@
 
   - name: "Delete UserSet in Access Policy"
     thalesgroup.ciphertrust.dpg_access_policy_save:
+      op_type: delete-user-set
       localNode: "{{ this_node_connection_string }}"
       policy_id: "{{ ap_id }}"
       policy_user_set_id: "{{ user_set2_id }}"
