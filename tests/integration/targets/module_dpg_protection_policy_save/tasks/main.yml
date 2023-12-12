@@ -29,7 +29,7 @@
         - pp_name is defined
         #- pp_allow_single_char_input is defined
         #- pp_allow_single_char_input_upd is defined
-        - pp_iv is defined
+        #- pp_iv is defined
         - pp_tweak is defined
         - pp_tweak_algorithm is defined
         - key_name is defined
@@ -86,7 +86,7 @@
       name: "{{ pp_name }}"
       #allow_single_char_input: "{{ pp_allow_single_char_input }}"
       character_set_id: "{{ char_set_id }}"
-      iv: "{{ pp_iv }}"
+      #iv: "{{ pp_iv }}"
       tweak: 1628462495815733
       tweak_algorithm: "{{ pp_tweak_algorithm }}"
       localNode: "{{ this_node_connection_string }}"
