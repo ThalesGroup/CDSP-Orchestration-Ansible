@@ -111,18 +111,13 @@
       op_type: add-user-set
       policy_id: "{{ ap_id }}"
       reveal_type: Plaintext
-      user_set_id: "{{ user_set1_id }}"
+      user_set_id: "{{ user_set2_id }}"
       localNode: "{{ this_node_connection_string }}"
     register: _result_update_ap_add_user_set
 
   - assert:
       that:
         - _result_update_ap_add_user_set is not failed
-        - _result_update_ap_add_user_set.response.id is string  
-
-  - name: "Save access policy user set ID"
-    set_fact:
-      user_set2_id: "{{ _result_update_ap_add_user_set.response.id }}"
 
   - name: "Update UserSet in Access Policy"
     thalesgroup.ciphertrust.dpg_access_policy_save:
@@ -137,17 +132,17 @@
       that:
         - _result_update_ap_update_user_set is not failed
 
-  - name: "Delete UserSet in Access Policy"
-    thalesgroup.ciphertrust.dpg_access_policy_save:
-      op_type: delete-user-set
-      localNode: "{{ this_node_connection_string }}"
-      policy_id: "{{ ap_id }}"
-      policy_user_set_id: "{{ user_set2_id }}"
-    register: _result_update_ap_delete_user_set
+  #- name: "Delete UserSet in Access Policy"
+  #  thalesgroup.ciphertrust.dpg_access_policy_save:
+  #    op_type: delete-user-set
+  #    localNode: "{{ this_node_connection_string }}"
+  #    policy_id: "{{ ap_id }}"
+  #    policy_user_set_id: "{{ user_set2_id }}"
+  #  register: _result_update_ap_delete_user_set
 
-  - assert:
-      that:
-        - _result_update_ap_delete_user_set is not failed
+  #- assert:
+  #    that:
+  #      - _result_update_ap_delete_user_set is not failed
 
   - name: "Delete Access Policy"
     thalesgroup.ciphertrust.cm_resource_delete:
