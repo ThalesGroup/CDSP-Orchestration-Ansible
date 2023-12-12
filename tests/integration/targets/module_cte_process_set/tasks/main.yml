@@ -1,19 +1,6 @@
 ---
 # (c) 2023 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#  http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 
 ####################################################################
 # WARNING: These are designed specifically for Ansible tests       #
@@ -27,17 +14,18 @@
         - this_node_connection_string is defined
 
 ## Validate the CTE Process Set module
+## Before adding the ProcessSet, we would need to create the signature set first
 - block:
   - name: "Create CTE SignatureSet"
     thalesgroup.ciphertrust.cte_signature_set:
       op_type: create
-      name: Test_CTE_SS_Ansible
+      name: "{{ signature_set_name }}"
       description: "Created via Ansible"
       source_list:
         - "/home/ansible"
-        - "/home/dummy1"
-        - "/home/dummy2"
-        - "/home/dummy3"
+        - "/home/user1"
+        - "/home/user2"
+        - "/home/user3"
       localNode: "{{ this_node_connection_string }}"
     register: _result_create_ss
 
@@ -50,7 +38,7 @@
   - name: "Create CTE ProcessSet"
     thalesgroup.ciphertrust.cte_process_set:
       op_type: create
-      name: Test_CTE_PS_Ansible
+      name: "{{ process_set_name }}"
       description: "Created via Ansible"
       processes:
         - signature: "{{ _result_create_ss.response.id }}"
@@ -74,7 +62,7 @@
           directory: "/home/ansible"
           file: "*"
         - signature: "{{ _result_create_ss.response.id }}"
-          directory: "/home/dummy1"
+          directory: "/home/user1"
           file: "*"
       localNode: "{{ this_node_connection_string }}"
     register: _result_patch
@@ -90,7 +78,7 @@
       id: "{{ _result_create.response.id }}"
       resources:
         - signature: "{{ _result_create_ss.response.id }}"
-          directory: "/home/dummy2"
+          directory: "/home/user2"
           file: "*"
       localNode: "{{ this_node_connection_string }}"
     register: _result_add_process
@@ -105,7 +93,7 @@
       op_type: patch_process
       id: "{{ _result_create.response.id }}"
       processIndex: 2
-      directory: "/home/dummy3"
+      directory: "/home/user3"
       file: "*"
       signature: "{{ _result_create_ss.response.id }}"
       localNode: "{{ this_node_connection_string }}"
@@ -121,6 +109,7 @@
       op_type: delete_process
       id: "{{ _result_create.response.id }}"
       localNode: "{{ this_node_connection_string }}"
+      processIndex: 2
     register: _result_del_process
 
   - assert:

@@ -143,7 +143,7 @@ argument_spec = dict(
     secret_name=dict(type='str'),
     key_vault=dict(type='str'),
     # op_type = update
-    attributes=dict(type='dict', options=_schema_less),
+    attributes=dict(type='dict', options=_azure_param_attribute),
     tags=dict(type='dict', options=_schema_less),
     # op_type = create-sync-job
     key_vaults=dict(type='list', element='str'),

@@ -26,46 +26,57 @@ def is_json(myjson):
     return False
   return True
 
-def getJwt(host, username, password):
+def getJwt(host, username, password, auth_domain_path):
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    auth_url='https://'+host+'/api/v1/auth/tokens'
-    auth_payload = {
+
+    auth_url='https://' + host + '/api/v1/auth/tokens'
+
+    if auth_domain_path != None:
+      auth_payload = {
         "grant_type":"password",
         "username":username,
         "password":password,
-    }
+        "auth_domain_path": auth_domain_path,
+      }
+    else:
+      auth_payload = {
+        "grant_type":"password",
+        "username":username,
+        "password":password,
+      }
+
     response = requests.post(auth_url, json=auth_payload, verify=False)
     return response.json()["jwt"]
 
 # This will never return the ID
 # There will be a separate call to be made to get the ID
-def POSTDataOld(payload=None, cm_node=None, cm_api_endpoint=None):
-    # Create the session object
-    node = ast.literal_eval(cm_node)
-    cmSessionObject = CMAPIObject(
-            cm_api_user=node["user"],
-            cm_api_pwd=node["password"],
-            cm_url=node["server_ip"],
-            cm_api_endpoint=cm_api_endpoint,
-            verify=False,
-        )
-    # execute the post API call to create the resource on CM 
-    try:
-      response = requests.post(
-        cmSessionObject["url"], 
-        headers=cmSessionObject["headers"], 
-        json = json.loads(payload), 
-        verify=False)
-      if "codeDesc" in response.json():
-          codeDesc=response.json()["codeDesc"]
-          if 'NCERRKeyAlreadyExists' in codeDesc:
-              return '4xx'
-          if 'NCERRConflict' in codeDesc:
-              return '4xx'
-      else:
-          return response.json()
-    except requests.exceptions.RequestException as err:
-        raise
+# def POSTDataOld(payload=None, cm_node=None, cm_api_endpoint=None):
+#     # Create the session object
+#     node = ast.literal_eval(cm_node)
+#     cmSessionObject = CMAPIObject(
+#             cm_api_user=node["user"],
+#             cm_api_pwd=node["password"],
+#             cm_url=node["server_ip"],
+#             cm_api_endpoint=cm_api_endpoint,
+#             verify=False,
+#         )
+#     # execute the post API call to create the resource on CM 
+#     try:
+#       response = requests.post(
+#         cmSessionObject["url"], 
+#         headers=cmSessionObject["headers"], 
+#         json = json.loads(payload), 
+#         verify=False)
+#       if "codeDesc" in response.json():
+#           codeDesc=response.json()["codeDesc"]
+#           if 'NCERRKeyAlreadyExists' in codeDesc:
+#               return '4xx'
+#           if 'NCERRConflict' in codeDesc:
+#               return '4xx'
+#       else:
+#           return response.json()
+#     except requests.exceptions.RequestException as err:
+#         raise
 
 # Returns the whole response object
 def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
@@ -74,12 +85,13 @@ def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
     pattern_2xx = re.compile(r'20[0-9]')
     pattern_4xx = re.compile(r'40[0-9]')
     cmSessionObject = CMAPIObject(
-            cm_api_user=node["user"],
-            cm_api_pwd=node["password"],
-            cm_url=node["server_ip"],
-            cm_api_endpoint=cm_api_endpoint,
-            verify=False,
-        )
+        cm_api_user=node["user"],
+        cm_api_pwd=node["password"],
+        cm_url=node["server_ip"],
+        auth_domain_path=node["auth_domain_path"],
+        cm_api_endpoint=cm_api_endpoint,
+        verify=False,
+      )
     # execute the post API call to create the resource on CM 
     try:
       _data = requests.post(
@@ -133,6 +145,7 @@ def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
       cm_api_user=node["user"],
       cm_api_pwd=node["password"],
       cm_url=node["server_ip"],
+      auth_domain_path=node["auth_domain_path"],
       cm_api_endpoint=cm_api_endpoint,
       verify=False,
     )
@@ -179,12 +192,13 @@ def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
     pattern_2xx = re.compile(r'20[0-9]')
     pattern_4xx = re.compile(r'40[0-9]')
     cmSessionObject = CMAPIObject(
-            cm_api_user=node["user"],
-            cm_api_pwd=node["password"],
-            cm_url=node["server_ip"],
-            cm_api_endpoint=cm_api_endpoint,
-            verify=False,
-        )
+        cm_api_user=node["user"],
+        cm_api_pwd=node["password"],
+        cm_url=node["server_ip"],
+        auth_domain_path=node["auth_domain_path"],
+        cm_api_endpoint=cm_api_endpoint,
+        verify=False,
+      )
     # execute the post API call to create the resource on CM 
     try:
       response = requests.post(
@@ -226,12 +240,13 @@ def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
     pattern_2xx = re.compile(r'20[0-9]')
     pattern_4xx = re.compile(r'40[0-9]')
     cmSessionObject = CMAPIObject(
-            cm_api_user=node["user"],
-            cm_api_pwd=node["password"],
-            cm_url=node["server_ip"],
-            cm_api_endpoint=cm_api_endpoint,
-            verify=False,
-        )
+        cm_api_user=node["user"],
+        cm_api_pwd=node["password"],
+        cm_url=node["server_ip"],
+        auth_domain_path=node["auth_domain_path"],
+        cm_api_endpoint=cm_api_endpoint,
+        verify=False,
+      )
     # execute the patch API call to update the resource on CM 
     try:
       response = requests.patch(
@@ -277,6 +292,7 @@ def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
       cm_api_user=node["user"],
       cm_api_pwd=node["password"],
       cm_url=node["server_ip"],
+      auth_domain_path=node["auth_domain_path"],
       cm_api_endpoint=cm_api_endpoint,
       verify=False,
     )
@@ -317,12 +333,13 @@ def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
     pattern_2xx = re.compile(r'20[0-9]')
     pattern_4xx = re.compile(r'40[0-9]')
     cmSessionObject = CMAPIObject(
-            cm_api_user=node["user"],
-            cm_api_pwd=node["password"],
-            cm_url=node["server_ip"],
-            cm_api_endpoint=cm_api_endpoint,
-            verify=False,
-        )
+        cm_api_user=node["user"],
+        cm_api_pwd=node["password"],
+        cm_url=node["server_ip"],
+        auth_domain_path=node["auth_domain_path"],
+        cm_api_endpoint=cm_api_endpoint,
+        verify=False,
+      )
     # execute the delete API call to delete the resource on CM
     try:
       response = requests.delete(cmSessionObject["url"], headers=cmSessionObject["headers"], verify=False)
@@ -358,6 +375,7 @@ def GETData(cm_node=None, cm_api_endpoint=None):
     cm_api_user=node["user"],
     cm_api_pwd=node["password"],
     cm_url=node["server_ip"],
+    auth_domain_path=node["auth_domain_path"],
     cm_api_endpoint=cm_api_endpoint,
     verify=False,
   )
@@ -394,12 +412,13 @@ def GETData(cm_node=None, cm_api_endpoint=None):
 def GETIdByName(name=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
     cmSessionObject = CMAPIObject(
-            cm_api_user=cm_node["user"],
-            cm_api_pwd=cm_node["password"],
-            cm_url=cm_node["server_ip"],
-            cm_api_endpoint=cm_api_endpoint,
-            verify=False,
-        )
+        cm_api_user=cm_node["user"],
+        cm_api_pwd=cm_node["password"],
+        cm_url=cm_node["server_ip"],
+        auth_domain_path=cm_node["auth_domain_path"],
+        cm_api_endpoint=cm_api_endpoint,
+        verify=False,
+      )
     # execute the delete API call to delete the resource on CM
     ret=dict()
     try:
@@ -422,6 +441,7 @@ def GETIdByQueryParam(param=None, value=None, cm_node=None, cm_api_endpoint=None
       cm_api_user=node["user"],
       cm_api_pwd=node["password"],
       cm_url=node["server_ip"],
+      auth_domain_path=node["auth_domain_path"],
       cm_api_endpoint=cm_api_endpoint,
       verify=False,
     )
@@ -463,9 +483,15 @@ def GETIdByQueryParam(param=None, value=None, cm_node=None, cm_api_endpoint=None
     except requests.exceptions.RequestException as err:
       raise AnsibleCMException(message="ErrorPath: cm_api >> " + err)
 
-def CMAPIObject(cm_api_user=None, cm_api_pwd=None, cm_url=None, cm_api_endpoint=None, verify=None):
+def CMAPIObject(cm_api_user=None, cm_api_pwd=None, cm_url=None, cm_api_endpoint=None, auth_domain_path=None, verify=None):
     """Create a Ciphertrust Manager (CM) client"""
     session=dict()
     session["url"] = 'https://' + cm_url + '/api/v1/' + cm_api_endpoint
-    session["headers"] = {"Content-Type": "application/json; charset=utf-8","Authorization": "Bearer " + getJwt(cm_url, cm_api_user, cm_api_pwd),}
+    token = getJwt(
+      host=cm_url,
+      username=cm_api_user,
+      password=cm_api_pwd,
+      auth_domain_path=auth_domain_path
+    )
+    session["headers"] = {"Content-Type": "application/json; charset=utf-8","Authorization": "Bearer " + token,}
     return session

@@ -161,6 +161,9 @@ RETURN = '''
 '''
 _schema_less = dict()
 
+_gcp_key_param_label = dict(
+  isakey=dict(type='str', options=['yes', 'no']),
+)
 _gcp_key_param = dict(
   algorithm=dict(type='str', options=[
       'RSA_SIGN_PSS_2048_SHA256',
@@ -184,7 +187,7 @@ _gcp_key_param = dict(
   key_name=dict(type='str'),
   protection_level=dict(type='str', options=['SOFTWARE', 'HSM']),
   purpose=dict(type='str', options=['ENCRYPT_DECRYPT', 'ASYMMETRIC_SIGN', 'ASYMMETRIC_DECRYPT', 'MAC']),
-  labels=dict(type='dict', options=_schema_less),
+  labels=dict(type='dict', options=_gcp_key_param_label),
   next_rotation_time=dict(type='str'),
   rotation_period=dict(type='str'),
 )

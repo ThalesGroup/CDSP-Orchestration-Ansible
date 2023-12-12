@@ -178,9 +178,14 @@ RETURN = '''
 
 _schema_less = dict()
 
+_attribute = dict(
+  nbf=dict(type='int'),
+  exp=dict(type='int'),
+)
+
 _azure_param = dict(
   kty=dict(type='str', options=['EC', 'EC-HSM', 'RSA', 'RSA-HSM']),
-  attributes=dict(type='dict', options=_schema_less),
+  attributes=dict(type='dict', options=_attribute),
   crv=dict(type='str', options=['P-256', 'P-384', 'P-521', 'SECP256K1']),
   key_ops=dict(type='list', element='str'),
   key_size=dict(type='int', options=[2048, 3072, 4096]),
@@ -205,7 +210,7 @@ argument_spec = dict(
     key_name=dict(type='str'),
     key_vault=dict(type='str'),
     # op_type = update
-    attributes=dict(type='dict', options=_schema_less),
+    attributes=dict(type='dict', options=_attribute),
     key_ops=dict(type='list', element='str'),
     tags=dict(type='dict', options=_schema_less),
     # op_type = create-sync-job

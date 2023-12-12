@@ -99,6 +99,7 @@ def _ciphertrust_common_argument_spec():
             user=dict(type='str', required=True),
             password=dict(type='str', required=True),
             verify=dict(type='bool', required=True),
+            auth_domain_path=dict(type='str'),
         )
     )
 

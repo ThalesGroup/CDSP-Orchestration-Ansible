@@ -152,7 +152,7 @@ EXAMPLES = '''
       - Client1
       - Client2
 
-- name: "Add guarpolicy to the CSI Storage Group"
+- name: "Add guardpolicy to the CSI Storage Group"
   thalesgroup.ciphertrust.cte_csi_storage_group:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"

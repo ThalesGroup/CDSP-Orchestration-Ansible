@@ -1,0 +1,61 @@
+#
+# (c) 2023 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+---
+  - name: "Sample playbook to test CCKM GCP functionality"
+    hosts: localhost
+    connection: local
+
+    vars_files:
+      - vars/cckm.yml
+
+    tasks:
+    # Create GCP Connection
+    - name: "Add Google connection"
+      thalesgroup.ciphertrust.connection_manager_google:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "{{ gcp_conn_name }}"
+        products:
+          - cckm
+        key_file: "{{ key_file_data }}"
+        cloud_name: gcp
+
+    - name: Pause for 30 seconds
+      ansible.builtin.pause:
+        seconds: 30
+
+    # Add GCP project
+    - name: "Add GCP Project"
+      thalesgroup.ciphertrust.cckm_gcp_keyring:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        project_id: "{{ project_id }}"
+        connection: "{{ gcp_conn_name }}"
+
+    # Add Keyring for CCKM
+    - name: "Add GCP Keyring"
+      thalesgroup.ciphertrust.cckm_gcp_keyring:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        connection: "{{ gcp_conn_name }}"
+        project_id: "{{ project_id }}"
+        key_rings: "{{ key_rings }}"
+
+    # Add Key to Keyring for CCKM
+    - name: "Add GCP Key"
+      thalesgroup.ciphertrust.cckm_gcp_key:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        key_ring: "{{ key_ring }}"
+        gcp_key_params:
+          key_name: "{{ key_name }}"
+          purpose: ENCRYPT_DECRYPT
+          protection_level: SOFTWARE
+          algorithm: GOOGLE_SYMMETRIC_ENCRYPTION
+          labels:
+            isakey: yes
+
+    - name: Debug Vault Output
+      debug: var=vault

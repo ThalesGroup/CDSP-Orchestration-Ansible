@@ -121,6 +121,10 @@ _arr_resource_type_choices = [
     'cte-client-group',
     'csigroup',
     'cte-client',
+    'azure-key-vault',
+    'azure-secret',
+    'azure-certificate',
+    'azure-key',
 ]
 
 argument_spec = dict(
@@ -189,6 +193,14 @@ def main():
         endpoint='transparent-encryption/clientgroups'
     elif resource_type == "csigroup":
         endpoint='transparent-encryption/csigroups'
+    elif resource_type == "azure-key-vault":
+        endpoint='cckm/azure/vaults'
+    elif resource_type == "azure-secret":
+        endpoint='cckm/azure/secrets'
+    elif resource_type == "azure-certificate":
+        endpoint='cckm/azure/certificates'
+    elif resource_type == "azure-key":
+        endpoint='cckm/azure/keys'
     else:
         module.fail_json(msg='resource_type not supported yet')
 

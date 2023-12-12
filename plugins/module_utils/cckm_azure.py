@@ -178,3 +178,38 @@ def uploadKeyOnAZ(**kwargs):
     raise
   except AnsibleCMException as custom_e:
     raise
+
+# CCKM Azure Secrets Management Functions
+def performAZSecretOperation(**kwargs):
+  request = {}
+
+  for key, value in kwargs.items():
+    if key not in ['node', 'id', 'secret_op_type'] and value != None:
+      request[key] = value
+
+  payload = json.dumps(request)
+
+  if kwargs['secret_op_type'] == "restore":
+    try:
+      response = POSTData(
+        payload=payload,
+        cm_node=kwargs["node"],
+        cm_api_endpoint="cckm/azure/secrets/" + kwargs['id'] + "/" + kwargs['secret_op_type'],
+        id="id",
+      )          
+      return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+      raise
+    except AnsibleCMException as custom_e:
+      raise
+  else:
+    try:
+      response = POSTWithoutData(
+        cm_node=kwargs["node"],
+        cm_api_endpoint="cckm/azure/secrets/" + kwargs['id'] + "/" + kwargs['secret_op_type'],
+      )          
+      return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+      raise
+    except AnsibleCMException as custom_e:
+      raise

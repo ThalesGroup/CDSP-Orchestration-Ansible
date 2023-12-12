@@ -5,3 +5,14 @@ this_node_connection_string:
   user: <CM_ADMIN_USERNAME>
   password: <CM_ADMIN_PASSWORD>
   verify: False
+
+signature_set_name: ansible_signature_set
+initial_source_list:
+  - "/usr/bin"
+updated_source_list:
+  - "/usr/bin"
+  - "/usr/sbin"
+add_signature_to_set:
+  - file_name: "/bin/cat"
+    hash_value: 05A9E97F7B0D5638A2FFBC1E53A31E44D36251BA35BA8A1556E569D3C8D9B497
+signature_file_name_get_id: "/bin/cat"
