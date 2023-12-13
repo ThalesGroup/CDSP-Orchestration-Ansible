@@ -233,7 +233,7 @@
       op_type: delete-api-url
       policy_id: "{{ policy_id }}"
       api_url_id: "{{ api_url_id }}"
-    register: _result_update_policy_add_api_url
+    register: _result_update_policy_del_api_url
 
   - assert:
       that:
