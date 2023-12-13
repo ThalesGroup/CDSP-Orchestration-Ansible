@@ -11,7 +11,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import createDPGPolicy, updateDPGPolicy
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import createDPGPolicy, updateDPGPolicy, dpgPolicyAddAPIUrl, dpgPolicyUpdateAPIUrl, dpgPolicyDeleteAPIUrl
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
 
 DOCUMENTATION = '''
@@ -79,6 +79,72 @@ options:
       type: list
       element: dict
       required: false
+    api_url:
+      description: URL of the application server from which the request will received.
+      type: str
+    destination_url:
+      description: URL of the application server where the request will be served.
+      type: str
+    json_request_post_tokens:
+      description: API tokens to be protected in a POST Request
+      type: list
+      element: dict
+    json_response_post_tokens:
+      description: API tokens to be protected in a POST Response
+      type: list
+      element: dict
+    json_request_get_tokens:
+      description: API tokens to be protected in a GET Request
+      type: list
+      element: dict
+    json_response_get_tokens:
+      description: API tokens to be protected in a GET Response
+      type: list
+      element: dict
+    json_request_put_tokens:
+      description: API tokens to be protected in a PUT Request
+      type: list
+      element: dict
+    json_response_put_tokens:
+      description: API tokens to be protected in a PUT Response
+      type: list
+      element: dict
+    json_request_patch_tokens:
+      description: API tokens to be protected in a PATCH Request
+      type: list
+      element: dict
+    json_response_patch_tokens:
+      description: API tokens to be protected in a PATCH Response
+      type: list
+      element: dict
+    json_request_delete_tokens:
+      description: API tokens to be protected in a DELETE Request
+      type: list
+      element: dict
+    json_response_delete_tokens:
+      description: API tokens to be protected in a DELETE Response
+      type: list
+      element: dict
+    url_request_post_tokens:
+      description: API tokens to be protected in a POST Request
+      type: list
+      element: dict
+    url_request_get_tokens:
+      description: API tokens to be protected in a GET Request
+      type: list
+      element: dict
+    url_request_put_tokens:
+      description: API tokens to be protected in a PUT Request
+      type: list
+      element: dict
+    url_request_patch_tokens:
+      description: API tokens to be protected in a PATCH Request
+      type: list
+      element: dict
+    url_request_delete_tokens:
+      description: API tokens to be protected in a DELETE Request
+      type: list
+      element: dict
 '''
 
 EXAMPLES = '''
@@ -91,7 +157,24 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
+    name: DPGPolicyName
+    proxy_config:
+    - api_url: "/api/sample/resource/{id}"
+      destination_url: "http://localhost:8080"
+      json_request_post_tokens:
+      - name: "creditCard.[*].CCNumber"
+        operation: "protect"
+        protection_policy: "CC_ProtectionPolicy"
+      - name: "creditCard.[*].cvv"
+        operation: "protect"
+        protection_policy: "cvv_ProtectionPolicy"
+      json_response_get_tokens:
+      - name: "creditCard.[*].cvv"
+        operation: "reveal"
+        protection_policy: "cvv_ProtectionPolicy"
+        access_policy: "cc_access_policy"
 
 - name: "Patch DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
@@ -102,7 +185,10 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: patch
+    policy_id: DPGPolicyID
+    description: "Updated via Ansible"
 '''
 
 RETURN = '''
@@ -114,6 +200,7 @@ _api_token = dict(
     operation=dict(type='str'),
     protection_policy=dict(type='str'),
     access_policy=dict(type='str'),
+    external_version_header=dict(type='str'),
 )
 
 _proxy_config = dict(
@@ -137,11 +224,31 @@ _proxy_config = dict(
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch'], required=True),
+    op_type=dict(type='str', options=['create', 'patch', 'add-api-url', 'update-api-url', 'delete-api-url'], required=True),
     policy_id=dict(type='str'),
     name=dict(type='str'),
     description=dict(type='int'),
     proxy_config=dict(type='list', element='dict', options=_proxy_config),
+    #op_type=add-api-url
+    api_url=dict(type='str'),
+    destination_url=dict(type='str'),
+    json_request_delete_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    json_request_get_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    json_request_patch_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    json_request_post_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    json_request_put_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    json_response_delete_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    json_response_get_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    json_response_patch_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    json_response_post_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    json_response_put_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    url_request_delete_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    url_request_get_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    url_request_patch_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    url_request_post_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    url_request_put_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    #op_type=update-api-url or delete-api-url
+    api_url_id=dict(type='str'),
 )
 
 def validate_parameters(dpg_policy_module):
@@ -193,6 +300,80 @@ def main():
           policy_id=module.params.get('policy_id'),
           description=module.params.get('description'),
           proxy_config=module.params.get('proxy_config'),
+        )
+        result['response'] = response
+      except CMApiException as api_e:
+        if api_e.api_error_code:
+          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+      except AnsibleCMException as custom_e:
+        module.fail_json(msg=custom_e.message)
+
+    elif module.params.get('op_type') == 'add-api-url':
+      try:
+        response = dpgPolicyAddAPIUrl(
+          node=module.params.get('localNode'),
+          policy_id=module.params.get('policy_id'),
+          api_url=module.params.get('api_url'),
+          destination_url=module.params.get('destination_url'),
+          json_request_delete_tokens=module.params.get('json_request_delete_tokens'),
+          json_request_get_tokens=module.params.get('json_request_get_tokens'),
+          json_request_patch_tokens=module.params.get('json_request_patch_tokens'),
+          json_request_post_tokens=module.params.get('json_request_post_tokens'),
+          json_request_put_tokens=module.params.get('json_request_put_tokens'),
+          json_response_delete_tokens=module.params.get('json_response_delete_tokens'),
+          json_response_get_tokens=module.params.get('json_response_get_tokens'),
+          json_response_patch_tokens=module.params.get('json_response_patch_tokens'),
+          json_response_post_tokens=module.params.get('json_response_post_tokens'),
+          json_response_put_tokens=module.params.get('json_response_put_tokens'),
+          url_request_delete_tokens=module.params.get('url_request_delete_tokens'),
+          url_request_get_tokens=module.params.get('url_request_get_tokens'),
+          url_request_patch_tokens=module.params.get('url_request_patch_tokens'),
+          url_request_post_tokens=module.params.get('url_request_post_tokens'),
+          url_request_put_tokens=module.params.get('url_request_put_tokens'),
+        )
+        result['response'] = response
+      except CMApiException as api_e:
+        if api_e.api_error_code:
+          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+      except AnsibleCMException as custom_e:
+        module.fail_json(msg=custom_e.message)
+
+    elif module.params.get('op_type') == 'update-api-url':
+      try:
+        response = dpgPolicyUpdateAPIUrl(
+          node=module.params.get('localNode'),
+          policy_id=module.params.get('policy_id'),
+          api_url_id=module.params.get('api_url_id'),
+          destination_url=module.params.get('destination_url'),
+          json_request_delete_tokens=module.params.get('json_request_delete_tokens'),
+          json_request_get_tokens=module.params.get('json_request_get_tokens'),
+          json_request_patch_tokens=module.params.get('json_request_patch_tokens'),
+          json_request_post_tokens=module.params.get('json_request_post_tokens'),
+          json_request_put_tokens=module.params.get('json_request_put_tokens'),
+          json_response_delete_tokens=module.params.get('json_response_delete_tokens'),
+          json_response_get_tokens=module.params.get('json_response_get_tokens'),
+          json_response_patch_tokens=module.params.get('json_response_patch_tokens'),
+          json_response_post_tokens=module.params.get('json_response_post_tokens'),
+          json_response_put_tokens=module.params.get('json_response_put_tokens'),
+          url_request_delete_tokens=module.params.get('url_request_delete_tokens'),
+          url_request_get_tokens=module.params.get('url_request_get_tokens'),
+          url_request_patch_tokens=module.params.get('url_request_patch_tokens'),
+          url_request_post_tokens=module.params.get('url_request_post_tokens'),
+          url_request_put_tokens=module.params.get('url_request_put_tokens'),
+        )
+        result['response'] = response
+      except CMApiException as api_e:
+        if api_e.api_error_code:
+          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+      except AnsibleCMException as custom_e:
+        module.fail_json(msg=custom_e.message)
+
+    elif module.params.get('op_type') == 'delete-api-url':
+      try:
+        response = dpgPolicyDeleteAPIUrl(
+          node=module.params.get('localNode'),
+          policy_id=module.params.get('policy_id'),
+          api_url_id=module.params.get('api_url_id'),
         )
         result['response'] = response
       except CMApiException as api_e:

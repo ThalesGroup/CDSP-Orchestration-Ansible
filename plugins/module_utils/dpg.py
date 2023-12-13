@@ -414,3 +414,65 @@ def updateDPGPolicy(**kwargs):
     raise
   except AnsibleCMException as custom_e:
     raise
+
+def dpgPolicyAddAPIUrl(**kwargs):
+  #Add UserSet to DPG Access Policy
+  request = {}
+
+  for key, value in kwargs.items():
+    if key not in ["node", "policy_id"] and value != None:
+      request[key] = value
+
+  payload = json.dumps(request)
+
+  try:
+    response = POSTData(
+      payload=payload,
+      cm_node=kwargs['node'],
+      cm_api_endpoint="data-protection/dpg-policies/" + kwargs['policy_id'] + "/api-urls",
+      id="id",
+    )
+    return ast.literal_eval(str(response))
+  except CMApiException as api_e:
+    raise
+  except AnsibleCMException as custom_e:
+    raise
+
+def dpgPolicyUpdateAPIUrl(**kwargs):
+  # Update userSet in access policy
+  request = {}
+
+  for key, value in kwargs.items():
+    if key not in ["node", "policy_id", "api_url_id"] and value != None:
+      request[key] = value
+
+  payload = json.dumps(request)
+
+  try:
+    response = PATCHData(
+      payload=payload,
+      cm_node=kwargs['node'],
+      cm_api_endpoint="data-protection/dpg-policies/" + kwargs['policy_id'] + "/api-urls/" + kwargs['api_url_id'],
+    )
+    return ast.literal_eval(str(response))
+  except CMApiException as api_e:
+    raise
+  except AnsibleCMException as custom_e:
+    raise
+  
+def dpgPolicyDeleteAPIUrl(**kwargs):
+  result = dict(
+    changed=False,
+  )
+  endpoint="data-protection/dpg-policies/" + kwargs['policy_id'] + "/api-urls"
+  try:
+    response = DELETEByNameOrId(
+        key=kwargs['api_url_id'],
+        cm_node=kwargs['node'],
+        cm_api_endpoint=endpoint
+    )
+    result['response'] = response
+  except CMApiException as api_e:
+    raise
+  except AnsibleCMException as custom_e:
+    raise

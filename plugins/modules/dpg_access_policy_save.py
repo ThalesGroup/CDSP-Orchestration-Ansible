@@ -131,6 +131,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
     name: DemoAccessPolicy
     default_reveal_type: "Ciphertext"
@@ -149,6 +150,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: patch
     policy_id: accessPolicyID
     name: DemoAccessPolicyUPD
