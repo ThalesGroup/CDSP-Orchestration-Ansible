@@ -196,7 +196,7 @@
       op_type: add-api-url
       policy_id: "{{ policy_id }}"
       api_url: "/api/sample/resource/{id}"
-      destination_url: "http://localhost:8080"
+      destination_url: "http://localhost:8081"
       json_request_post_tokens:
       - name: "creditCard.[*].cvv"
         operation: "protect"
@@ -219,11 +219,7 @@
       op_type: update-api-url
       policy_id: "{{ policy_id }}"
       api_url_id: "{{ api_url_id }}"
-      destination_url: "http://localhost:8081"
-      json_request_post_tokens:
-      - name: "creditCard.[*].cvv"
-        operation: "protect"
-        protection_policy: "{{ pp_name_cvv }}"
+      destination_url: "http://localhost:8082"
     register: _result_update_policy_upd_api_url
 
   - assert:
@@ -292,7 +288,7 @@
         - _result_delete_ap is not failed
 
   ## Delete UserSet
-  - name: "Delete UserSet 1"
+  - name: "Delete UserSet"
     thalesgroup.ciphertrust.cm_resource_delete:
       key: "{{ user_set_id }}"
       resource_type: "user-sets"
