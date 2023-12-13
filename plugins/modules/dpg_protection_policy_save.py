@@ -56,7 +56,11 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false     
+          default: false
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true
     op_type:
       description: Operation to be performed
       choices: [create, patch]
@@ -64,7 +68,7 @@ options:
       type: str
     policy_name:
       description:
-        - Identifier of the access policy to be patched
+        - Identifier of the protection policy to be patched
       type: str
     algorithm:
       description: Algorithm to be used during crypto operations
@@ -76,10 +80,12 @@ options:
       description: Unique name for the protection policy
       type: str
     allow_single_char_input:
-      description: If true, null or single-character inputs are passed untransformed. If false, row transformation fails
+      description: 
+      - If true, null or single-character inputs are passed untransformed. If false, row transformation fails
+      - Obsolete post CM v2.12
       type: bool
     character_set_id:
-      description: ID of the Characterset
+      description: ID of the Character Set
       required: false
       type: str
     iv:
@@ -96,11 +102,15 @@ options:
       required: false
       type: str
     disable_versioning:
-      description: If set to true, versioning is not maintained for the protection policies. The default value is false.
+      description: 
+      - If set to true, versioning is not maintained for the protection policies. The default value is false.
+      - Added in CM v2.12
       required: false
       type: bool
     use_external_versioning:
-      description: If set to true, external versioning is enabled for the protection policy. The version details are stored in a separate external parameter. The default value is false.
+      description: 
+      - If set to true, external versioning is enabled for the protection policy. The version details are stored in a separate external parameter. The default value is false.
+      - Added in CM v2.12
       required: false
       type: bool
 '''
@@ -118,9 +128,9 @@ EXAMPLES = '''
         auth_domain_path:
     op_type: create
     algorithm: "AES/CBC/PKCS5Padding"
-    key: CM_KEY_ID
+    key: <CM_KEY_ID>
     name: DemoProtectionPolicy
-    character_set_id: CHAR_SET_ID
+    character_set_id: <CHAR_SET_ID>
     iv: 16
     tweak: 1628462495815733
     tweak_algorithm: SHA1
@@ -136,8 +146,22 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
     op_type: patch
+    policy_name: DemoProtectionPolicy
     tweak: 1628462495815733
     tweak_algorithm: SHA256
+
+- name: "Delete Protection Policy by name"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    key: DemoProtectionPolicy
+    resource_type: "protection-policies"
+    localNode:
+        server_ip: "IP/FQDN of CipherTrust Manager"
+        server_private_ip: "Private IP in case that is different from above"
+        server_port: 5432
+        user: "CipherTrust Manager Username"
+        password: "CipherTrust Manager Password"
+        verify: false
+        auth_domain_path:
 '''
 
 RETURN = '''

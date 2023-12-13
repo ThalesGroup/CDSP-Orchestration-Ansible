@@ -16,10 +16,10 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 
 DOCUMENTATION = '''
 ---
-module: domain_save
-short_description: Create and manage DPG user-sets
+module: dpg_user_set_save
+short_description: Create and manage DPG user sets
 description:
-    - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with domains management API
+    - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with user sets management API
     - Refer https://thalesdocs.com/ctp/con/dpg/latest/admin/index.html for API documentation
 version_added: "1.0.0"
 author: Anurag Jain, Developer Advocate Thales Group
@@ -56,7 +56,11 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false     
+          default: false
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true
     op_type:
       description: Operation to be performed
       choices: [create, patch]
@@ -64,13 +68,13 @@ options:
       type: str
     user_set_id:
       description:
-        - Identifier of the userset to be patched
+        - Identifier of the user set to be patched
       type: str
     name:
       description: Unique name for the user set
       type: str
     description:
-      description: The description of user-set
+      description: The description of user set
       type: str
     users:
       description: List of users to be added in user set
@@ -81,7 +85,7 @@ options:
 '''
 
 EXAMPLES = '''
-- name: "Create Access Policy"
+- name: "Create User Set"
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
@@ -92,8 +96,13 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
     op_type: create
+    name: AnsibleIntegrationTest_UserSet
+    description: "Created via Ansible"
+    users:
+    - "AnsibleIntegrationTest_User1"
+    - "AnsibleIntegrationTest_User2"
 
-- name: "Patch Access Policy"
+- name: "Patch User Set"
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
@@ -104,6 +113,24 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
     op_type: patch
+    user_set_id: <UserSetID>
+    users:
+    - "AnsibleIntegrationTest_User1"
+    - "AnsibleIntegrationTest_User2"
+    - "AnsibleIntegrationTest_User3"
+
+- name: "Delete UserSet ID"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode:
+        server_ip: "IP/FQDN of CipherTrust Manager"
+        server_private_ip: "Private IP in case that is different from above"
+        server_port: 5432
+        user: "CipherTrust Manager Username"
+        password: "CipherTrust Manager Password"
+        verify: false
+        auth_domain_path:
+    key: <UserSetID>
+    resource_type: "user-sets"
 '''
 
 RETURN = '''

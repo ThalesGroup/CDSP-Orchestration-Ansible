@@ -16,10 +16,10 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 
 DOCUMENTATION = '''
 ---
-module: domain_save
+module: dpg_character_set_save
 short_description: Create and manage DPG character-sets
 description:
-    - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with domains management API
+    - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with Character Set management API
     - Refer https://thalesdocs.com/ctp/con/dpg/latest/admin/index.html for API documentation
 version_added: "1.0.0"
 author: Anurag Jain, Developer Advocate Thales Group
@@ -56,32 +56,33 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false     
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true  
     op_type:
       description: Operation to be performed
       choices: [create, patch]
       required: true
       type: str
-    user_set_id:
+    char_set_id:
       description:
-        - Identifier of the userset to be patched
+        - Identifier of the Character Set to be patched
       type: str
     name:
-      description: Unique name for the user set
+      description: Unique name for the Character Set
       type: str
-    description:
-      description: The description of user-set
+    encoding:
+      description: The description of Character Set
       type: str
-    users:
-      description: List of users to be added in user set
+    range:
+      description: Allowed range of characters in HEX format
       type: list
       elements: str
-      default: []
-      required: false
 '''
 
 EXAMPLES = '''
-- name: "Create Access Policy"
+- name: "Create Character Set"
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
@@ -92,9 +93,14 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
     op_type: create
+    name: DPGAlphaNum
+    range:
+    - "0030-0039"
+    - "0041-005A"
+    encoding: "UTF-8"
 
-- name: "Patch Access Policy"
-  thalesgroup.ciphertrust.dpg_user_set_save:
+- name: "Patch Character Set"
+  thalesgroup.ciphertrust.dpg_character_set_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"
@@ -104,6 +110,25 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
     op_type: patch
+    char_set_id: <CharSetID>
+    range:
+    - "0030-0039"
+    - "0041-005A"
+    - "0061-007A"
+
+- name: "Delete charset by ID"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    key: <CharSetID>
+    resource_type: "character-sets"
+    localNode:
+        server_ip: "IP/FQDN of CipherTrust Manager"
+        server_private_ip: "Private IP in case that is different from above"
+        server_port: 5432
+        user: "CipherTrust Manager Username"
+        password: "CipherTrust Manager Password"
+        verify: false
+        auth_domain_path:
+
 '''
 
 RETURN = '''

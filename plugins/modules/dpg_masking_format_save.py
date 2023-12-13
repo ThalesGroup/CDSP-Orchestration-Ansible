@@ -56,7 +56,11 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false     
+          default: false
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true  
     op_type:
       description: Operation to be performed
       choices: [create, patch]
@@ -64,7 +68,7 @@ options:
       type: str
     masking_format_id:
       description:
-        - Identifier of the userset to be patched
+        - Identifier of the Masking Format to be patched
       type: str
     name:
       description: Unique name for the masking format
@@ -98,8 +102,13 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
     op_type: create
+    name: AnsibleIntegrationTest_MaskingFormat
+    ending_characters: 2
+    mask_char: X
+    show: true
+    starting_characters: 4
 
-- name: "Patch Access Policy"
+- name: "Patch Masking Format"
   thalesgroup.ciphertrust.dpg_masking_format_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
@@ -110,6 +119,23 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
     op_type: patch
+    masking_format_id: <MaskingFormatID>
+    ending_characters: 4
+    mask_char: O
+    starting_characters: 2
+
+- name: "Delete Masking Format ID"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    key: <MaskingFormatID>
+    resource_type: "masking-formats"
+    localNode:
+        server_ip: "IP/FQDN of CipherTrust Manager"
+        server_private_ip: "Private IP in case that is different from above"
+        server_port: 5432
+        user: "CipherTrust Manager Username"
+        password: "CipherTrust Manager Password"
+        verify: false
+        auth_domain_path:
 '''
 
 RETURN = '''

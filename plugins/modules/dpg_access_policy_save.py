@@ -56,7 +56,10 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false     
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true
     op_type:
       description: Operation to be performed
       choices: [create, patch, add-user-set, update-user-set, delete-user-set]
@@ -136,10 +139,10 @@ EXAMPLES = '''
     name: DemoAccessPolicy
     default_reveal_type: "Ciphertext"
     user_set_policy:
-      - reveal_type: Plaintext
-        user_set_id: UserSetID
-      - reveal_type: Ciphertext
-        user_set_id: UserSetID
+    - reveal_type: Plaintext
+      user_set_id: <UserSetID>
+    - reveal_type: Ciphertext
+      user_set_id: <UserSetID>
 
 - name: "Patch Access Policy"
   thalesgroup.ciphertrust.dpg_access_policy_save:
@@ -152,10 +155,53 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
     op_type: patch
-    policy_id: accessPolicyID
+    policy_id: <accessPolicyID>
     name: DemoAccessPolicyUPD
     description: "Updated via Ansible"
     default_reveal_type: Plaintext
+
+- name: "Add UserSet to Access Policy"
+  thalesgroup.ciphertrust.dpg_access_policy_save:
+    op_type: add-user-set
+    policy_id: <accessPolicyID>
+    reveal_type: Plaintext
+    user_set_id: <UserSetID>
+    localNode:
+        server_ip: "IP/FQDN of CipherTrust Manager"
+        server_private_ip: "Private IP in case that is different from above"
+        server_port: 5432
+        user: "CipherTrust Manager Username"
+        password: "CipherTrust Manager Password"
+        verify: false
+        auth_domain_path:
+
+  - name: "Update UserSet in Access Policy"
+    thalesgroup.ciphertrust.dpg_access_policy_save:
+      op_type: update-user-set
+      policy_id: <accessPolicyID>
+      policy_user_set_id: <UserSetID>
+      reveal_type: Plaintext
+      localNode:
+        server_ip: "IP/FQDN of CipherTrust Manager"
+        server_private_ip: "Private IP in case that is different from above"
+        server_port: 5432
+        user: "CipherTrust Manager Username"
+        password: "CipherTrust Manager Password"
+        verify: false
+        auth_domain_path:
+
+  - name: "Delete Access Policy"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: <accessPolicyID>
+      resource_type: "access-policies"
+      localNode:
+        server_ip: "IP/FQDN of CipherTrust Manager"
+        server_private_ip: "Private IP in case that is different from above"
+        server_port: 5432
+        user: "CipherTrust Manager Username"
+        password: "CipherTrust Manager Password"
+        verify: false
+        auth_domain_path:
 '''
 
 RETURN = '''

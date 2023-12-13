@@ -56,7 +56,10 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false     
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true
     op_type:
       description: Operation to be performed
       choices: [create, patch]
@@ -175,6 +178,7 @@ EXAMPLES = '''
         operation: "reveal"
         protection_policy: "cvv_ProtectionPolicy"
         access_policy: "cc_access_policy"
+  register: _result
 
 - name: "Patch DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
@@ -187,8 +191,69 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
     op_type: patch
-    policy_id: DPGPolicyID
+    policy_id: <DPGPolicyID>
     description: "Updated via Ansible"
+
+- name: "Add api_url to DPG Policy"
+  thalesgroup.ciphertrust.dpg_policy_save:
+    localNode:
+        server_ip: "IP/FQDN of CipherTrust Manager"
+        server_private_ip: "Private IP in case that is different from above"
+        server_port: 5432
+        user: "CipherTrust Manager Username"
+        password: "CipherTrust Manager Password"
+        verify: false
+        auth_domain_path:
+    op_type: add-api-url
+    policy_id: <DPGPolicyID>
+    api_url: "/api/v2/sample/resource/{id}"
+    destination_url: "http://localhost:8080"
+    json_request_post_tokens:
+    - name: "creditCard.[*].cvv"
+      operation: "protect"
+      protection_policy: "cvv_ProtectionPolicy"
+
+- name: "Update api_url in DPG Policy"
+  thalesgroup.ciphertrust.dpg_policy_save:
+    localNode:
+        server_ip: "IP/FQDN of CipherTrust Manager"
+        server_private_ip: "Private IP in case that is different from above"
+        server_port: 5432
+        user: "CipherTrust Manager Username"
+        password: "CipherTrust Manager Password"
+        verify: false
+        auth_domain_path:
+    op_type: update-api-url
+    policy_id: <DPGPolicyID>
+    api_url_id: <API_URL_ID>
+    destination_url: "http://localhost:8081"
+
+- name: "Delete api_url from DPG Policy"
+  thalesgroup.ciphertrust.dpg_policy_save:
+    localNode:
+        server_ip: "IP/FQDN of CipherTrust Manager"
+        server_private_ip: "Private IP in case that is different from above"
+        server_port: 5432
+        user: "CipherTrust Manager Username"
+        password: "CipherTrust Manager Password"
+        verify: false
+        auth_domain_path:
+    op_type: delete-api-url
+    policy_id: <DPGPolicyID>
+    api_url_id: <API_URL_ID>
+
+- name: "Delete DPG Policy by ID"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    key: <DPGPolicyID>
+    resource_type: "dpg-policies"
+    localNode:
+        server_ip: "IP/FQDN of CipherTrust Manager"
+        server_private_ip: "Private IP in case that is different from above"
+        server_port: 5432
+        user: "CipherTrust Manager Username"
+        password: "CipherTrust Manager Password"
+        verify: false
+        auth_domain_path:
 '''
 
 RETURN = '''
