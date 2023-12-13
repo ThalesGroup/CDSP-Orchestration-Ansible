@@ -227,7 +227,7 @@ argument_spec = dict(
     op_type=dict(type='str', options=['create', 'patch', 'add-api-url', 'update-api-url', 'delete-api-url'], required=True),
     policy_id=dict(type='str'),
     name=dict(type='str'),
-    description=dict(type='int'),
+    description=dict(type='str'),
     proxy_config=dict(type='list', element='dict', options=_proxy_config),
     #op_type=add-api-url
     api_url=dict(type='str'),

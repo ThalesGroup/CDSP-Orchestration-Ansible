@@ -95,7 +95,6 @@
       algorithm: "{{ pp_algorithm_cc }}"
       key: "{{ key_id }}"
       name: "{{ pp_name_cc }}"
-      character_set_id: "{{ char_set_id }}"
       tweak: "{{ pp_tweak_cc }}"
       tweak_algorithm: "{{ pp_tweak_algorithm_cc }}"
       localNode: "{{ this_node_connection_string }}"
@@ -255,7 +254,7 @@
   - assert:
       that:
         - _result_delete_dpg_policy is not failed
-        
+
   # Final cleanup
   ## Delete Protection Policies
   - name: "Delete Protection Policy CVV by name"
