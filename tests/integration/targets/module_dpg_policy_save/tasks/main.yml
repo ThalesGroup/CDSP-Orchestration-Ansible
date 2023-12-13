@@ -154,7 +154,7 @@
       op_type: create
       name: "{{ dpg_policy_name }}"
       proxy_config:
-      - api_url: "/api/sample/resource/{id}"
+      - api_url: "/api/v1/sample/resource/{id}"
         destination_url: "http://localhost:8080"
         json_request_post_tokens:
         - name: "creditCard.[*].CCNumber"
@@ -195,8 +195,8 @@
       localNode: "{{ this_node_connection_string }}"
       op_type: add-api-url
       policy_id: "{{ policy_id }}"
-      api_url: "/api/sample/resource/{id}"
-      destination_url: "http://localhost:8081"
+      api_url: "/api/v2/sample/resource/{id}"
+      destination_url: "http://localhost:8080"
       json_request_post_tokens:
       - name: "creditCard.[*].cvv"
         operation: "protect"
@@ -219,7 +219,7 @@
       op_type: update-api-url
       policy_id: "{{ policy_id }}"
       api_url_id: "{{ api_url_id }}"
-      destination_url: "http://localhost:8082"
+      destination_url: "http://localhost:8081"
     register: _result_update_policy_upd_api_url
 
   - assert:
