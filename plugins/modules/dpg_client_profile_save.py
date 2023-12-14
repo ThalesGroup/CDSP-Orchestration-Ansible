@@ -57,6 +57,10 @@ options:
           type: bool
           required: true
           default: false     
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true  
     op_type:
       description: Operation to be performed
       choices: [create, patch]
@@ -120,7 +124,17 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
         auth_domain_path:
+    name: DPGClientProfile
     op_type: create
+    app_connector_type: DPG
+    lifetime: 30d
+    cert_duration: 730
+    max_clients: 200
+    ca_id: <CA_UUID>
+    nae_iface_port: 9005
+    csr_parameters:
+      csr_cn: admin
+    policy_id: <DPGPolicyID>
 
 - name: "Patch DPG Client Profile"
   thalesgroup.ciphertrust.dpg_client_profile_save:
@@ -133,6 +147,8 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
     op_type: patch
+    profile_id: <DPGClientProfileID>
+    lifetime: 180d
 '''
 
 RETURN = '''

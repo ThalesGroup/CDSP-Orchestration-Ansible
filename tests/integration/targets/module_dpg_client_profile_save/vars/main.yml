@@ -1,0 +1,32 @@
+this_node_connection_string: "{{ cm_connection_string }}"
+
+char_set_name: DPGAlphaNum
+char_set_encoding: "UTF-8"
+char_set_range:
+  - "0030-0039"
+  - "0041-005A"
+  - "0061-007A"
+key_name: dpg_key
+key_algo: aes
+key_len: 256
+usage_mask: 3145740
+pp_algorithm_cvv: "FPE/FF1v2/UNICODE"
+pp_name_cvv: cvv_ProtectionPolicy
+pp_tweak_cvv: 1628462495815733
+pp_tweak_algorithm_cvv: SHA1
+pp_algorithm_cc: "FPE/AES/CARD10"
+pp_name_cc: CC_ProtectionPolicy
+pp_tweak_cc: 9828462495846783
+pp_tweak_algorithm_cc: SHA1
+user_set_name: plainttextuserset
+user_set_description: "Created via Ansible"
+user_set_users:
+  - "paymentclient"
+  - "refundclient"
+ap_name: cc_access_policy
+ap_default_reveal_type: "Error Replacement Value"
+ap_default_error_replacement_value: "143001"
+dpg_policy_name: CC_Policy
+dpg_client_ca_id: "{{ local_ca_id }}"
+dpg_nae_interface_number: "{{ nae_interface_port_number }}"
+dpg_client_name: AnsibleClientProfile
