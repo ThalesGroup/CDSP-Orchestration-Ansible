@@ -55,7 +55,11 @@ options:
             description: if SSL verification is required
             type: bool
             required: true
-            default: false     
+            default: false
+          auth_domain_path:
+            description: user's domain path
+            type: str
+            required: true
     op_type:
         description: 
           - Operation to be performed
@@ -92,6 +96,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: add
     object_type: user
     object_id: user_id_on_CM
@@ -106,6 +111,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: add
     object_type: client
     object_id: client_id_on_CM
@@ -120,6 +126,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: remove
     object_type: user
     object_id: user_id_on_CM
@@ -134,6 +141,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: remove
     object_type: client
     object_id: client_id_on_CM

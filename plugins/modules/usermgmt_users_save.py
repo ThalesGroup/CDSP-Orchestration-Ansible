@@ -58,6 +58,10 @@ options:
             type: bool
             required: true
             default: false
+          auth_domain_path:
+            description: user's domain path
+            type: str
+            required: true
     op_type:
         description: Operation to be performed
         choices: [create, patch, changepw, patch_self]
@@ -171,6 +175,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
       op_type: "create"
       username: "john.doe"
       password: "oldPassword12!"
@@ -186,6 +191,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
       op_type: "patch"
       cm_user_id: "local|UUID"
       username: "john.doe"
@@ -201,6 +207,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
       op_type: "changepw"
       username: "john.doe"
       password: "oldPassword12!"
@@ -215,6 +222,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
       op_type: "patch_self"
       name: "CM Admin"
 '''

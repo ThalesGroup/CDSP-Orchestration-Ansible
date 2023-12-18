@@ -17,7 +17,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 DOCUMENTATION = '''
 ---
 module: group_save
-short_description: Create or update groups
+short_description: Create or update groups on CipherTrust Manager
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with groups management API
 version_added: "1.0.0"
@@ -55,7 +55,11 @@ options:
             description: if SSL verification is required
             type: bool
             required: true
-            default: false     
+            default: false
+          auth_domain_path:
+            description: user's domain path
+            type: str
+            required: true
     op_type:
         description: Operation to be performed
         choices: [create, patch]
@@ -106,6 +110,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
     name: "group_name"
 
@@ -118,6 +123,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: patch
     old_name: "group_name"
     name: "new_name"
