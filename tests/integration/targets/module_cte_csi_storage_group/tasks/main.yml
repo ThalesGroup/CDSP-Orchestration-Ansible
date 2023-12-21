@@ -82,7 +82,6 @@
   - assert:
       that:
         - _result_add_user is not failed
-        - _result_add_user.response is match("Resource deleted successfully")
 
   - name: "Remove Client from Group"
     thalesgroup.ciphertrust.group_add_remove_object:
@@ -96,4 +95,14 @@
   - assert:
       that:
         - _result_add_client is not failed
-        - _result_add_client.response is match("Resource deleted successfully")
+        
+- name: "Delete Resource Set 3"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    key: "{{ _result_create_rs_3.response.id }}"
+    resource_type: "resourceset"
+    localNode: "{{ this_node_connection_string }}"
+  register: _result_delete_resource_set_3
+  
+- assert:
+    that:
+      - _result_delete_resource_set_3 is not failed

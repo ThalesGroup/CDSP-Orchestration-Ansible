@@ -56,6 +56,10 @@ options:
           type: bool
           required: true
           default: false
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_process, patch_process, delete_process]
@@ -105,6 +109,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
     name: TestProcessSet
     description: "via Ansible"
@@ -126,6 +131,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: add_process
     id: "{{ process_set['response']['id'] }}"
     processes:

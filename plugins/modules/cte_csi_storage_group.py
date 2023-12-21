@@ -56,7 +56,11 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false
+          default: false   
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_client, remove_client, add_guard_point, patch_guard_point, remove_guard_point]
@@ -115,6 +119,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
     name: AnsibleCSI_SG_1
     k8s_namespace: AnsibleK8s_NS_1
@@ -132,6 +137,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
     id: "{{ csi_sg['response']['id'] }}"
     description: "Test CSIStorageGroup Updated"
@@ -146,6 +152,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: add_client
     id: "{{ csi_sg['response']['id'] }}"
     client_list:
@@ -161,6 +168,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: add_guard_point
     id: "{{ csi_sg['response']['id'] }}"
     policy_list:

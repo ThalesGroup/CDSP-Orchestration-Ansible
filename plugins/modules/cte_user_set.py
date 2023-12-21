@@ -56,6 +56,10 @@ options:
           type: bool
           required: true
           default: false
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true  
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_user, patch_user, delete_user]
@@ -104,6 +108,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
     name: UserSet1
     description: "Using Ansible"
@@ -127,6 +132,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: add_user
     id: "{{ userset['response']['id'] }}"
     users:

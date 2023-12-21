@@ -16,7 +16,7 @@
 ## Validate the CTE Process Set module
 ## Before adding the ProcessSet, we would need to create the signature set first
 - block:
-  - name: "Create CTE SignatureSet"
+  - name: "Create CTE Signature Set"
     thalesgroup.ciphertrust.cte_signature_set:
       op_type: create
       name: "{{ signature_set_name }}"
@@ -35,7 +35,7 @@
         - _result_create_ss.response.id is string
 
 - block:
-  - name: "Create CTE ProcessSet"
+  - name: "Create CTE Process Set"
     thalesgroup.ciphertrust.cte_process_set:
       op_type: create
       name: "{{ process_set_name }}"
@@ -52,7 +52,7 @@
         - _result_create is not failed
         - _result_create.response.id is string
 
-  - name: "Patch CTE ProcessSet"
+  - name: "Patch CTE Process Set"
     thalesgroup.ciphertrust.cte_process_set:
       op_type: patch
       id: "{{ _result_create.response.id }}"
@@ -72,7 +72,7 @@
         - _result_patch is not failed
         - _result_patch.response.message is match("Resource updated successfully")
 
-  - name: "Add Processes to ProcessSet"
+  - name: "Add Processes to Process Set"
     thalesgroup.ciphertrust.cte_process_set:
       op_type: add_process
       id: "{{ _result_create.response.id }}"
@@ -88,7 +88,7 @@
         - _result_add_process is not failed
         - _result_add_process.response.message is match("Resource updated successfully")
 
-  - name: "Update Process in ProcessSet"
+  - name: "Update Process in Process Set"
     thalesgroup.ciphertrust.cte_process_set:
       op_type: patch_process
       id: "{{ _result_create.response.id }}"
@@ -104,7 +104,7 @@
         - _result_upd_process is not failed
         - _result_upd_process.response.message is match("Resource updated successfully")
 
-  - name: "Remove Process from ProcessSet"
+  - name: "Remove Process from Process Set"
     thalesgroup.ciphertrust.cte_process_set:
       op_type: delete_process
       id: "{{ _result_create.response.id }}"
@@ -116,3 +116,25 @@
       that:
         - _result_del_process is not failed
         - _result_del_process.response is match("Resource deleted successfully")
+  
+  - name: "Delete Process Set"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_create.response.id }}"
+      resource_type: "processset"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_process_set
+    
+  - assert:
+      that:
+        - _result_delete_process_set is not failed
+  
+  - name: "Delete Signature Set"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_create_ss.response.id }}"
+      resource_type: "signatureset"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_signature_set
+    
+  - assert:
+      that:
+        - _result_delete_signature_set is not failed

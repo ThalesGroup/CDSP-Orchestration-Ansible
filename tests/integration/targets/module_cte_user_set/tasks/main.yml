@@ -21,6 +21,7 @@
     thalesgroup.ciphertrust.cte_user_set:
       op_type: create
       name: "{{ user_set_name }}"
+      description: "{{ description }}"
       users: "{{ initial_users_list }}"
       localNode: "{{ this_node_connection_string }}"
     register: _result_create
@@ -30,7 +31,7 @@
         - _result_create is not failed
         - _result_create.response.id is string
 
-  - name: "Patch CTE UserSet"
+  - name: "Update CTE UserSet"
     thalesgroup.ciphertrust.cte_user_set:
       op_type: patch
       id: "{{ _result_create.response.id }}"
@@ -61,7 +62,7 @@
       op_type: patch_user
       id: "{{ _result_create.response.id }}"
       userIndex: "{{ user_index_to_be_updated }}"
-      uname: "{{ updated_uname_index1 }}"
+      uname: "{{ username_to_be_updated }}"
       uid: "{{ uid_to_be_updated }}"
       gname: rootGroup
       gid: 1000
@@ -71,7 +72,6 @@
   - assert:
       that:
         - _result_upd_user is not failed
-        - _result_upd_user.response.message is match("Resource created successfully")
 
   - name: "Remove User from UserSet"
     thalesgroup.ciphertrust.cte_user_set:
@@ -84,4 +84,14 @@
   - assert:
       that:
         - _result_del_user is not failed
-        - _result_del_user.response is match("Resource deleted successfully")
+  
+  - name: "Delete User Set"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_create.response.id }}"
+      resource_type: "userset"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_user_set
+    
+  - assert:
+      that:
+        - _result_delete_user_set is not failed

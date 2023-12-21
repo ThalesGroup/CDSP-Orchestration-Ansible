@@ -56,6 +56,10 @@ options:
           type: bool
           required: true
           default: false
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_signature, get_signature, delete_signature, sign_app, query_sign_app, cancel_sign_app]
@@ -103,6 +107,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
     name: TestSignSet
     source_list:
@@ -119,6 +124,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: add_signature
     id: "{{ signature_set['response']['id'] }}"
     source_list:
@@ -134,6 +140,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: delete_signature
     id: "{{ signature_set['response']['id'] }}"
     signature_id: "{{ signature['response']['id'] }}"
@@ -147,6 +154,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: sign_app
     id: "{{ signature_set['response']['id'] }}"
     client_id: Client1

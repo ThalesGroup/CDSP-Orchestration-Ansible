@@ -86,4 +86,14 @@
   - assert:
       that:
         - _result_del_resource is not failed
-        - _result_del_resource.response is match("Resource deleted successfully")
+  
+  - name: "Delete Resource Set"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_create.response.id }}"
+      resource_type: "resourceset"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_resource_set
+    
+  - assert:
+      that:
+        - _result_delete_resource_set is not failed

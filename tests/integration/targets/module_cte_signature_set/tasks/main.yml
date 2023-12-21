@@ -68,7 +68,7 @@
         - _result_add_signature is not failed
         - _result_add_signature.response.message is match("Resource updated successfully")
 
-  - name: "Get Signature ID from SignatureSet"
+  - name: "Get Signature ID from SignatureSet and File Name filter"
     thalesgroup.ciphertrust.cte_signature_set:
       op_type: get_signature
       id: "{{ _result_create.response.id }}"
@@ -92,3 +92,14 @@
       that:
         - _result_del_signature is not failed
         - _result_del_signature.response is match("Resource deleted successfully")
+  
+  - name: "Delete Signature Set"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_create.response.id }}"
+      resource_type: "signatureset"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_signature_set
+    
+  - assert:
+      that:
+        - _result_delete_signature_set is not failed

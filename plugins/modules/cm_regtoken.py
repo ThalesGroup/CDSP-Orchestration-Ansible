@@ -55,7 +55,11 @@ options:
             description: if SSL verification is required
             type: bool
             required: true
-            default: false     
+            default: false  
+          auth_domain_path:
+            description: user's domain path
+            type: str
+            required: true     
     op_type:
         description: Operation to be performed
         choices: [create, patch]
@@ -95,6 +99,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
     ca_id: 76c4da32-0953-4c6a-bf77-c5a70314244c
     cert_duration: 730

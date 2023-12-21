@@ -55,7 +55,11 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false     
+          default: false   
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true  
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_data_transfer_rule, add_ldt_rule, add_key_rule, add_security_rule, patch_data_transfer_rule, patch_ldt_rule, patch_key_rule, patch_security_rule, patch_idt_rule, remove_data_transfer_rule, remove_ldt_rule, remove_key_rule, remove_security_rule]
@@ -195,6 +199,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
     name: "Policy-Ans-001"
     description: "Created via Ansible"
@@ -228,6 +233,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: add_data_transfer_rule
     policy_id: "{{ policy['response']['id'] }}"
     rule_name="datatxrules"
@@ -244,6 +250,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: remove_data_transfer_rule
     policy_id: "{{ policy['response']['id'] }}"
     rule_name="datatxrules"

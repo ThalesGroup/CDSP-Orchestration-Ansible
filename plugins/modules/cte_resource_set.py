@@ -56,6 +56,10 @@ options:
           type: bool
           required: true
           default: false
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_resource, patch_resource, delete_resource]
@@ -120,6 +124,7 @@ EXAMPLES = '''
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
+      auth_domain_path:
     op_type: create
     name: "RS-Ans-001"
     description: "Created via Ansible"
@@ -140,6 +145,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: add_resource
     id: "{{ resource_set['response']['id'] }}"
     resources:
