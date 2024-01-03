@@ -8,7 +8,7 @@ description: "Created via Ansible"
 
 username: admin
 keyName: AnsibleCTEKey
-keyAlgo: AES
+keyAlgo: aes
 keySize: 256
 resource_set_name: Ansible_RES_SET
 cte_policy_name: Ansible-CTE-Policy

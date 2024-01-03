@@ -55,7 +55,11 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false     
+          default: false    
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true 
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_client, add_guard_point, auth-binaries, remove_client, ldt_pause]
@@ -133,12 +137,13 @@ EXAMPLES = '''
 - name: "Create CTE Client Group"
   thalesgroup.ciphertrust.cte_client_group:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     cluster_type: NON-CLUSTER
     name: ClientGroup1
@@ -146,12 +151,13 @@ EXAMPLES = '''
 - name: "Add client to CTE client group"
   thalesgroup.ciphertrust.cte_client_group:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: add_client
     client_list:
       - Client1
@@ -161,12 +167,13 @@ EXAMPLES = '''
 - name: "Add guard point to CTE client group"
   thalesgroup.ciphertrust.cte_client_group:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: add_guard_point
     guard_paths:
       - "/opt/path1/"
