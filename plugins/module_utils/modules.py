@@ -19,14 +19,12 @@ The 'ThalesCipherTrustModule' module provides similar, but more restricted,
 interfaces to the normal Ansible module.
 """
 
-import os
-import traceback
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.basic import env_fallback
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils._text import to_native
+
 
 class ThalesCipherTrustModule:
     """An ansible module class for CipherTrust modules
@@ -61,11 +59,12 @@ class ThalesCipherTrustModule:
                 pass
             kwargs["argument_spec"] = argument_spec_full
 
-        self._module = ThalesCipherTrustModule.default_settings["module_class"](**kwargs)
+        self._module = ThalesCipherTrustModule.default_settings["module_class"](
+            **kwargs)
         self.check_mode = self._module.check_mode
         self._diff = self._module._diff
         self._name = self._module._name
-        
+
     @property
     def params(self):
         return self._module.params
@@ -88,11 +87,12 @@ class ThalesCipherTrustModule:
     def boolean(self, *args, **kwargs):
         return self._module.boolean(*args, **kwargs)
 
+
 def _ciphertrust_common_argument_spec():
     """
     """
     return dict(
-        localNode = dict(
+        localNode=dict(
             server_ip=dict(type='str', required=True),
             server_private_ip=dict(type='str', required=True),
             server_port=dict(type='int', required=True),
@@ -102,6 +102,7 @@ def _ciphertrust_common_argument_spec():
             auth_domain_path=dict(type='str'),
         )
     )
+
 
 def ciphertrust_argument_spec():
     """

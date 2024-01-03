@@ -16,6 +16,7 @@ module as shown below.
 
 from ansible.module_utils._text import to_native
 
+
 class CMApiException(Exception):
 
     def __str__(self):
@@ -34,7 +35,8 @@ class CMApiException(Exception):
 
         self.message = message
         self.api_error_code = api_error_code
-        #super().__init__(self.api_error_code + ": " + self.message)
+        # super().__init__(self.api_error_code + ": " + self.message)
+
 
 class AnsibleCMException(Exception):
 
@@ -51,4 +53,4 @@ class AnsibleCMException(Exception):
             super().__init__(message)
 
         self.message = message
-        #super().__init__(self.message)
+        # super().__init__(self.message)

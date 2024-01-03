@@ -16,45 +16,47 @@ import ast
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
 
+
 def create(**kwargs):
-  request = {}
+    request = {}
 
-  for key, value in kwargs.items():
-    if key != "node" and value != None:
-      request[key] = value
+    for key, value in kwargs.items():
+        if key != "node" and value != None:
+            request[key] = value
 
-  payload = json.dumps(request)
+    payload = json.dumps(request)
 
-  try:
-    response = POSTData(
-      payload=payload,
-      cm_node=kwargs["node"],
-      cm_api_endpoint="client-management/regtokens",
-      id="token",
-    )          
-    return ast.literal_eval(str(response))
-  except CMApiException as api_e:
-    raise
-  except AnsibleCMException as custom_e:
-    raise
+    try:
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="client-management/regtokens",
+            id="token",
+        )
+        return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise
+
 
 def patch(**kwargs):
-  request = {}
+    request = {}
 
-  for key, value in kwargs.items():
-    if key not in ["node", "id"] and value != None:
-      request[key] = value
+    for key, value in kwargs.items():
+        if key not in ["node", "id"] and value != None:
+            request[key] = value
 
-  payload = json.dumps(request)
+    payload = json.dumps(request)
 
-  try:
-    response = PATCHData(
-      payload=payload,
-      cm_node=kwargs['node'],
-      cm_api_endpoint="client-management/regtokens/" + kwargs['id'],
-    )
-    return ast.literal_eval(str(response))
-  except CMApiException as api_e:
-    raise
-  except AnsibleCMException as custom_e:
-    raise
+    try:
+        response = PATCHData(
+            payload=payload,
+            cm_node=kwargs['node'],
+            cm_api_endpoint="client-management/regtokens/" + kwargs['id'],
+        )
+        return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise

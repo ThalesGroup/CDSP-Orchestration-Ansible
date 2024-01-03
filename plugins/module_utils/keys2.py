@@ -10,21 +10,20 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-import os
-import requests
-import urllib3
 import json
 import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, POSTWithoutData, PATCHData
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
 
+
 def is_json(myjson):
-  try:
-    json.loads(myjson)
-  except ValueError as e:
-    return False
-  return True
+    try:
+        json.loads(myjson)
+    except ValueError as e:
+        return False
+    return True
+
 
 def create(**kwargs):
     result = dict()
@@ -37,18 +36,19 @@ def create(**kwargs):
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
-              payload=payload,
-              cm_node=kwargs["node"],
-              cm_api_endpoint="vault/keys2",
-              id="id",
-          )
-          
-      return ast.literal_eval(str(response))
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="vault/keys2",
+            id="id",
+        )
+
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def patch(**kwargs):
     result = dict()
@@ -61,16 +61,17 @@ def patch(**kwargs):
     payload = json.dumps(request)
 
     try:
-      response = PATCHData(
-              payload=payload,
-              cm_node=kwargs['node'],
-              cm_api_endpoint="vault/keys2/" + kwargs['cm_key_id'],
-          )
-      return ast.literal_eval(str(response))
+        response = PATCHData(
+            payload=payload,
+            cm_node=kwargs['node'],
+            cm_api_endpoint="vault/keys2/" + kwargs['cm_key_id'],
+        )
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def version_create(**kwargs):
     result = dict()
@@ -83,19 +84,21 @@ def version_create(**kwargs):
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
-              payload=payload,
-              cm_node=kwargs['node'],
-              cm_api_endpoint="vault/keys2/" + kwargs['cm_key_id'] + "/versions",
-              id="id",
-          )
-      return ast.literal_eval(str(response))
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs['node'],
+            cm_api_endpoint="vault/keys2/" + kwargs['cm_key_id'] + "/versions",
+            id="id",
+        )
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
 
 # destroy, archive, recover, revoke, reactivate, export, clone
+
+
 def destroy(**kwargs):
     result = dict()
     request = {}
@@ -116,15 +119,16 @@ def destroy(**kwargs):
         url = "vault/keys2/" + kwargs['cm_key_id'] + "/destroy" + queryString
 
     try:
-      response = POSTWithoutData(
-              cm_node=kwargs['node'],
-              cm_api_endpoint=url,
-          )
-      return ast.literal_eval(str(response))
+        response = POSTWithoutData(
+            cm_node=kwargs['node'],
+            cm_api_endpoint=url,
+        )
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def archive(**kwargs):
     result = dict()
@@ -146,15 +150,16 @@ def archive(**kwargs):
         url = "vault/keys2/" + kwargs['cm_key_id'] + "/archive" + queryString
 
     try:
-      response = POSTWithoutData(
-              cm_node=kwargs['node'],
-              cm_api_endpoint=url,
-          )
-      return ast.literal_eval(str(response))
+        response = POSTWithoutData(
+            cm_node=kwargs['node'],
+            cm_api_endpoint=url,
+        )
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def recover(**kwargs):
     result = dict()
@@ -176,15 +181,16 @@ def recover(**kwargs):
         url = "vault/keys2/" + kwargs['cm_key_id'] + "/recover" + queryString
 
     try:
-      response = POSTWithoutData(
-              cm_node=kwargs['node'],
-              cm_api_endpoint=url,
-          )
-      return ast.literal_eval(str(response))
+        response = POSTWithoutData(
+            cm_node=kwargs['node'],
+            cm_api_endpoint=url,
+        )
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def revoke(**kwargs):
     result = dict()
@@ -212,18 +218,19 @@ def revoke(**kwargs):
         url = "vault/keys2/" + kwargs['cm_key_id'] + "/revoke" + queryString
 
     try:
-      response = POSTData(
-              payload=payload,
-              cm_node=kwargs["node"],
-              cm_api_endpoint=url,
-              id="id",
-          )
-          
-      return ast.literal_eval(str(response))
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+            id="id",
+        )
+
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def reactivate(**kwargs):
     result = dict()
@@ -248,21 +255,22 @@ def reactivate(**kwargs):
     if queryString == "?":
         url = "vault/keys2/" + kwargs['cm_key_id'] + "/reactivate"
     else:
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/reactivate" + queryString
+        url = "vault/keys2/" + \
+            kwargs['cm_key_id'] + "/reactivate" + queryString
 
     try:
-      response = POSTData(
-              payload=payload,
-              cm_node=kwargs["node"],
-              cm_api_endpoint=url,
-              id="id",
-          )
-          
-      return ast.literal_eval(str(response))
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+            id="id",
+        )
+
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
 
 
 def export(**kwargs):
@@ -293,17 +301,18 @@ def export(**kwargs):
         url = "vault/keys2/" + kwargs['cm_key_id'] + "/export" + queryString
 
     try:
-      response = POSTData(
-              payload=payload,
-              cm_node=kwargs["node"],
-              cm_api_endpoint=url,
-          )
-          
-      return ast.literal_eval(str(response))
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+        )
+
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def clone(**kwargs):
     result = dict()
@@ -324,12 +333,14 @@ def clone(**kwargs):
             queryString = queryString + "type=" + kwargs['id_type']
         else:
             queryString = queryString + "&type=" + kwargs['id_type']
-    
+
     if kwargs['includeMaterial'] != None:
         if queryString == "?":
-            queryString = queryString + "includeMaterial=" + kwargs['includeMaterial']
+            queryString = queryString + "includeMaterial=" + \
+                kwargs['includeMaterial']
         else:
-            queryString = queryString + "&includeMaterial=" + kwargs['includeMaterial']
+            queryString = queryString + "&includeMaterial=" + \
+                kwargs['includeMaterial']
 
     if queryString == "?":
         url = "vault/keys2/" + kwargs['cm_key_id'] + "/clone"
@@ -337,14 +348,14 @@ def clone(**kwargs):
         url = "vault/keys2/" + kwargs['cm_key_id'] + "/clone" + queryString
 
     try:
-      response = POSTData(
-              payload=payload,
-              cm_node=kwargs["node"],
-              cm_api_endpoint=url,
-          )
-          
-      return ast.literal_eval(str(response))
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+        )
+
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
