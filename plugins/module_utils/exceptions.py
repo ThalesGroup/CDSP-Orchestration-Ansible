@@ -18,7 +18,6 @@ from ansible.module_utils._text import to_native
 
 
 class CMApiException(Exception):
-
     def __str__(self):
         if self.api_error_code and self.message:
             return "{0}: {1}".format(self.api_error_code, self.message)
@@ -39,7 +38,6 @@ class CMApiException(Exception):
 
 
 class AnsibleCMException(Exception):
-
     def __str__(self):
         if self.message:
             return "{0}".format(self.message)

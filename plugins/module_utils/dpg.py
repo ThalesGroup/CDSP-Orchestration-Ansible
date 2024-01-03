@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData, POSTWithoutData, DELETEByNameOrId
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    POSTData,
+    PATCHData,
+    POSTWithoutData,
+    DELETEByNameOrId,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 
 def is_json(myjson):
@@ -63,9 +72,8 @@ def updateAccessPolicy(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="data-protection/access-policies/" +
-            kwargs['policy_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="data-protection/access-policies/" + kwargs["policy_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -87,9 +95,10 @@ def accessPolicyAddUserSet(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="data-protection/access-policies/" +
-            kwargs['policy_id'] + "/user-set",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="data-protection/access-policies/"
+            + kwargs["policy_id"]
+            + "/user-set",
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -111,9 +120,11 @@ def accessPolicyUpdateUserSet(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="data-protection/access-policies/" +
-            kwargs['policy_id'] + "/user-set/" + kwargs['policy_user_set_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="data-protection/access-policies/"
+            + kwargs["policy_id"]
+            + "/user-set/"
+            + kwargs["policy_user_set_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -126,19 +137,19 @@ def accessPolicyDeleteUserSet(**kwargs):
     result = dict(
         changed=False,
     )
-    endpoint = "data-protection/access-policies/" + \
-        kwargs['policy_id'] + "/user-set"
+    endpoint = "data-protection/access-policies/" + kwargs["policy_id"] + "/user-set"
     try:
         response = DELETEByNameOrId(
-            key=kwargs['policy_user_set_id'],
-            cm_node=kwargs['node'],
-            cm_api_endpoint=endpoint
+            key=kwargs["policy_user_set_id"],
+            cm_node=kwargs["node"],
+            cm_api_endpoint=endpoint,
         )
-        result['response'] = response
+        result["response"] = response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 # Save or Update Protection Policy
 
@@ -181,15 +192,16 @@ def updateProtectionPolicy(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="data-protection/protection-policies/" +
-            kwargs['policy_name'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="data-protection/protection-policies/"
+            + kwargs["policy_name"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 # Save or Update UserSet
 
@@ -232,15 +244,15 @@ def updateUserSet(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="data-protection/user-sets/" +
-            kwargs['user_set_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="data-protection/user-sets/" + kwargs["user_set_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 # Save or Update CharSet
 
@@ -283,15 +295,15 @@ def updateCharacterSet(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="data-protection/character-sets/" +
-            kwargs['char_set_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="data-protection/character-sets/" + kwargs["char_set_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 # Save or Update Masking Format
 
@@ -334,15 +346,16 @@ def updateMaskingFormat(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="data-protection/masking-formats/" +
-            kwargs['masking_format_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="data-protection/masking-formats/"
+            + kwargs["masking_format_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 # Save or Update Client Profile
 
@@ -385,15 +398,15 @@ def updateClientProfile(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="data-protection/client-profiles/" +
-            kwargs['profile_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="data-protection/client-profiles/" + kwargs["profile_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 # Save or Update DPG Policy
 
@@ -436,9 +449,8 @@ def updateDPGPolicy(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="data-protection/dpg-policies/" +
-            kwargs['policy_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="data-protection/dpg-policies/" + kwargs["policy_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -460,9 +472,10 @@ def dpgPolicyAddAPIUrl(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="data-protection/dpg-policies/" +
-            kwargs['policy_id'] + "/api-urls",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="data-protection/dpg-policies/"
+            + kwargs["policy_id"]
+            + "/api-urls",
             id="id",
         )
         return ast.literal_eval(str(response))
@@ -485,9 +498,11 @@ def dpgPolicyUpdateAPIUrl(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="data-protection/dpg-policies/" +
-            kwargs['policy_id'] + "/api-urls/" + kwargs['api_url_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="data-protection/dpg-policies/"
+            + kwargs["policy_id"]
+            + "/api-urls/"
+            + kwargs["api_url_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -500,15 +515,12 @@ def dpgPolicyDeleteAPIUrl(**kwargs):
     result = dict(
         changed=False,
     )
-    endpoint = "data-protection/dpg-policies/" + \
-        kwargs['policy_id'] + "/api-urls"
+    endpoint = "data-protection/dpg-policies/" + kwargs["policy_id"] + "/api-urls"
     try:
         response = DELETEByNameOrId(
-            key=kwargs['api_url_id'],
-            cm_node=kwargs['node'],
-            cm_api_endpoint=endpoint
+            key=kwargs["api_url_id"], cm_node=kwargs["node"], cm_api_endpoint=endpoint
         )
-        result['response'] = response
+        result["response"] = response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

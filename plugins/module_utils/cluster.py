@@ -8,13 +8,19 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    POSTData,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 
 def is_json(myjson):
@@ -24,6 +30,7 @@ def is_json(myjson):
         return False
     return True
 
+
 # Utils function to create a new single node cluster
 # Node information is required as an argument to this method
 
@@ -32,7 +39,7 @@ def new(**kwargs):
     result = dict()
     request = {}
 
-    node = kwargs['node']
+    node = kwargs["node"]
     cm = ast.literal_eval(node)
 
     request["localNodeHost"] = cm["server_private_ip"]
@@ -43,10 +50,10 @@ def new(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="cluster/new",
         )
-        return 'Cluster creation initiated successfully!'
+        return "Cluster creation initiated successfully!"
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -54,8 +61,8 @@ def new(**kwargs):
 
 
 def csr(**kwargs):
-    master = kwargs['master']
-    node = kwargs['node']
+    master = kwargs["master"]
+    node = kwargs["node"]
 
     master_cm = ast.literal_eval(master)
     node_cm = ast.literal_eval(node)
@@ -67,9 +74,7 @@ def csr(**kwargs):
 
     try:
         response = POSTData(
-            payload=payload,
-            cm_node=node,
-            cm_api_endpoint="cluster/csr"
+            payload=payload, cm_node=node, cm_api_endpoint="cluster/csr"
         )
         return response["csr"]
     except CMApiException as api_e:
@@ -79,9 +84,9 @@ def csr(**kwargs):
 
 
 def sign(**kwargs):
-    master = kwargs['master']
-    node = kwargs['node']
-    csr = kwargs['csr']
+    master = kwargs["master"]
+    node = kwargs["node"]
+    csr = kwargs["csr"]
 
     master_cm = ast.literal_eval(master)
     node_cm = ast.literal_eval(node)
@@ -95,11 +100,7 @@ def sign(**kwargs):
     payload = json.dumps(request)
 
     try:
-        response = POSTData(
-            payload=payload,
-            cm_node=master,
-            cm_api_endpoint="nodes"
-        )
+        response = POSTData(payload=payload, cm_node=master, cm_api_endpoint="nodes")
         return response
     except CMApiException as api_e:
         raise
@@ -108,11 +109,11 @@ def sign(**kwargs):
 
 
 def join(master, node, cert, caChain, mkek_blob):
-    master = kwargs['master']
-    node = kwargs['node']
-    cert = kwargs['cert']
-    caChain = kwargs['caChain']
-    mkek_blob = kwargs['mkek_blob']
+    master = kwargs["master"]
+    node = kwargs["node"]
+    cert = kwargs["cert"]
+    caChain = kwargs["caChain"]
+    mkek_blob = kwargs["mkek_blob"]
 
     master_cm = ast.literal_eval(master)
     node_cm = ast.literal_eval(node)
@@ -134,9 +135,7 @@ def join(master, node, cert, caChain, mkek_blob):
 
     try:
         response = POSTData(
-            payload=payload,
-            cm_node=node,
-            cm_api_endpoint="cluster/join"
+            payload=payload, cm_node=node, cm_api_endpoint="cluster/join"
         )
         return response
     except CMApiException as api_e:

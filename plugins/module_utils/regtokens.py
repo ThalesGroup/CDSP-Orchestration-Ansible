@@ -8,13 +8,20 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    POSTData,
+    PATCHData,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 
 def create(**kwargs):
@@ -52,8 +59,8 @@ def patch(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="client-management/regtokens/" + kwargs['id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="client-management/regtokens/" + kwargs["id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:

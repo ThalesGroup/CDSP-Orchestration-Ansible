@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData, POSTWithoutData, DeleteWithoutData
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    POSTData,
+    PATCHData,
+    POSTWithoutData,
+    DeleteWithoutData,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 
 def is_json(myjson):
@@ -62,8 +71,8 @@ def patch(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="usermgmt/groups/" + kwargs['old_name'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="usermgmt/groups/" + kwargs["old_name"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -73,11 +82,11 @@ def patch(**kwargs):
 
 
 def addUserToGroup(**kwargs):
-    url = "usermgmt/groups/" + kwargs['name'] + "/users/" + kwargs['object_id']
+    url = "usermgmt/groups/" + kwargs["name"] + "/users/" + kwargs["object_id"]
 
     try:
         response = POSTWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))
@@ -88,12 +97,13 @@ def addUserToGroup(**kwargs):
 
 
 def addClientToGroup(**kwargs):
-    url = "client-management/groups/" + \
-        kwargs['name'] + "/clients/" + kwargs['object_id']
+    url = (
+        "client-management/groups/" + kwargs["name"] + "/clients/" + kwargs["object_id"]
+    )
 
     try:
         response = POSTWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))
@@ -104,11 +114,11 @@ def addClientToGroup(**kwargs):
 
 
 def deleteUserFromGroup(**kwargs):
-    url = "usermgmt/groups/" + kwargs['name'] + "/users/" + kwargs['object_id']
+    url = "usermgmt/groups/" + kwargs["name"] + "/users/" + kwargs["object_id"]
 
     try:
         response = DeleteWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return str(response)
@@ -119,12 +129,13 @@ def deleteUserFromGroup(**kwargs):
 
 
 def deleteClientFromGroup(**kwargs):
-    url = "client-management/groups/" + \
-        kwargs['name'] + "/clients/" + kwargs['object_id']
+    url = (
+        "client-management/groups/" + kwargs["name"] + "/clients/" + kwargs["object_id"]
+    )
 
     try:
         response = DeleteWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return str(response)

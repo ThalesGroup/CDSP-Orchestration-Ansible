@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.regtokens import create, patch
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.regtokens import (
+    create,
+    patch,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cm_regtoken
 short_description: Create or update registration token
@@ -87,9 +96,9 @@ options:
     name_prefix:
         description: Prefix for the client name. For a client registered using this registration token, name_prefix, if specified, client name will be constructed as 'name_prefix{nth client registered using this registation token}', If name_prefix is not specified, CipherTrust Manager server will generate a random name for the client.
         type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Registration Token"
   thalesgroup.ciphertrust.cm_regtoken:
     localNode:
@@ -108,47 +117,47 @@ EXAMPLES = '''
     lifetime: 30d
     max_clients: 100
     name_prefix: "ansible_client"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 _schema_less = dict()
 
 _label = dict(
-   ClientProfile=dict(type='str'),
+    ClientProfile=dict(type="str"),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch'], required=True),
-    id=dict(type='str'),
-    ca_id=dict(type='str'),
-    cert_duration=dict(type='int'),
-    label=dict(type='dict', options=_label),
-    lifetime=dict(type='str'),
-    max_clients=dict(type='int'),
-    name_prefix=dict(type='str'),
+    op_type=dict(type="str", options=["create", "patch"], required=True),
+    id=dict(type="str"),
+    ca_id=dict(type="str"),
+    cert_duration=dict(type="int"),
+    label=dict(type="dict", options=_label),
+    lifetime=dict(type="str"),
+    max_clients=dict(type="int"),
+    name_prefix=dict(type="str"),
 )
+
 
 def validate_parameters(regtoken_module):
     return True
 
+
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
-        required_if=(
-            ['op_type', 'patch', ['id']],
-        ),
+        required_if=(["op_type", "patch", ["id"]],),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         regtoken_module=module,
@@ -158,43 +167,54 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = create(
-          node=module.params.get('localNode'),
-          ca_id=module.params.get('ca_id'),
-          cert_duration=module.params.get('cert_duration'),
-          label=module.params.get('label'),
-          lifetime=module.params.get('lifetime'),
-          max_clients=module.params.get('max_clients'),
-          name_prefix=module.params.get('name_prefix'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = create(
+                node=module.params.get("localNode"),
+                ca_id=module.params.get("ca_id"),
+                cert_duration=module.params.get("cert_duration"),
+                label=module.params.get("label"),
+                lifetime=module.params.get("lifetime"),
+                max_clients=module.params.get("max_clients"),
+                name_prefix=module.params.get("name_prefix"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = patch(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          lifetime=module.params.get('lifetime'),
-          max_clients=module.params.get('max_clients'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = patch(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                lifetime=module.params.get("lifetime"),
+                max_clients=module.params.get("max_clients"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
 
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

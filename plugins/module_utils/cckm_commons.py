@@ -8,66 +8,74 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData, POSTWithoutData
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    POSTData,
+    PATCHData,
+    POSTWithoutData,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 
 def addCCKMCloudAsset(**kwargs):
     request = {}
     for key, value in kwargs.items():
-        if key not in ['node', 'cloud_type', 'asset_type'] and value != None:
+        if key not in ["node", "cloud_type", "asset_type"] and value != None:
             request[key] = value
 
     payload = json.dumps(request)
 
-    endpoint = ''
-    resource_type = kwargs['asset_type']
-    cloud = kwargs['cloud_type']
+    endpoint = ""
+    resource_type = kwargs["asset_type"]
+    cloud = kwargs["cloud_type"]
 
     if cloud == "az":
         if resource_type == "vault":
-            endpoint = 'cckm/azure/add-vaults'
+            endpoint = "cckm/azure/add-vaults"
         elif resource_type == "certificate":
-            endpoint = 'cckm/azure/certificates'
+            endpoint = "cckm/azure/certificates"
         elif resource_type == "key":
-            endpoint = 'cckm/azure/keys'
+            endpoint = "cckm/azure/keys"
         elif resource_type == "secret":
-            endpoint = 'cckm/azure/secrets'
+            endpoint = "cckm/azure/secrets"
         else:
             raise AnsibleCMException(message="invalid asset type")
     elif cloud == "aws":
         if resource_type == "cks":
-            endpoint = 'cckm/aws/custom-key-stores'
+            endpoint = "cckm/aws/custom-key-stores"
         elif resource_type == "virtual-key":
-            endpoint = 'cckm/virtual/keys'
+            endpoint = "cckm/virtual/keys"
         elif resource_type == "hyok-key":
-            endpoint = 'cckm/aws/create-hyok-key'
+            endpoint = "cckm/aws/create-hyok-key"
         elif resource_type == "key":
-            endpoint = 'cckm/aws/keys'
+            endpoint = "cckm/aws/keys"
         elif resource_type == "template":
-            endpoint = 'cckm/aws/templates'
+            endpoint = "cckm/aws/templates"
         elif resource_type == "kms":
-            endpoint = 'cckm/aws/kms'
+            endpoint = "cckm/aws/kms"
         else:
             raise AnsibleCMException(message="invalid asset type")
     elif cloud == "gcp":
         if resource_type == "ekm":
-            endpoint = 'cckm/ekm/endpoints'
+            endpoint = "cckm/ekm/endpoints"
         elif resource_type == "project":
-            endpoint = 'cckm/google/projects'
+            endpoint = "cckm/google/projects"
         elif resource_type == "key":
-            endpoint = 'cckm/google/keys'
+            endpoint = "cckm/google/keys"
         elif resource_type == "keyring":
-            endpoint = 'cckm/google/add-key-rings'
+            endpoint = "cckm/google/add-key-rings"
         elif resource_type == "workspace":
-            endpoint = 'cckm/GoogleWorkspaceCSE/issuers'
+            endpoint = "cckm/GoogleWorkspaceCSE/issuers"
         elif resource_type == "workspace_endpoint":
-            endpoint = 'cckm/GoogleWorkspaceCSE/endpoints'
+            endpoint = "cckm/GoogleWorkspaceCSE/endpoints"
         else:
             raise AnsibleCMException(message="invalid asset type")
     else:
@@ -90,46 +98,46 @@ def addCCKMCloudAsset(**kwargs):
 def editCCKMCloudAsset(**kwargs):
     request = {}
     for key, value in kwargs.items():
-        if key not in ['node', 'id', 'cloud_type', 'asset_type'] and value != None:
+        if key not in ["node", "id", "cloud_type", "asset_type"] and value != None:
             request[key] = value
 
     payload = json.dumps(request)
 
-    endpoint = ''
-    resource_type = kwargs['asset_type']
-    cloud = kwargs['cloud_type']
+    endpoint = ""
+    resource_type = kwargs["asset_type"]
+    cloud = kwargs["cloud_type"]
 
     if cloud == "az":
         if resource_type == "vault":
-            endpoint = "cckm/azure/vaults/" + kwargs['id']
+            endpoint = "cckm/azure/vaults/" + kwargs["id"]
         elif resource_type == "certificate":
-            endpoint = "cckm/azure/certificates/" + kwargs['id']
+            endpoint = "cckm/azure/certificates/" + kwargs["id"]
         elif resource_type == "key":
-            endpoint = "cckm/azure/keys/" + kwargs['id']
+            endpoint = "cckm/azure/keys/" + kwargs["id"]
         elif resource_type == "secret":
-            endpoint = "cckm/azure/secrets/" + kwargs['id']
+            endpoint = "cckm/azure/secrets/" + kwargs["id"]
         else:
             raise AnsibleCMException(message="invalid asset type")
     elif cloud == "aws":
         if resource_type == "cks":
-            endpoint = 'cckm/aws/custom-key-stores/' + kwargs['id']
+            endpoint = "cckm/aws/custom-key-stores/" + kwargs["id"]
         elif resource_type == "virtual-key":
-            endpoint = 'cckm/virtual/keys/' + kwargs['id']
+            endpoint = "cckm/virtual/keys/" + kwargs["id"]
         elif resource_type == "template":
-            endpoint = 'cckm/aws/templates/' + kwargs['id']
+            endpoint = "cckm/aws/templates/" + kwargs["id"]
         elif resource_type == "kms":
-            endpoint = 'cckm/aws/kms/' + kwargs['id']
+            endpoint = "cckm/aws/kms/" + kwargs["id"]
         else:
             raise AnsibleCMException(message="invalid asset type")
     elif cloud == "gcp":
         if resource_type == "ekm":
-            endpoint = 'cckm/ekm/endpoints/' + kwargs['id']
+            endpoint = "cckm/ekm/endpoints/" + kwargs["id"]
         elif resource_type == "key":
-            endpoint = 'cckm/google/keys/' + kwargs['id']
+            endpoint = "cckm/google/keys/" + kwargs["id"]
         elif resource_type == "keyring":
-            endpoint = 'cckm/google/key-rings' + kwargs['id']
+            endpoint = "cckm/google/key-rings" + kwargs["id"]
         elif resource_type == "workspace_endpoint":
-            endpoint = 'cckm/GoogleWorkspaceCSE/endpoints' + kwargs['id']
+            endpoint = "cckm/GoogleWorkspaceCSE/endpoints" + kwargs["id"]
         else:
             raise AnsibleCMException(message="invalid asset type")
     else:
@@ -152,14 +160,14 @@ def createSyncJob(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ['node', 'cloud_type', 'asset_type'] and value != None:
+        if key not in ["node", "cloud_type", "asset_type"] and value != None:
             request[key] = value
 
     payload = json.dumps(request)
 
-    endpoint = ''
-    resource_type = kwargs['asset_type']
-    cloud = kwargs['cloud_type']
+    endpoint = ""
+    resource_type = kwargs["asset_type"]
+    cloud = kwargs["cloud_type"]
 
     if cloud == "az":
         if resource_type == "certificate":
@@ -172,14 +180,14 @@ def createSyncJob(**kwargs):
             raise AnsibleCMException(message="invalid asset type")
     elif cloud == "aws":
         if resource_type == "cks":
-            endpoint = 'cckm/aws/custom-key-stores/synchronization-jobs'
+            endpoint = "cckm/aws/custom-key-stores/synchronization-jobs"
         elif resource_type == "key":
-            endpoint = 'cckm/aws/synchronization-jobs'
+            endpoint = "cckm/aws/synchronization-jobs"
         else:
             raise AnsibleCMException(message="invalid asset type")
     elif cloud == "gcp":
         if resource_type == "key":
-            endpoint = 'cckm/google/synchronization-jobs'
+            endpoint = "cckm/google/synchronization-jobs"
         else:
             raise AnsibleCMException(message="invalid asset type")
     else:
@@ -203,38 +211,42 @@ def cancelSyncJob(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ['node', 'id', 'cloud_type', 'asset_type'] and value != None:
+        if key not in ["node", "id", "cloud_type", "asset_type"] and value != None:
             request[key] = value
 
-    endpoint = ''
-    resource_type = kwargs['asset_type']
-    cloud = kwargs['cloud_type']
+    endpoint = ""
+    resource_type = kwargs["asset_type"]
+    cloud = kwargs["cloud_type"]
 
     if cloud == "az":
         if resource_type == "certificate":
-            endpoint = "cckm/azure/certificates/synchronization-jobs/" + \
-                kwargs['id'] + "/cancel"
+            endpoint = (
+                "cckm/azure/certificates/synchronization-jobs/"
+                + kwargs["id"]
+                + "/cancel"
+            )
         elif resource_type == "key":
-            endpoint = "cckm/azure/synchronization-jobs/" + \
-                kwargs['id'] + "/cancel"
+            endpoint = "cckm/azure/synchronization-jobs/" + kwargs["id"] + "/cancel"
         elif resource_type == "secret":
-            endpoint = "cckm/azure/secrets/synchronization-jobs/" + \
-                kwargs['id'] + "/cancel"
+            endpoint = (
+                "cckm/azure/secrets/synchronization-jobs/" + kwargs["id"] + "/cancel"
+            )
         else:
             raise AnsibleCMException(message="invalid asset type")
     elif cloud == "aws":
         if resource_type == "cks":
-            endpoint = "cckm/aws/custom-key-stores/synchronization-jobs/" + \
-                kwargs['id'] + "/cancel"
+            endpoint = (
+                "cckm/aws/custom-key-stores/synchronization-jobs/"
+                + kwargs["id"]
+                + "/cancel"
+            )
         elif resource_type == "key":
-            endpoint = "cckm/aws/synchronization-jobs/" + \
-                kwargs['id'] + "/cancel"
+            endpoint = "cckm/aws/synchronization-jobs/" + kwargs["id"] + "/cancel"
         else:
             raise AnsibleCMException(message="invalid asset type")
     elif cloud == "gcp":
         if resource_type == "key":
-            endpoint = "cckm/google/synchronization-jobs" + \
-                kwargs['id'] + "/cancel"
+            endpoint = "cckm/google/synchronization-jobs" + kwargs["id"] + "/cancel"
         else:
             raise AnsibleCMException(message="invalid asset type")
     else:

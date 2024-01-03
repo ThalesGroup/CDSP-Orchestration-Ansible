@@ -8,13 +8,23 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData, POSTWithoutData, DeleteWithoutData, PUTData
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    POSTData,
+    PATCHData,
+    POSTWithoutData,
+    DeleteWithoutData,
+    PUTData,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 
 def is_json(myjson):
@@ -62,8 +72,8 @@ def patch(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="configs/interfaces/" + kwargs['interface_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="configs/interfaces/" + kwargs["interface_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -80,14 +90,14 @@ def addCertificateToInterface(**kwargs):
         if key not in ["node", "interface_id"] and value != None:
             request[key] = value
 
-    url = "configs/interfaces/" + kwargs['interface_id'] + "/certificate"
+    url = "configs/interfaces/" + kwargs["interface_id"] + "/certificate"
 
     payload = json.dumps(request)
 
     try:
         response = PUTData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))
@@ -98,11 +108,11 @@ def addCertificateToInterface(**kwargs):
 
 
 def enableInterface(**kwargs):
-    url = "configs/interfaces/" + kwargs['interface_id'] + "/enable"
+    url = "configs/interfaces/" + kwargs["interface_id"] + "/enable"
 
     try:
         response = POSTWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))
@@ -113,11 +123,11 @@ def enableInterface(**kwargs):
 
 
 def disableInterface(**kwargs):
-    url = "configs/interfaces/" + kwargs['interface_id'] + "/disable"
+    url = "configs/interfaces/" + kwargs["interface_id"] + "/disable"
 
     try:
         response = POSTWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))
@@ -128,12 +138,13 @@ def disableInterface(**kwargs):
 
 
 def restoreDefaultTlsCiphers(**kwargs):
-    url = "configs/interfaces/" + \
-        kwargs['interface_id'] + "/restore-default-tls-ciphers"
+    url = (
+        "configs/interfaces/" + kwargs["interface_id"] + "/restore-default-tls-ciphers"
+    )
 
     try:
         response = POSTWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))
@@ -144,7 +155,7 @@ def restoreDefaultTlsCiphers(**kwargs):
 
 
 def createCsr(**kwargs):
-    url = "configs/interfaces/" + kwargs['interface_id'] + "/csr"
+    url = "configs/interfaces/" + kwargs["interface_id"] + "/csr"
 
     result = dict()
     request = {}
@@ -169,12 +180,11 @@ def createCsr(**kwargs):
 
 
 def autogenServerCert(**kwargs):
-    url = "configs/interfaces/" + \
-        kwargs['interface_id'] + "/auto-gen-server-cert"
+    url = "configs/interfaces/" + kwargs["interface_id"] + "/auto-gen-server-cert"
 
     try:
         response = POSTWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))
@@ -185,7 +195,7 @@ def autogenServerCert(**kwargs):
 
 
 def useCertificate(**kwargs):
-    url = "configs/interfaces/" + kwargs['interface_id'] + "/use-certificate"
+    url = "configs/interfaces/" + kwargs["interface_id"] + "/use-certificate"
 
     result = dict()
     request = {}

@@ -8,6 +8,7 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import os
@@ -17,7 +18,10 @@ import json
 import ast
 import re
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 
 def is_json(myjson):
@@ -31,7 +35,7 @@ def is_json(myjson):
 def getJwt(host, username, password, auth_domain_path):
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-    auth_url = 'https://' + host + '/api/v1/auth/tokens'
+    auth_url = "https://" + host + "/api/v1/auth/tokens"
 
     if auth_domain_path != None:
         auth_payload = {
@@ -49,6 +53,7 @@ def getJwt(host, username, password, auth_domain_path):
 
     response = requests.post(auth_url, json=auth_payload, verify=False)
     return response.json()["jwt"]
+
 
 # This will never return the ID
 # There will be a separate call to be made to get the ID
@@ -86,8 +91,8 @@ def getJwt(host, username, password, auth_domain_path):
 def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
     # Create the session object
     node = ast.literal_eval(cm_node)
-    pattern_2xx = re.compile(r'20[0-9]')
-    pattern_4xx = re.compile(r'40[0-9]')
+    pattern_2xx = re.compile(r"20[0-9]")
+    pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
         cm_api_user=node["user"],
         cm_api_pwd=node["password"],
@@ -102,7 +107,8 @@ def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
             cmSessionObject["url"],
             headers=cmSessionObject["headers"],
             json=json.loads(payload),
-            verify=False)
+            verify=False,
+        )
 
         response = _data.json()
 
@@ -110,33 +116,48 @@ def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
             __ret = {
                 "id": response[id],
                 "data": response,
-                "message": "Resource created successfully"
+                "message": "Resource created successfully",
             }
         else:
             if "codeDesc" in json.dumps(response):
-                raise CMApiException(message="Error creating resource < " +
-                                     response["codeDesc"] + " >", api_error_code=_data.status_code)
+                raise CMApiException(
+                    message="Error creating resource < " + response["codeDesc"] + " >",
+                    api_error_code=_data.status_code,
+                )
             else:
                 if id is None:
-                    if pattern_2xx.search(str(response)) or pattern_2xx.search(str(_data.status_code)):
+                    if pattern_2xx.search(str(response)) or pattern_2xx.search(
+                        str(_data.status_code)
+                    ):
                         __ret = {
                             "message": "Resource created successfully",
-                            "description": str(response)
+                            "description": str(response),
                         }
-                    elif pattern_4xx.search(str(response)) or pattern_4xx.search(str(_data.status_code)):
+                    elif pattern_4xx.search(str(response)) or pattern_4xx.search(
+                        str(_data.status_code)
+                    ):
                         raise CMApiException(
-                            message="Error creating resource " + str(response), api_error_code=_data.status_code)
+                            message="Error creating resource " + str(response),
+                            api_error_code=_data.status_code,
+                        )
                     else:
                         raise CMApiException(
-                            message="Error creating resource " + str(response), api_error_code=_data.status_code)
-                elif id is not None and (pattern_2xx.search(str(response)) or pattern_2xx.search(str(_data.status_code))):
+                            message="Error creating resource " + str(response),
+                            api_error_code=_data.status_code,
+                        )
+                elif id is not None and (
+                    pattern_2xx.search(str(response))
+                    or pattern_2xx.search(str(_data.status_code))
+                ):
                     __ret = {
                         "message": "Resource created successfully",
-                        "description": str(response)
+                        "description": str(response),
                     }
                 else:
                     raise CMApiException(
-                        message="Error creating resource " + str(response), api_error_code=_data.status_code)
+                        message="Error creating resource " + str(response),
+                        api_error_code=_data.status_code,
+                    )
 
         return __ret
     except requests.exceptions.HTTPError as errh:
@@ -148,14 +169,15 @@ def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
     except requests.exceptions.RequestException as err:
         raise AnsibleCMException(message="ErrorPath: cm_api >> " + err)
 
+
 # Added to support PUT operation
 
 
 def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = ast.literal_eval(cm_node)
-    pattern_2xx = re.compile(r'20[0-9]')
-    pattern_4xx = re.compile(r'40[0-9]')
+    pattern_2xx = re.compile(r"20[0-9]")
+    pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
         cm_api_user=node["user"],
         cm_api_pwd=node["password"],
@@ -170,12 +192,15 @@ def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
             cmSessionObject["url"],
             headers=cmSessionObject["headers"],
             json=json.loads(payload),
-            verify=False)
+            verify=False,
+        )
 
         if is_json(str(response)):
             if "codeDesc" in response.json:
-                raise CMApiException(message="Error updating resource < " +
-                                     response["codeDesc"] + " >", api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error updating resource < " + response["codeDesc"] + " >",
+                    api_error_code=response.status_code,
+                )
             else:
                 __ret = {
                     "message": "Resource updated successfully",
@@ -184,14 +209,18 @@ def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
             if pattern_2xx.search(str(response)):
                 __ret = {
                     "message": "Resource updated successfully",
-                    "description": str(response)
+                    "description": str(response),
                 }
             elif pattern_4xx.search(str(response)):
-                raise CMApiException(message="Error updating resource " +
-                                     str(response), api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error updating resource " + str(response),
+                    api_error_code=response.status_code,
+                )
             else:
-                raise CMApiException(message="Error updating resource " +
-                                     str(response), api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error updating resource " + str(response),
+                    api_error_code=response.status_code,
+                )
 
         return __ret
     except requests.exceptions.HTTPError as errh:
@@ -207,8 +236,8 @@ def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
 def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = ast.literal_eval(cm_node)
-    pattern_2xx = re.compile(r'20[0-9]')
-    pattern_4xx = re.compile(r'40[0-9]')
+    pattern_2xx = re.compile(r"20[0-9]")
+    pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
         cm_api_user=node["user"],
         cm_api_pwd=node["password"],
@@ -220,14 +249,15 @@ def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
     # execute the post API call to create the resource on CM
     try:
         response = requests.post(
-            cmSessionObject["url"],
-            headers=cmSessionObject["headers"],
-            verify=False)
+            cmSessionObject["url"], headers=cmSessionObject["headers"], verify=False
+        )
 
         if is_json(str(response)):
             if "codeDesc" in response.json:
-                raise CMApiException(message="Error creating resource < " +
-                                     response["codeDesc"] + " >", api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error creating resource < " + response["codeDesc"] + " >",
+                    api_error_code=response.status_code,
+                )
             else:
                 __ret = {
                     "message": "Resource created successfully",
@@ -236,14 +266,18 @@ def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
             if pattern_2xx.search(str(response)):
                 __ret = {
                     "message": "Resource created successfully",
-                    "description": str(response)
+                    "description": str(response),
                 }
             elif pattern_4xx.search(str(response)):
-                raise CMApiException(message="Error creating resource " +
-                                     str(response), api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error creating resource " + str(response),
+                    api_error_code=response.status_code,
+                )
             else:
-                raise CMApiException(message="Error creating resource " +
-                                     str(response), api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error creating resource " + str(response),
+                    api_error_code=response.status_code,
+                )
 
         return __ret
     except requests.exceptions.HTTPError as errh:
@@ -259,8 +293,8 @@ def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
 def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = ast.literal_eval(cm_node)
-    pattern_2xx = re.compile(r'20[0-9]')
-    pattern_4xx = re.compile(r'40[0-9]')
+    pattern_2xx = re.compile(r"20[0-9]")
+    pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
         cm_api_user=node["user"],
         cm_api_pwd=node["password"],
@@ -275,12 +309,15 @@ def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
             cmSessionObject["url"],
             headers=cmSessionObject["headers"],
             json=json.loads(payload),
-            verify=False)
+            verify=False,
+        )
 
         if is_json(str(response)):
             if "codeDesc" in response.json:
-                raise CMApiException(message="Error creating resource < " +
-                                     response["codeDesc"] + " >", api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error creating resource < " + response["codeDesc"] + " >",
+                    api_error_code=response.status_code,
+                )
             else:
                 __ret = {
                     "message": "Resource updated successfully",
@@ -289,14 +326,18 @@ def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
             if pattern_2xx.search(str(response)):
                 __ret = {
                     "message": "Resource updated successfully",
-                    "status_code": str(response)
+                    "status_code": str(response),
                 }
             elif pattern_4xx.search(str(response)):
-                raise CMApiException(message="Error creating resource " +
-                                     str(response), api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error creating resource " + str(response),
+                    api_error_code=response.status_code,
+                )
             else:
-                raise CMApiException(message="Error creating resource " +
-                                     str(response), api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error creating resource " + str(response),
+                    api_error_code=response.status_code,
+                )
 
         return __ret
     except requests.exceptions.HTTPError as errh:
@@ -312,8 +353,8 @@ def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
 def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = ast.literal_eval(cm_node)
-    pattern_2xx = re.compile(r'20[0-9]')
-    pattern_4xx = re.compile(r'40[0-9]')
+    pattern_2xx = re.compile(r"20[0-9]")
+    pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
         cm_api_user=node["user"],
         cm_api_pwd=node["password"],
@@ -325,11 +366,16 @@ def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
     # execute the delete API call to delete the resource on CM
     try:
         response = requests.delete(
-            cmSessionObject["url"] + "/" + key, headers=cmSessionObject["headers"], verify=False)
+            cmSessionObject["url"] + "/" + key,
+            headers=cmSessionObject["headers"],
+            verify=False,
+        )
         if is_json(str(response)):
             if "codeDesc" in response.json:
-                raise CMApiException(message="Error deleting resource < " +
-                                     response["codeDesc"] + " >", api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error deleting resource < " + response["codeDesc"] + " >",
+                    api_error_code=response.status_code,
+                )
             else:
                 __ret = {
                     "message": "Resource deleted successfully",
@@ -338,14 +384,18 @@ def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
             if pattern_2xx.search(str(response)):
                 __ret = {
                     "message": "Resource deleted successfully",
-                    "status_code": str(response)
+                    "status_code": str(response),
                 }
             elif pattern_4xx.search(str(response)):
-                raise CMApiException(message="Error deleting resource " +
-                                     str(response), api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error deleting resource " + str(response),
+                    api_error_code=response.status_code,
+                )
             else:
-                raise CMApiException(message="Error deleting resource " +
-                                     str(response), api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error deleting resource " + str(response),
+                    api_error_code=response.status_code,
+                )
 
         return __ret
     except requests.exceptions.HTTPError as errh:
@@ -361,8 +411,8 @@ def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
 def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = ast.literal_eval(cm_node)
-    pattern_2xx = re.compile(r'20[0-9]')
-    pattern_4xx = re.compile(r'40[0-9]')
+    pattern_2xx = re.compile(r"20[0-9]")
+    pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
         cm_api_user=node["user"],
         cm_api_pwd=node["password"],
@@ -374,23 +424,30 @@ def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
     # execute the delete API call to delete the resource on CM
     try:
         response = requests.delete(
-            cmSessionObject["url"], headers=cmSessionObject["headers"], verify=False)
+            cmSessionObject["url"], headers=cmSessionObject["headers"], verify=False
+        )
 
         if is_json(str(response)):
             if "codeDesc" in response.json():
-                raise CMApiException(message="Error creating resource < " +
-                                     response["codeDesc"] + " >", api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error creating resource < " + response["codeDesc"] + " >",
+                    api_error_code=response.status_code,
+                )
             else:
-                return 'Resource deleted successfully'
+                return "Resource deleted successfully"
         else:
             if pattern_2xx.search(str(response)):
-                return 'Resource deleted successfully'
+                return "Resource deleted successfully"
             elif pattern_4xx.search(str(response)):
-                raise CMApiException(message="Error deleting resource " +
-                                     str(response), api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error deleting resource " + str(response),
+                    api_error_code=response.status_code,
+                )
             else:
-                raise CMApiException(message="Error deleting resource " +
-                                     str(response), api_error_code=response.status_code)
+                raise CMApiException(
+                    message="Error deleting resource " + str(response),
+                    api_error_code=response.status_code,
+                )
 
     except requests.exceptions.HTTPError as errh:
         raise AnsibleCMException(message="HTTPError: cm_api >> " + errh)
@@ -418,23 +475,23 @@ def GETData(cm_node=None, cm_api_endpoint=None):
 
     try:
         _data = requests.get(
-            cmSessionObject["url"],
-            headers=cmSessionObject["headers"],
-            verify=False)
+            cmSessionObject["url"], headers=cmSessionObject["headers"], verify=False
+        )
 
         response = _data.json()
 
         if response["resources"] == None:
-            raise CMApiException(message="Error fetching data " +
-                                 str(response), api_error_code=_data.status_code)
+            raise CMApiException(
+                message="Error fetching data " + str(response),
+                api_error_code=_data.status_code,
+            )
 
         if len(response["resources"]) > 0:
-            __ret = {
-                "id": response["resources"][0][id]
-            }
+            __ret = {"id": response["resources"][0][id]}
         else:
-            raise CMApiException(message="No records found",
-                                 api_error_code=_data.status_code)
+            raise CMApiException(
+                message="No records found", api_error_code=_data.status_code
+            )
 
         return __ret
     except requests.exceptions.HTTPError as errh:
@@ -445,6 +502,7 @@ def GETData(cm_node=None, cm_api_endpoint=None):
         raise AnsibleCMException(message="TimeoutError: cm_api >> " + errt)
     except requests.exceptions.RequestException as err:
         raise AnsibleCMException(message="ErrorPath: cm_api >> " + err)
+
 
 # Below method is outdated...need to be cleaned up later
 
@@ -463,20 +521,25 @@ def GETIdByName(name=None, cm_node=None, cm_api_endpoint=None):
     ret = dict()
     try:
         response = requests.get(
-            cmSessionObject["url"] + "/?skip=0&limit=1&name=" + name, headers=cmSessionObject["headers"], verify=False)
+            cmSessionObject["url"] + "/?skip=0&limit=1&name=" + name,
+            headers=cmSessionObject["headers"],
+            verify=False,
+        )
         if len(response.json()["resources"]) > 0:
             ret["id"] = response.json()["resources"][0]["id"]
-            ret["status"] = '2xx'
+            ret["status"] = "2xx"
             return ret
         else:
-            ret["status"] = '4xx'
-            ret["id"] = ''
+            ret["status"] = "4xx"
+            ret["id"] = ""
             return ret
     except requests.exceptions.RequestException as err:
         raise
 
 
-def GETIdByQueryParam(param=None, value=None, cm_node=None, cm_api_endpoint=None, id=None):
+def GETIdByQueryParam(
+    param=None, value=None, cm_node=None, cm_api_endpoint=None, id=None
+):
     # Create the session object
     node = ast.literal_eval(cm_node)
     cmSessionObject = CMAPIObject(
@@ -488,35 +551,32 @@ def GETIdByQueryParam(param=None, value=None, cm_node=None, cm_api_endpoint=None
         verify=False,
     )
 
-    url = ''
+    url = ""
     if param == None:
         url = cmSessionObject["url"]
     else:
-        url = cmSessionObject["url"] + \
-            "/?skip=0&limit=1&" + param + "=" + value
+        url = cmSessionObject["url"] + "/?skip=0&limit=1&" + param + "=" + value
 
     try:
-        _data = requests.get(
-            url,
-            headers=cmSessionObject["headers"],
-            verify=False)
+        _data = requests.get(url, headers=cmSessionObject["headers"], verify=False)
 
         response = _data.json()
 
         if response["resources"] == None:
-            raise CMApiException(message="Error fetching data " +
-                                 str(response), api_error_code=_data.status_code)
+            raise CMApiException(
+                message="Error fetching data " + str(response),
+                api_error_code=_data.status_code,
+            )
 
         if len(response["resources"]) > 0:
             if id == None:
                 return response
             else:
-                __ret = {
-                    "id": response["resources"][0][id]
-                }
+                __ret = {"id": response["resources"][0][id]}
         else:
             raise CMApiException(
-                message="No matching records found", api_error_code=_data.status_code)
+                message="No matching records found", api_error_code=_data.status_code
+            )
 
         return __ret
     except requests.exceptions.HTTPError as errh:
@@ -529,16 +589,25 @@ def GETIdByQueryParam(param=None, value=None, cm_node=None, cm_api_endpoint=None
         raise AnsibleCMException(message="ErrorPath: cm_api >> " + err)
 
 
-def CMAPIObject(cm_api_user=None, cm_api_pwd=None, cm_url=None, cm_api_endpoint=None, auth_domain_path=None, verify=None):
+def CMAPIObject(
+    cm_api_user=None,
+    cm_api_pwd=None,
+    cm_url=None,
+    cm_api_endpoint=None,
+    auth_domain_path=None,
+    verify=None,
+):
     """Create a Ciphertrust Manager (CM) client"""
     session = dict()
-    session["url"] = 'https://' + cm_url + '/api/v1/' + cm_api_endpoint
+    session["url"] = "https://" + cm_url + "/api/v1/" + cm_api_endpoint
     token = getJwt(
         host=cm_url,
         username=cm_api_user,
         password=cm_api_pwd,
-        auth_domain_path=auth_domain_path
+        auth_domain_path=auth_domain_path,
     )
     session["headers"] = {
-        "Content-Type": "application/json; charset=utf-8", "Authorization": "Bearer " + token, }
+        "Content-Type": "application/json; charset=utf-8",
+        "Authorization": "Bearer " + token,
+    }
     return session

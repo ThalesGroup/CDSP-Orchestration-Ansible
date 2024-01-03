@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, GETData, POSTWithoutData, GETIdByQueryParam
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    POSTData,
+    GETData,
+    POSTWithoutData,
+    GETIdByQueryParam,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 
 def is_json(myjson):
@@ -33,14 +42,14 @@ def getLockdata(node):
             cm_node=node,
             cm_api_endpoint="licensing/lockdata",
         )
-        if response == '4xx':
-            result['error'] = 'Failed to fetch data'
+        if response == "4xx":
+            result["error"] = "Failed to fetch data"
         else:
-            result['data'] = response
+            result["data"] = response
 
         return result
     except:
-        result['failed'] = True
+        result["failed"] = True
 
 
 def getTrialLicenseId(**kwargs):
@@ -96,11 +105,11 @@ def addLicense(**kwargs):
 def activateTrial(**kwargs):
     result = dict()
 
-    url = "licensing/trials/" + kwargs['trialId'] + "/activate"
+    url = "licensing/trials/" + kwargs["trialId"] + "/activate"
 
     try:
         response = POSTWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))
@@ -113,11 +122,11 @@ def activateTrial(**kwargs):
 def deactivateTrial(**kwargs):
     result = dict()
 
-    url = "licensing/trials/" + kwargs['trialId'] + "/deactivate"
+    url = "licensing/trials/" + kwargs["trialId"] + "/deactivate"
 
     try:
         response = POSTWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))

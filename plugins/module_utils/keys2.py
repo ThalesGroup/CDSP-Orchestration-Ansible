@@ -8,13 +8,21 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, POSTWithoutData, PATCHData
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    POSTData,
+    POSTWithoutData,
+    PATCHData,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 
 def is_json(myjson):
@@ -63,8 +71,8 @@ def patch(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="vault/keys2/" + kwargs['cm_key_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="vault/keys2/" + kwargs["cm_key_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -86,8 +94,8 @@ def version_create(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="vault/keys2/" + kwargs['cm_key_id'] + "/versions",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="vault/keys2/" + kwargs["cm_key_id"] + "/versions",
             id="id",
         )
         return ast.literal_eval(str(response))
@@ -95,6 +103,7 @@ def version_create(**kwargs):
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 # destroy, archive, recover, revoke, reactivate, export, clone
 
@@ -104,23 +113,23 @@ def destroy(**kwargs):
     request = {}
     queryString = "?"
 
-    if kwargs['key_version'] != None:
-        queryString = queryString + "version=" + kwargs['key_version']
+    if kwargs["key_version"] != None:
+        queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs['id_type'] != None:
+    if kwargs["id_type"] != None:
         if queryString == "?":
-            queryString = queryString + "type=" + kwargs['id_type']
+            queryString = queryString + "type=" + kwargs["id_type"]
         else:
-            queryString = queryString + "&type=" + kwargs['id_type']
+            queryString = queryString + "&type=" + kwargs["id_type"]
 
     if queryString == "?":
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/destroy"
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/destroy"
     else:
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/destroy" + queryString
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/destroy" + queryString
 
     try:
         response = POSTWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))
@@ -135,23 +144,23 @@ def archive(**kwargs):
     request = {}
     queryString = "?"
 
-    if kwargs['key_version'] != None:
-        queryString = queryString + "version=" + kwargs['key_version']
+    if kwargs["key_version"] != None:
+        queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs['id_type'] != None:
+    if kwargs["id_type"] != None:
         if queryString == "?":
-            queryString = queryString + "type=" + kwargs['id_type']
+            queryString = queryString + "type=" + kwargs["id_type"]
         else:
-            queryString = queryString + "&type=" + kwargs['id_type']
+            queryString = queryString + "&type=" + kwargs["id_type"]
 
     if queryString == "?":
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/archive"
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/archive"
     else:
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/archive" + queryString
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/archive" + queryString
 
     try:
         response = POSTWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))
@@ -166,23 +175,23 @@ def recover(**kwargs):
     request = {}
     queryString = "?"
 
-    if kwargs['key_version'] != None:
-        queryString = queryString + "version=" + kwargs['key_version']
+    if kwargs["key_version"] != None:
+        queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs['id_type'] != None:
+    if kwargs["id_type"] != None:
         if queryString == "?":
-            queryString = queryString + "type=" + kwargs['id_type']
+            queryString = queryString + "type=" + kwargs["id_type"]
         else:
-            queryString = queryString + "&type=" + kwargs['id_type']
+            queryString = queryString + "&type=" + kwargs["id_type"]
 
     if queryString == "?":
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/recover"
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/recover"
     else:
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/recover" + queryString
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/recover" + queryString
 
     try:
         response = POSTWithoutData(
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
         return ast.literal_eval(str(response))
@@ -203,19 +212,19 @@ def revoke(**kwargs):
 
     payload = json.dumps(request)
 
-    if kwargs['key_version'] != None:
-        queryString = queryString + "version=" + kwargs['key_version']
+    if kwargs["key_version"] != None:
+        queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs['id_type'] != None:
+    if kwargs["id_type"] != None:
         if queryString == "?":
-            queryString = queryString + "type=" + kwargs['id_type']
+            queryString = queryString + "type=" + kwargs["id_type"]
         else:
-            queryString = queryString + "&type=" + kwargs['id_type']
+            queryString = queryString + "&type=" + kwargs["id_type"]
 
     if queryString == "?":
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/revoke"
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/revoke"
     else:
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/revoke" + queryString
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/revoke" + queryString
 
     try:
         response = POSTData(
@@ -243,20 +252,19 @@ def reactivate(**kwargs):
 
     payload = json.dumps(request)
 
-    if kwargs['key_version'] != None:
-        queryString = queryString + "version=" + kwargs['key_version']
+    if kwargs["key_version"] != None:
+        queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs['id_type'] != None:
+    if kwargs["id_type"] != None:
         if queryString == "?":
-            queryString = queryString + "type=" + kwargs['id_type']
+            queryString = queryString + "type=" + kwargs["id_type"]
         else:
-            queryString = queryString + "&type=" + kwargs['id_type']
+            queryString = queryString + "&type=" + kwargs["id_type"]
 
     if queryString == "?":
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/reactivate"
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/reactivate"
     else:
-        url = "vault/keys2/" + \
-            kwargs['cm_key_id'] + "/reactivate" + queryString
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/reactivate" + queryString
 
     try:
         response = POSTData(
@@ -286,19 +294,19 @@ def export(**kwargs):
 
     payload = json.dumps(request)
 
-    if kwargs['key_version'] != None:
-        queryString = queryString + "version=" + kwargs['key_version']
+    if kwargs["key_version"] != None:
+        queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs['id_type'] != None:
+    if kwargs["id_type"] != None:
         if queryString == "?":
-            queryString = queryString + "type=" + kwargs['id_type']
+            queryString = queryString + "type=" + kwargs["id_type"]
         else:
-            queryString = queryString + "&type=" + kwargs['id_type']
+            queryString = queryString + "&type=" + kwargs["id_type"]
 
     if queryString == "?":
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/export"
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/export"
     else:
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/export" + queryString
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/export" + queryString
 
     try:
         response = POSTData(
@@ -320,32 +328,34 @@ def clone(**kwargs):
     queryString = "?"
 
     for key, value in kwargs.items():
-        if key not in ["node", "cm_key_id", "key_version", "id_type", "includeMaterial"] and value != None:
+        if (
+            key
+            not in ["node", "cm_key_id", "key_version", "id_type", "includeMaterial"]
+            and value != None
+        ):
             request[key] = value
 
     payload = json.dumps(request)
 
-    if kwargs['key_version'] != None:
-        queryString = queryString + "version=" + kwargs['key_version']
+    if kwargs["key_version"] != None:
+        queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs['id_type'] != None:
+    if kwargs["id_type"] != None:
         if queryString == "?":
-            queryString = queryString + "type=" + kwargs['id_type']
+            queryString = queryString + "type=" + kwargs["id_type"]
         else:
-            queryString = queryString + "&type=" + kwargs['id_type']
+            queryString = queryString + "&type=" + kwargs["id_type"]
 
-    if kwargs['includeMaterial'] != None:
+    if kwargs["includeMaterial"] != None:
         if queryString == "?":
-            queryString = queryString + "includeMaterial=" + \
-                kwargs['includeMaterial']
+            queryString = queryString + "includeMaterial=" + kwargs["includeMaterial"]
         else:
-            queryString = queryString + "&includeMaterial=" + \
-                kwargs['includeMaterial']
+            queryString = queryString + "&includeMaterial=" + kwargs["includeMaterial"]
 
     if queryString == "?":
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/clone"
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/clone"
     else:
-        url = "vault/keys2/" + kwargs['cm_key_id'] + "/clone" + queryString
+        url = "vault/keys2/" + kwargs["cm_key_id"] + "/clone" + queryString
 
     try:
         response = POSTData(

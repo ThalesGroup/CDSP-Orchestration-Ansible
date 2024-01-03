@@ -8,13 +8,20 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    POSTData,
+    PATCHData,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 
 def is_json(myjson):
@@ -26,7 +33,6 @@ def is_json(myjson):
 
 
 def create(**kwargs):
-    result = dict()
     request = {}
 
     for key, value in kwargs.items():
@@ -38,7 +44,7 @@ def create(**kwargs):
     try:
         __resp = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="usermgmt/users",
             id="user_id",
         )
@@ -51,7 +57,6 @@ def create(**kwargs):
 
 
 def patch(**kwargs):
-    result = dict()
     request = {}
 
     for key, value in kwargs.items():
@@ -63,8 +68,8 @@ def patch(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="usermgmt/users/" + kwargs['cm_user_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="usermgmt/users/" + kwargs["cm_user_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -74,7 +79,6 @@ def patch(**kwargs):
 
 
 def changepw(**kwargs):
-    result = dict()
     request = {}
 
     for key, value in kwargs.items():
@@ -86,7 +90,7 @@ def changepw(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="auth/changepw",
         )
         return ast.literal_eval(str(response))
@@ -97,7 +101,6 @@ def changepw(**kwargs):
 
 
 def patch_self(**kwargs):
-    result = dict()
     request = {}
 
     for key, value in kwargs.items():
@@ -109,7 +112,7 @@ def patch_self(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="auth/self/user",
         )
         return ast.literal_eval(str(response))
