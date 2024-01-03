@@ -5,3 +5,10 @@ namespace: K8sNamespace_1
 storage_class: K8sStorageClass_1
 client_profile: DefaultClientProfile
 description: "Created via Ansible"
+
+username: admin
+keyName: AnsibleCTEKey
+keyAlgo: AES
+keySize: 256
+resource_set_name: Ansible_RES_SET
+cte_policy_name: Ansible-CTE-Policy
