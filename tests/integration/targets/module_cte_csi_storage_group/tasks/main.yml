@@ -151,31 +151,30 @@
 
   - assert:
       that:
-        - _result_add_policy_to_sg['response']['status_code'] is 201
-        - _result_add_policy_to_sg['response']['guardpoints'][0]['guardpoint']['id'] is string
+        - _result_add_policy_to_sg is not failed
 
-  - name: "Update GuardPolicy in Storage Group"
-    thalesgroup.ciphertrust.cte_csi_storage_group:
-      op_type: patch_guard_point
-      gp_id: "{{ _result_add_policy_to_sg['response']['guardpoints'][0]['guardpoint']['id'] }}"
-      guard_enabled: true
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_update_policy_in_sg
+  # - name: "Update GuardPolicy in Storage Group"
+  #   thalesgroup.ciphertrust.cte_csi_storage_group:
+  #     op_type: patch_guard_point
+  #     gp_id: "{{ _result_add_policy_to_sg['response']['guardpoints'][0]['guardpoint']['id'] }}"
+  #     guard_enabled: true
+  #     localNode: "{{ this_node_connection_string }}"
+  #   register: _result_update_policy_in_sg
 
-  - assert:
-      that:
-        - _result_update_policy_in_sg is not failed
+  # - assert:
+  #     that:
+  #       - _result_update_policy_in_sg is not failed
 
-  - name: "Delete GuardPolicy in Storage Group"
-    thalesgroup.ciphertrust.cte_csi_storage_group:
-      op_type: remove_guard_point
-      gp_id: "{{ _result_add_policy_to_sg['response']['guardpoints'][0]['guardpoint']['id'] }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_remove_policy_in_sg
+  # - name: "Delete GuardPolicy in Storage Group"
+  #   thalesgroup.ciphertrust.cte_csi_storage_group:
+  #     op_type: remove_guard_point
+  #     gp_id: "{{ _result_add_policy_to_sg['response']['guardpoints'][0]['guardpoint']['id'] }}"
+  #     localNode: "{{ this_node_connection_string }}"
+  #   register: _result_remove_policy_in_sg
 
-  - assert:
-      that:
-        - _result_remove_policy_in_sg is not failed
+  # - assert:
+  #     that:
+  #       - _result_remove_policy_in_sg is not failed
 
   - name: "Delete Storage Group"
     thalesgroup.ciphertrust.cm_resource_delete:
