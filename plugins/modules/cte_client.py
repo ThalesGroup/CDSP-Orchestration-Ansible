@@ -56,7 +56,11 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false     
+          default: false    
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true  
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_guard_point, unenroll, delete, delete_id, auth_binaries, ldt_pause, patch_guard_point, gp_unguard, gp_enable_early_access]
@@ -191,12 +195,13 @@ EXAMPLES = '''
 - name: "Create CTE Client"
   thalesgroup.ciphertrust.cte_client:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     name: "CTE-Client-Ans-001"
     description: "Created via Ansible"
@@ -207,12 +212,13 @@ EXAMPLES = '''
 - name: "Add Guard Point to the CTE Client"
   thalesgroup.ciphertrust.cte_client:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: add_guard_point
     guard_paths:
       - "/opt/path1/"

@@ -83,7 +83,58 @@
       that:
         - _result_add_gp is not failed
         - _result_add_gp.response.message is match("Resource created successfully")
+  
+  - name: "Patch Guard Point in CTE Client"
+    thalesgroup.ciphertrust.cte_client:
+      op_type: patch_guard_point
+      id: "{{ _result_create['response']['id'] }}"
+      gp_id: "{{ _result_add_gp['response']['id'] }}"
+      guard_enabled: true
+    register: _result_update_gp
 
+  - assert:
+      that:
+        - _result_update_gp is not failed
+        - _result_update_gp.response.message is match("Resource updated successfully")
+  
+  - name: "Enable early access on GuardPoint"
+    thalesgroup.ciphertrust.cte_client:
+      op_type: gp_enable_early_access
+      id: "{{ _result_create['response']['id'] }}"
+      gp_id: "{{ _result_add_gp['response']['id'] }}"
+      early_access: true
+    register: _result_update_gp_enable_early_access
+
+  - assert:
+      that:
+        - _result_update_gp_enable_early_access is not failed
+        - _result_update_gp_enable_early_access.response.message is match("Resource updated successfully")
+  
+  - name: "UnGuard the guard point"
+    thalesgroup.ciphertrust.cte_client:
+      op_type: gp_unguard
+      id: "{{ _result_create['response']['id'] }}"
+      guard_point_id_list: 
+        - "{{ _result_add_gp['response']['id'] }}"
+    register: _result_unguard
+
+  - assert:
+      that:
+        - _result_unguard is not failed
+        - _result_unguard.response.message is match("Resource updated successfully")
+
+  - name: "Send LDT Suspend Request to CTE Client"
+    thalesgroup.ciphertrust.cte_client:
+      op_type: ldt_pause
+      id: "{{ _result_create['response']['id'] }}"
+      localNode: "{{ this_node_connection_string }}"
+      paused: true
+    register: _result_ldt_pause
+
+  - assert:
+      that:
+        - _result_ldt_pause is not failed
+  
   - name: "Un-enroll CTE Client"
     thalesgroup.ciphertrust.cte_client:
       op_type: unenroll
