@@ -28,7 +28,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 def addCCKMCloudAsset(**kwargs):
     request = {}
     for key, value in kwargs.items():
-        if key not in ["node", "cloud_type", "asset_type"] and value != None:
+        if key not in ["node", "cloud_type", "asset_type"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -98,7 +98,7 @@ def addCCKMCloudAsset(**kwargs):
 def editCCKMCloudAsset(**kwargs):
     request = {}
     for key, value in kwargs.items():
-        if key not in ["node", "id", "cloud_type", "asset_type"] and value != None:
+        if key not in ["node", "id", "cloud_type", "asset_type"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -160,7 +160,7 @@ def createSyncJob(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "cloud_type", "asset_type"] and value != None:
+        if key not in ["node", "cloud_type", "asset_type"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -211,7 +211,7 @@ def cancelSyncJob(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "cloud_type", "asset_type"] and value != None:
+        if key not in ["node", "id", "cloud_type", "asset_type"] and value is not None:
             request[key] = value
 
     endpoint = ""

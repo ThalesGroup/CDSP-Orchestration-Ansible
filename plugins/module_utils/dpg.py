@@ -39,7 +39,7 @@ def createAccessPolicy(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key != "node" and value != None:
+        if key != "node" and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -64,7 +64,7 @@ def updateAccessPolicy(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id"] and value != None:
+        if key not in ["node", "policy_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -87,7 +87,7 @@ def accessPolicyAddUserSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id"] and value != None:
+        if key not in ["node", "policy_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -112,7 +112,7 @@ def accessPolicyUpdateUserSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id", "policy_user_set_id"] and value != None:
+        if key not in ["node", "policy_id", "policy_user_set_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -159,7 +159,7 @@ def createProtectionPolicy(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key != "node" and value != None:
+        if key != "node" and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -184,7 +184,7 @@ def updateProtectionPolicy(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_name"] and value != None:
+        if key not in ["node", "policy_name"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -211,7 +211,7 @@ def createUserSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key != "node" and value != None:
+        if key != "node" and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -236,7 +236,7 @@ def updateUserSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "user_set_id"] and value != None:
+        if key not in ["node", "user_set_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -262,7 +262,7 @@ def createCharacterSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key != "node" and value != None:
+        if key != "node" and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -287,7 +287,7 @@ def updateCharacterSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "char_set_id"] and value != None:
+        if key not in ["node", "char_set_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -313,7 +313,7 @@ def createMaskingFormat(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key != "node" and value != None:
+        if key != "node" and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -338,7 +338,7 @@ def updateMaskingFormat(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "masking_format_id"] and value != None:
+        if key not in ["node", "masking_format_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -365,7 +365,7 @@ def createClientProfile(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key != "node" and value != None:
+        if key != "node" and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -390,7 +390,7 @@ def updateClientProfile(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "profile_id"] and value != None:
+        if key not in ["node", "profile_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -416,7 +416,7 @@ def createDPGPolicy(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key != "node" and value != None:
+        if key != "node" and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -441,7 +441,7 @@ def updateDPGPolicy(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id"] and value != None:
+        if key not in ["node", "policy_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -464,7 +464,7 @@ def dpgPolicyAddAPIUrl(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id"] and value != None:
+        if key not in ["node", "policy_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -490,7 +490,7 @@ def dpgPolicyUpdateAPIUrl(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id", "api_url_id"] and value != None:
+        if key not in ["node", "policy_id", "api_url_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)

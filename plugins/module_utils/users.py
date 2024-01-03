@@ -36,7 +36,7 @@ def create(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key != "node" and value != None:
+        if key != "node" and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -60,7 +60,7 @@ def patch(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "cm_user_id"] and value != None:
+        if key not in ["node", "cm_user_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -82,7 +82,7 @@ def changepw(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -104,7 +104,7 @@ def patch_self(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)

@@ -25,7 +25,7 @@ def createCTEPolicy(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -48,7 +48,7 @@ def updateCTEPolicy(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id"] and value != None:
+        if key not in ["node", "policy_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -73,7 +73,7 @@ def ctePolicyAddRule(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id", "rule_name"] and value != None:
+        if key not in ["node", "policy_id", "rule_name"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -97,7 +97,7 @@ def ctePolicyPatchRule(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id", "rule_name", "rule_id"] and value != None:
+        if key not in ["node", "policy_id", "rule_name", "rule_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -141,7 +141,7 @@ def createProcessSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -164,7 +164,7 @@ def updateProcessSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -187,7 +187,7 @@ def addProcessToSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -210,7 +210,7 @@ def updateProcessInSetByIndex(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "processIndex"] and value != None:
+        if key not in ["node", "id", "processIndex"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -253,7 +253,7 @@ def createResourceSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -276,7 +276,7 @@ def updateResourceSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -299,7 +299,7 @@ def addResourceToSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -322,7 +322,7 @@ def updateResourceInSetByIndex(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "resourceIndex"] and value != None:
+        if key not in ["node", "id", "resourceIndex"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -365,7 +365,7 @@ def createSignatureSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -388,7 +388,7 @@ def updateSignatureSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -411,7 +411,7 @@ def addSignatureToSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -467,7 +467,7 @@ def sendSignAppRequest(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -491,7 +491,7 @@ def querySignAppRequest(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -515,7 +515,7 @@ def cancelSignAppRequest(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -542,7 +542,7 @@ def createUserSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -565,7 +565,7 @@ def updateUserSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -587,7 +587,7 @@ def addUserToSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -610,7 +610,7 @@ def updateUserInSetByIndex(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "userIndex"] and value != None:
+        if key not in ["node", "id", "userIndex"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -652,7 +652,7 @@ def createCSIStorageGroup(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -675,7 +675,7 @@ def updateCSIStorageGroup(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -697,7 +697,7 @@ def csiGroupAddClient(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -737,7 +737,7 @@ def csiGroupAddGuardPoint(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -761,7 +761,7 @@ def csiGroupUpdateGuardPoint(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "gp_id"] and value != None:
+        if key not in ["node", "gp_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -802,7 +802,7 @@ def createClientGroup(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -825,7 +825,7 @@ def updateClientGroup(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -848,7 +848,7 @@ def clientGroupAddClients(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -872,7 +872,7 @@ def clientGroupAddGuardPoint(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -896,7 +896,7 @@ def clientGroupAuthBinaries(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -935,7 +935,7 @@ def clientGroupLDTPause(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -962,7 +962,7 @@ def createClient(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -985,7 +985,7 @@ def patchClient(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -1009,7 +1009,7 @@ def clientAddGuardPoint(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -1035,7 +1035,7 @@ def unEnrollClient(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -1060,7 +1060,7 @@ def deleteClients(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -1084,7 +1084,7 @@ def deleteClientById(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -1109,7 +1109,7 @@ def updateClientAuthBinaries(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -1134,7 +1134,7 @@ def sendLDTPauseCmd(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -1160,7 +1160,7 @@ def patchGuardPointCTEClient(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "gp_id"] and value != None:
+        if key not in ["node", "id", "gp_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -1185,7 +1185,7 @@ def unGuardPoints(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -1210,7 +1210,7 @@ def updateGPEarlyAccess(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "gp_id"] and value != None:
+        if key not in ["node", "id", "gp_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)

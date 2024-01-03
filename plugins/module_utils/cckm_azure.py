@@ -31,7 +31,7 @@ def performAZVaultOperation(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "vault_op"] and value != None:
+        if key not in ["node", "id", "vault_op"] and value is not None:
             request[key] = value
 
     if kwargs["vault_op"] == "disable-rotation-job":
@@ -93,7 +93,7 @@ def performAZCertificateOperation(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "certificate_op_type"] and value != None:
+        if key not in ["node", "id", "certificate_op_type"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -140,7 +140,7 @@ def importCertToAZ(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -166,7 +166,7 @@ def performAZKeyOperation(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "key_op_type"] and value != None:
+        if key not in ["node", "id", "key_op_type"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -210,7 +210,7 @@ def uploadKeyOnAZ(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -236,7 +236,7 @@ def performAZSecretOperation(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "secret_op_type"] and value != None:
+        if key not in ["node", "id", "secret_op_type"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)

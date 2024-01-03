@@ -83,7 +83,7 @@ def addLicense(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key != "node" and value != None:
+        if key != "node" and value is not None:
             request[key] = value
 
     payload = json.dumps(request)

@@ -30,7 +30,7 @@ def performCKSOperation(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "cks_op"] and value != None:
+        if key not in ["node", "id", "cks_op"] and value is not None:
             request[key] = value
 
     if (
@@ -81,7 +81,7 @@ def performHYOKKeyOperation(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "hyok_op_type"] and value != None:
+        if key not in ["node", "id", "hyok_op_type"] and value is not None:
             request[key] = value
 
     if kwargs["hyok_op_type"] == "block" or kwargs["hyok_op_type"] == "unblock":
@@ -126,7 +126,7 @@ def performKeyOperation(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "key_op_type"] and value != None:
+        if key not in ["node", "id", "key_op_type"] and value is not None:
             request[key] = value
 
     if (
@@ -187,7 +187,7 @@ def uploadKeyToAWS(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -210,7 +210,7 @@ def verifyKeyAlias(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -236,7 +236,7 @@ def updateACLs(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)

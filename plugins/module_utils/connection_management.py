@@ -39,7 +39,7 @@ def createConnection(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "connection_type"] and value != None:
+        if key not in ["node", "connection_type"] and value is not None:
             request[key] = value
 
     if kwargs["connection_type"] == "aws":
@@ -92,7 +92,7 @@ def patchConnection(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "connection_type", "connection_id"] and value != None:
+        if key not in ["node", "connection_type", "connection_id"] and value is not None:
             request[key] = value
 
     if kwargs["connection_type"] == "aws":
@@ -157,7 +157,7 @@ def addHadoopNode(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "connection_id"] and value != None:
+        if key not in ["node", "connection_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -182,7 +182,7 @@ def updateHadoopNode(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "node_id", "connection_id"] and value != None:
+        if key not in ["node", "node_id", "connection_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -207,7 +207,7 @@ def deleteHadoopNode(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "node_id", "connection_id"] and value != None:
+        if key not in ["node", "node_id", "connection_id"] and value is not None:
             request[key] = value
 
     try:
@@ -230,7 +230,7 @@ def addLunaPartition(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "connection_id"] and value != None:
+        if key not in ["node", "connection_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -255,7 +255,7 @@ def deleteLunaPartition(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "partition_id", "connection_id"] and value != None:
+        if key not in ["node", "partition_id", "connection_id"] and value is not None:
             request[key] = value
 
     try:
@@ -281,7 +281,7 @@ def addLunaSTCPartition(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -304,7 +304,7 @@ def addHSMServer(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -327,7 +327,7 @@ def enableSTC(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "connection_id"] and value != None:
+        if key not in ["node", "connection_id"] and value is not None:
             request[key] = value
 
     try:
@@ -348,7 +348,7 @@ def disableSTC(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "connection_id"] and value != None:
+        if key not in ["node", "connection_id"] and value is not None:
             request[key] = value
 
     try:

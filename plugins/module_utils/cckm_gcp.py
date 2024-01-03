@@ -31,7 +31,7 @@ def performGCPEKMOperation(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "ekm_op_type"] and value != None:
+        if key not in ["node", "id", "ekm_op_type"] and value is not None:
             request[key] = value
 
     try:
@@ -53,7 +53,7 @@ def performGCPKeyRingOperation(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "keyring_op_type"] and value != None:
+        if key not in ["node", "id", "keyring_op_type"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -91,7 +91,7 @@ def performKeyOperation(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "key_op_type"] and value != None:
+        if key not in ["node", "id", "key_op_type"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -146,7 +146,7 @@ def performKeyVersionOperation(**kwargs):
     for key, value in kwargs.items():
         if (
             key not in ["node", "id", "key_version_op_type", "version_id"]
-            and value != None
+            and value is not None
         ):
             request[key] = value
 
@@ -171,7 +171,7 @@ def uploadKeyGCP(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -194,7 +194,7 @@ def updateAllKeyVersions(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -217,7 +217,7 @@ def performGCPWorkspaceEndpointOperation(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "endpoint_op_type"] and value != None:
+        if key not in ["node", "id", "endpoint_op_type"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)

@@ -37,7 +37,7 @@ def getJwt(host, username, password, auth_domain_path):
 
     auth_url = "https://" + host + "/api/v1/auth/tokens"
 
-    if auth_domain_path != None:
+    if auth_domain_path is not None:
         auth_payload = {
             "grant_type": "password",
             "username": username,

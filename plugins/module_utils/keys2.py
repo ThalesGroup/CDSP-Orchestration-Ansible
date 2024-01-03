@@ -38,7 +38,7 @@ def create(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key != "node" and value != None:
+        if key != "node" and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -63,7 +63,7 @@ def patch(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "cm_key_id"] and value != None:
+        if key not in ["node", "cm_key_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -86,7 +86,7 @@ def version_create(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "cm_key_id"] and value != None:
+        if key not in ["node", "cm_key_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -113,10 +113,10 @@ def destroy(**kwargs):
     request = {}
     queryString = "?"
 
-    if kwargs["key_version"] != None:
+    if kwargs["key_version"] is not None:
         queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs["id_type"] != None:
+    if kwargs["id_type"] is not None:
         if queryString == "?":
             queryString = queryString + "type=" + kwargs["id_type"]
         else:
@@ -144,10 +144,10 @@ def archive(**kwargs):
     request = {}
     queryString = "?"
 
-    if kwargs["key_version"] != None:
+    if kwargs["key_version"] is not None:
         queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs["id_type"] != None:
+    if kwargs["id_type"] is not None:
         if queryString == "?":
             queryString = queryString + "type=" + kwargs["id_type"]
         else:
@@ -175,10 +175,10 @@ def recover(**kwargs):
     request = {}
     queryString = "?"
 
-    if kwargs["key_version"] != None:
+    if kwargs["key_version"] is not None:
         queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs["id_type"] != None:
+    if kwargs["id_type"] is not None:
         if queryString == "?":
             queryString = queryString + "type=" + kwargs["id_type"]
         else:
@@ -207,15 +207,15 @@ def revoke(**kwargs):
     queryString = "?"
 
     for key, value in kwargs.items():
-        if key not in ["node", "cm_key_id", "key_version", "id_type"] and value != None:
+        if key not in ["node", "cm_key_id", "key_version", "id_type"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
-    if kwargs["key_version"] != None:
+    if kwargs["key_version"] is not None:
         queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs["id_type"] != None:
+    if kwargs["id_type"] is not None:
         if queryString == "?":
             queryString = queryString + "type=" + kwargs["id_type"]
         else:
@@ -247,15 +247,15 @@ def reactivate(**kwargs):
     queryString = "?"
 
     for key, value in kwargs.items():
-        if key not in ["node", "cm_key_id", "key_version", "id_type"] and value != None:
+        if key not in ["node", "cm_key_id", "key_version", "id_type"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
-    if kwargs["key_version"] != None:
+    if kwargs["key_version"] is not None:
         queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs["id_type"] != None:
+    if kwargs["id_type"] is not None:
         if queryString == "?":
             queryString = queryString + "type=" + kwargs["id_type"]
         else:
@@ -287,17 +287,17 @@ def export(**kwargs):
     queryString = "?"
 
     for key, value in kwargs.items():
-        if key not in ["node", "cm_key_id", "key_version", "id_type"] and value != None:
+        if key not in ["node", "cm_key_id", "key_version", "id_type"] and value is not None:
             request[key] = value
         if key == "keyFormat":
             request["format"] = value
 
     payload = json.dumps(request)
 
-    if kwargs["key_version"] != None:
+    if kwargs["key_version"] is not None:
         queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs["id_type"] != None:
+    if kwargs["id_type"] is not None:
         if queryString == "?":
             queryString = queryString + "type=" + kwargs["id_type"]
         else:
@@ -331,22 +331,22 @@ def clone(**kwargs):
         if (
             key
             not in ["node", "cm_key_id", "key_version", "id_type", "includeMaterial"]
-            and value != None
+            and value is not None
         ):
             request[key] = value
 
     payload = json.dumps(request)
 
-    if kwargs["key_version"] != None:
+    if kwargs["key_version"] is not None:
         queryString = queryString + "version=" + kwargs["key_version"]
 
-    if kwargs["id_type"] != None:
+    if kwargs["id_type"] is not None:
         if queryString == "?":
             queryString = queryString + "type=" + kwargs["id_type"]
         else:
             queryString = queryString + "&type=" + kwargs["id_type"]
 
-    if kwargs["includeMaterial"] != None:
+    if kwargs["includeMaterial"] is not None:
         if queryString == "?":
             queryString = queryString + "includeMaterial=" + kwargs["includeMaterial"]
         else:
