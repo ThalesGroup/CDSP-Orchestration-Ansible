@@ -151,7 +151,7 @@
 
   - assert:
       that:
-        - _result_add_policy_to_sg is not failed
+        - _result_add_policy_to_sg['response']['status_code'] is 201
         - _result_add_policy_to_sg['response']['guardpoints'][0]['guardpoint']['id'] is string
 
   - name: "Update GuardPolicy in Storage Group"
