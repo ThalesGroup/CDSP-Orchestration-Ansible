@@ -8,13 +8,21 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import DELETEByNameOrId
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    DELETEByNameOrId,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cm_resource_delete
 short_description: Delete CipherTrust Manager resource using ID
@@ -77,9 +85,9 @@ options:
             - client-profiles
             - masking-formats
         type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 # Delete Resource at CipherTrust Manager
 - name: "Delete key on Ciphertrust Manager"
   thalesgroup.ciphertrust.cm_resource_delete:
@@ -92,48 +100,50 @@ EXAMPLES = '''
         verify: false
     key: "resource_id"
     resource_type: "keys"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 message:
     description: String with response
     returned: changed or success
     type: string
     sample: successfully deleted
-'''
+"""
 
 _arr_resource_type_choices = [
-    'keys', 
-    'protection-policies', 
-    'access-policies', 
-    'user-sets', 
-    'interfaces', 
-    'character-sets', 
-    'users', 
-    'dpg-policies', 
-    'client-profiles', 
-    'masking-formats',
-    'resourceset',
-    'signatureset',
-    'userset',
-    'processset',
-    'cte-policy',
-    'cte-client-group',
-    'csigroup',
-    'cte-client',
-    'azure-key-vault',
-    'azure-secret',
-    'azure-certificate',
-    'azure-key',
+    "keys",
+    "protection-policies",
+    "access-policies",
+    "user-sets",
+    "interfaces",
+    "character-sets",
+    "users",
+    "dpg-policies",
+    "client-profiles",
+    "masking-formats",
+    "resourceset",
+    "signatureset",
+    "userset",
+    "processset",
+    "cte-policy",
+    "cte-client-group",
+    "csigroup",
+    "cte-client",
+    "azure-key-vault",
+    "azure-secret",
+    "azure-certificate",
+    "azure-key",
 ]
 
 argument_spec = dict(
-    key=dict(type='str', required=True),
-    resource_type=dict(type='str', choices=_arr_resource_type_choices, required=True),
+    key=dict(type="str", required=True),
+    resource_type=dict(type="str", choices=_arr_resource_type_choices, required=True),
 )
+
 
 def validate_parameters(user_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
@@ -144,9 +154,10 @@ def setup_module_object():
     )
     return module
 
+
 def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         user_module=module,
@@ -156,68 +167,74 @@ def main():
         changed=False,
     )
 
-    endpoint = ''
-    resource_type=module.params.get('resource_type')
-    #Create the API end point based on the resource_type
+    endpoint = ""
+    resource_type = module.params.get("resource_type")
+    # Create the API end point based on the resource_type
     if resource_type == "keys":
-        endpoint = 'vault/keys2'
+        endpoint = "vault/keys2"
     elif resource_type == "interfaces":
-        endpoint = 'configs/interfaces'
+        endpoint = "configs/interfaces"
     elif resource_type == "users":
-        endpoint = 'usermgmt/users'
+        endpoint = "usermgmt/users"
     elif resource_type == "client-profiles":
-        endpoint = 'data-protection/client-profiles'
+        endpoint = "data-protection/client-profiles"
     elif resource_type == "dpg-policies":
-        endpoint = 'data-protection/dpg-policies'
+        endpoint = "data-protection/dpg-policies"
     elif resource_type == "access-policies":
-        endpoint='data-protection/access-policies'
+        endpoint = "data-protection/access-policies"
     elif resource_type == "user-sets":
-        endpoint='data-protection/user-sets'
+        endpoint = "data-protection/user-sets"
     elif resource_type == "protection-policies":
-        endpoint='data-protection/protection-policies'
+        endpoint = "data-protection/protection-policies"
     elif resource_type == "character-sets":
-        endpoint='data-protection/character-sets'
+        endpoint = "data-protection/character-sets"
     elif resource_type == "masking-formats":
-        endpoint='data-protection/masking-formats'
+        endpoint = "data-protection/masking-formats"
     elif resource_type == "resourceset":
-        endpoint='transparent-encryption/resourcesets'
+        endpoint = "transparent-encryption/resourcesets"
     elif resource_type == "signatureset":
-        endpoint='transparent-encryption/signaturesets'
+        endpoint = "transparent-encryption/signaturesets"
     elif resource_type == "userset":
-        endpoint='transparent-encryption/usersets'
+        endpoint = "transparent-encryption/usersets"
     elif resource_type == "processset":
-        endpoint='transparent-encryption/processsets'
+        endpoint = "transparent-encryption/processsets"
     elif resource_type == "cte-policy":
-        endpoint='transparent-encryption/policies'
+        endpoint = "transparent-encryption/policies"
     elif resource_type == "cte-client-group":
-        endpoint='transparent-encryption/clientgroups'
+        endpoint = "transparent-encryption/clientgroups"
     elif resource_type == "csigroup":
-        endpoint='transparent-encryption/csigroups'
+        endpoint = "transparent-encryption/csigroups"
     elif resource_type == "azure-key-vault":
-        endpoint='cckm/azure/vaults'
+        endpoint = "cckm/azure/vaults"
     elif resource_type == "azure-secret":
-        endpoint='cckm/azure/secrets'
+        endpoint = "cckm/azure/secrets"
     elif resource_type == "azure-certificate":
-        endpoint='cckm/azure/certificates'
+        endpoint = "cckm/azure/certificates"
     elif resource_type == "azure-key":
-        endpoint='cckm/azure/keys'
+        endpoint = "cckm/azure/keys"
     else:
-        module.fail_json(msg='resource_type not supported yet')
+        module.fail_json(msg="resource_type not supported yet")
 
     try:
         response = DELETEByNameOrId(
-            key=module.params.get('key'),
-            cm_node=module.params.get('localNode'),
-            cm_api_endpoint=endpoint
+            key=module.params.get("key"),
+            cm_node=module.params.get("localNode"),
+            cm_api_endpoint=endpoint,
         )
-        result['response'] = response
+        result["response"] = response
     except CMApiException as api_e:
         if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+            module.fail_json(
+                msg="status code: "
+                + str(api_e.api_error_code)
+                + " message: "
+                + api_e.message
+            )
     except AnsibleCMException as custom_e:
         module.fail_json(msg=custom_e.message)
 
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

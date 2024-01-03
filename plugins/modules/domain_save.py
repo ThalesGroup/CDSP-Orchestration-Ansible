@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.domains import create, patch
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.domains import (
+    create,
+    patch,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: domain_save
 short_description: Create or manage domains
@@ -111,9 +120,9 @@ options:
         required: false
         default: none
         type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Domain"
   thalesgroup.ciphertrust.domain_save:
     localNode:
@@ -142,47 +151,49 @@ EXAMPLES = '''
     op_type: patch
     domain_id: "ID_STRING"
     connection_id: "ID_STRING"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 _schema_less = dict()
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch'], required=True),
-    domain_id=dict(type='str'),
-    admins=dict(type='list', element='str'),
-    name=dict(type='str'),
-    allow_user_management=dict(type='bool', required=False, default=False),
-    hsm_connection_id=dict(type='str', required=False),
-    hsm_kek_label=dict(type='str', required=False),
-    meta=dict(type='dict', options=_schema_less, required=False),
-    parent_ca_id=dict(type='str', required=False),
-    connection_id=dict(type='str', required=False),
-    domain_kek_label=dict(type='str', required=False),
+    op_type=dict(type="str", options=["create", "patch"], required=True),
+    domain_id=dict(type="str"),
+    admins=dict(type="list", element="str"),
+    name=dict(type="str"),
+    allow_user_management=dict(type="bool", required=False, default=False),
+    hsm_connection_id=dict(type="str", required=False),
+    hsm_kek_label=dict(type="str", required=False),
+    meta=dict(type="dict", options=_schema_less, required=False),
+    parent_ca_id=dict(type="str", required=False),
+    connection_id=dict(type="str", required=False),
+    domain_kek_label=dict(type="str", required=False),
 )
+
 
 def validate_parameters(domain_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'patch', ['domain_id']],
-            ['op_type', 'create', ['admins']],
-            ['op_type', 'create', ['name']],
+            ["op_type", "patch", ["domain_id"]],
+            ["op_type", "create", ["admins"]],
+            ["op_type", "create", ["name"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         domain_module=module,
@@ -192,44 +203,55 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = create(
-          node=module.params.get('localNode'),
-          admins=module.params.get('admins'),
-          name=module.params.get('name'),
-          allow_user_management=module.params.get('allow_user_management'),
-          hsm_connection_id=module.params.get('hsm_connection_id'),
-          hsm_kek_label=module.params.get('hsm_kek_label'),
-          meta=module.params.get('meta'),
-          parent_ca_id=module.params.get('parent_ca_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = create(
+                node=module.params.get("localNode"),
+                admins=module.params.get("admins"),
+                name=module.params.get("name"),
+                allow_user_management=module.params.get("allow_user_management"),
+                hsm_connection_id=module.params.get("hsm_connection_id"),
+                hsm_kek_label=module.params.get("hsm_kek_label"),
+                meta=module.params.get("meta"),
+                parent_ca_id=module.params.get("parent_ca_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = patch(
-          node=module.params.get('localNode'),
-          domain_id=module.params.get('domain_id'),
-          connection_id=module.params.get('connection_id'),
-          domain_kek_label=module.params.get('domain_kek_label'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = patch(
+                node=module.params.get("localNode"),
+                domain_id=module.params.get("domain_id"),
+                connection_id=module.params.get("connection_id"),
+                domain_kek_label=module.params.get("domain_kek_label"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

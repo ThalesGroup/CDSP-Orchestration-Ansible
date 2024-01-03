@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import createUserSet, updateUserSet
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
+    createUserSet,
+    updateUserSet,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: dpg_user_set_save
 short_description: Create and manage DPG user sets
@@ -82,9 +91,9 @@ options:
       elements: str
       default: []
       required: false
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create User Set"
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode:
@@ -131,39 +140,41 @@ EXAMPLES = '''
         auth_domain_path:
     key: <UserSetID>
     resource_type: "user-sets"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch'], required=True),
-    user_set_id=dict(type='str'),
-    name=dict(type='str'),
-    description=dict(type='str'),
-    users=dict(type='list', element='str'),
+    op_type=dict(type="str", options=["create", "patch"], required=True),
+    user_set_id=dict(type="str"),
+    name=dict(type="str"),
+    description=dict(type="str"),
+    users=dict(type="list", element="str"),
 )
+
 
 def validate_parameters(dpg_user_set_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'patch', ['user_set_id']],
-            ['op_type', 'create', ['name']]
+            ["op_type", "patch", ["user_set_id"]],
+            ["op_type", "create", ["name"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         dpg_user_set_module=module,
@@ -173,41 +184,52 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createUserSet(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          description=module.params.get('description'),
-          users=module.params.get('users'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createUserSet(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                description=module.params.get("description"),
+                users=module.params.get("users"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateUserSet(
-          node=module.params.get('localNode'),
-          user_set_id=module.params.get('user_set_id'),
-          name=module.params.get('name'),
-          description=module.params.get('description'),
-          users=module.params.get('users'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateUserSet(
+                node=module.params.get("localNode"),
+                user_set_id=module.params.get("user_set_id"),
+                name=module.params.get("name"),
+                description=module.params.get("description"),
+                users=module.params.get("users"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

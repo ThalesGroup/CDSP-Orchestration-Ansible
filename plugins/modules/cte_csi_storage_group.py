@@ -8,13 +8,27 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import createCSIStorageGroup, updateCSIStorageGroup, csiGroupAddClient, csiGroupAddGuardPoint, csiGroupRemoveClient, csiGroupUpdateGuardPoint, csiGroupRemoveGuardPoint
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createCSIStorageGroup,
+    updateCSIStorageGroup,
+    csiGroupAddClient,
+    csiGroupAddGuardPoint,
+    csiGroupRemoveClient,
+    csiGroupUpdateGuardPoint,
+    csiGroupRemoveGuardPoint,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_csi_storage_group
 short_description: Manage CTE CSI Storage Group
@@ -107,9 +121,9 @@ options:
     guard_enabled:
       description: Enable or disable the GuardPolicy. Set to true to enable, false to disable.
       type: boolean
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CSI Storage Group"
   thalesgroup.ciphertrust.cte_csi_storage_group:
     localNode:
@@ -174,59 +188,65 @@ EXAMPLES = '''
     policy_list:
       - CSI_Policy_1
       - CSI_Policy_2
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 argument_spec = dict(
-    op_type=dict(type='str', options=[
-      'create',
-      'patch',
-      'add_client',
-      'remove_client',
-      'add_guard_point',
-      'patch_guard_point',
-      'remove_guard_point',
-    ], required=True),
-    id=dict(type='str'),
-    client_id=dict(type='str'),
-    gp_id=dict(type='str'),
-    k8s_namespace=dict(type='str'),
-    k8s_storage_class=dict(type='str'),
-    name=dict(type='str'),
-    client_profile=dict(type='str'),
-    description=dict(type='str'),
-    client_list=dict(type='list', element='str'),
-    policy_list=dict(type='list', element='str'),
-    guard_enabled=dict(type='bool'),
+    op_type=dict(
+        type="str",
+        options=[
+            "create",
+            "patch",
+            "add_client",
+            "remove_client",
+            "add_guard_point",
+            "patch_guard_point",
+            "remove_guard_point",
+        ],
+        required=True,
+    ),
+    id=dict(type="str"),
+    client_id=dict(type="str"),
+    gp_id=dict(type="str"),
+    k8s_namespace=dict(type="str"),
+    k8s_storage_class=dict(type="str"),
+    name=dict(type="str"),
+    client_profile=dict(type="str"),
+    description=dict(type="str"),
+    client_list=dict(type="list", element="str"),
+    policy_list=dict(type="list", element="str"),
+    guard_enabled=dict(type="bool"),
 )
+
 
 def validate_parameters(cte_csi_sg_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'create', ['k8s_namespace', 'k8s_storage_class', 'name']],
-            ['op_type', 'patch', ['id']],
-            ['op_type', 'add_client', ['id', 'client_list']],
-            ['op_type', 'remove_client', ['id', 'client_id']],
-            ['op_type', 'add_guard_point', ['id', 'policy_list']],
-            ['op_type', 'patch_guard_point', ['id', 'gp_id']],
-            ['op_type', 'remove_guard_point', ['id', 'gp_id']],
+            ["op_type", "create", ["k8s_namespace", "k8s_storage_class", "name"]],
+            ["op_type", "patch", ["id"]],
+            ["op_type", "add_client", ["id", "client_list"]],
+            ["op_type", "remove_client", ["id", "client_id"]],
+            ["op_type", "add_guard_point", ["id", "policy_list"]],
+            ["op_type", "patch_guard_point", ["id", "gp_id"]],
+            ["op_type", "remove_guard_point", ["id", "gp_id"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         cte_csi_sg_module=module,
@@ -236,111 +256,147 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createCSIStorageGroup(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          description=module.params.get('description'),
-          k8s_namespace=module.params.get('k8s_namespace'),
-          k8s_storage_class=module.params.get('k8s_storage_class'),
-          client_profile=module.params.get('client_profile'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createCSIStorageGroup(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                description=module.params.get("description"),
+                k8s_namespace=module.params.get("k8s_namespace"),
+                k8s_storage_class=module.params.get("k8s_storage_class"),
+                client_profile=module.params.get("client_profile"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateCSIStorageGroup(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          description=module.params.get('description'),
-          client_profile=module.params.get('client_profile'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateCSIStorageGroup(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                description=module.params.get("description"),
+                client_profile=module.params.get("client_profile"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add_client':
-      try:
-        response = csiGroupAddClient(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          client_list=module.params.get('client_list'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add_client":
+        try:
+            response = csiGroupAddClient(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                client_list=module.params.get("client_list"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'remove_client':
-      try:
-        response = csiGroupRemoveClient(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          client_id=module.params.get('client_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "remove_client":
+        try:
+            response = csiGroupRemoveClient(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                client_id=module.params.get("client_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add_guard_point':
-      try:
-        response = csiGroupAddGuardPoint(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          policy_list=module.params.get('policy_list'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add_guard_point":
+        try:
+            response = csiGroupAddGuardPoint(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                policy_list=module.params.get("policy_list"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch_guard_point':
-      try:
-        response = csiGroupUpdateGuardPoint(
-          node=module.params.get('localNode'),
-          gp_id=module.params.get('gp_id'),
-          guard_enabled=module.params.get('guard_enabled'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch_guard_point":
+        try:
+            response = csiGroupUpdateGuardPoint(
+                node=module.params.get("localNode"),
+                gp_id=module.params.get("gp_id"),
+                guard_enabled=module.params.get("guard_enabled"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'remove_guard_point':
-      try:
-        response = csiGroupRemoveGuardPoint(
-          node=module.params.get('localNode'),
-          gp_id=module.params.get('gp_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "remove_guard_point":
+        try:
+            response = csiGroupRemoveGuardPoint(
+                node=module.params.get("localNode"),
+                gp_id=module.params.get("gp_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

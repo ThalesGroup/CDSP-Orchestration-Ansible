@@ -8,13 +8,27 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 import destroy, archive, recover, revoke, reactivate, export, clone
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 import (
+    destroy,
+    archive,
+    recover,
+    revoke,
+    reactivate,
+    export,
+    clone,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: vault_keys2_op
 short_description: Perform operations on keys
@@ -407,9 +421,9 @@ options:
         required: false
         default: null
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Key"
   thalesgroup.ciphertrust.vault_keys2_create:
     localNode:
@@ -424,245 +438,381 @@ EXAMPLES = '''
     algorithm: aes
     size: 256
     usageMask: 3145740
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
-_wrap_HKDF=dict(
-    hashAlgorithm=dict(type='str', choices=['hmac-sha1', 'hmac-sha224', 'hmac-sha256', 'hmac-sha384', 'hmac-sha512'], required=False),
-    info=dict(type='str', required=False),
-    okmLen=dict(type='int', required=False),
-    salt=dict(type='str', required=False),
+_wrap_HKDF = dict(
+    hashAlgorithm=dict(
+        type="str",
+        choices=[
+            "hmac-sha1",
+            "hmac-sha224",
+            "hmac-sha256",
+            "hmac-sha384",
+            "hmac-sha512",
+        ],
+        required=False,
+    ),
+    info=dict(type="str", required=False),
+    okmLen=dict(type="int", required=False),
+    salt=dict(type="str", required=False),
 )
-_wrap_JWE=dict(
-    contentEncryptionAlgorithm=dict(type='str', choices=['AES_128_CBC_HMAC_SHA_256', 'AES_192_CBC_HMAC_SHA_384', 'AES_256_CBC_HMAC_SHA_512', 'AES_128_GCM', 'AES_192_GCM', 'AES_256_GCM'], default='AES_256_GCM', required=False),
-    jwtIdentifier=dict(type='str', required=False),
-    keyEncryptionAlgorithm=dict(type='str', choices=['RSA1_5', 'RSA_OAEP_SHA1', 'RSA_OAEP_SHA256', 'ECDH_ES', 'ECDH_ES_AES_128_KEY_WRAP', 'ECDH_ES_AES_192_KEY_WRAP', 'ECDH_ES_AES_256_KEY_WRAP'], default='RSA_OAEP_SHA1', required=False),
-    keyIdentifier=dict(type='str', required=False),
+_wrap_JWE = dict(
+    contentEncryptionAlgorithm=dict(
+        type="str",
+        choices=[
+            "AES_128_CBC_HMAC_SHA_256",
+            "AES_192_CBC_HMAC_SHA_384",
+            "AES_256_CBC_HMAC_SHA_512",
+            "AES_128_GCM",
+            "AES_192_GCM",
+            "AES_256_GCM",
+        ],
+        default="AES_256_GCM",
+        required=False,
+    ),
+    jwtIdentifier=dict(type="str", required=False),
+    keyEncryptionAlgorithm=dict(
+        type="str",
+        choices=[
+            "RSA1_5",
+            "RSA_OAEP_SHA1",
+            "RSA_OAEP_SHA256",
+            "ECDH_ES",
+            "ECDH_ES_AES_128_KEY_WRAP",
+            "ECDH_ES_AES_192_KEY_WRAP",
+            "ECDH_ES_AES_256_KEY_WRAP",
+        ],
+        default="RSA_OAEP_SHA1",
+        required=False,
+    ),
+    keyIdentifier=dict(type="str", required=False),
 )
-_wrap_PBE=dict(
-    dklen=dict(type='int', required=False),
-    hashAlgorithm=dict(type='str', choices=['hmac-sha1', 'hmac-sha224', 'hmac-sha256', 'hmac-sha384', 'hmac-sha512', 'hmac-sha512/224', 'hmac-sha512/256', 'hmac-sha3-224', 'hmac-sha3-256', 'hmac-sha3-384', 'hmac-sha3-512'], required=False),
-    iteration=dict(type='int', required=False),
-    password=dict(type='str', required=False),
-    passwordIdentifier=dict(type='str', required=False),
-    passwordIdentifierType=dict(type='str', choices=['name', 'id', 'slug'], required=False),
-    purpose=dict(type='str', required=False),
-    salt=dict(type='str', required=False),
+_wrap_PBE = dict(
+    dklen=dict(type="int", required=False),
+    hashAlgorithm=dict(
+        type="str",
+        choices=[
+            "hmac-sha1",
+            "hmac-sha224",
+            "hmac-sha256",
+            "hmac-sha384",
+            "hmac-sha512",
+            "hmac-sha512/224",
+            "hmac-sha512/256",
+            "hmac-sha3-224",
+            "hmac-sha3-256",
+            "hmac-sha3-384",
+            "hmac-sha3-512",
+        ],
+        required=False,
+    ),
+    iteration=dict(type="int", required=False),
+    password=dict(type="str", required=False),
+    passwordIdentifier=dict(type="str", required=False),
+    passwordIdentifierType=dict(
+        type="str", choices=["name", "id", "slug"], required=False
+    ),
+    purpose=dict(type="str", required=False),
+    salt=dict(type="str", required=False),
 )
-_wrap_RSAAES=dict(
-    aesKeySize=dict(type='int', choices=[128, 192, 256], default=256, required=False),
-    padding=dict(type='str', choices=['oaep', 'oaep256', 'oaep384', 'oaep512'], default='oaep256', required=False),
+_wrap_RSAAES = dict(
+    aesKeySize=dict(type="int", choices=[128, 192, 256], default=256, required=False),
+    padding=dict(
+        type="str",
+        choices=["oaep", "oaep256", "oaep384", "oaep512"],
+        default="oaep256",
+        required=False,
+    ),
 )
 _schema_less = dict()
 
 argument_spec = dict(
-    key_version=dict(type='int', required=False),
-    id_type=dict(type='str', options=['name', 'id', 'uri', 'alias'], required=False),
-    includeMaterial=dict(type='bool', default=False, required=False),
-    op_type=dict(type='str', options=['destroy', 'archive', 'recover', 'revoke', 'reactivate', 'export', 'clone'], required=True),
-    cm_key_id=dict(type='str', required=True),
-    reason=dict(type='str', choices=['Unspecified', 'KeyCompromise', 'CACompromise', 'AffiliationChanged', 'Superseded', 'CessationOfOperation', 'PrivilegeWithdrawn', 'DeactivatedToActive', 'ActiveProtectStopToActive', 'DeactivatedToActiveProtectStop']),
-    compromiseOccurrenceDate=dict(type='str', required=False),
-    message=dict(type='str', required=False),
-    combineXts=dict(type='bool', required=False, default=False),
-    encoding=dict(type='str', required=False),
-    keyFormat=dict(type='str', choices=['pkcs1', 'pkcs8', 'pkcs12', 'jwe'], required=False),
-    macSignKeyIdentifier=dict(type='str', required=False),
-    macSignKeyIdentifierType=dict(type='str', choices=['name', 'id', 'alias'], required=False),
-    padded=dict(type='bool', required=False, default=False),
-    password=dict(type='str', required=False),
-    pemWrap=dict(type='bool', required=False, default=False),
-    secretDataEncoding=dict(type='str', required=False),
-    secretDataLink=dict(type='str', required=False),
-    signingAlgo=dict(type='str', choice=['RSA-PSS', 'RSA'], required=False),
-    wrapHKDF=dict(type='dict', options=_wrap_HKDF, required=False),
-    wrapJWE=dict(type='dict', options=_wrap_JWE, required=False),
-    wrapKeyIDType=dict(type='str', choices=['name', 'id', 'alias'], required=False),
-    wrapKeyName=dict(type='str', required=False),
-    wrapPBE=dict(type='dict', options=_wrap_PBE, required=False),
-    wrapPublicKey=dict(type='str', required=False),
-    wrapPublicKeyPadding=dict(type='str', choices=['pkcs1', 'oaep', 'oaep256', 'oaep384', 'oaep512'], required=False),
-    wrapRSAAES=dict(type='dict', options=_wrap_RSAAES, required=False),
-    wrappingEncryptionAlgo=dict(type='str', choices=['AES/AESKEYWRAP', 'AES/AESKEYWRAPPADDING', 'RSA/RSAAESKEYWRAPPADDING'], required=False),
-    wrappingHashAlgo=dict(type='str', required=False),
-    wrappingMethod=dict(type='str', choices=['encrypt', 'mac/sign', 'pbe'], required=False),
-    newKeyName=dict(type='str', required=False),
-    meta=dict(type='dict', options=_schema_less, required=False),
-    idSize=dict(type='int', required=False),
+    key_version=dict(type="int", required=False),
+    id_type=dict(type="str", options=["name", "id", "uri", "alias"], required=False),
+    includeMaterial=dict(type="bool", default=False, required=False),
+    op_type=dict(
+        type="str",
+        options=[
+            "destroy",
+            "archive",
+            "recover",
+            "revoke",
+            "reactivate",
+            "export",
+            "clone",
+        ],
+        required=True,
+    ),
+    cm_key_id=dict(type="str", required=True),
+    reason=dict(
+        type="str",
+        choices=[
+            "Unspecified",
+            "KeyCompromise",
+            "CACompromise",
+            "AffiliationChanged",
+            "Superseded",
+            "CessationOfOperation",
+            "PrivilegeWithdrawn",
+            "DeactivatedToActive",
+            "ActiveProtectStopToActive",
+            "DeactivatedToActiveProtectStop",
+        ],
+    ),
+    compromiseOccurrenceDate=dict(type="str", required=False),
+    message=dict(type="str", required=False),
+    combineXts=dict(type="bool", required=False, default=False),
+    encoding=dict(type="str", required=False),
+    keyFormat=dict(
+        type="str", choices=["pkcs1", "pkcs8", "pkcs12", "jwe"], required=False
+    ),
+    macSignKeyIdentifier=dict(type="str", required=False),
+    macSignKeyIdentifierType=dict(
+        type="str", choices=["name", "id", "alias"], required=False
+    ),
+    padded=dict(type="bool", required=False, default=False),
+    password=dict(type="str", required=False),
+    pemWrap=dict(type="bool", required=False, default=False),
+    secretDataEncoding=dict(type="str", required=False),
+    secretDataLink=dict(type="str", required=False),
+    signingAlgo=dict(type="str", choice=["RSA-PSS", "RSA"], required=False),
+    wrapHKDF=dict(type="dict", options=_wrap_HKDF, required=False),
+    wrapJWE=dict(type="dict", options=_wrap_JWE, required=False),
+    wrapKeyIDType=dict(type="str", choices=["name", "id", "alias"], required=False),
+    wrapKeyName=dict(type="str", required=False),
+    wrapPBE=dict(type="dict", options=_wrap_PBE, required=False),
+    wrapPublicKey=dict(type="str", required=False),
+    wrapPublicKeyPadding=dict(
+        type="str",
+        choices=["pkcs1", "oaep", "oaep256", "oaep384", "oaep512"],
+        required=False,
+    ),
+    wrapRSAAES=dict(type="dict", options=_wrap_RSAAES, required=False),
+    wrappingEncryptionAlgo=dict(
+        type="str",
+        choices=["AES/AESKEYWRAP", "AES/AESKEYWRAPPADDING", "RSA/RSAAESKEYWRAPPADDING"],
+        required=False,
+    ),
+    wrappingHashAlgo=dict(type="str", required=False),
+    wrappingMethod=dict(
+        type="str", choices=["encrypt", "mac/sign", "pbe"], required=False
+    ),
+    newKeyName=dict(type="str", required=False),
+    meta=dict(type="dict", options=_schema_less, required=False),
+    idSize=dict(type="int", required=False),
 )
+
 
 def validate_parameters(user_module):
     return True
 
+
 def setup_module_object():
     module = ThalesCipherTrustModule(
-      argument_spec=argument_spec,
-      required_if=(
-        ['op_type', 'revoke', ['reason']],
-        ['op_type', 'reactivate', ['reason']],
-      ),
-      mutually_exclusive=[],
-      supports_check_mode=True,
+        argument_spec=argument_spec,
+        required_if=(
+            ["op_type", "revoke", ["reason"]],
+            ["op_type", "reactivate", ["reason"]],
+        ),
+        mutually_exclusive=[],
+        supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
-      user_module=module,
+        user_module=module,
     )
 
     result = dict(
-      changed=False,
+        changed=False,
     )
 
-    if module.params.get('op_type') == 'destroy':
-      try:
-        response = destroy(
-            node=module.params.get('localNode'),
-            cm_key_id=module.params.get('cm_key_id'),
-            key_version=module.params.get('key_version'),
-            id_type=module.params.get('id_type'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "destroy":
+        try:
+            response = destroy(
+                node=module.params.get("localNode"),
+                cm_key_id=module.params.get("cm_key_id"),
+                key_version=module.params.get("key_version"),
+                id_type=module.params.get("id_type"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'archive':
-      try:
-        response = archive(
-            node=module.params.get('localNode'),
-            cm_key_id=module.params.get('cm_key_id'),
-            key_version=module.params.get('key_version'),
-            id_type=module.params.get('id_type'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
-        
-    elif module.params.get('op_type') == 'recover':
-      try:
-        response = recover(
-            node=module.params.get('localNode'),
-            cm_key_id=module.params.get('cm_key_id'),
-            key_version=module.params.get('key_version'),
-            id_type=module.params.get('id_type'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
-        
-    elif module.params.get('op_type') == 'revoke':
-      try:
-        response = revoke(
-            node=module.params.get('localNode'),
-            cm_key_id=module.params.get('cm_key_id'),
-            key_version=module.params.get('key_version'),
-            id_type=module.params.get('id_type'),
-            reason=module.params.get('reason'),
-            compromiseOccurrenceDate=module.params.get('compromiseOccurrenceDate'),
-            message=module.params.get('message'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
-        
-    elif module.params.get('op_type') == 'reactivate':
-      try:
-        response = reactivate(
-            node=module.params.get('localNode'),
-            cm_key_id=module.params.get('cm_key_id'),
-            key_version=module.params.get('key_version'),
-            id_type=module.params.get('id_type'),
-            reason=module.params.get('reason'),
-            message=module.params.get('message'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
-        
-    elif module.params.get('op_type') == 'export':
-      try:
-        response = export(
-            node=module.params.get('localNode'),
-            cm_key_id=module.params.get('cm_key_id'),
-            key_version=module.params.get('key_version'),
-            id_type=module.params.get('id_type'),
-            combineXts=module.params.get('combineXts'),
-            encoding=module.params.get('encoding'),
-            keyFormat=module.params.get('keyFormat'),
-            macSignKeyIdentifier=module.params.get('macSignKeyIdentifier'),
-            macSignKeyIdentifierType=module.params.get('macSignKeyIdentifierType'),
-            padded=module.params.get('padded'),
-            password=module.params.get('password'),
-            pemWrap=module.params.get('pemWrap'),
-            secretDataEncoding=module.params.get('secretDataEncoding'),
-            secretDataLink=module.params.get('secretDataLink'),
-            signingAlgo=module.params.get('signingAlgo'),
-            wrapHKDF=module.params.get('wrapHKDF'),
-            wrapJWE=module.params.get('wrapJWE'),
-            wrapKeyIDType=module.params.get('wrapKeyIDType'),
-            wrapKeyName=module.params.get('wrapKeyName'),
-            wrapPBE=module.params.get('wrapPBE'),
-            wrapPublicKey=module.params.get('wrapPublicKey'),
-            wrapPublicKeyPadding=module.params.get('wrapPublicKeyPadding'),
-            wrapRSAAES=module.params.get('wrapRSAAES'),
-            wrapSymmetricKeyName=module.params.get('wrapSymmetricKeyName'),
-            wrappingEncryptionAlgo=module.params.get('wrappingEncryptionAlgo'),
-            wrappingHashAlgo=module.params.get('wrappingHashAlgo'),
-            wrappingMethod=module.params.get('wrappingMethod'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
-        
-    elif module.params.get('op_type') == 'clone':
-      try:
-        response = clone(
-            node=module.params.get('localNode'),
-            cm_key_id=module.params.get('cm_key_id'),
-            key_version=module.params.get('key_version'),
-            id_type=module.params.get('id_type'),
-            includeMaterial=module.params.get('includeMaterial'),
-            idSize=module.params.get('idSize'),
-            meta=module.params.get('meta'),
-            newKeyName=module.params.get('newKeyName'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
-        
+    elif module.params.get("op_type") == "archive":
+        try:
+            response = archive(
+                node=module.params.get("localNode"),
+                cm_key_id=module.params.get("cm_key_id"),
+                key_version=module.params.get("key_version"),
+                id_type=module.params.get("id_type"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
+
+    elif module.params.get("op_type") == "recover":
+        try:
+            response = recover(
+                node=module.params.get("localNode"),
+                cm_key_id=module.params.get("cm_key_id"),
+                key_version=module.params.get("key_version"),
+                id_type=module.params.get("id_type"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
+
+    elif module.params.get("op_type") == "revoke":
+        try:
+            response = revoke(
+                node=module.params.get("localNode"),
+                cm_key_id=module.params.get("cm_key_id"),
+                key_version=module.params.get("key_version"),
+                id_type=module.params.get("id_type"),
+                reason=module.params.get("reason"),
+                compromiseOccurrenceDate=module.params.get("compromiseOccurrenceDate"),
+                message=module.params.get("message"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
+
+    elif module.params.get("op_type") == "reactivate":
+        try:
+            response = reactivate(
+                node=module.params.get("localNode"),
+                cm_key_id=module.params.get("cm_key_id"),
+                key_version=module.params.get("key_version"),
+                id_type=module.params.get("id_type"),
+                reason=module.params.get("reason"),
+                message=module.params.get("message"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
+
+    elif module.params.get("op_type") == "export":
+        try:
+            response = export(
+                node=module.params.get("localNode"),
+                cm_key_id=module.params.get("cm_key_id"),
+                key_version=module.params.get("key_version"),
+                id_type=module.params.get("id_type"),
+                combineXts=module.params.get("combineXts"),
+                encoding=module.params.get("encoding"),
+                keyFormat=module.params.get("keyFormat"),
+                macSignKeyIdentifier=module.params.get("macSignKeyIdentifier"),
+                macSignKeyIdentifierType=module.params.get("macSignKeyIdentifierType"),
+                padded=module.params.get("padded"),
+                password=module.params.get("password"),
+                pemWrap=module.params.get("pemWrap"),
+                secretDataEncoding=module.params.get("secretDataEncoding"),
+                secretDataLink=module.params.get("secretDataLink"),
+                signingAlgo=module.params.get("signingAlgo"),
+                wrapHKDF=module.params.get("wrapHKDF"),
+                wrapJWE=module.params.get("wrapJWE"),
+                wrapKeyIDType=module.params.get("wrapKeyIDType"),
+                wrapKeyName=module.params.get("wrapKeyName"),
+                wrapPBE=module.params.get("wrapPBE"),
+                wrapPublicKey=module.params.get("wrapPublicKey"),
+                wrapPublicKeyPadding=module.params.get("wrapPublicKeyPadding"),
+                wrapRSAAES=module.params.get("wrapRSAAES"),
+                wrapSymmetricKeyName=module.params.get("wrapSymmetricKeyName"),
+                wrappingEncryptionAlgo=module.params.get("wrappingEncryptionAlgo"),
+                wrappingHashAlgo=module.params.get("wrappingHashAlgo"),
+                wrappingMethod=module.params.get("wrappingMethod"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
+
+    elif module.params.get("op_type") == "clone":
+        try:
+            response = clone(
+                node=module.params.get("localNode"),
+                cm_key_id=module.params.get("cm_key_id"),
+                key_version=module.params.get("key_version"),
+                id_type=module.params.get("id_type"),
+                includeMaterial=module.params.get("includeMaterial"),
+                idSize=module.params.get("idSize"),
+                meta=module.params.get("meta"),
+                newKeyName=module.params.get("newKeyName"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
+
     else:
         module.fail_json(msg="invalid op_type")
 
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

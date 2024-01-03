@@ -8,13 +8,25 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import createDPGPolicy, updateDPGPolicy, dpgPolicyAddAPIUrl, dpgPolicyUpdateAPIUrl, dpgPolicyDeleteAPIUrl
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
+    createDPGPolicy,
+    updateDPGPolicy,
+    dpgPolicyAddAPIUrl,
+    dpgPolicyUpdateAPIUrl,
+    dpgPolicyDeleteAPIUrl,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: dpg_policy_save
 short_description: Manage DPG execution behavior for REST URLs and associated encryption parameters
@@ -148,9 +160,9 @@ options:
       description: API tokens to be protected in a DELETE Request
       type: list
       element: dict
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
@@ -254,86 +266,150 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
         auth_domain_path:
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 _api_token = dict(
-    name=dict(type='str'),
-    operation=dict(type='str'),
-    protection_policy=dict(type='str'),
-    access_policy=dict(type='str'),
-    external_version_header=dict(type='str'),
+    name=dict(type="str"),
+    operation=dict(type="str"),
+    protection_policy=dict(type="str"),
+    access_policy=dict(type="str"),
+    external_version_header=dict(type="str"),
 )
 
 _proxy_config = dict(
-    api_url=dict(type='str'),
-    destination_url=dict(type='str'),
-    json_request_delete_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_request_get_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_request_patch_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_request_post_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_request_put_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_response_delete_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_response_get_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_response_patch_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_response_post_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_response_put_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    url_request_delete_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    url_request_get_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    url_request_patch_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    url_request_post_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    url_request_put_tokens=dict(type='list', element='dict', options=_api_token, required=False),
+    api_url=dict(type="str"),
+    destination_url=dict(type="str"),
+    json_request_delete_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_request_get_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_request_patch_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_request_post_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_request_put_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_response_delete_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_response_get_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_response_patch_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_response_post_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_response_put_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    url_request_delete_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    url_request_get_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    url_request_patch_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    url_request_post_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    url_request_put_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch', 'add-api-url', 'update-api-url', 'delete-api-url'], required=True),
-    policy_id=dict(type='str'),
-    name=dict(type='str'),
-    description=dict(type='str'),
-    proxy_config=dict(type='list', element='dict', options=_proxy_config),
-    #op_type=add-api-url
-    api_url=dict(type='str'),
-    destination_url=dict(type='str'),
-    json_request_delete_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_request_get_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_request_patch_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_request_post_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_request_put_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_response_delete_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_response_get_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_response_patch_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_response_post_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    json_response_put_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    url_request_delete_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    url_request_get_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    url_request_patch_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    url_request_post_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    url_request_put_tokens=dict(type='list', element='dict', options=_api_token, required=False),
-    #op_type=update-api-url or delete-api-url
-    api_url_id=dict(type='str'),
+    op_type=dict(
+        type="str",
+        options=["create", "patch", "add-api-url", "update-api-url", "delete-api-url"],
+        required=True,
+    ),
+    policy_id=dict(type="str"),
+    name=dict(type="str"),
+    description=dict(type="str"),
+    proxy_config=dict(type="list", element="dict", options=_proxy_config),
+    # op_type=add-api-url
+    api_url=dict(type="str"),
+    destination_url=dict(type="str"),
+    json_request_delete_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_request_get_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_request_patch_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_request_post_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_request_put_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_response_delete_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_response_get_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_response_patch_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_response_post_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    json_response_put_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    url_request_delete_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    url_request_get_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    url_request_patch_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    url_request_post_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    url_request_put_tokens=dict(
+        type="list", element="dict", options=_api_token, required=False
+    ),
+    # op_type=update-api-url or delete-api-url
+    api_url_id=dict(type="str"),
 )
+
 
 def validate_parameters(dpg_policy_module):
     return True
 
+
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
-        required_if=(
-            ['op_type', 'patch', ['policy_id']],
-        ),
+        required_if=(["op_type", "patch", ["policy_id"]],),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         dpg_policy_module=module,
@@ -343,114 +419,164 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createDPGPolicy(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          description=module.params.get('description'),
-          proxy_config=module.params.get('proxy_config'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createDPGPolicy(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                description=module.params.get("description"),
+                proxy_config=module.params.get("proxy_config"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateDPGPolicy(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          description=module.params.get('description'),
-          proxy_config=module.params.get('proxy_config'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateDPGPolicy(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                description=module.params.get("description"),
+                proxy_config=module.params.get("proxy_config"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add-api-url':
-      try:
-        response = dpgPolicyAddAPIUrl(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          api_url=module.params.get('api_url'),
-          destination_url=module.params.get('destination_url'),
-          json_request_delete_tokens=module.params.get('json_request_delete_tokens'),
-          json_request_get_tokens=module.params.get('json_request_get_tokens'),
-          json_request_patch_tokens=module.params.get('json_request_patch_tokens'),
-          json_request_post_tokens=module.params.get('json_request_post_tokens'),
-          json_request_put_tokens=module.params.get('json_request_put_tokens'),
-          json_response_delete_tokens=module.params.get('json_response_delete_tokens'),
-          json_response_get_tokens=module.params.get('json_response_get_tokens'),
-          json_response_patch_tokens=module.params.get('json_response_patch_tokens'),
-          json_response_post_tokens=module.params.get('json_response_post_tokens'),
-          json_response_put_tokens=module.params.get('json_response_put_tokens'),
-          url_request_delete_tokens=module.params.get('url_request_delete_tokens'),
-          url_request_get_tokens=module.params.get('url_request_get_tokens'),
-          url_request_patch_tokens=module.params.get('url_request_patch_tokens'),
-          url_request_post_tokens=module.params.get('url_request_post_tokens'),
-          url_request_put_tokens=module.params.get('url_request_put_tokens'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add-api-url":
+        try:
+            response = dpgPolicyAddAPIUrl(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                api_url=module.params.get("api_url"),
+                destination_url=module.params.get("destination_url"),
+                json_request_delete_tokens=module.params.get(
+                    "json_request_delete_tokens"
+                ),
+                json_request_get_tokens=module.params.get("json_request_get_tokens"),
+                json_request_patch_tokens=module.params.get(
+                    "json_request_patch_tokens"
+                ),
+                json_request_post_tokens=module.params.get("json_request_post_tokens"),
+                json_request_put_tokens=module.params.get("json_request_put_tokens"),
+                json_response_delete_tokens=module.params.get(
+                    "json_response_delete_tokens"
+                ),
+                json_response_get_tokens=module.params.get("json_response_get_tokens"),
+                json_response_patch_tokens=module.params.get(
+                    "json_response_patch_tokens"
+                ),
+                json_response_post_tokens=module.params.get(
+                    "json_response_post_tokens"
+                ),
+                json_response_put_tokens=module.params.get("json_response_put_tokens"),
+                url_request_delete_tokens=module.params.get(
+                    "url_request_delete_tokens"
+                ),
+                url_request_get_tokens=module.params.get("url_request_get_tokens"),
+                url_request_patch_tokens=module.params.get("url_request_patch_tokens"),
+                url_request_post_tokens=module.params.get("url_request_post_tokens"),
+                url_request_put_tokens=module.params.get("url_request_put_tokens"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'update-api-url':
-      try:
-        response = dpgPolicyUpdateAPIUrl(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          api_url_id=module.params.get('api_url_id'),
-          destination_url=module.params.get('destination_url'),
-          json_request_delete_tokens=module.params.get('json_request_delete_tokens'),
-          json_request_get_tokens=module.params.get('json_request_get_tokens'),
-          json_request_patch_tokens=module.params.get('json_request_patch_tokens'),
-          json_request_post_tokens=module.params.get('json_request_post_tokens'),
-          json_request_put_tokens=module.params.get('json_request_put_tokens'),
-          json_response_delete_tokens=module.params.get('json_response_delete_tokens'),
-          json_response_get_tokens=module.params.get('json_response_get_tokens'),
-          json_response_patch_tokens=module.params.get('json_response_patch_tokens'),
-          json_response_post_tokens=module.params.get('json_response_post_tokens'),
-          json_response_put_tokens=module.params.get('json_response_put_tokens'),
-          url_request_delete_tokens=module.params.get('url_request_delete_tokens'),
-          url_request_get_tokens=module.params.get('url_request_get_tokens'),
-          url_request_patch_tokens=module.params.get('url_request_patch_tokens'),
-          url_request_post_tokens=module.params.get('url_request_post_tokens'),
-          url_request_put_tokens=module.params.get('url_request_put_tokens'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "update-api-url":
+        try:
+            response = dpgPolicyUpdateAPIUrl(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                api_url_id=module.params.get("api_url_id"),
+                destination_url=module.params.get("destination_url"),
+                json_request_delete_tokens=module.params.get(
+                    "json_request_delete_tokens"
+                ),
+                json_request_get_tokens=module.params.get("json_request_get_tokens"),
+                json_request_patch_tokens=module.params.get(
+                    "json_request_patch_tokens"
+                ),
+                json_request_post_tokens=module.params.get("json_request_post_tokens"),
+                json_request_put_tokens=module.params.get("json_request_put_tokens"),
+                json_response_delete_tokens=module.params.get(
+                    "json_response_delete_tokens"
+                ),
+                json_response_get_tokens=module.params.get("json_response_get_tokens"),
+                json_response_patch_tokens=module.params.get(
+                    "json_response_patch_tokens"
+                ),
+                json_response_post_tokens=module.params.get(
+                    "json_response_post_tokens"
+                ),
+                json_response_put_tokens=module.params.get("json_response_put_tokens"),
+                url_request_delete_tokens=module.params.get(
+                    "url_request_delete_tokens"
+                ),
+                url_request_get_tokens=module.params.get("url_request_get_tokens"),
+                url_request_patch_tokens=module.params.get("url_request_patch_tokens"),
+                url_request_post_tokens=module.params.get("url_request_post_tokens"),
+                url_request_put_tokens=module.params.get("url_request_put_tokens"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'delete-api-url':
-      try:
-        response = dpgPolicyDeleteAPIUrl(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          api_url_id=module.params.get('api_url_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "delete-api-url":
+        try:
+            response = dpgPolicyDeleteAPIUrl(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                api_url_id=module.params.get("api_url_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -8,13 +8,23 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 import create, patch, version_create
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 import (
+    create,
+    patch,
+    version_create,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: vault_keys2_create
 short_description: Create or update keys in CipherTrust Manager managed vault
@@ -559,9 +569,9 @@ options:
         required: false
         default: false
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Key"
   thalesgroup.ciphertrust.vault_keys2_create:
     localNode:
@@ -589,160 +599,283 @@ EXAMPLES = '''
     op_type: patch
     cm_key_id: "4ae2649a705e479589ef65759d3287f6ff452a788531445fbc7f0240516d028d"
     unexportable: false
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 _alias = dict(
-    alias=dict(type='str', required=True),
-    index=dict(type='int', required=False),
-    type=dict(type='str', required=False), 
+    alias=dict(type="str", required=True),
+    index=dict(type="int", required=False),
+    type=dict(type="str", required=False),
 )
 _cte = dict(
-  persistent_on_client=dict(type='bool'),
-  encryption_mode=dict(type='str'),
-  cte_versioned=dict(type='bool'),
+    persistent_on_client=dict(type="bool"),
+    encryption_mode=dict(type="str"),
+    cte_versioned=dict(type="bool"),
 )
 _permission = dict(
-    UseKey=dict(type='list', element='str'),
-    ReadKey=dict(type='list', element='str'),
-    ExportKey=dict(type='list', element='str'),
-    MACWithKey=dict(type='list', element='str'),
-    SignWithKey=dict(type='list', element='str'),
-    DecryptWithKey=dict(type='list', element='str'),
-    EncryptWithKey=dict(type='list', element='str'),
-    MACVerifyWithKey=dict(type='list', element='str'),
-    SignVerifyWithKey=dict(type='list', element='str'),
+    UseKey=dict(type="list", element="str"),
+    ReadKey=dict(type="list", element="str"),
+    ExportKey=dict(type="list", element="str"),
+    MACWithKey=dict(type="list", element="str"),
+    SignWithKey=dict(type="list", element="str"),
+    DecryptWithKey=dict(type="list", element="str"),
+    EncryptWithKey=dict(type="list", element="str"),
+    MACVerifyWithKey=dict(type="list", element="str"),
+    SignVerifyWithKey=dict(type="list", element="str"),
 )
 _meta = dict(
-    ownerId=dict(type='str', required=False),
-    permissions=dict(type='dict', options=_permission),
-    cte=dict(type='dict', options=_cte),
-    versionedKey=dict(type='bool'),
+    ownerId=dict(type="str", required=False),
+    permissions=dict(type="dict", options=_permission),
+    cte=dict(type="dict", options=_cte),
+    versionedKey=dict(type="bool"),
 )
 _schema_less = dict()
 _hkdfParam = dict(
-    hashAlgorithm=dict(type='str', choices=['hmac-sha1', 'hmac-sha224', 'hmac-sha256', 'hmac-sha384', 'hmac-sha512'], default='hmac-sha256', required=False),
-    ikmKeyName=dict(type='str', required=False),
-    info=dict(type='str', required=False),
-    salt=dict(type='str', required=False),
+    hashAlgorithm=dict(
+        type="str",
+        choices=[
+            "hmac-sha1",
+            "hmac-sha224",
+            "hmac-sha256",
+            "hmac-sha384",
+            "hmac-sha512",
+        ],
+        default="hmac-sha256",
+        required=False,
+    ),
+    ikmKeyName=dict(type="str", required=False),
+    info=dict(type="str", required=False),
+    salt=dict(type="str", required=False),
 )
-_public_key_param=dict(
-    activationDate=dict(type='int', required=False),
-    aliases=dict(type='list', element='dict', options=_alias, required=False),
-    archiveDate=dict(type='int', required=False),
-    deactivationDate=dict(type='int', required=False),
-    meta=dict(type='dict', options=_schema_less, required=False),
-    name=dict(type='int', required=False),
-    state=dict(type='int', required=False),
-    undeletable=dict(type='bool', default=False, required=False),
-    unexportable=dict(type='bool', default=False, required=False),
-    usageMask=dict(type='int', required=False),
+_public_key_param = dict(
+    activationDate=dict(type="int", required=False),
+    aliases=dict(type="list", element="dict", options=_alias, required=False),
+    archiveDate=dict(type="int", required=False),
+    deactivationDate=dict(type="int", required=False),
+    meta=dict(type="dict", options=_schema_less, required=False),
+    name=dict(type="int", required=False),
+    state=dict(type="int", required=False),
+    undeletable=dict(type="bool", default=False, required=False),
+    unexportable=dict(type="bool", default=False, required=False),
+    usageMask=dict(type="int", required=False),
 )
-_wrap_HKDF=dict(
-    hashAlgorithm=dict(type='str', choices=['hmac-sha1', 'hmac-sha224', 'hmac-sha256', 'hmac-sha384', 'hmac-sha512'], required=False),
-    info=dict(type='str', required=False),
-    okmLen=dict(type='int', required=False),
-    salt=dict(type='str', required=False),
+_wrap_HKDF = dict(
+    hashAlgorithm=dict(
+        type="str",
+        choices=[
+            "hmac-sha1",
+            "hmac-sha224",
+            "hmac-sha256",
+            "hmac-sha384",
+            "hmac-sha512",
+        ],
+        required=False,
+    ),
+    info=dict(type="str", required=False),
+    okmLen=dict(type="int", required=False),
+    salt=dict(type="str", required=False),
 )
-_wrap_PBE=dict(
-    dklen=dict(type='int', required=False),
-    hashAlgorithm=dict(type='str', choices=['hmac-sha1', 'hmac-sha224', 'hmac-sha256', 'hmac-sha384', 'hmac-sha512', 'hmac-sha512/224', 'hmac-sha512/256', 'hmac-sha3-224', 'hmac-sha3-256', 'hmac-sha3-384', 'hmac-sha3-512'], required=False),
-    iteration=dict(type='int', required=False),
-    password=dict(type='str', required=False),
-    passwordIdentifier=dict(type='str', required=False),
-    passwordIdentifierType=dict(type='str', choices=['name', 'id', 'slug'], required=False),
-    purpose=dict(type='str', required=False),
-    salt=dict(type='str', required=False),
+_wrap_PBE = dict(
+    dklen=dict(type="int", required=False),
+    hashAlgorithm=dict(
+        type="str",
+        choices=[
+            "hmac-sha1",
+            "hmac-sha224",
+            "hmac-sha256",
+            "hmac-sha384",
+            "hmac-sha512",
+            "hmac-sha512/224",
+            "hmac-sha512/256",
+            "hmac-sha3-224",
+            "hmac-sha3-256",
+            "hmac-sha3-384",
+            "hmac-sha3-512",
+        ],
+        required=False,
+    ),
+    iteration=dict(type="int", required=False),
+    password=dict(type="str", required=False),
+    passwordIdentifier=dict(type="str", required=False),
+    passwordIdentifierType=dict(
+        type="str", choices=["name", "id", "slug"], required=False
+    ),
+    purpose=dict(type="str", required=False),
+    salt=dict(type="str", required=False),
 )
-_wrap_RSAAES=dict(
-    aesKeySize=dict(type='int', choices=[128, 192, 256], default=256, required=False),
-    padding=dict(type='str', choices=['oaep', 'oaep256', 'oaep384', 'oaep512'], default='oaep256', required=False),
+_wrap_RSAAES = dict(
+    aesKeySize=dict(type="int", choices=[128, 192, 256], default=256, required=False),
+    padding=dict(
+        type="str",
+        choices=["oaep", "oaep256", "oaep384", "oaep512"],
+        default="oaep256",
+        required=False,
+    ),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch', 'create_version'], required=True),
-    cm_key_id=dict(type='str'),
-    activationDate=dict(type='str', required=False),
-    algorithm=dict(type='str', required=False, choices=['aes', 'tdes', 'rsa', 'ec', 'hmac-sha1', 'hmac-sha256', 'hmac-sha384', 'hmac-sha512', 'seed', 'aria', 'opaque'], default="aes"),
-    aliases=dict(type='list', element='dict', options=_alias, required=False),
-    archiveDate=dict(type='str', required=False),
-    certType=dict(type='str', choices=['x509-pem', 'x509-der'], required=False),
-    compromiseDate=dict(type='str', required=False),
-    compromiseOccurrenceDate=dict(type='str', required=False),
-    curveid=dict(type='str', choices=['secp224k1', 'secp224r1', 'secp256k1', 'secp384r1', 'secp521r1', 'prime256v1', 'brainpoolP224r1', 'brainpoolP224t1', 'brainpoolP256r1', 'brainpoolP256t1', 'brainpoolP384r1', 'brainpoolP384t1', 'brainpoolP512r1', 'brainpoolP512t1'], required=False),
-    deactivationDate=dict(type='str', required=False),
-    defaultIV=dict(type='str', required=False),
-    destroyDate=dict(type='str', required=False),
-    encoding=dict(type='str', required=False),
-    format=dict(type='str', required=False),
-    generateKeyId=dict(type='bool', required=False, default=False),
-    hkdfCreateParameters=dict(type='dict', options=_hkdfParam, required=False),
-    id=dict(type='str', required=False),
-    idSize=dict(type='int', required=False),
-    keyId=dict(type='str', required=False),
-    labels=dict(type='dict', options=_schema_less, required=False),
-    macSignBytes=dict(type='str', required=False),
-    macSignKeyIdentifier=dict(type='str', required=False),
-    macSignKeyIdentifierType=dict(type='str', choices=['name', 'id', 'alias'], required=False),
-    material=dict(type='str', required=False),
-    meta=dict(type='dict', options=_meta, required=False),
-    muid=dict(type='str', required=False),
-    name=dict(type='str', required=False),
-    objectType=dict(type='str', choices=['Symmetric Key', 'Public Key', 'Private Key', 'Secret Data', 'Opaque Object', 'Certificate'], required=False),
-    padded=dict(type='bool', default=False, required=False),
-    password=dict(type='str', required=False),
-    processStartDate=dict(type='str', required=False),
-    protectStopDate=dict(type='str', required=False),
-    publicKeyParameters=dict(type='dict', options=_public_key_param, required=False),
-    revocationMessage=dict(type='str', required=False),
-    revocationReason=dict(type='str', choices=['Unspecified', 'KeyCompromise', 'CACompromise', 'AffiliationChanged', 'Superseded', 'CessationOfOperation', 'PrivilegeWithdrawn'], required=False),
-    rotationFrequencyDays=dict(type='str', required=False),
-    secretDataEncoding=dict(type='str', required=False),
-    secretDataLink=dict(type='str', required=False),
-    signingAlgo=dict(type='str', choice=['RSA-PSS', 'RSA'], required=False),
-    size=dict(type='int', required=False),
-    state=dict(type='str', required=False),
-    undeletable=dict(type='bool', required=False, default=False),
-    unexportable=dict(type='bool', required=False, default=False),
-    usageMask=dict(type='int', required=False),
-    uuid=dict(type='str', required=False),
-    wrapHKDF=dict(type='dict', options=_wrap_HKDF, required=False),
-    wrapKeyIDType=dict(type='str', choices=['name', 'id', 'alias'], required=False),
-    wrapKeyName=dict(type='str', required=False),
-    wrapPBE=dict(type='dict', options=_wrap_PBE, required=False),
-    wrapPublicKey=dict(type='str', required=False),
-    wrapPublicKeyPadding=dict(type='str', choices=['pkcs1', 'oaep', 'oaep256', 'oaep384', 'oaep512'], required=False),
-    wrapRSAAES=dict(type='dict', options=_wrap_RSAAES, required=False),
-    wrappingEncryptionAlgo=dict(type='str', choices=['AES/AESKEYWRAP', 'AES/AESKEYWRAPPADDING', 'RSA/RSAAESKEYWRAPPADDING'], required=False),
-    wrappingHashAlgo=dict(type='str', required=False),
-    wrappingMethod=dict(type='str', choices=['encrypt', 'mac/sign', 'pbe'], required=False),
-    xts=dict(type='bool', required=False, default=False),
-    allVersions=dict(type='bool', required=False, default=False), # applicable to the patch operation only
-    offset=dict(type='int', required=False), # applicable to the create_version operation only
+    op_type=dict(
+        type="str", options=["create", "patch", "create_version"], required=True
+    ),
+    cm_key_id=dict(type="str"),
+    activationDate=dict(type="str", required=False),
+    algorithm=dict(
+        type="str",
+        required=False,
+        choices=[
+            "aes",
+            "tdes",
+            "rsa",
+            "ec",
+            "hmac-sha1",
+            "hmac-sha256",
+            "hmac-sha384",
+            "hmac-sha512",
+            "seed",
+            "aria",
+            "opaque",
+        ],
+        default="aes",
+    ),
+    aliases=dict(type="list", element="dict", options=_alias, required=False),
+    archiveDate=dict(type="str", required=False),
+    certType=dict(type="str", choices=["x509-pem", "x509-der"], required=False),
+    compromiseDate=dict(type="str", required=False),
+    compromiseOccurrenceDate=dict(type="str", required=False),
+    curveid=dict(
+        type="str",
+        choices=[
+            "secp224k1",
+            "secp224r1",
+            "secp256k1",
+            "secp384r1",
+            "secp521r1",
+            "prime256v1",
+            "brainpoolP224r1",
+            "brainpoolP224t1",
+            "brainpoolP256r1",
+            "brainpoolP256t1",
+            "brainpoolP384r1",
+            "brainpoolP384t1",
+            "brainpoolP512r1",
+            "brainpoolP512t1",
+        ],
+        required=False,
+    ),
+    deactivationDate=dict(type="str", required=False),
+    defaultIV=dict(type="str", required=False),
+    destroyDate=dict(type="str", required=False),
+    encoding=dict(type="str", required=False),
+    format=dict(type="str", required=False),
+    generateKeyId=dict(type="bool", required=False, default=False),
+    hkdfCreateParameters=dict(type="dict", options=_hkdfParam, required=False),
+    id=dict(type="str", required=False),
+    idSize=dict(type="int", required=False),
+    keyId=dict(type="str", required=False),
+    labels=dict(type="dict", options=_schema_less, required=False),
+    macSignBytes=dict(type="str", required=False),
+    macSignKeyIdentifier=dict(type="str", required=False),
+    macSignKeyIdentifierType=dict(
+        type="str", choices=["name", "id", "alias"], required=False
+    ),
+    material=dict(type="str", required=False),
+    meta=dict(type="dict", options=_meta, required=False),
+    muid=dict(type="str", required=False),
+    name=dict(type="str", required=False),
+    objectType=dict(
+        type="str",
+        choices=[
+            "Symmetric Key",
+            "Public Key",
+            "Private Key",
+            "Secret Data",
+            "Opaque Object",
+            "Certificate",
+        ],
+        required=False,
+    ),
+    padded=dict(type="bool", default=False, required=False),
+    password=dict(type="str", required=False),
+    processStartDate=dict(type="str", required=False),
+    protectStopDate=dict(type="str", required=False),
+    publicKeyParameters=dict(type="dict", options=_public_key_param, required=False),
+    revocationMessage=dict(type="str", required=False),
+    revocationReason=dict(
+        type="str",
+        choices=[
+            "Unspecified",
+            "KeyCompromise",
+            "CACompromise",
+            "AffiliationChanged",
+            "Superseded",
+            "CessationOfOperation",
+            "PrivilegeWithdrawn",
+        ],
+        required=False,
+    ),
+    rotationFrequencyDays=dict(type="str", required=False),
+    secretDataEncoding=dict(type="str", required=False),
+    secretDataLink=dict(type="str", required=False),
+    signingAlgo=dict(type="str", choice=["RSA-PSS", "RSA"], required=False),
+    size=dict(type="int", required=False),
+    state=dict(type="str", required=False),
+    undeletable=dict(type="bool", required=False, default=False),
+    unexportable=dict(type="bool", required=False, default=False),
+    usageMask=dict(type="int", required=False),
+    uuid=dict(type="str", required=False),
+    wrapHKDF=dict(type="dict", options=_wrap_HKDF, required=False),
+    wrapKeyIDType=dict(type="str", choices=["name", "id", "alias"], required=False),
+    wrapKeyName=dict(type="str", required=False),
+    wrapPBE=dict(type="dict", options=_wrap_PBE, required=False),
+    wrapPublicKey=dict(type="str", required=False),
+    wrapPublicKeyPadding=dict(
+        type="str",
+        choices=["pkcs1", "oaep", "oaep256", "oaep384", "oaep512"],
+        required=False,
+    ),
+    wrapRSAAES=dict(type="dict", options=_wrap_RSAAES, required=False),
+    wrappingEncryptionAlgo=dict(
+        type="str",
+        choices=["AES/AESKEYWRAP", "AES/AESKEYWRAPPADDING", "RSA/RSAAESKEYWRAPPADDING"],
+        required=False,
+    ),
+    wrappingHashAlgo=dict(type="str", required=False),
+    wrappingMethod=dict(
+        type="str", choices=["encrypt", "mac/sign", "pbe"], required=False
+    ),
+    xts=dict(type="bool", required=False, default=False),
+    allVersions=dict(
+        type="bool", required=False, default=False
+    ),  # applicable to the patch operation only
+    offset=dict(
+        type="int", required=False
+    ),  # applicable to the create_version operation only
 )
+
 
 def validate_parameters(user_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'patch', ['cm_key_id']],
-            ['op_type', 'create_version', ['cm_key_id']],
+            ["op_type", "patch", ["cm_key_id"]],
+            ["op_type", "create_version", ["cm_key_id"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         user_module=module,
@@ -752,135 +885,151 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = create(
-          node=module.params.get('localNode'),
-          activationDate=module.params.get('activationDate'),
-          algorithm=module.params.get('algorithm'),
-          aliases=module.params.get('aliases'),
-          archiveDate=module.params.get('archiveDate'),
-          certType=module.params.get('certType'),
-          compromiseDate=module.params.get('compromiseDate'),
-          compromiseOccurrenceDate=module.params.get('compromiseOccurrenceDate'),
-          curveid=module.params.get('curveid'),
-          deactivationDate=module.params.get('deactivationDate'),
-          defaultIV=module.params.get('defaultIV'),
-          destroyDate=module.params.get('destroyDate'),
-          encoding=module.params.get('encoding'),
-          format=module.params.get('format'),
-          generateKeyId=module.params.get('generateKeyId'),
-          hkdfCreateParameters=module.params.get('hkdfCreateParameters'),
-          id=module.params.get('id'),
-          idSize=module.params.get('idSize'),
-          keyId=module.params.get('keyId'),
-          labels=module.params.get('labels'),
-          macSignBytes=module.params.get('macSignBytes'),
-          macSignKeyIdentifier=module.params.get('macSignKeyIdentifier'),
-          macSignKeyIdentifierType=module.params.get('macSignKeyIdentifierType'),
-          material=module.params.get('material'),
-          meta=module.params.get('meta'),
-          muid=module.params.get('muid'),
-          name=module.params.get('name'),
-          objectType=module.params.get('objectType'),
-          padded=module.params.get('padded'),
-          password=module.params.get('password'),
-          processStartDate=module.params.get('processStartDate'),
-          protectStopDate=module.params.get('protectStopDate'),
-          publicKeyParameters=module.params.get('publicKeyParameters'),
-          revocationMessage=module.params.get('revocationMessage'),
-          revocationReason=module.params.get('revocationReason'),
-          rotationFrequencyDays=module.params.get('rotationFrequencyDays'),
-          secretDataEncoding=module.params.get('secretDataEncoding'),
-          secretDataLink=module.params.get('secretDataLink'),
-          signingAlgo=module.params.get('signingAlgo'),
-          size=module.params.get('size'),
-          state=module.params.get('state'),
-          undeletable=module.params.get('undeletable'),
-          unexportable=module.params.get('unexportable'),
-          usageMask=module.params.get('usageMask'),
-          uuid=module.params.get('uuid'),
-          wrapHKDF=module.params.get('wrapHKDF'),
-          wrapKeyIDType=module.params.get('wrapKeyIDType'),
-          wrapKeyName=module.params.get('wrapKeyName'),
-          wrapPBE=module.params.get('wrapPBE'),
-          wrapPublicKey=module.params.get('wrapPublicKey'),
-          wrapPublicKeyPadding=module.params.get('wrapPublicKeyPadding'),
-          wrapRSAAES=module.params.get('wrapRSAAES'),
-          wrappingEncryptionAlgo=module.params.get('wrappingEncryptionAlgo'),
-          wrappingHashAlgo=module.params.get('wrappingHashAlgo'),
-          wrappingMethod=module.params.get('wrappingMethod'),
-          xts=module.params.get('xts'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = create(
+                node=module.params.get("localNode"),
+                activationDate=module.params.get("activationDate"),
+                algorithm=module.params.get("algorithm"),
+                aliases=module.params.get("aliases"),
+                archiveDate=module.params.get("archiveDate"),
+                certType=module.params.get("certType"),
+                compromiseDate=module.params.get("compromiseDate"),
+                compromiseOccurrenceDate=module.params.get("compromiseOccurrenceDate"),
+                curveid=module.params.get("curveid"),
+                deactivationDate=module.params.get("deactivationDate"),
+                defaultIV=module.params.get("defaultIV"),
+                destroyDate=module.params.get("destroyDate"),
+                encoding=module.params.get("encoding"),
+                format=module.params.get("format"),
+                generateKeyId=module.params.get("generateKeyId"),
+                hkdfCreateParameters=module.params.get("hkdfCreateParameters"),
+                id=module.params.get("id"),
+                idSize=module.params.get("idSize"),
+                keyId=module.params.get("keyId"),
+                labels=module.params.get("labels"),
+                macSignBytes=module.params.get("macSignBytes"),
+                macSignKeyIdentifier=module.params.get("macSignKeyIdentifier"),
+                macSignKeyIdentifierType=module.params.get("macSignKeyIdentifierType"),
+                material=module.params.get("material"),
+                meta=module.params.get("meta"),
+                muid=module.params.get("muid"),
+                name=module.params.get("name"),
+                objectType=module.params.get("objectType"),
+                padded=module.params.get("padded"),
+                password=module.params.get("password"),
+                processStartDate=module.params.get("processStartDate"),
+                protectStopDate=module.params.get("protectStopDate"),
+                publicKeyParameters=module.params.get("publicKeyParameters"),
+                revocationMessage=module.params.get("revocationMessage"),
+                revocationReason=module.params.get("revocationReason"),
+                rotationFrequencyDays=module.params.get("rotationFrequencyDays"),
+                secretDataEncoding=module.params.get("secretDataEncoding"),
+                secretDataLink=module.params.get("secretDataLink"),
+                signingAlgo=module.params.get("signingAlgo"),
+                size=module.params.get("size"),
+                state=module.params.get("state"),
+                undeletable=module.params.get("undeletable"),
+                unexportable=module.params.get("unexportable"),
+                usageMask=module.params.get("usageMask"),
+                uuid=module.params.get("uuid"),
+                wrapHKDF=module.params.get("wrapHKDF"),
+                wrapKeyIDType=module.params.get("wrapKeyIDType"),
+                wrapKeyName=module.params.get("wrapKeyName"),
+                wrapPBE=module.params.get("wrapPBE"),
+                wrapPublicKey=module.params.get("wrapPublicKey"),
+                wrapPublicKeyPadding=module.params.get("wrapPublicKeyPadding"),
+                wrapRSAAES=module.params.get("wrapRSAAES"),
+                wrappingEncryptionAlgo=module.params.get("wrappingEncryptionAlgo"),
+                wrappingHashAlgo=module.params.get("wrappingHashAlgo"),
+                wrappingMethod=module.params.get("wrappingMethod"),
+                xts=module.params.get("xts"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = patch(
-          node=module.params.get('localNode'),
-          cm_key_id=module.params.get('cm_key_id'),
-          activationDate=module.params.get('activationDate'),
-          aliases=module.params.get('aliases'),
-          allVersions=module.params.get('allVersions'),
-          archiveDate=module.params.get('archiveDate'),
-          compromiseOccurrenceDate=module.params.get('compromiseOccurrenceDate'),
-          deactivationDate=module.params.get('deactivationDate'),
-          keyId=module.params.get('keyId'),
-          labels=module.params.get('labels'),
-          meta=module.params.get('meta'),
-          muid=module.params.get('muid'),
-          processStartDate=module.params.get('processStartDate'),
-          protectStopDate=module.params.get('protectStopDate'),
-          revocationMessage=module.params.get('revocationMessage'),
-          revocationReason=module.params.get('revocationReason'),
-          rotationFrequencyDays=module.params.get('rotationFrequencyDays'),
-          undeletable=module.params.get('undeletable'),
-          unexportable=module.params.get('unexportable'),
-          usageMask=module.params.get('usageMask'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = patch(
+                node=module.params.get("localNode"),
+                cm_key_id=module.params.get("cm_key_id"),
+                activationDate=module.params.get("activationDate"),
+                aliases=module.params.get("aliases"),
+                allVersions=module.params.get("allVersions"),
+                archiveDate=module.params.get("archiveDate"),
+                compromiseOccurrenceDate=module.params.get("compromiseOccurrenceDate"),
+                deactivationDate=module.params.get("deactivationDate"),
+                keyId=module.params.get("keyId"),
+                labels=module.params.get("labels"),
+                meta=module.params.get("meta"),
+                muid=module.params.get("muid"),
+                processStartDate=module.params.get("processStartDate"),
+                protectStopDate=module.params.get("protectStopDate"),
+                revocationMessage=module.params.get("revocationMessage"),
+                revocationReason=module.params.get("revocationReason"),
+                rotationFrequencyDays=module.params.get("rotationFrequencyDays"),
+                undeletable=module.params.get("undeletable"),
+                unexportable=module.params.get("unexportable"),
+                usageMask=module.params.get("usageMask"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
-      try:
-        response = version_create(
-          node=module.params.get('localNode'),
-          cm_key_id=module.params.get('cm_key_id'),
-          aliases=module.params.get('aliases'),
-          certType=module.params.get('certType'),
-          defaultIV=module.params.get('defaultIV'),
-          encoding=module.params.get('encoding'),
-          format=module.params.get('format'),
-          idSize=module.params.get('idSize'),
-          keyId=module.params.get('keyId'),
-          labels=module.params.get('labels'),
-          material=module.params.get('material'),
-          muid=module.params.get('muid'),
-          offset=module.params.get('offset'),
-          padded=module.params.get('padded'),
-          uuid=module.params.get('uuid'),
-          wrapKeyIDType=module.params.get('wrapKeyIDType'),
-          wrapKeyName=module.params.get('wrapKeyName'),
-          wrapPublicKey=module.params.get('wrapPublicKey'),
-          wrapPublicKeyPadding=module.params.get('wrapPublicKeyPadding'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+        try:
+            response = version_create(
+                node=module.params.get("localNode"),
+                cm_key_id=module.params.get("cm_key_id"),
+                aliases=module.params.get("aliases"),
+                certType=module.params.get("certType"),
+                defaultIV=module.params.get("defaultIV"),
+                encoding=module.params.get("encoding"),
+                format=module.params.get("format"),
+                idSize=module.params.get("idSize"),
+                keyId=module.params.get("keyId"),
+                labels=module.params.get("labels"),
+                material=module.params.get("material"),
+                muid=module.params.get("muid"),
+                offset=module.params.get("offset"),
+                padded=module.params.get("padded"),
+                uuid=module.params.get("uuid"),
+                wrapKeyIDType=module.params.get("wrapKeyIDType"),
+                wrapKeyName=module.params.get("wrapKeyName"),
+                wrapPublicKey=module.params.get("wrapPublicKey"),
+                wrapPublicKeyPadding=module.params.get("wrapPublicKeyPadding"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

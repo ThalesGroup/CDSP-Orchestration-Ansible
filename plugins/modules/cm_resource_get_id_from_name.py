@@ -8,12 +8,20 @@
 #
 
 from __future__ import absolute_import, division, print_function
-__metaclass__ = type
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import GETIdByQueryParam
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
 
-DOCUMENTATION = '''
+__metaclass__ = type
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    GETIdByQueryParam,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
+
+DOCUMENTATION = """
 ---
 module: cm_resource_get_id_from_name
 short_description: Get CipherTrust Manager resource ID from resource name
@@ -86,9 +94,9 @@ options:
             - This is a string type of option that will hold the value of filter query parameter
         required: true
         type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Get Key ID"
   thalesgroup.ciphertrust.cm_resource_get_id_from_name:
     localNode:
@@ -101,54 +109,51 @@ EXAMPLES = '''
     query_param: "name"
     query_param_value: "AnsibleKey"
     resource_type: "keys"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 id:
     description: String with the ID returned by the CipherTrust Manager
     returned: changed or success
     type: string
     sample: 123456789
-'''
+"""
 
 _arr_resource_type_choices = [
-    'keys', 
-    'protection-policies', 
-    'access-policies', 
-    'user-sets', 
-    'interfaces', 
-    'character-sets', 
-    'users', 
-    'dpg-policies', 
-    'client-profiles', 
-    'masking-formats',
-    'resourceset',
-    'signatureset',
-    'userset',
-    'processset',
-    'cte-policy',
-    'cte-client-group',
-    'csigroup',
-    'cte-client',
-    'azure-key-vault',
-    'azure-secret',
-    'azure-certificate',
-    'azure-key',
+    "keys",
+    "protection-policies",
+    "access-policies",
+    "user-sets",
+    "interfaces",
+    "character-sets",
+    "users",
+    "dpg-policies",
+    "client-profiles",
+    "masking-formats",
+    "resourceset",
+    "signatureset",
+    "userset",
+    "processset",
+    "cte-policy",
+    "cte-client-group",
+    "csigroup",
+    "cte-client",
+    "azure-key-vault",
+    "azure-secret",
+    "azure-certificate",
+    "azure-key",
 ]
-_arr_query_param_choices = [
-    'name',
-    'username', 
-    'email', 
-    'status'
-]
+_arr_query_param_choices = ["name", "username", "email", "status"]
 argument_spec = dict(
-    resource_type=dict(type='str', choices=_arr_resource_type_choices, required=True),
-    query_param=dict(type='str', choices=_arr_query_param_choices, required=True),
-    query_param_value=dict(type='str', required=True),
+    resource_type=dict(type="str", choices=_arr_resource_type_choices, required=True),
+    query_param=dict(type="str", choices=_arr_query_param_choices, required=True),
+    query_param_value=dict(type="str", required=True),
 )
+
 
 def validate_parameters(user_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
@@ -159,9 +164,10 @@ def setup_module_object():
     )
     return module
 
+
 def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         user_module=module,
@@ -171,91 +177,97 @@ def main():
         changed=False,
     )
 
-    endpoint = ''
-    resource_type=module.params.get('resource_type')
-    #Create the API end point based on the resource_type
+    endpoint = ""
+    resource_type = module.params.get("resource_type")
+    # Create the API end point based on the resource_type
     if resource_type == "keys":
-        endpoint='vault/keys2'
-        query_id='id'
+        endpoint = "vault/keys2"
+        query_id = "id"
     elif resource_type == "interfaces":
-        endpoint='configs/interfaces'
-        query_id='id'
+        endpoint = "configs/interfaces"
+        query_id = "id"
     elif resource_type == "users":
-        endpoint='usermgmt/users'
-        query_id='user_id'
+        endpoint = "usermgmt/users"
+        query_id = "user_id"
     elif resource_type == "client-profiles":
-        endpoint='data-protection/client-profiles'
-        query_id='id'
+        endpoint = "data-protection/client-profiles"
+        query_id = "id"
     elif resource_type == "dpg-policies":
-        endpoint='data-protection/dpg-policies'
-        query_id='id'
+        endpoint = "data-protection/dpg-policies"
+        query_id = "id"
     elif resource_type == "access-policies":
-        endpoint='data-protection/access-policies'
-        query_id='id'
+        endpoint = "data-protection/access-policies"
+        query_id = "id"
     elif resource_type == "user-sets":
-        endpoint='data-protection/user-sets'
-        query_id='id'
+        endpoint = "data-protection/user-sets"
+        query_id = "id"
     elif resource_type == "character-sets":
-        endpoint='data-protection/character-sets'
-        query_id='id'
+        endpoint = "data-protection/character-sets"
+        query_id = "id"
     elif resource_type == "masking-formats":
-        endpoint='data-protection/masking-formats'
-        query_id='id'
+        endpoint = "data-protection/masking-formats"
+        query_id = "id"
     elif resource_type == "resourceset":
-        endpoint='transparent-encryption/resourcesets'
-        query_id='id'
+        endpoint = "transparent-encryption/resourcesets"
+        query_id = "id"
     elif resource_type == "signatureset":
-        endpoint='transparent-encryption/signaturesets'
-        query_id='id'
+        endpoint = "transparent-encryption/signaturesets"
+        query_id = "id"
     elif resource_type == "userset":
-        endpoint='transparent-encryption/usersets'
-        query_id='id'
+        endpoint = "transparent-encryption/usersets"
+        query_id = "id"
     elif resource_type == "processset":
-        endpoint='transparent-encryption/processsets'
-        query_id='id'
+        endpoint = "transparent-encryption/processsets"
+        query_id = "id"
     elif resource_type == "cte-policy":
-        endpoint='transparent-encryption/policies'
-        query_id='id'
+        endpoint = "transparent-encryption/policies"
+        query_id = "id"
     elif resource_type == "cte-client-group":
-        endpoint='transparent-encryption/clientgroups'
-        query_id='id'        
+        endpoint = "transparent-encryption/clientgroups"
+        query_id = "id"
     elif resource_type == "cte-client":
-        endpoint='transparent-encryption/clients'
-        query_id='id'
+        endpoint = "transparent-encryption/clients"
+        query_id = "id"
     elif resource_type == "csigroup":
-        endpoint='transparent-encryption/csigroups'
-        query_id='id'
+        endpoint = "transparent-encryption/csigroups"
+        query_id = "id"
     elif resource_type == "azure-key-vault":
-        endpoint='cckm/azure/vaults'
-        query_id='id'
+        endpoint = "cckm/azure/vaults"
+        query_id = "id"
     elif resource_type == "azure-secret":
-        endpoint='cckm/azure/secrets'
-        query_id='id'
+        endpoint = "cckm/azure/secrets"
+        query_id = "id"
     elif resource_type == "azure-certificate":
-        endpoint='cckm/azure/certificates'
-        query_id='id'
+        endpoint = "cckm/azure/certificates"
+        query_id = "id"
     elif resource_type == "azure-key":
-        endpoint='cckm/azure/keys'
-        query_id='id'
+        endpoint = "cckm/azure/keys"
+        query_id = "id"
     else:
-        module.fail_json(msg='resource_type not supported yet')
+        module.fail_json(msg="resource_type not supported yet")
 
     try:
         response = GETIdByQueryParam(
-            cm_node=module.params.get('localNode'),
-            param=module.params.get('query_param'),
-            value=module.params.get('query_param_value'),
+            cm_node=module.params.get("localNode"),
+            param=module.params.get("query_param"),
+            value=module.params.get("query_param_value"),
             cm_api_endpoint=endpoint,
             id=query_id,
         )
-        result['response'] = response
+        result["response"] = response
     except CMApiException as api_e:
         if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+            module.fail_json(
+                msg="status code: "
+                + str(api_e.api_error_code)
+                + " message: "
+                + api_e.message
+            )
     except AnsibleCMException as custom_e:
         module.fail_json(msg=custom_e.message)
 
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

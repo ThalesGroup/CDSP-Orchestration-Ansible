@@ -8,13 +8,31 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import createClient, patchClient, clientAddGuardPoint, unEnrollClient, deleteClients, deleteClientById, updateClientAuthBinaries, sendLDTPauseCmd, patchGuardPointCTEClient, unGuardPoints, updateGPEarlyAccess
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createClient,
+    patchClient,
+    clientAddGuardPoint,
+    unEnrollClient,
+    deleteClients,
+    deleteClientById,
+    updateClientAuthBinaries,
+    sendLDTPauseCmd,
+    patchGuardPointCTEClient,
+    unGuardPoints,
+    updateGPEarlyAccess,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_client
 short_description: Manage CTE clients
@@ -189,9 +207,9 @@ options:
     early_access:
       description: Whether to enable early access on the GuardPoint
       type: boolean
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE Client"
   thalesgroup.ciphertrust.cte_client:
     localNode:
@@ -231,115 +249,131 @@ EXAMPLES = '''
       early_access: true
       preserve_sparse_regions: true
     id: "{{ client['response']['id'] }}"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 _guard_point_params = dict(
-  guard_point_type=dict(type='str', options=['directory_auto', 'directory_manual', 'rawdevice_manual', 'rawdevice_auto', 'cloudstorage_auto', 'cloudstorage_manual']),
-  policy_id=dict(type='str'),
-  automount_enabled=dict(type='bool'),
-  cifs_enabled=dict(type='bool'),
-  data_classification_enabled=dict(type='bool'),
-  data_lineage_enabled=dict(type='bool'),
-  disk_name=dict(type='str'),
-  diskgroup_name=dict(type='str'),
-  early_access=dict(type='bool'),
-  intelligent_protection=dict(type='bool'),
-  is_esg_capable_device=dict(type='bool'),
-  is_idt_capable_device=dict(type='bool'),
-  mfa_enabled=dict(type='bool'),
-  network_share_credentials_id=dict(type='str'),
-  preserve_sparse_regions=dict(type='bool'),
+    guard_point_type=dict(
+        type="str",
+        options=[
+            "directory_auto",
+            "directory_manual",
+            "rawdevice_manual",
+            "rawdevice_auto",
+            "cloudstorage_auto",
+            "cloudstorage_manual",
+        ],
+    ),
+    policy_id=dict(type="str"),
+    automount_enabled=dict(type="bool"),
+    cifs_enabled=dict(type="bool"),
+    data_classification_enabled=dict(type="bool"),
+    data_lineage_enabled=dict(type="bool"),
+    disk_name=dict(type="str"),
+    diskgroup_name=dict(type="str"),
+    early_access=dict(type="bool"),
+    intelligent_protection=dict(type="bool"),
+    is_esg_capable_device=dict(type="bool"),
+    is_idt_capable_device=dict(type="bool"),
+    mfa_enabled=dict(type="bool"),
+    network_share_credentials_id=dict(type="str"),
+    preserve_sparse_regions=dict(type="bool"),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=[
-      'create', 
-      'patch',
-      'add_guard_point',
-      'unenroll',
-      'delete',
-      'delete_id',
-      'auth_binaries',
-      'ldt_pause',
-      'patch_guard_point',
-      'gp_unguard',
-      'gp_enable_early_access',
-    ], required=True),
-    id=dict(type='str'),
-    name=dict(type='str'),
-    client_type=dict(type='str', options=['CTE-U', 'FS']),
-    client_locked=dict(type='bool'),
-    communication_enabled=dict(type='bool'),    
-    description=dict(type='str'),
-    password=dict(type='str'),
-    password_creation_method=dict(type='str', options=['GENERATE', 'MANUAL']),
-    profile_identifier=dict(type='str'),
-    registration_allowed=dict(type='bool'),
-    system_locked=dict(type='bool'),
-    user_space_client=dict(type='bool'),
+    op_type=dict(
+        type="str",
+        options=[
+            "create",
+            "patch",
+            "add_guard_point",
+            "unenroll",
+            "delete",
+            "delete_id",
+            "auth_binaries",
+            "ldt_pause",
+            "patch_guard_point",
+            "gp_unguard",
+            "gp_enable_early_access",
+        ],
+        required=True,
+    ),
+    id=dict(type="str"),
+    name=dict(type="str"),
+    client_type=dict(type="str", options=["CTE-U", "FS"]),
+    client_locked=dict(type="bool"),
+    communication_enabled=dict(type="bool"),
+    description=dict(type="str"),
+    password=dict(type="str"),
+    password_creation_method=dict(type="str", options=["GENERATE", "MANUAL"]),
+    profile_identifier=dict(type="str"),
+    registration_allowed=dict(type="bool"),
+    system_locked=dict(type="bool"),
+    user_space_client=dict(type="bool"),
     # Patch specific attributes
-    client_mfa_enabled=dict(type='bool'),
-    del_client=dict(type='bool'),
-    disable_capability=dict(type='str'),
-    dynamic_parameters=dict(type='str'),
-    enable_domain_sharing=dict(type='bool'),
-    enabled_capabilities=dict(type='str', options=['LDT', 'EKP', "ES"]),
-    max_num_cache_log=dict(type='int'),
-    max_space_cache_log=dict(type='int'),
-    profile_id=dict(type='str'),
-    shared_domain_list=dict(type='list', element='str'),
+    client_mfa_enabled=dict(type="bool"),
+    del_client=dict(type="bool"),
+    disable_capability=dict(type="str"),
+    dynamic_parameters=dict(type="str"),
+    enable_domain_sharing=dict(type="bool"),
+    enabled_capabilities=dict(type="str", options=["LDT", "EKP", "ES"]),
+    max_num_cache_log=dict(type="int"),
+    max_space_cache_log=dict(type="int"),
+    profile_id=dict(type="str"),
+    shared_domain_list=dict(type="list", element="str"),
     # Params for adding guard paths to client
-    guard_paths=dict(type='list', element='str'),
-    guard_point_params=dict(type='dict', options=_guard_point_params),
+    guard_paths=dict(type="list", element="str"),
+    guard_point_params=dict(type="dict", options=_guard_point_params),
     # Params for other ops on CTE client
-    client_id_list=dict(type='list', element='str'),
-    force_del_client=dict(type='bool'),
-    auth_binaries=dict(type='str'),
-    client_auth_binaries_from=dict(type='str'),
-    re_sign=dict(type='bool'),
-    paused=dict(type='bool'),
-    gp_id=dict(type='str'),
-    data_classification_enabled=dict(type='bool'),
-    data_lineage_enabled=dict(type='bool'),
-    guard_enabled=dict(type='bool'),
-    mfa_enabled=dict(type='bool'),
-    network_share_credentials_id=dict(type='str'),
-    guard_point_id_list=dict(type='list', element='str'),
-    early_access=dict(type='bool'),
+    client_id_list=dict(type="list", element="str"),
+    force_del_client=dict(type="bool"),
+    auth_binaries=dict(type="str"),
+    client_auth_binaries_from=dict(type="str"),
+    re_sign=dict(type="bool"),
+    paused=dict(type="bool"),
+    gp_id=dict(type="str"),
+    data_classification_enabled=dict(type="bool"),
+    data_lineage_enabled=dict(type="bool"),
+    guard_enabled=dict(type="bool"),
+    mfa_enabled=dict(type="bool"),
+    network_share_credentials_id=dict(type="str"),
+    guard_point_id_list=dict(type="list", element="str"),
+    early_access=dict(type="bool"),
 )
+
 
 def validate_parameters(cte_client_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'create', ['name']],
-            ['op_type', 'patch', ['id']],
-            ['op_type', 'add_guard_point', ['id', 'guard_paths', 'guard_point_params']],
-            ['op_type', 'unenroll', ['name']],
-            ['op_type', 'delete', ['client_id_list']],
-            ['op_type', 'delete_id', ['id']],
-            ['op_type', 'auth_binaries', ['id']],
-            ['op_type', 'ldt_pause', ['id', 'paused']],
-            ['op_type', 'patch_guard_point', ['id', 'gp_id']],
-            ['op_type', 'gp_unguard', ['id', 'guard_point_id_list']],
-            ['op_type', 'gp_enable_early_access', ['id', 'gp_id', 'early_access']],
+            ["op_type", "create", ["name"]],
+            ["op_type", "patch", ["id"]],
+            ["op_type", "add_guard_point", ["id", "guard_paths", "guard_point_params"]],
+            ["op_type", "unenroll", ["name"]],
+            ["op_type", "delete", ["client_id_list"]],
+            ["op_type", "delete_id", ["id"]],
+            ["op_type", "auth_binaries", ["id"]],
+            ["op_type", "ldt_pause", ["id", "paused"]],
+            ["op_type", "patch_guard_point", ["id", "gp_id"]],
+            ["op_type", "gp_unguard", ["id", "guard_point_id_list"]],
+            ["op_type", "gp_enable_early_access", ["id", "gp_id", "early_access"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         cte_client_module=module,
@@ -349,197 +383,259 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createClient(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          description=module.params.get('description'),
-          client_locked=module.params.get('client_locked'),
-          client_type=module.params.get('client_type'),
-          communication_enabled=module.params.get('communication_enabled'),
-          password=module.params.get('password'),
-          password_creation_method=module.params.get('password_creation_method'),
-          profile_identifier=module.params.get('profile_identifier'),
-          registration_allowed=module.params.get('registration_allowed'),
-          system_locked=module.params.get('system_locked'),
-          #user_space_client=module.params.get('user_space_client'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createClient(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                description=module.params.get("description"),
+                client_locked=module.params.get("client_locked"),
+                client_type=module.params.get("client_type"),
+                communication_enabled=module.params.get("communication_enabled"),
+                password=module.params.get("password"),
+                password_creation_method=module.params.get("password_creation_method"),
+                profile_identifier=module.params.get("profile_identifier"),
+                registration_allowed=module.params.get("registration_allowed"),
+                system_locked=module.params.get("system_locked"),
+                # user_space_client=module.params.get('user_space_client'),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = patchClient(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          client_locked=module.params.get('client_locked'),
-          client_mfa_enabled=module.params.get('client_mfa_enabled'),
-          communication_enabled=module.params.get('communication_enabled'),
-          del_client=module.params.get('del_client'),
-          description=module.params.get('description'),
-          disable_capability=module.params.get('disable_capability'),
-          dynamic_parameters=module.params.get('dynamic_parameters'),
-          enable_domain_sharing=module.params.get('enable_domain_sharing'),
-          enabled_capabilities=module.params.get('enabled_capabilities'),
-          max_num_cache_log=module.params.get('max_num_cache_log'),
-          max_space_cache_log=module.params.get('max_space_cache_log'),
-          password=module.params.get('password'),
-          password_creation_method=module.params.get('password_creation_method'),
-          profile_id=module.params.get('profile_id'),
-          registration_allowed=module.params.get('registration_allowed'),
-          shared_domain_list=module.params.get('shared_domain_list'),
-          system_locked=module.params.get('system_locked'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = patchClient(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                client_locked=module.params.get("client_locked"),
+                client_mfa_enabled=module.params.get("client_mfa_enabled"),
+                communication_enabled=module.params.get("communication_enabled"),
+                del_client=module.params.get("del_client"),
+                description=module.params.get("description"),
+                disable_capability=module.params.get("disable_capability"),
+                dynamic_parameters=module.params.get("dynamic_parameters"),
+                enable_domain_sharing=module.params.get("enable_domain_sharing"),
+                enabled_capabilities=module.params.get("enabled_capabilities"),
+                max_num_cache_log=module.params.get("max_num_cache_log"),
+                max_space_cache_log=module.params.get("max_space_cache_log"),
+                password=module.params.get("password"),
+                password_creation_method=module.params.get("password_creation_method"),
+                profile_id=module.params.get("profile_id"),
+                registration_allowed=module.params.get("registration_allowed"),
+                shared_domain_list=module.params.get("shared_domain_list"),
+                system_locked=module.params.get("system_locked"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add_guard_point':
-      try:
-        response = clientAddGuardPoint(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          guard_paths=module.params.get('guard_paths'),
-          guard_point_params=module.params.get('guard_point_params'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add_guard_point":
+        try:
+            response = clientAddGuardPoint(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                guard_paths=module.params.get("guard_paths"),
+                guard_point_params=module.params.get("guard_point_params"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'unenroll':
-      try:
-        response = unEnrollClient(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "unenroll":
+        try:
+            response = unEnrollClient(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'delete':
-      try:
-        response = deleteClients(
-          node=module.params.get('localNode'),
-          client_id_list=module.params.get('client_id_list'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "delete":
+        try:
+            response = deleteClients(
+                node=module.params.get("localNode"),
+                client_id_list=module.params.get("client_id_list"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'delete_id':
-      try:
-        response = deleteClientById(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          del_client=module.params.get('del_client'),
-          force_del_client=module.params.get('force_del_client'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "delete_id":
+        try:
+            response = deleteClientById(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                del_client=module.params.get("del_client"),
+                force_del_client=module.params.get("force_del_client"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'auth_binaries':
-      try:
-        response = updateClientAuthBinaries(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          auth_binaries=module.params.get('auth_binaries'),
-          client_auth_binaries_from=module.params.get('client_auth_binaries_from'),
-          re_sign=module.params.get('re_sign'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "auth_binaries":
+        try:
+            response = updateClientAuthBinaries(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                auth_binaries=module.params.get("auth_binaries"),
+                client_auth_binaries_from=module.params.get(
+                    "client_auth_binaries_from"
+                ),
+                re_sign=module.params.get("re_sign"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'ldt_pause':
-      try:
-        response = sendLDTPauseCmd(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          paused=module.params.get('paused'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "ldt_pause":
+        try:
+            response = sendLDTPauseCmd(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                paused=module.params.get("paused"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch_guard_point':
-      try:
-        response = patchGuardPointCTEClient(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          gp_id=module.params.get('gp_id'),
-          data_classification_enabled=module.params.get('data_classification_enabled'),
-          data_lineage_enabled=module.params.get('data_lineage_enabled'),
-          guard_enabled=module.params.get('guard_enabled'),
-          mfa_enabled=module.params.get('mfa_enabled'),
-          network_share_credentials_id=module.params.get('network_share_credentials_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch_guard_point":
+        try:
+            response = patchGuardPointCTEClient(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                gp_id=module.params.get("gp_id"),
+                data_classification_enabled=module.params.get(
+                    "data_classification_enabled"
+                ),
+                data_lineage_enabled=module.params.get("data_lineage_enabled"),
+                guard_enabled=module.params.get("guard_enabled"),
+                mfa_enabled=module.params.get("mfa_enabled"),
+                network_share_credentials_id=module.params.get(
+                    "network_share_credentials_id"
+                ),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'gp_unguard':
-      try:
-        response = unGuardPoints(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          guard_point_id_list=module.params.get('guard_point_id_list'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "gp_unguard":
+        try:
+            response = unGuardPoints(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                guard_point_id_list=module.params.get("guard_point_id_list"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'gp_enable_early_access':
-      try:
-        response = updateGPEarlyAccess(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          gp_id=module.params.get('gp_id'),
-          early_access=module.params.get('early_access'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "gp_enable_early_access":
+        try:
+            response = updateGPEarlyAccess(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                gp_id=module.params.get("gp_id"),
+                early_access=module.params.get("early_access"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

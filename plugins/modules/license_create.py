@@ -8,13 +8,21 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import addLicense
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
+    addLicense,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: license_create
 short_description: Add a license to CipherTrust Manager
@@ -65,9 +73,9 @@ options:
         required: false
         type: str
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Add License"
   thalesgroup.ciphertrust.license_create:
     localNode:
@@ -78,19 +86,21 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
     license: license_string
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 argument_spec = dict(
-    license=dict(type='str', options=['create', 'patch'], required=True),
-    bind_type=dict(type='str'),
+    license=dict(type="str", options=["create", "patch"], required=True),
+    bind_type=dict(type="str"),
 )
+
 
 def validate_parameters(user_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
@@ -101,10 +111,10 @@ def setup_module_object():
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         user_module=module,
@@ -115,19 +125,25 @@ def main():
     )
 
     try:
-      response = addLicense(
-        node=module.params.get('localNode'),
-        license=module.params.get('license'),
-        bind_type=module.params.get('bind_type'),
-      )
-      result['response'] = response
+        response = addLicense(
+            node=module.params.get("localNode"),
+            license=module.params.get("license"),
+            bind_type=module.params.get("bind_type"),
+        )
+        result["response"] = response
     except CMApiException as api_e:
-      if api_e.api_error_code:
-        module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+        if api_e.api_error_code:
+            module.fail_json(
+                msg="status code: "
+                + str(api_e.api_error_code)
+                + " message: "
+                + api_e.message
+            )
     except AnsibleCMException as custom_e:
-      module.fail_json(msg=custom_e.message)
+        module.fail_json(msg=custom_e.message)
 
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

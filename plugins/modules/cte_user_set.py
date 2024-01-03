@@ -8,13 +8,25 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import createUserSet, updateUserSet, addUserToSet, updateUserInSetByIndex, deleteUserInSetByIndex
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createUserSet,
+    updateUserSet,
+    addUserToSet,
+    updateUserInSetByIndex,
+    deleteUserInSetByIndex,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_user_set
 short_description: Create and manage CTE user-sets
@@ -96,9 +108,9 @@ options:
     uname:
       description: Name of the user which shall be added in user-set
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE Userset"
   thalesgroup.ciphertrust.cte_user_set:
     localNode:
@@ -140,62 +152,68 @@ EXAMPLES = '''
         uid: 1001
         gname: rootGroup
         gid: 1000
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 _user = dict(
-  gid=dict(type='int'),
-  gname=dict(type='str'),
-  os_domain=dict(type='str'),
-  uid=dict(type='int'),
-  uname=dict(type='str'),
+    gid=dict(type="int"),
+    gname=dict(type="str"),
+    os_domain=dict(type="str"),
+    uid=dict(type="int"),
+    uname=dict(type="str"),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=[
-      'create', 
-      'patch', 
-      'add_user', 
-      'patch_user',
-      'delete_user',
-    ], required=True),
-    id=dict(type='str'),
-    userIndex=dict(type='int'),
-    name=dict(type='str'),
-    description=dict(type='str'),
-    users=dict(type='list', element='dict', options=_user),
-    gid=dict(type='int'),
-    gname=dict(type='str'),
-    os_domain=dict(type='str'),
-    uid=dict(type='int'),
-    uname=dict(type='str'),
+    op_type=dict(
+        type="str",
+        options=[
+            "create",
+            "patch",
+            "add_user",
+            "patch_user",
+            "delete_user",
+        ],
+        required=True,
+    ),
+    id=dict(type="str"),
+    userIndex=dict(type="int"),
+    name=dict(type="str"),
+    description=dict(type="str"),
+    users=dict(type="list", element="dict", options=_user),
+    gid=dict(type="int"),
+    gname=dict(type="str"),
+    os_domain=dict(type="str"),
+    uid=dict(type="int"),
+    uname=dict(type="str"),
 )
+
 
 def validate_parameters(cte_user_set_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'create', ['name']],
-            ['op_type', 'patch', ['id']],
-            ['op_type', 'add_user', ['id']],
-            ['op_type', 'patch_user', ['id', 'userIndex']],
-            ['op_type', 'delete_user', ['id', 'userIndex']],            
+            ["op_type", "create", ["name"]],
+            ["op_type", "patch", ["id"]],
+            ["op_type", "add_user", ["id"]],
+            ["op_type", "patch_user", ["id", "userIndex"]],
+            ["op_type", "delete_user", ["id", "userIndex"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         cte_user_set_module=module,
@@ -205,87 +223,113 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createUserSet(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          description=module.params.get('description'),
-          users=module.params.get('users'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createUserSet(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                description=module.params.get("description"),
+                users=module.params.get("users"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateUserSet(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          description=module.params.get('description'),
-          users=module.params.get('users'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateUserSet(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                description=module.params.get("description"),
+                users=module.params.get("users"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add_user':
-      try:
-        response = addUserToSet(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          users=module.params.get('users'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add_user":
+        try:
+            response = addUserToSet(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                users=module.params.get("users"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch_user':
-      try:
-        response = updateUserInSetByIndex(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          userIndex=str(module.params.get('userIndex')),
-          gid=module.params.get('gid'),
-          gname=module.params.get('gname'),
-          os_domain=module.params.get('os_domain'),
-          uid=module.params.get('uid'),
-          uname=module.params.get('uname'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch_user":
+        try:
+            response = updateUserInSetByIndex(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                userIndex=str(module.params.get("userIndex")),
+                gid=module.params.get("gid"),
+                gname=module.params.get("gname"),
+                os_domain=module.params.get("os_domain"),
+                uid=module.params.get("uid"),
+                uname=module.params.get("uname"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'delete_user':
-      try:
-        response = deleteUserInSetByIndex(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          userIndex=str(module.params.get('userIndex')),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "delete_user":
+        try:
+            response = deleteUserInSetByIndex(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                userIndex=str(module.params.get("userIndex")),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import activateTrial, deactivateTrial
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
+    activateTrial,
+    deactivateTrial,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: license_trial_action
 short_description: Activate or deactivate CipherTrust Manager trial license
@@ -66,9 +75,9 @@ options:
         required: true
         type: str
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Activate Trial License"
   thalesgroup.ciphertrust.license_trial_action:
     localNode:
@@ -92,19 +101,21 @@ EXAMPLES = '''
         verify: false
     action_type: deactivate
     trialId: trial_id
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 argument_spec = dict(
-    action_type=dict(type='str', options=['activate', 'deactivate'], required=True),
-    trialId=dict(type='str', required=True),
+    action_type=dict(type="str", options=["activate", "deactivate"], required=True),
+    trialId=dict(type="str", required=True),
 )
+
 
 def validate_parameters(user_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
@@ -115,10 +126,10 @@ def setup_module_object():
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         user_module=module,
@@ -128,33 +139,44 @@ def main():
         changed=False,
     )
 
-    if module.params.get('action_type') == 'activate':
-      try:
-        response = activateTrial(
-            node=module.params.get('localNode'),
-            trialId=module.params.get('trialId')
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("action_type") == "activate":
+        try:
+            response = activateTrial(
+                node=module.params.get("localNode"),
+                trialId=module.params.get("trialId"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
-      try:
-        response = deactivateTrial(
-            node=module.params.get('localNode'),
-            trialId=module.params.get('trialId')
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+        try:
+            response = deactivateTrial(
+                node=module.params.get("localNode"),
+                trialId=module.params.get("trialId"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

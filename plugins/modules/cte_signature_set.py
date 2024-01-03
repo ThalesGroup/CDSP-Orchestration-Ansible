@@ -8,13 +8,28 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import createSignatureSet, updateSignatureSet, addSignatureToSet, deleteSignatureInSetById, sendSignAppRequest, querySignAppRequest, cancelSignAppRequest, getSignatureFromSetByFilter
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createSignatureSet,
+    updateSignatureSet,
+    addSignatureToSet,
+    deleteSignatureInSetById,
+    sendSignAppRequest,
+    querySignAppRequest,
+    cancelSignAppRequest,
+    getSignatureFromSetByFilter,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_signature_set
 short_description: Create and manage CTE Signature Sets
@@ -95,9 +110,9 @@ options:
       description:
         - ID of the client where the signing request is to be sent
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE Signature Set"
   thalesgroup.ciphertrust.cte_signature_set:
     localNode:
@@ -158,64 +173,70 @@ EXAMPLES = '''
     op_type: sign_app
     id: "{{ signature_set['response']['id'] }}"
     client_id: Client1
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 _signature = dict(
-  file_name=dict(type='str'),
-  hash_value=dict(type='str'),
+    file_name=dict(type="str"),
+    hash_value=dict(type="str"),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=[
-      'create', 
-      'patch', 
-      'add_signature',
-      'get_signature',
-      'delete_signature',
-      'sign_app',
-      'query_sign_app',
-      'cancel_sign_app'
-    ], required=True),
-    id=dict(type='str'),
-    signature_id=dict(type='str'),
-    name=dict(type='str'),
-    description=dict(type='str'),
-    source_list=dict(type='list', element='str'),
-    signatures=dict(type='list', element='dict', options=_signature),
-    client_id=dict(type='str'),
-    hash_value=dict(type='str'),
-    file_name=dict(type='str'),
+    op_type=dict(
+        type="str",
+        options=[
+            "create",
+            "patch",
+            "add_signature",
+            "get_signature",
+            "delete_signature",
+            "sign_app",
+            "query_sign_app",
+            "cancel_sign_app",
+        ],
+        required=True,
+    ),
+    id=dict(type="str"),
+    signature_id=dict(type="str"),
+    name=dict(type="str"),
+    description=dict(type="str"),
+    source_list=dict(type="list", element="str"),
+    signatures=dict(type="list", element="dict", options=_signature),
+    client_id=dict(type="str"),
+    hash_value=dict(type="str"),
+    file_name=dict(type="str"),
 )
+
 
 def validate_parameters(cte_signature_set_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'create', ['name']],
-            ['op_type', 'patch', ['id']],
-            ['op_type', 'add_signature', ['id', 'signatures']],
-            ['op_type', 'get_signature', ['id']],
-            ['op_type', 'delete_signature', ['id', 'signature_id']],
-            ['op_type', 'sign_app', ['id', 'client_id']],
-            ['op_type', 'query_sign_app', ['id', 'client_id']],
-            ['op_type', 'cancel_sign_app', ['id', 'client_id']],
+            ["op_type", "create", ["name"]],
+            ["op_type", "patch", ["id"]],
+            ["op_type", "add_signature", ["id", "signatures"]],
+            ["op_type", "get_signature", ["id"]],
+            ["op_type", "delete_signature", ["id", "signature_id"]],
+            ["op_type", "sign_app", ["id", "client_id"]],
+            ["op_type", "query_sign_app", ["id", "client_id"]],
+            ["op_type", "cancel_sign_app", ["id", "client_id"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         cte_signature_set_module=module,
@@ -225,125 +246,166 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createSignatureSet(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          description=module.params.get('description'),
-          source_list=module.params.get('source_list'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createSignatureSet(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                description=module.params.get("description"),
+                source_list=module.params.get("source_list"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateSignatureSet(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          description=module.params.get('description'),
-          source_list=module.params.get('source_list'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateSignatureSet(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                description=module.params.get("description"),
+                source_list=module.params.get("source_list"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add_signature':
-      try:
-        response = addSignatureToSet(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          signatures=module.params.get('signatures'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add_signature":
+        try:
+            response = addSignatureToSet(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                signatures=module.params.get("signatures"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'get_signature':
-      try:
-        response = getSignatureFromSetByFilter(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          hash_value=module.params.get('hash_value'),
-          file_name=module.params.get('file_name'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "get_signature":
+        try:
+            response = getSignatureFromSetByFilter(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                hash_value=module.params.get("hash_value"),
+                file_name=module.params.get("file_name"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'delete_signature':
-      try:
-        response = deleteSignatureInSetById(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          signature_id=module.params.get('signature_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "delete_signature":
+        try:
+            response = deleteSignatureInSetById(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                signature_id=module.params.get("signature_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'sign_app':
-      try:
-        response = sendSignAppRequest(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          client_id=module.params.get('client_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "sign_app":
+        try:
+            response = sendSignAppRequest(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                client_id=module.params.get("client_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'query_sign_app':
-      try:
-        response = querySignAppRequest(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          client_id=module.params.get('client_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "query_sign_app":
+        try:
+            response = querySignAppRequest(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                client_id=module.params.get("client_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'cancel_sign_app':
-      try:
-        response = cancelSignAppRequest(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          client_id=module.params.get('client_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "cancel_sign_app":
+        try:
+            response = cancelSignAppRequest(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                client_id=module.params.get("client_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

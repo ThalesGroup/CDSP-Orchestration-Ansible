@@ -8,13 +8,24 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cluster import new, csr, sign, join
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cluster import (
+    new,
+    csr,
+    sign,
+    join,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cm_cluster
 short_description: Create or join CipherTrust Manager node cluster
@@ -93,9 +104,9 @@ options:
             required: true
             default: false
         default: []
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create new cluster"
   thalesgroup.ciphertrust.cm_cluster:
     localNode:
@@ -124,19 +135,19 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
-'''
+"""
 
 _joining_node = dict(
-    server_ip=dict(type='str', required=True),
-    server_private_ip=dict(type='str', required=True),
-    server_port=dict(type='int', required=True),
-    user=dict(type='str', required=True),
-    password=dict(type='str', required=True),
-    verify=dict(type='bool', required=True),
+    server_ip=dict(type="str", required=True),
+    server_private_ip=dict(type="str", required=True),
+    server_port=dict(type="int", required=True),
+    user=dict(type="str", required=True),
+    password=dict(type="str", required=True),
+    verify=dict(type="bool", required=True),
 )
 argument_spec = dict(
-    op_type=dict(type='str', options=['new', 'join'], required=True),
-    nodes=dict(type='list', element='dict', options=_joining_node),
+    op_type=dict(type="str", options=["new", "join"], required=True),
+    nodes=dict(type="list", element="dict", options=_joining_node),
 )
 
 
@@ -147,9 +158,7 @@ def validate_parameters(cluster_module):
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
-        required_if=(
-            ['op_type', 'join', ['nodes']],
-        ),
+        required_if=(["op_type", "join", ["nodes"]],),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
@@ -157,7 +166,6 @@ def setup_module_object():
 
 
 def main():
-
     global module
 
     module = setup_module_object()
@@ -169,48 +177,56 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'new':
+    if module.params.get("op_type") == "new":
         try:
             response = new(
-                node=module.params.get('localNode'),
+                node=module.params.get("localNode"),
             )
-            result['response'] = response
+            result["response"] = response
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
-                    msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
         except AnsibleCMException as custom_e:
             module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'join':
-        _joining_nodes = module.params.get('nodes')
+    elif module.params.get("op_type") == "join":
+        _joining_nodes = module.params.get("nodes")
 
         for node in _joining_nodes:
-            strCSR = ''
+            strCSR = ""
             # ------Section Begins-----"
             # Send request for CSR generation to the new node
             try:
                 strCSR = csr(
-                    master=module.params.get('localNode'),
+                    master=module.params.get("localNode"),
                     node=node,
                 )
             except CMApiException as api_e:
                 if api_e.api_error_code:
                     module.fail_json(
-                        msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+                        msg="status code: "
+                        + str(api_e.api_error_code)
+                        + " message: "
+                        + api_e.message
+                    )
             except AnsibleCMException as custom_e:
                 module.fail_json(msg=custom_e.message)
             # ------Section Ends-----"
 
             # ------Section Begins-----"
             # Send request for CSR signing to member node
-            cert = ''
-            caChain = ''
-            mkek_blob = ''
+            cert = ""
+            caChain = ""
+            mkek_blob = ""
 
             try:
                 output = sign(
-                    master=module.params.get('localNode'),
+                    master=module.params.get("localNode"),
                     node=node,
                     csr=strCSR,
                 )
@@ -220,7 +236,11 @@ def main():
             except CMApiException as api_e:
                 if api_e.api_error_code:
                     module.fail_json(
-                        msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+                        msg="status code: "
+                        + str(api_e.api_error_code)
+                        + " message: "
+                        + api_e.message
+                    )
             except AnsibleCMException as custom_e:
                 module.fail_json(msg=custom_e.message)
             # ------Section Ends-----"
@@ -230,7 +250,7 @@ def main():
 
             try:
                 output = join(
-                    master=module.params.get('localNode'),
+                    master=module.params.get("localNode"),
                     node=node,
                     cert=cert,
                     caChain=caChain,
@@ -240,7 +260,11 @@ def main():
             except CMApiException as api_e:
                 if api_e.api_error_code:
                     module.fail_json(
-                        msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+                        msg="status code: "
+                        + str(api_e.api_error_code)
+                        + " message: "
+                        + api_e.message
+                    )
             except AnsibleCMException as custom_e:
                 module.fail_json(msg=custom_e.message)
             # ------Section Ends-----"
@@ -248,5 +272,5 @@ def main():
     module.exit_json(**result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

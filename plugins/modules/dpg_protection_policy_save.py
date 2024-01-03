@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import createProtectionPolicy, updateProtectionPolicy
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
+    createProtectionPolicy,
+    updateProtectionPolicy,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: dpg_protection_policy_save
 short_description: Manage DPG protection policies governing crypto operations
@@ -113,9 +122,9 @@ options:
       - Added in CM v2.12
       required: false
       type: bool
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Protection Policy"
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode:
@@ -162,46 +171,48 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
         auth_domain_path:
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch'], required=True),
-    policy_name=dict(type='str'),
-    algorithm=dict(type='str'),
-    key=dict(type='str'),
-    name=dict(type='str'),
-    allow_single_char_input=dict(type='bool'),
-    character_set_id=dict(type='str'),
-    iv=dict(type='str'),
-    tweak=dict(type='str'),
-    tweak_algorithm=dict(type='str', options=['SHA1', 'SHA256', 'None']),
-    disable_versioning=dict(type='bool'),
-    use_external_versioning=dict(type='bool'),
+    op_type=dict(type="str", options=["create", "patch"], required=True),
+    policy_name=dict(type="str"),
+    algorithm=dict(type="str"),
+    key=dict(type="str"),
+    name=dict(type="str"),
+    allow_single_char_input=dict(type="bool"),
+    character_set_id=dict(type="str"),
+    iv=dict(type="str"),
+    tweak=dict(type="str"),
+    tweak_algorithm=dict(type="str", options=["SHA1", "SHA256", "None"]),
+    disable_versioning=dict(type="bool"),
+    use_external_versioning=dict(type="bool"),
 )
+
 
 def validate_parameters(dpg_protection_policy_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'patch', ['policy_name']],
-            ['op_type', 'create', ['algorithm', 'key', 'name']]
+            ["op_type", "patch", ["policy_name"]],
+            ["op_type", "create", ["algorithm", "key", "name"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         dpg_protection_policy_module=module,
@@ -211,52 +222,71 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createProtectionPolicy(
-          node=module.params.get('localNode'),
-          algorithm=module.params.get('algorithm'),
-          key=module.params.get('key'),
-          name=module.params.get('name'),
-          allow_single_char_input=module.params.get('allow_single_char_input'), #Parameter not applicable with CM v2.12
-          character_set_id=module.params.get('character_set_id'),
-          iv=module.params.get('iv'),
-          tweak=module.params.get('tweak'),
-          tweak_algorithm=module.params.get('tweak_algorithm'),
-          disable_versioning=module.params.get('disable_versioning'), #Parameter added in CM v2.12
-          use_external_versioning=module.params.get('use_external_versioning'), #Parameter added in CM v2.12
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createProtectionPolicy(
+                node=module.params.get("localNode"),
+                algorithm=module.params.get("algorithm"),
+                key=module.params.get("key"),
+                name=module.params.get("name"),
+                allow_single_char_input=module.params.get(
+                    "allow_single_char_input"
+                ),  # Parameter not applicable with CM v2.12
+                character_set_id=module.params.get("character_set_id"),
+                iv=module.params.get("iv"),
+                tweak=module.params.get("tweak"),
+                tweak_algorithm=module.params.get("tweak_algorithm"),
+                disable_versioning=module.params.get(
+                    "disable_versioning"
+                ),  # Parameter added in CM v2.12
+                use_external_versioning=module.params.get(
+                    "use_external_versioning"
+                ),  # Parameter added in CM v2.12
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateProtectionPolicy(
-          node=module.params.get('localNode'),
-          policy_name=module.params.get('policy_name'),
-          algorithm=module.params.get('algorithm'),
-          key=module.params.get('key'),
-          allow_single_char_input=module.params.get('allow_single_char_input'), #Parameter not applicable with CM v2.12
-          character_set_id=module.params.get('character_set_id'),
-          iv=module.params.get('iv'),
-          tweak=module.params.get('tweak'),
-          tweak_algorithm=module.params.get('tweak_algorithm'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateProtectionPolicy(
+                node=module.params.get("localNode"),
+                policy_name=module.params.get("policy_name"),
+                algorithm=module.params.get("algorithm"),
+                key=module.params.get("key"),
+                allow_single_char_input=module.params.get(
+                    "allow_single_char_input"
+                ),  # Parameter not applicable with CM v2.12
+                character_set_id=module.params.get("character_set_id"),
+                iv=module.params.get("iv"),
+                tweak=module.params.get("tweak"),
+                tweak_algorithm=module.params.get("tweak_algorithm"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

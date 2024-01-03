@@ -8,13 +8,25 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import createResourceSet, updateResourceSet, addResourceToSet, updateResourceInSetByIndex, deleteResourceInSetByIndex
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createResourceSet,
+    updateResourceSet,
+    addResourceToSet,
+    updateResourceInSetByIndex,
+    deleteResourceInSetByIndex,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_resource_set
 short_description: Create and manage CTE resource-sets
@@ -112,9 +124,9 @@ options:
       description:
         - Flag to include subfolders in the Resource
       type: boolean
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE ResourceSet"
   thalesgroup.ciphertrust.cte_resource_set:
     localNode:
@@ -153,74 +165,80 @@ EXAMPLES = '''
         file: "*"
         include_subfolders: true
         hdfs: false
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 _resource = dict(
-  directory=dict(type='str'),
-  file=dict(type='str'),
-  hdfs=dict(type='bool'),
-  include_subfolders=dict(type='bool'),
+    directory=dict(type="str"),
+    file=dict(type="str"),
+    hdfs=dict(type="bool"),
+    include_subfolders=dict(type="bool"),
 )
 
 _classification_tag_attribute = dict(
-  data_type=dict(type='str'),
-  name=dict(type='str'),
-  operator=dict(type='str', options=['eq', 'lt', 'ne', 'le', 'gt', 'ge']),
-  value=dict(type='str'),
+    data_type=dict(type="str"),
+    name=dict(type="str"),
+    operator=dict(type="str", options=["eq", "lt", "ne", "le", "gt", "ge"]),
+    value=dict(type="str"),
 )
 
 _classification_tag = dict(
-  attributes=dict(type='list', element='dict', options=_classification_tag_attribute),
-  description=dict(type='str'),
-  name=dict(type='str'),
+    attributes=dict(type="list", element="dict", options=_classification_tag_attribute),
+    description=dict(type="str"),
+    name=dict(type="str"),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=[
-      'create', 
-      'patch', 
-      'add_resource', 
-      'patch_resource',
-      'delete_resource',
-    ], required=True),
-    id=dict(type='str'),
-    resourceIndex=dict(type='int'),
-    name=dict(type='str'),
-    description=dict(type='str'),
-    classification_tags=dict(type='list', element='dict', options=_classification_tag),
-    resources=dict(type='list', element='dict', options=_resource),
-    type=dict(type='str', options=['Directory', 'Classification']),
-    directory=dict(type='str'),
-    file=dict(type='str'),
-    hdfs=dict(type='bool'),
-    include_subfolders=dict(type='bool'),
+    op_type=dict(
+        type="str",
+        options=[
+            "create",
+            "patch",
+            "add_resource",
+            "patch_resource",
+            "delete_resource",
+        ],
+        required=True,
+    ),
+    id=dict(type="str"),
+    resourceIndex=dict(type="int"),
+    name=dict(type="str"),
+    description=dict(type="str"),
+    classification_tags=dict(type="list", element="dict", options=_classification_tag),
+    resources=dict(type="list", element="dict", options=_resource),
+    type=dict(type="str", options=["Directory", "Classification"]),
+    directory=dict(type="str"),
+    file=dict(type="str"),
+    hdfs=dict(type="bool"),
+    include_subfolders=dict(type="bool"),
 )
+
 
 def validate_parameters(cte_resource_set_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'create', ['name']],
-            ['op_type', 'patch', ['id']],
-            ['op_type', 'add_resource', ['id']],
-            ['op_type', 'patch_resource', ['id', 'resourceIndex']],
+            ["op_type", "create", ["name"]],
+            ["op_type", "patch", ["id"]],
+            ["op_type", "add_resource", ["id"]],
+            ["op_type", "patch_resource", ["id", "resourceIndex"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         cte_resource_set_module=module,
@@ -230,89 +248,115 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createResourceSet(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          classification_tags=module.params.get('classification_tags'),
-          description=module.params.get('description'),
-          resources=module.params.get('resources'),
-          type=module.params.get('type'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createResourceSet(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                classification_tags=module.params.get("classification_tags"),
+                description=module.params.get("description"),
+                resources=module.params.get("resources"),
+                type=module.params.get("type"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateResourceSet(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          classification_tags=module.params.get('classification_tags'),
-          description=module.params.get('description'),
-          resources=module.params.get('resources'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateResourceSet(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                classification_tags=module.params.get("classification_tags"),
+                description=module.params.get("description"),
+                resources=module.params.get("resources"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add_resource':
-      try:
-        response = addResourceToSet(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          resources=module.params.get('resources'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add_resource":
+        try:
+            response = addResourceToSet(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                resources=module.params.get("resources"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch_resource':
-      try:
-        response = updateResourceInSetByIndex(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          resourceIndex=str(module.params.get('resourceIndex')),
-          directory=module.params.get('directory'),
-          file=module.params.get('file'),
-          hdfs=module.params.get('hdfs'),
-          include_subfolders=module.params.get('include_subfolders'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch_resource":
+        try:
+            response = updateResourceInSetByIndex(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                resourceIndex=str(module.params.get("resourceIndex")),
+                directory=module.params.get("directory"),
+                file=module.params.get("file"),
+                hdfs=module.params.get("hdfs"),
+                include_subfolders=module.params.get("include_subfolders"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'delete_resource':
-      try:
-        response = deleteResourceInSetByIndex(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          resourceIndex=str(module.params.get('resourceIndex')),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "delete_resource":
+        try:
+            response = deleteResourceInSetByIndex(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                resourceIndex=str(module.params.get("resourceIndex")),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

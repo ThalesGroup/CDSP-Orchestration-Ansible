@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import createMaskingFormat, updateMaskingFormat
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
+    createMaskingFormat,
+    updateMaskingFormat,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: dpg_masking_format_save
 short_description: Manage masking formats for DPG
@@ -88,9 +97,9 @@ options:
     starting_characters:
       description: Number of starting characters to be masked
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Masking Format"
   thalesgroup.ciphertrust.dpg_masking_format_save:
     localNode:
@@ -136,41 +145,43 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
         auth_domain_path:
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch'], required=True),
-    masking_format_id=dict(type='str'),
-    name=dict(type='str'),
-    starting_characters=dict(type='int'),
-    ending_characters=dict(type='int'),
-    mask_char=dict(type='str'),
-    show=dict(type='bool'),
+    op_type=dict(type="str", options=["create", "patch"], required=True),
+    masking_format_id=dict(type="str"),
+    name=dict(type="str"),
+    starting_characters=dict(type="int"),
+    ending_characters=dict(type="int"),
+    mask_char=dict(type="str"),
+    show=dict(type="bool"),
 )
+
 
 def validate_parameters(dpg_masking_format_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'patch', ['masking_format_id']],
-            ['op_type', 'create', ['name']]
+            ["op_type", "patch", ["masking_format_id"]],
+            ["op_type", "create", ["name"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         dpg_masking_format_module=module,
@@ -180,45 +191,56 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createMaskingFormat(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          ending_characters=module.params.get('ending_characters'),
-          mask_char=module.params.get('mask_char'),
-          show=module.params.get('show'),
-          starting_characters=module.params.get('starting_characters'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createMaskingFormat(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                ending_characters=module.params.get("ending_characters"),
+                mask_char=module.params.get("mask_char"),
+                show=module.params.get("show"),
+                starting_characters=module.params.get("starting_characters"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateMaskingFormat(
-          node=module.params.get('localNode'),
-          masking_format_id=module.params.get('masking_format_id'),
-          name=module.params.get('name'),
-          ending_characters=module.params.get('ending_characters'),
-          mask_char=module.params.get('mask_char'),
-          show=module.params.get('show'),
-          starting_characters=module.params.get('starting_characters'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateMaskingFormat(
+                node=module.params.get("localNode"),
+                masking_format_id=module.params.get("masking_format_id"),
+                name=module.params.get("name"),
+                ending_characters=module.params.get("ending_characters"),
+                mask_char=module.params.get("mask_char"),
+                show=module.params.get("show"),
+                starting_characters=module.params.get("starting_characters"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

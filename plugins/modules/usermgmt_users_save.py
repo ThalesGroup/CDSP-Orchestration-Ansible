@@ -8,15 +8,26 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.users import create, patch, changepw, patch_self
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.users import (
+    create,
+    patch,
+    changepw,
+    patch_self,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 module = None
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: usermgmt_users_save
 short_description: Create and manage users in CipherTrust Manager
@@ -163,9 +174,9 @@ options:
           - The domain where user needs to be authenticated. This is the domain where user is created. Defaults to the root domain.
           - required only for changew op_type, not mandatory though
         type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create new user"
     thalesgroup.ciphertrust.usermgmt_users_save:
       localNode: 
@@ -225,58 +236,63 @@ EXAMPLES = '''
         auth_domain_path:
       op_type: "patch_self"
       name: "CM Admin"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 _metadata = dict()
 _login_flags = dict(
-    prevent_ui_login=dict(type='bool', required=False, default=False),
+    prevent_ui_login=dict(type="bool", required=False, default=False),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch', 'changepw', 'patch_self'], required=True),
-    cm_user_id=dict(type='str'),
-    allowed_auth_methods=dict(type='list', element='str', required=False, default=['password']),
-    app_metadata=dict(type='dict', options=_metadata, required=False),
-    certificate_subject_dn=dict(type='str', required=False),
-    connection=dict(type='str', required=False, default='local_account'),
-    email=dict(type='str', required=False),
-    enable_cert_auth=dict(type='bool', required=False),
-    is_domain_user=dict(type='bool', required=False),
-    login_flags=dict(type='dict', options=_login_flags, required=False),
-    name=dict(type='str', required=False),
-    password=dict(type='str', required=False),
-    password_change_required=dict(type='bool', required=False),
-    user_id=dict(type='str', required=False),
-    user_metadata=dict(type='dict', options=_metadata, required=False),
-    username=dict(type='str'), # Not needed in self update, else needed
-    failed_logins_count=dict(type='int'), # Needed only for patch operation
-    new_password=dict(type='str'), # Needed only for change pwd operation
-    auth_domain=dict(type='str'), # Needed only for change pwd operation
+    op_type=dict(
+        type="str", options=["create", "patch", "changepw", "patch_self"], required=True
+    ),
+    cm_user_id=dict(type="str"),
+    allowed_auth_methods=dict(
+        type="list", element="str", required=False, default=["password"]
+    ),
+    app_metadata=dict(type="dict", options=_metadata, required=False),
+    certificate_subject_dn=dict(type="str", required=False),
+    connection=dict(type="str", required=False, default="local_account"),
+    email=dict(type="str", required=False),
+    enable_cert_auth=dict(type="bool", required=False),
+    is_domain_user=dict(type="bool", required=False),
+    login_flags=dict(type="dict", options=_login_flags, required=False),
+    name=dict(type="str", required=False),
+    password=dict(type="str", required=False),
+    password_change_required=dict(type="bool", required=False),
+    user_id=dict(type="str", required=False),
+    user_metadata=dict(type="dict", options=_metadata, required=False),
+    username=dict(type="str"),  # Not needed in self update, else needed
+    failed_logins_count=dict(type="int"),  # Needed only for patch operation
+    new_password=dict(type="str"),  # Needed only for change pwd operation
+    auth_domain=dict(type="str"),  # Needed only for change pwd operation
 )
+
 
 def validate_parameters(user_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'create', ['username']],
-            ['op_type', 'patch', ['cm_user_id', 'username']],
-            ['op_type', 'changepw', ['password', 'new_password', 'username']],
+            ["op_type", "create", ["username"]],
+            ["op_type", "patch", ["cm_user_id", "username"]],
+            ["op_type", "changepw", ["password", "new_password", "username"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
-
     )
     return module
 
+
 def main():
-    
     module = setup_module_object()
     validate_parameters(
         user_module=module,
@@ -286,85 +302,106 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
+    if module.params.get("op_type") == "create":
         try:
-          response = create(
-            node=module.params.get('localNode'),
-            allowed_auth_methods=module.params.get('allowed_auth_methods'),
-            app_metadata=module.params.get('app_metadata'),
-            certificate_subject_dn=module.params.get('certificate_subject_dn'),
-            connection=module.params.get('connection'),
-            email=module.params.get('email'),
-            enable_cert_auth=module.params.get('enable_cert_auth'),
-            login_flags=module.params.get('login_flags'),
-            prevent_ui_login_bool=module.params.get('prevent_ui_login'),
-            name=module.params.get('name'),
-            password=module.params.get('password'),
-            password_change_required=module.params.get('password_change_required'),
-            user_id=module.params.get('user_id'),
-            user_metadata=module.params.get('user_metadata'),
-            username=module.params.get('username'),
-          )
-          result['response'] = response
+            response = create(
+                node=module.params.get("localNode"),
+                allowed_auth_methods=module.params.get("allowed_auth_methods"),
+                app_metadata=module.params.get("app_metadata"),
+                certificate_subject_dn=module.params.get("certificate_subject_dn"),
+                connection=module.params.get("connection"),
+                email=module.params.get("email"),
+                enable_cert_auth=module.params.get("enable_cert_auth"),
+                login_flags=module.params.get("login_flags"),
+                prevent_ui_login_bool=module.params.get("prevent_ui_login"),
+                name=module.params.get("name"),
+                password=module.params.get("password"),
+                password_change_required=module.params.get("password_change_required"),
+                user_id=module.params.get("user_id"),
+                user_metadata=module.params.get("user_metadata"),
+                username=module.params.get("username"),
+            )
+            result["response"] = response
         except CMApiException as api_e:
-          if api_e.api_error_code:
-            module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
         except AnsibleCMException as custom_e:
-          module.fail_json(msg=custom_e.message)
-    elif module.params.get('op_type') == 'patch':
+            module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
         try:
-          response = patch(
-            node=module.params.get('localNode'),
-            cm_user_id=module.params.get('cm_user_id'),
-            allowed_auth_methods=module.params.get('allowed_auth_methods'),
-            certificate_subject_dn=module.params.get('certificate_subject_dn'),
-            email=module.params.get('email'),
-            enable_cert_auth_bool=module.params.get('enable_cert_auth'),
-            failed_logins_count=module.params.get('failed_logins_count'),
-            login_flags=module.params.get('login_flags'),
-            name=module.params.get('name'),
-            password=module.params.get('password'),
-            password_change_required=module.params.get('password_change_required'),
-            user_metadata=module.params.get('user_metadata'),
-            username=module.params.get('username'),
-          )
-          result['response'] = response
+            response = patch(
+                node=module.params.get("localNode"),
+                cm_user_id=module.params.get("cm_user_id"),
+                allowed_auth_methods=module.params.get("allowed_auth_methods"),
+                certificate_subject_dn=module.params.get("certificate_subject_dn"),
+                email=module.params.get("email"),
+                enable_cert_auth_bool=module.params.get("enable_cert_auth"),
+                failed_logins_count=module.params.get("failed_logins_count"),
+                login_flags=module.params.get("login_flags"),
+                name=module.params.get("name"),
+                password=module.params.get("password"),
+                password_change_required=module.params.get("password_change_required"),
+                user_metadata=module.params.get("user_metadata"),
+                username=module.params.get("username"),
+            )
+            result["response"] = response
         except CMApiException as api_e:
-          if api_e.api_error_code:
-            module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
         except AnsibleCMException as custom_e:
-          module.fail_json(msg=custom_e.message)
-    elif module.params.get('op_type') == 'changepw':
+            module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "changepw":
         try:
-          response = changepw(
-            node=module.params.get('localNode'),
-            password=module.params.get('password'),
-            username=module.params.get('username'),
-            new_password=module.params.get('new_password'),
-            auth_domain=module.params.get('auth_domain'),
-          )
-          result['response'] = response
+            response = changepw(
+                node=module.params.get("localNode"),
+                password=module.params.get("password"),
+                username=module.params.get("username"),
+                new_password=module.params.get("new_password"),
+                auth_domain=module.params.get("auth_domain"),
+            )
+            result["response"] = response
         except CMApiException as api_e:
-          if api_e.api_error_code:
-            module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
         except AnsibleCMException as custom_e:
-          module.fail_json(msg=custom_e.message)
+            module.fail_json(msg=custom_e.message)
     else:
         try:
-          response = patch_self(
-            node=module.params.get('localNode'),
-            email=module.params.get('email'),
-            name=module.params.get('name'),
-            user_metadata=module.params.get('user_metadata'),
-          )
-          result['response'] = response
+            response = patch_self(
+                node=module.params.get("localNode"),
+                email=module.params.get("email"),
+                name=module.params.get("name"),
+                user_metadata=module.params.get("user_metadata"),
+            )
+            result["response"] = response
         except CMApiException as api_e:
-          if api_e.api_error_code:
-            module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
         except AnsibleCMException as custom_e:
-          module.fail_json(msg=custom_e.message)
-          
+            module.fail_json(msg=custom_e.message)
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

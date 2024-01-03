@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.groups import create, patch
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.groups import (
+    create,
+    patch,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: group_save
 short_description: Create or update groups on CipherTrust Manager
@@ -98,9 +107,9 @@ options:
         required: true
         default: null
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Group"
   thalesgroup.ciphertrust.group_save:
     localNode:
@@ -127,41 +136,41 @@ EXAMPLES = '''
     op_type: patch
     old_name: "group_name"
     name: "new_name"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 _schema_less = dict()
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch'], required=True),
-    old_name=dict(type='str'),
-    name=dict(type='str', required=True),
-    app_metadata=dict(type='dict', options=_schema_less, required=False),
-    client_metadata=dict(type='dict', options=_schema_less, required=False),
-    user_metadata=dict(type='dict', options=_schema_less, required=False),
+    op_type=dict(type="str", options=["create", "patch"], required=True),
+    old_name=dict(type="str"),
+    name=dict(type="str", required=True),
+    app_metadata=dict(type="dict", options=_schema_less, required=False),
+    client_metadata=dict(type="dict", options=_schema_less, required=False),
+    user_metadata=dict(type="dict", options=_schema_less, required=False),
 )
+
 
 def validate_parameters(user_module):
     return True
 
+
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
-        required_if=(
-            ['op_type', 'patch', ['old_name']],
-        ),
+        required_if=(["op_type", "patch", ["old_name"]],),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         user_module=module,
@@ -171,43 +180,54 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = create(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          app_metadata=module.params.get('app_metadata'),
-          client_metadata=module.params.get('client_metadata'),
-          user_metadata=module.params.get('user_metadata'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = create(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                app_metadata=module.params.get("app_metadata"),
+                client_metadata=module.params.get("client_metadata"),
+                user_metadata=module.params.get("user_metadata"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = patch(
-          node=module.params.get('localNode'),
-          old_name=module.params.get('old_name'),
-          name=module.params.get('name'),
-          app_metadata=module.params.get('app_metadata'),
-          client_metadata=module.params.get('client_metadata'),
-          user_metadata=module.params.get('user_metadata'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = patch(
+                node=module.params.get("localNode"),
+                old_name=module.params.get("old_name"),
+                name=module.params.get("name"),
+                app_metadata=module.params.get("app_metadata"),
+                client_metadata=module.params.get("client_metadata"),
+                user_metadata=module.params.get("user_metadata"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
 
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

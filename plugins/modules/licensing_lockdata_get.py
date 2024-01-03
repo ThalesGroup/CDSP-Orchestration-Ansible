@@ -8,12 +8,15 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import getLockdata
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
+    getLockdata,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: licensing_lockdata_get
 short_description: Get license lockdata used to get license code
@@ -55,9 +58,9 @@ options:
             type: bool
             required: true
             default: false
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Get Licensing Lockdata"
   thalesgroup.ciphertrust.licensing_lockdata_get:
     localNode:
@@ -67,41 +70,41 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
-def main():    
+
+def main():
     localNode = dict(
-            server_ip=dict(type='str', required=True),
-            server_private_ip=dict(type='str', required=True),
-            server_port=dict(type='int', required=True),
-            user=dict(type='str', required=True),
-            password=dict(type='str', required=True),
-            verify=dict(type='bool', required=True),
-        )
+        server_ip=dict(type="str", required=True),
+        server_private_ip=dict(type="str", required=True),
+        server_port=dict(type="int", required=True),
+        user=dict(type="str", required=True),
+        password=dict(type="str", required=True),
+        verify=dict(type="bool", required=True),
+    )
     module = AnsibleModule(
-            argument_spec=dict(
-                localNode=dict(type='dict', options=localNode, required=True),
-            ),
-        )
+        argument_spec=dict(
+            localNode=dict(type="dict", options=localNode, required=True),
+        ),
+    )
 
-    localNode = module.params.get('localNode');
+    localNode = module.params.get("localNode")
 
     result = dict(
         changed=False,
     )
 
     response = dict()
-    response = getLockdata(
-        node=localNode
-    )    
+    response = getLockdata(node=localNode)
 
-    result['response'] = response
+    result["response"] = response
 
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import createCharacterSet, updateCharacterSet
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
+    createCharacterSet,
+    updateCharacterSet,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: dpg_character_set_save
 short_description: Create and manage DPG character-sets
@@ -79,9 +88,9 @@ options:
       description: Allowed range of characters in HEX format
       type: list
       elements: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Character Set"
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode:
@@ -129,39 +138,41 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
 
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch'], required=True),
-    char_set_id=dict(type='str'),
-    name=dict(type='str'),
-    encoding=dict(type='str'),
-    range=dict(type='list', element='str'),
+    op_type=dict(type="str", options=["create", "patch"], required=True),
+    char_set_id=dict(type="str"),
+    name=dict(type="str"),
+    encoding=dict(type="str"),
+    range=dict(type="list", element="str"),
 )
+
 
 def validate_parameters(dpg_char_set_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'patch', ['char_set_id']],
-            ['op_type', 'create', ['name', 'range']]
+            ["op_type", "patch", ["char_set_id"]],
+            ["op_type", "create", ["name", "range"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         dpg_char_set_module=module,
@@ -171,41 +182,52 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createCharacterSet(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          range=module.params.get('range'),
-          encoding=module.params.get('encoding'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createCharacterSet(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                range=module.params.get("range"),
+                encoding=module.params.get("encoding"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateCharacterSet(
-          node=module.params.get('localNode'),
-          char_set_id=module.params.get('char_set_id'),
-          name=module.params.get('name'),
-          range=module.params.get('range'),
-          encoding=module.params.get('encoding'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateCharacterSet(
+                node=module.params.get("localNode"),
+                char_set_id=module.params.get("char_set_id"),
+                name=module.params.get("name"),
+                range=module.params.get("range"),
+                encoding=module.params.get("encoding"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

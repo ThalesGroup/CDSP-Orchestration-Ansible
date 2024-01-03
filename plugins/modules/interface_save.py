@@ -8,13 +8,22 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.interfaces import create, patch
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.interfaces import (
+    create,
+    patch,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: interface_save
 short_description: Create or update an interface or service CipherTrust Manager is hosting
@@ -274,9 +283,9 @@ options:
           type: bool
           default: null
           required: true
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Interface"
   thalesgroup.ciphertrust.interface_save:
     localNode:
@@ -292,85 +301,116 @@ EXAMPLES = '''
     interface_type: nae
     mode: no-tls-pw-opt
     network_interface: all
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 _nae_mask_system_groups = dict(
-  mask_system_groups=dict(type='bool', required=False),
+    mask_system_groups=dict(type="bool", required=False),
 )
 _meta = dict(
-  nae=dict(type='dict', options=_nae_mask_system_groups, required=False),
+    nae=dict(type="dict", options=_nae_mask_system_groups, required=False),
 )
 _trusted_cas = dict(
-  external=dict(type='list', element='str', required=False),
-  local=dict(type='list', element='str', required=False),
+    external=dict(type="list", element="str", required=False),
+    local=dict(type="list", element="str", required=False),
 )
 _name = dict(
-  C=dict(type='str', required=False),
-  L=dict(type='str', required=False),
-  O=dict(type='str', required=False),
-  OU=dict(type='str', required=False),
-  ST=dict(type='str', required=False),
+    C=dict(type="str", required=False),
+    L=dict(type="str", required=False),
+    O=dict(type="str", required=False),
+    OU=dict(type="str", required=False),
+    ST=dict(type="str", required=False),
 )
 _local_auto_gen_attribute = dict(
-  cn=dict(type='str', required=True),
-  dns_names=dict(type='list', element='str', required=False),
-  email_addresses=dict(type='list', element='str', required=False),
-  ip_addresses=dict(type='list', element='str', required=False),
-  names=dict(type='list', element='dict', options=_name, required=False),
-  uid=dict(type='str', required=False),
+    cn=dict(type="str", required=True),
+    dns_names=dict(type="list", element="str", required=False),
+    email_addresses=dict(type="list", element="str", required=False),
+    ip_addresses=dict(type="list", element="str", required=False),
+    names=dict(type="list", element="dict", options=_name, required=False),
+    uid=dict(type="str", required=False),
 )
 _tls_cipher = dict(
-  cipher_suite=dict(type='str', required=True),
-  enabled=dict(type='bool', required=True),
+    cipher_suite=dict(type="str", required=True),
+    enabled=dict(type="bool", required=True),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=['create', 'patch'], required=True),
-    interface_id=dict(type='str'),
-    port=dict(type='int', required=True),
-    auto_gen_ca_id=dict(type='str', required=False),
-    auto_registration=dict(type='bool', required=False),
-    allow_unregistered=dict(type='bool', required=False),
-    cert_user_field=dict(type='str', options=['CN','SN','E','E_ND','UID','OU'], required=False),
-    custom_uid_size=dict(type='int', required=False),
-    custom_uid_v2=dict(type='bool', required=False),
-    default_connection=dict(type='str', required=False),
-    interface_type=dict(type='str', required=False, choices=['web', 'kmip', 'nae', 'snmp'], default="nae"),
-    kmip_enable_hard_delete=dict(type='int', options=[0,1], required=False),
-    maximum_tls_version=dict(type='str', required=False, choices=['tls_1_0', 'tls_1_1', 'tls_1_2', 'tls_1_3']),
-    meta=dict(type='dict', options=_meta, required=False),
-    minimum_tls_version=dict(type='str', required=False, choices=['tls_1_0', 'tls_1_1', 'tls_1_2', 'tls_1_3'], default='tls_1_2'),
-    mode=dict(type='str', choices=['no-tls-pw-opt','no-tls-pw-req','unauth-tls-pw-opt','unauth-tls-pw-req','tls-cert-opt-pw-opt','tls-pw-opt','tls-pw-req','tls-cert-pw-opt','tls-cert-and-pw'], required=False, default="no-tls-pw-opt"),
-    name=dict(type='str', required=False),
-    network_interface=dict(type='str', required=False),
-    registration_token=dict(type='str', required=False),
-    trusted_cas=dict(type='dict', options=_trusted_cas, required=False),
-    local_auto_gen_attributes=dict(type='dict', options=_local_auto_gen_attribute, required=False),
-    tls_ciphers=dict(type='dict', options=_tls_cipher, required=False),
+    op_type=dict(type="str", options=["create", "patch"], required=True),
+    interface_id=dict(type="str"),
+    port=dict(type="int", required=True),
+    auto_gen_ca_id=dict(type="str", required=False),
+    auto_registration=dict(type="bool", required=False),
+    allow_unregistered=dict(type="bool", required=False),
+    cert_user_field=dict(
+        type="str", options=["CN", "SN", "E", "E_ND", "UID", "OU"], required=False
+    ),
+    custom_uid_size=dict(type="int", required=False),
+    custom_uid_v2=dict(type="bool", required=False),
+    default_connection=dict(type="str", required=False),
+    interface_type=dict(
+        type="str",
+        required=False,
+        choices=["web", "kmip", "nae", "snmp"],
+        default="nae",
+    ),
+    kmip_enable_hard_delete=dict(type="int", options=[0, 1], required=False),
+    maximum_tls_version=dict(
+        type="str", required=False, choices=["tls_1_0", "tls_1_1", "tls_1_2", "tls_1_3"]
+    ),
+    meta=dict(type="dict", options=_meta, required=False),
+    minimum_tls_version=dict(
+        type="str",
+        required=False,
+        choices=["tls_1_0", "tls_1_1", "tls_1_2", "tls_1_3"],
+        default="tls_1_2",
+    ),
+    mode=dict(
+        type="str",
+        choices=[
+            "no-tls-pw-opt",
+            "no-tls-pw-req",
+            "unauth-tls-pw-opt",
+            "unauth-tls-pw-req",
+            "tls-cert-opt-pw-opt",
+            "tls-pw-opt",
+            "tls-pw-req",
+            "tls-cert-pw-opt",
+            "tls-cert-and-pw",
+        ],
+        required=False,
+        default="no-tls-pw-opt",
+    ),
+    name=dict(type="str", required=False),
+    network_interface=dict(type="str", required=False),
+    registration_token=dict(type="str", required=False),
+    trusted_cas=dict(type="dict", options=_trusted_cas, required=False),
+    local_auto_gen_attributes=dict(
+        type="dict", options=_local_auto_gen_attribute, required=False
+    ),
+    tls_ciphers=dict(type="dict", options=_tls_cipher, required=False),
 )
+
 
 def validate_parameters(user_module):
     return True
 
+
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
-        required_if=(
-            ['op_type', 'patch', ['interface_id']],
-        ),
+        required_if=(["op_type", "patch", ["interface_id"]],),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         user_module=module,
@@ -380,70 +420,83 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = create(
-          node=module.params.get('localNode'),
-          port=module.params.get('port'),
-          auto_gen_ca_id=module.params.get('auto_gen_ca_id'),
-          auto_registration=module.params.get('auto_registration'),
-          allow_unregistered=module.params.get('allow_unregistered'),
-          cert_user_field=module.params.get('cert_user_field'),
-          custom_uid_size=module.params.get('custom_uid_size'),
-          custom_uid_v2=module.params.get('custom_uid_v2'),
-          default_connection=module.params.get('default_connection'),
-          interface_type=module.params.get('interface_type'),
-          kmip_enable_hard_delete=module.params.get('kmip_enable_hard_delete'),
-          maximum_tls_version=module.params.get('maximum_tls_version'),
-          meta=module.params.get('meta'),
-          minimum_tls_version=module.params.get('minimum_tls_version'),
-          mode=module.params.get('mode'),
-          name=module.params.get('name'),
-          network_interface=module.params.get('network_interface'),
-          registration_token=module.params.get('registration_token'),
-          trusted_cas=module.params.get('trusted_cas'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = create(
+                node=module.params.get("localNode"),
+                port=module.params.get("port"),
+                auto_gen_ca_id=module.params.get("auto_gen_ca_id"),
+                auto_registration=module.params.get("auto_registration"),
+                allow_unregistered=module.params.get("allow_unregistered"),
+                cert_user_field=module.params.get("cert_user_field"),
+                custom_uid_size=module.params.get("custom_uid_size"),
+                custom_uid_v2=module.params.get("custom_uid_v2"),
+                default_connection=module.params.get("default_connection"),
+                interface_type=module.params.get("interface_type"),
+                kmip_enable_hard_delete=module.params.get("kmip_enable_hard_delete"),
+                maximum_tls_version=module.params.get("maximum_tls_version"),
+                meta=module.params.get("meta"),
+                minimum_tls_version=module.params.get("minimum_tls_version"),
+                mode=module.params.get("mode"),
+                name=module.params.get("name"),
+                network_interface=module.params.get("network_interface"),
+                registration_token=module.params.get("registration_token"),
+                trusted_cas=module.params.get("trusted_cas"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = patch(
-          node=module.params.get('localNode'),
-          interface_id=module.params.get('interface_id'),
-          port=module.params.get('port'),
-          auto_gen_ca_id=module.params.get('auto_gen_ca_id'),
-          auto_registration=module.params.get('auto_registration'),
-          allow_unregistered=module.params.get('allow_unregistered'),
-          cert_user_field=module.params.get('cert_user_field'),
-          custom_uid_size=module.params.get('custom_uid_size'),
-          custom_uid_v2=module.params.get('custom_uid_v2'),
-          default_connection=module.params.get('default_connection'),
-          kmip_enable_hard_delete=module.params.get('kmip_enable_hard_delete'),
-          maximum_tls_version=module.params.get('maximum_tls_version'),
-          meta=module.params.get('meta'),
-          minimum_tls_version=module.params.get('minimum_tls_version'),
-          mode=module.params.get('mode'),
-          registration_token=module.params.get('registration_token'),
-          trusted_cas=module.params.get('trusted_cas'),
-          local_auto_gen_attributes=module.params.get('local_auto_gen_attributes'),
-          tls_ciphers=module.params.get('tls_ciphers'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = patch(
+                node=module.params.get("localNode"),
+                interface_id=module.params.get("interface_id"),
+                port=module.params.get("port"),
+                auto_gen_ca_id=module.params.get("auto_gen_ca_id"),
+                auto_registration=module.params.get("auto_registration"),
+                allow_unregistered=module.params.get("allow_unregistered"),
+                cert_user_field=module.params.get("cert_user_field"),
+                custom_uid_size=module.params.get("custom_uid_size"),
+                custom_uid_v2=module.params.get("custom_uid_v2"),
+                default_connection=module.params.get("default_connection"),
+                kmip_enable_hard_delete=module.params.get("kmip_enable_hard_delete"),
+                maximum_tls_version=module.params.get("maximum_tls_version"),
+                meta=module.params.get("meta"),
+                minimum_tls_version=module.params.get("minimum_tls_version"),
+                mode=module.params.get("mode"),
+                registration_token=module.params.get("registration_token"),
+                trusted_cas=module.params.get("trusted_cas"),
+                local_auto_gen_attributes=module.params.get(
+                    "local_auto_gen_attributes"
+                ),
+                tls_ciphers=module.params.get("tls_ciphers"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
 
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

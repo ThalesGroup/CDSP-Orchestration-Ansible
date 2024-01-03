@@ -8,13 +8,25 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import createCTEPolicy, ctePolicyAddRule, updateCTEPolicy, ctePolicyPatchRule, ctePolicyDeleteRule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createCTEPolicy,
+    ctePolicyAddRule,
+    updateCTEPolicy,
+    ctePolicyPatchRule,
+    ctePolicyDeleteRule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_policy_save
 short_description: Manage policies as collection of rules that govern data access and encryption
@@ -187,9 +199,9 @@ options:
       description: Specify the type of the key. Must be one of name, id, slug, alias, uri, uuid, muid or key_id. If not specified, the type of the key is inferred.
       choices: [name, id, slug, alias, uri, uuid, muid, key_id]
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     localNode:
@@ -255,155 +267,192 @@ EXAMPLES = '''
     policy_id: "{{ policy['response']['id'] }}"
     rule_name="datatxrules"
     rule_id="{{ datatxrule['response']['id'] }}"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 _data_transform_rules = dict(
-   key_id=dict(type='str'),
-   key_type=dict(type='str', options=['name', 'id', 'slug', 'alias', 'uri', 'uuid', 'muid', 'key_id']),
-   resource_set_id=dict(type='str'),
+    key_id=dict(type="str"),
+    key_type=dict(
+        type="str",
+        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+    ),
+    resource_set_id=dict(type="str"),
 )
 
 _idt_key_rules = dict(
-   current_key=dict(type='str'),
-   current_key_type=dict(type='str', options=['name', 'id', 'slug', 'alias', 'uri', 'uuid', 'muid', 'key_id']),
-   transformation_key=dict(type='str'),
-   transformation_key_type=dict(type='str', options=['name', 'id', 'slug', 'alias', 'uri', 'uuid', 'muid', 'key_id']),
+    current_key=dict(type="str"),
+    current_key_type=dict(
+        type="str",
+        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+    ),
+    transformation_key=dict(type="str"),
+    transformation_key_type=dict(
+        type="str",
+        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+    ),
 )
 
 _key_rules = dict(
-   key_id=dict(type='str'),
-   key_type=dict(type='str', options=['name', 'id', 'slug', 'alias', 'uri', 'uuid', 'muid', 'key_id']),
-   resource_set_id=dict(type='str'),
+    key_id=dict(type="str"),
+    key_type=dict(
+        type="str",
+        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+    ),
+    resource_set_id=dict(type="str"),
 )
 
 _current_key = dict(
-   key_id=dict(type='str'),
-   key_type=dict(type='str', options=['name', 'id', 'slug', 'alias', 'uri', 'uuid', 'muid', 'key_id']),
+    key_id=dict(type="str"),
+    key_type=dict(
+        type="str",
+        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+    ),
 )
 _transformation_key = dict(
-   key_id=dict(type='str'),
-   key_type=dict(type='str', options=['name', 'id', 'slug', 'alias', 'uri', 'uuid', 'muid', 'key_id']),
+    key_id=dict(type="str"),
+    key_type=dict(
+        type="str",
+        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+    ),
 )
 
 _ldt_key_rules = dict(
-   current_key=dict(type='dict', options=_current_key),
-   is_exclusion_rule=dict(type='bool'),
-   resource_set_id=dict(type='str'),
-   transformation_key=dict(type='dict', options=_transformation_key),
+    current_key=dict(type="dict", options=_current_key),
+    is_exclusion_rule=dict(type="bool"),
+    resource_set_id=dict(type="str"),
+    transformation_key=dict(type="dict", options=_transformation_key),
 )
 
 _metadata = dict(
-    restrict_update=dict(type='bool'),
+    restrict_update=dict(type="bool"),
 )
 
 _security_rules = dict(
-    action=dict(type='str', options=['read', 'write', 'all_ops', 'key_op']),
-    effect=dict(type='str', options=['permit', 'deny', 'audit', 'applykey']),
-    exclude_process_set=dict(type='bool'),
-    exclude_resource_set=dict(type='bool'),
-    exclude_user_set=dict(type='bool'),
-    partial_match=dict(type='bool'),
-    process_set_id=dict(type='str'),
-    resource_set_id=dict(type='str'),
-    user_set_id=dict(type='str'),
+    action=dict(type="str", options=["read", "write", "all_ops", "key_op"]),
+    effect=dict(type="str", options=["permit", "deny", "audit", "applykey"]),
+    exclude_process_set=dict(type="bool"),
+    exclude_resource_set=dict(type="bool"),
+    exclude_user_set=dict(type="bool"),
+    partial_match=dict(type="bool"),
+    process_set_id=dict(type="str"),
+    resource_set_id=dict(type="str"),
+    user_set_id=dict(type="str"),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=[
-      'create', 
-      'patch', 
-      'add_data_transfer_rule', 
-      'add_ldt_rule', 
-      'add_key_rule', 
-      'add_security_rule',
-      'patch_data_transfer_rule', 
-      'patch_ldt_rule', 
-      'patch_key_rule', 
-      'patch_security_rule',
-      'patch_idt_rule',
-      'remove_data_transfer_rule', 
-      'remove_ldt_rule', 
-      'remove_key_rule', 
-      'remove_security_rule',
-    ], required=True),
-    policy_id=dict(type='str'),
-    name=dict(type='str'),
-    policy_type=dict(type='str', options=['Standard', 'LDT', 'IDT', 'CSI', 'Cloud_Object_Storage']),
-    data_transform_rules=dict(type='list', element='dict', options=_data_transform_rules),
-    description=dict(type='str'),
-    idt_key_rules=dict(type='list', element='dict', options=_idt_key_rules),
-    key_rules=dict(type='list', element='dict', options=_key_rules),
-    ldt_key_rules=dict(type='list', element='dict', options=_ldt_key_rules),
-    metadata=dict(type='dict', options=_metadata),
-    never_deny=dict(type='bool'),
-    security_rules=dict(type='list', element='dict', options=_security_rules),
-    force_restrict_update=dict(type='bool'),
-    order_number=dict(type='int'),
+    op_type=dict(
+        type="str",
+        options=[
+            "create",
+            "patch",
+            "add_data_transfer_rule",
+            "add_ldt_rule",
+            "add_key_rule",
+            "add_security_rule",
+            "patch_data_transfer_rule",
+            "patch_ldt_rule",
+            "patch_key_rule",
+            "patch_security_rule",
+            "patch_idt_rule",
+            "remove_data_transfer_rule",
+            "remove_ldt_rule",
+            "remove_key_rule",
+            "remove_security_rule",
+        ],
+        required=True,
+    ),
+    policy_id=dict(type="str"),
+    name=dict(type="str"),
+    policy_type=dict(
+        type="str", options=["Standard", "LDT", "IDT", "CSI", "Cloud_Object_Storage"]
+    ),
+    data_transform_rules=dict(
+        type="list", element="dict", options=_data_transform_rules
+    ),
+    description=dict(type="str"),
+    idt_key_rules=dict(type="list", element="dict", options=_idt_key_rules),
+    key_rules=dict(type="list", element="dict", options=_key_rules),
+    ldt_key_rules=dict(type="list", element="dict", options=_ldt_key_rules),
+    metadata=dict(type="dict", options=_metadata),
+    never_deny=dict(type="bool"),
+    security_rules=dict(type="list", element="dict", options=_security_rules),
+    force_restrict_update=dict(type="bool"),
+    order_number=dict(type="int"),
     # params for op_type add_data_transfer_rule
-    key_id=dict(type='str'),
-    key_type=dict(type='str', options=['name', 'id', 'slug', 'alias', 'uri', 'uuid', 'muid', 'key_id']),
-    resource_set_id=dict(type='str'),
-    dataTxRuleId=dict(type='str'),
-    keyRuleId=dict(type='str'),
+    key_id=dict(type="str"),
+    key_type=dict(
+        type="str",
+        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+    ),
+    resource_set_id=dict(type="str"),
+    dataTxRuleId=dict(type="str"),
+    keyRuleId=dict(type="str"),
     # params for op_type add_ldt_rule
-    current_keys=dict(type='dict', options=_current_key),
-    is_exclusion_rule=dict(type='bool'),
-    transformation_keys=dict(type='dict', options=_transformation_key),
-    ldtRuleId=dict(type='str'),
+    current_keys=dict(type="dict", options=_current_key),
+    is_exclusion_rule=dict(type="bool"),
+    transformation_keys=dict(type="dict", options=_transformation_key),
+    ldtRuleId=dict(type="str"),
     # params for op_type add_security_rule
-    action=dict(type='str', options=['read', 'write', 'all_ops', 'key_op']),
-    effect=dict(type='str', options=['permit', 'deny', 'audit', 'applykey']),
-    exclude_process_set=dict(type='bool'),
-    exclude_resource_set=dict(type='bool'),
-    exclude_user_set=dict(type='bool'),
-    partial_match=dict(type='bool'),
-    process_set_id=dict(type='str'),
-    user_set_id=dict(type='str'),
-    securityRuleId=dict(type='str'),
+    action=dict(type="str", options=["read", "write", "all_ops", "key_op"]),
+    effect=dict(type="str", options=["permit", "deny", "audit", "applykey"]),
+    exclude_process_set=dict(type="bool"),
+    exclude_resource_set=dict(type="bool"),
+    exclude_user_set=dict(type="bool"),
+    partial_match=dict(type="bool"),
+    process_set_id=dict(type="str"),
+    user_set_id=dict(type="str"),
+    securityRuleId=dict(type="str"),
     # params for op_type patch_idt_rule
-    idtRuleId=dict(type='str'),
-    current_key=dict(type='str'),
-    current_key_type=dict(type='str', options=['name', 'id', 'slug', 'alias', 'uri', 'uuid', 'muid', 'key_id']),
-    transformation_key=dict(type='str'),
-    transformation_key_type=dict(type='str', options=['name', 'id', 'slug', 'alias', 'uri', 'uuid', 'muid', 'key_id']),
+    idtRuleId=dict(type="str"),
+    current_key=dict(type="str"),
+    current_key_type=dict(
+        type="str",
+        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+    ),
+    transformation_key=dict(type="str"),
+    transformation_key_type=dict(
+        type="str",
+        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+    ),
 )
+
 
 def validate_parameters(cte_policy_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'patch', ['policy_id']],
-            ['op_type', 'add_data_transfer_rule', ['policy_id', 'key_id']],
-            ['op_type', 'add_ldt_rule', ['policy_id', 'current_keys']],
-            ['op_type', 'add_key_rule', ['policy_id', 'key_id']],
-            ['op_type', 'add_security_rule', ['policy_id', 'effect']],
-            ['op_type', 'create', ['name', 'policy_type']],
-            ['op_type', 'patch_data_transfer_rule', ['policy_id', 'dataTxRuleId']],
-            ['op_type', 'patch_ldt_rule', ['policy_id', 'ldtRuleId']],
-            ['op_type', 'patch_key_rule', ['policy_id', 'keyRuleId']],
-            ['op_type', 'patch_security_rule', ['policy_id', 'securityRuleId']],
-            ['op_type', 'patch_idt_rule', ['policy_id', 'idtRuleId']],
-            ['op_type', 'remove_data_transfer_rule', ['policy_id', 'dataTxRuleId']],
-            ['op_type', 'remove_ldt_rule', ['policy_id', 'ldtRuleId']],
-            ['op_type', 'remove_key_rule', ['policy_id', 'keyRuleId']],
-            ['op_type', 'remove_security_rule', ['policy_id', 'securityRuleId']],
+            ["op_type", "patch", ["policy_id"]],
+            ["op_type", "add_data_transfer_rule", ["policy_id", "key_id"]],
+            ["op_type", "add_ldt_rule", ["policy_id", "current_keys"]],
+            ["op_type", "add_key_rule", ["policy_id", "key_id"]],
+            ["op_type", "add_security_rule", ["policy_id", "effect"]],
+            ["op_type", "create", ["name", "policy_type"]],
+            ["op_type", "patch_data_transfer_rule", ["policy_id", "dataTxRuleId"]],
+            ["op_type", "patch_ldt_rule", ["policy_id", "ldtRuleId"]],
+            ["op_type", "patch_key_rule", ["policy_id", "keyRuleId"]],
+            ["op_type", "patch_security_rule", ["policy_id", "securityRuleId"]],
+            ["op_type", "patch_idt_rule", ["policy_id", "idtRuleId"]],
+            ["op_type", "remove_data_transfer_rule", ["policy_id", "dataTxRuleId"]],
+            ["op_type", "remove_ldt_rule", ["policy_id", "ldtRuleId"]],
+            ["op_type", "remove_key_rule", ["policy_id", "keyRuleId"]],
+            ["op_type", "remove_security_rule", ["policy_id", "securityRuleId"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         cte_policy_module=module,
@@ -413,286 +462,362 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createCTEPolicy(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          description=module.params.get('description'),
-          policy_type=module.params.get('policy_type'),
-          data_transform_rules=module.params.get('data_transform_rules'),
-          idt_key_rules=module.params.get('idt_key_rules'),
-          key_rules=module.params.get('key_rules'),
-          ldt_key_rules=module.params.get('ldt_key_rules'),
-          metadata=module.params.get('metadata'),
-          never_deny=module.params.get('never_deny'),
-          security_rules=module.params.get('security_rules'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createCTEPolicy(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                description=module.params.get("description"),
+                policy_type=module.params.get("policy_type"),
+                data_transform_rules=module.params.get("data_transform_rules"),
+                idt_key_rules=module.params.get("idt_key_rules"),
+                key_rules=module.params.get("key_rules"),
+                ldt_key_rules=module.params.get("ldt_key_rules"),
+                metadata=module.params.get("metadata"),
+                never_deny=module.params.get("never_deny"),
+                security_rules=module.params.get("security_rules"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateCTEPolicy(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          description=module.params.get('description'),
-          force_restrict_update=module.params.get('force_restrict_update'),
-          metadata=module.params.get('metadata'),
-          never_deny=module.params.get('never_deny'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateCTEPolicy(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                description=module.params.get("description"),
+                force_restrict_update=module.params.get("force_restrict_update"),
+                metadata=module.params.get("metadata"),
+                never_deny=module.params.get("never_deny"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add_data_transfer_rule':
-      try:
-        response = ctePolicyAddRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="datatxrules",
-          key_id=module.params.get('key_id'),
-          key_type=module.params.get('key_type'),
-          resource_set_id=module.params.get('resource_set_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add_data_transfer_rule":
+        try:
+            response = ctePolicyAddRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="datatxrules",
+                key_id=module.params.get("key_id"),
+                key_type=module.params.get("key_type"),
+                resource_set_id=module.params.get("resource_set_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add_key_rule':
-      try:
-        response = ctePolicyAddRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="keyrules",
-          key_id=module.params.get('key_id'),
-          key_type=module.params.get('key_type'),
-          resource_set_id=module.params.get('resource_set_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add_key_rule":
+        try:
+            response = ctePolicyAddRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="keyrules",
+                key_id=module.params.get("key_id"),
+                key_type=module.params.get("key_type"),
+                resource_set_id=module.params.get("resource_set_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add_ldt_rule':
-      try:
-        response = ctePolicyAddRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="ldtkeyrules",
-          current_key=module.params.get('current_keys'),
-          is_exclusion_rule=module.params.get('is_exclusion_rule'),
-          resource_set_id=module.params.get('resource_set_id'),
-          transformation_key=module.params.get('transformation_keys'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add_ldt_rule":
+        try:
+            response = ctePolicyAddRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="ldtkeyrules",
+                current_key=module.params.get("current_keys"),
+                is_exclusion_rule=module.params.get("is_exclusion_rule"),
+                resource_set_id=module.params.get("resource_set_id"),
+                transformation_key=module.params.get("transformation_keys"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add_security_rule':
-      try:
-        response = ctePolicyAddRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="securityrules",
-          effect=module.params.get('effect'),
-          action=module.params.get('action'),
-          exclude_process_set=module.params.get('exclude_process_set'),
-          exclude_resource_set=module.params.get('exclude_resource_set'),
-          exclude_user_set=module.params.get('exclude_user_set'),
-          partial_match=module.params.get('partial_match'),
-          process_set_id=module.params.get('process_set_id'),
-          resource_set_id=module.params.get('resource_set_id'),
-          user_set_id=module.params.get('user_set_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add_security_rule":
+        try:
+            response = ctePolicyAddRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="securityrules",
+                effect=module.params.get("effect"),
+                action=module.params.get("action"),
+                exclude_process_set=module.params.get("exclude_process_set"),
+                exclude_resource_set=module.params.get("exclude_resource_set"),
+                exclude_user_set=module.params.get("exclude_user_set"),
+                partial_match=module.params.get("partial_match"),
+                process_set_id=module.params.get("process_set_id"),
+                resource_set_id=module.params.get("resource_set_id"),
+                user_set_id=module.params.get("user_set_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch_data_transfer_rule':
-      try:
-        response = ctePolicyPatchRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="datatxrules",
-          rule_id=module.params.get('dataTxRuleId'),
-          key_id=module.params.get('key_id'),
-          key_type=module.params.get('key_type'),
-          resource_set_id=module.params.get('resource_set_id'),
-          order_number=module.params.get('order_number'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch_data_transfer_rule":
+        try:
+            response = ctePolicyPatchRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="datatxrules",
+                rule_id=module.params.get("dataTxRuleId"),
+                key_id=module.params.get("key_id"),
+                key_type=module.params.get("key_type"),
+                resource_set_id=module.params.get("resource_set_id"),
+                order_number=module.params.get("order_number"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch_key_rule':
-      try:
-        response = ctePolicyPatchRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="keyrules",
-          rule_id=module.params.get('keyRuleId'),
-          key_id=module.params.get('key_id'),
-          key_type=module.params.get('key_type'),
-          resource_set_id=module.params.get('resource_set_id'),
-          order_number=module.params.get('order_number'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch_key_rule":
+        try:
+            response = ctePolicyPatchRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="keyrules",
+                rule_id=module.params.get("keyRuleId"),
+                key_id=module.params.get("key_id"),
+                key_type=module.params.get("key_type"),
+                resource_set_id=module.params.get("resource_set_id"),
+                order_number=module.params.get("order_number"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch_ldt_rule':
-      try:
-        response = ctePolicyPatchRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="ldtkeyrules",
-          rule_id=module.params.get('ldtRuleId'),
-          order_number=module.params.get('order_number'),
-          current_key=module.params.get('current_keys'),
-          is_exclusion_rule=module.params.get('is_exclusion_rule'),
-          resource_set_id=module.params.get('resource_set_id'),
-          transformation_key=module.params.get('transformation_keys'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch_ldt_rule":
+        try:
+            response = ctePolicyPatchRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="ldtkeyrules",
+                rule_id=module.params.get("ldtRuleId"),
+                order_number=module.params.get("order_number"),
+                current_key=module.params.get("current_keys"),
+                is_exclusion_rule=module.params.get("is_exclusion_rule"),
+                resource_set_id=module.params.get("resource_set_id"),
+                transformation_key=module.params.get("transformation_keys"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch_security_rule':
-      try:
-        response = ctePolicyPatchRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="securityrules",
-          rule_id=module.params.get('securityRuleId'),
-          order_number=module.params.get('order_number'),
-          effect=module.params.get('effect'),
-          action=module.params.get('action'),
-          exclude_process_set=module.params.get('exclude_process_set'),
-          exclude_resource_set=module.params.get('exclude_resource_set'),
-          exclude_user_set=module.params.get('exclude_user_set'),
-          partial_match=module.params.get('partial_match'),
-          process_set_id=module.params.get('process_set_id'),
-          resource_set_id=module.params.get('resource_set_id'),
-          user_set_id=module.params.get('user_set_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch_security_rule":
+        try:
+            response = ctePolicyPatchRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="securityrules",
+                rule_id=module.params.get("securityRuleId"),
+                order_number=module.params.get("order_number"),
+                effect=module.params.get("effect"),
+                action=module.params.get("action"),
+                exclude_process_set=module.params.get("exclude_process_set"),
+                exclude_resource_set=module.params.get("exclude_resource_set"),
+                exclude_user_set=module.params.get("exclude_user_set"),
+                partial_match=module.params.get("partial_match"),
+                process_set_id=module.params.get("process_set_id"),
+                resource_set_id=module.params.get("resource_set_id"),
+                user_set_id=module.params.get("user_set_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch_idt_rule':
-      try:
-        response = ctePolicyPatchRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="idtkeyrules",
-          current_key=module.params.get('current_key'),
-          current_key_type=module.params.get('current_key_type'),
-          transformation_key=module.params.get('transformation_key'),
-          transformation_key_type=module.params.get('transformation_key_type'),
-          rule_id=module.params.get('idtRuleId'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch_idt_rule":
+        try:
+            response = ctePolicyPatchRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="idtkeyrules",
+                current_key=module.params.get("current_key"),
+                current_key_type=module.params.get("current_key_type"),
+                transformation_key=module.params.get("transformation_key"),
+                transformation_key_type=module.params.get("transformation_key_type"),
+                rule_id=module.params.get("idtRuleId"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'remove_data_transfer_rule':
-      try:
-        response = ctePolicyDeleteRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="datatxrules",
-          rule_id=module.params.get('dataTxRuleId'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "remove_data_transfer_rule":
+        try:
+            response = ctePolicyDeleteRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="datatxrules",
+                rule_id=module.params.get("dataTxRuleId"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'remove_ldt_rule':
-      try:
-        response = ctePolicyDeleteRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="ldtkeyrules",
-          rule_id=module.params.get('ldtRuleId'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "remove_ldt_rule":
+        try:
+            response = ctePolicyDeleteRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="ldtkeyrules",
+                rule_id=module.params.get("ldtRuleId"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'remove_key_rule':
-      try:
-        response = ctePolicyDeleteRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="keyrules",
-          rule_id=module.params.get('keyRuleId'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "remove_key_rule":
+        try:
+            response = ctePolicyDeleteRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="keyrules",
+                rule_id=module.params.get("keyRuleId"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'remove_security_rule':
-      try:
-        response = ctePolicyDeleteRule(
-          node=module.params.get('localNode'),
-          policy_id=module.params.get('policy_id'),
-          rule_name="securityrules",
-          rule_id=module.params.get('securityRuleId'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "remove_security_rule":
+        try:
+            response = ctePolicyDeleteRule(
+                node=module.params.get("localNode"),
+                policy_id=module.params.get("policy_id"),
+                rule_name="securityrules",
+                rule_id=module.params.get("securityRuleId"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
