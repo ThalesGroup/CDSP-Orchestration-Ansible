@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 # This is a utility file for interacting with the Thales CipherTrust Manager APIs for CipheTrust Transparent Encryption

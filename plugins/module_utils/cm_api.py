@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 # (c) 2023 Thales Group. All rights reserved.
@@ -54,8 +53,8 @@ def getJwt(host, username, password, auth_domain_path):
             "password": password,
         }
 
-    r = Request(headers = headers, timeout = 120, validate_certs = False)
-    _res = r.open(method = "POST", url = auth_url, data = json.dumps(auth_payload))
+    r = Request(headers=headers, timeout=120, validate_certs=False)
+    _res = r.open(method="POST", url=auth_url, data=json.dumps(auth_payload))
     response = json.loads(_res.read())
     return response["jwt"]
 
@@ -75,11 +74,13 @@ def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
     )
     # execute the post API call to create the resource on CM
     try:
-        r = Request(headers = cmSessionObject["headers"], timeout = 120, validate_certs = False)
+        r = Request(
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+        )
         _res = r.open(
-            method = "POST",
-            url = cmSessionObject["url"],
-            data = payload,
+            method="POST",
+            url=cmSessionObject["url"],
+            data=payload,
         )
 
         response = json.loads(_res.read())
@@ -146,11 +147,13 @@ def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
     )
     # execute the put API call to update resource on CM
     try:
-        r = Request(headers = cmSessionObject["headers"], timeout = 120, validate_certs = False)
+        r = Request(
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+        )
         _res = r.open(
-            method = "PUT",
-            url = cmSessionObject["url"],
-            data = payload,
+            method="PUT",
+            url=cmSessionObject["url"],
+            data=payload,
         )
 
         response = json.loads(_res.read())
@@ -203,10 +206,12 @@ def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
     )
     # execute the post API call to create the resource on CM
     try:
-        r = Request(headers = cmSessionObject["headers"], timeout = 120, validate_certs = False)
+        r = Request(
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+        )
         _res = r.open(
-            method = "POST",
-            url = cmSessionObject["url"],
+            method="POST",
+            url=cmSessionObject["url"],
         )
 
         response = json.loads(_res.read())
@@ -259,11 +264,13 @@ def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
     )
     # execute the patch API call to update the resource on CM
     try:
-        r = Request(headers = cmSessionObject["headers"], timeout = 120, validate_certs = False)
+        r = Request(
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+        )
         _res = r.open(
-            method = "PATCH",
-            url = cmSessionObject["url"],
-            data = payload,
+            method="PATCH",
+            url=cmSessionObject["url"],
+            data=payload,
         )
 
         response = json.loads(_res.read())
@@ -316,10 +323,12 @@ def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
     )
     # execute the delete API call to delete the resource on CM
     try:
-        r = Request(headers = cmSessionObject["headers"], timeout = 120, validate_certs = False)
+        r = Request(
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+        )
         _res = r.open(
-            method = "DELETE",
-            url = cmSessionObject["url"] + "/" + key,
+            method="DELETE",
+            url=cmSessionObject["url"] + "/" + key,
         )
 
         response = _res.read()
@@ -372,10 +381,12 @@ def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
     )
     # execute the delete API call to delete the resource on CM
     try:
-        r = Request(headers = cmSessionObject["headers"], timeout = 120, validate_certs = False)
+        r = Request(
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+        )
         _res = r.open(
-            method = "DELETE",
-            url = cmSessionObject["url"],
+            method="DELETE",
+            url=cmSessionObject["url"],
         )
 
         response = _res.read()
@@ -422,10 +433,12 @@ def GETData(cm_node=None, cm_api_endpoint=None):
     )
 
     try:
-        r = Request(headers = cmSessionObject["headers"], timeout = 120, validate_certs = False)
+        r = Request(
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+        )
         _res = r.open(
-            method = "GET",
-            url = cmSessionObject["url"],
+            method="GET",
+            url=cmSessionObject["url"],
         )
         response = json.loads(_res.read())
         status_code = _res.getcode()
@@ -439,9 +452,7 @@ def GETData(cm_node=None, cm_api_endpoint=None):
         if len(response["resources"]) > 0:
             __ret = {"id": response["resources"][0][id]}
         else:
-            raise CMApiException(
-                message="No records found", api_error_code=status_code
-            )
+            raise CMApiException(message="No records found", api_error_code=status_code)
 
         return __ret
     except HTTPError as err:
@@ -464,10 +475,12 @@ def GETIdByName(name=None, cm_node=None, cm_api_endpoint=None):
     # execute the delete API call to delete the resource on CM
     ret = dict()
     try:
-        r = Request(headers = cmSessionObject["headers"], timeout = 120, validate_certs = False)
+        r = Request(
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+        )
         _res = r.open(
-            method = "GET",
-            url = cmSessionObject["url"] + "/?skip=0&limit=1&name=" + name,
+            method="GET",
+            url=cmSessionObject["url"] + "/?skip=0&limit=1&name=" + name,
         )
         response = json.loads(_res.read())
         status_code = _res.getcode()
@@ -505,11 +518,10 @@ def GETIdByQueryParam(
         url = cmSessionObject["url"] + "/?skip=0&limit=1&" + param + "=" + value
 
     try:
-        r = Request(headers = cmSessionObject["headers"], timeout = 120, validate_certs = False)
-        _res = r.open(
-            method = "GET",
-            url = url
+        r = Request(
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
         )
+        _res = r.open(method="GET", url=url)
 
         response = json.loads(_res.read())
         status_code = _res.getcode()
@@ -532,14 +544,14 @@ def GETIdByQueryParam(
 
         return __ret
     except HTTPError as err:
-        raise err #AnsibleCMException(message="Exception: cm_api >> " + err)
-    #except requests.exceptions.HTTPError as errh:
+        raise err  # AnsibleCMException(message="Exception: cm_api >> " + err)
+    # except requests.exceptions.HTTPError as errh:
     #    raise AnsibleCMException(message="HTTPError: cm_api >> " + errh)
-    #except requests.exceptions.ConnectionError as errc:
+    # except requests.exceptions.ConnectionError as errc:
     #    raise AnsibleCMException(message="ConnectionError: cm_api >> " + errc)
-    #except requests.exceptions.Timeout as errt:
+    # except requests.exceptions.Timeout as errt:
     #    raise AnsibleCMException(message="TimeoutError: cm_api >> " + errt)
-    #except requests.exceptions.RequestException as err:
+    # except requests.exceptions.RequestException as err:
     #    raise AnsibleCMException(message="ErrorPath: cm_api >> " + err)
 
 
