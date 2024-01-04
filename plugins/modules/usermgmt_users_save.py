@@ -39,7 +39,7 @@ options:
     localNode:
         description:
             - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-            - holds IP/FQDN of the server, username, password, and port 
+            - holds IP/FQDN of the server, username, password, and port
         required: true
         type: dict
         suboptions:
@@ -82,14 +82,16 @@ options:
         description: CM user ID of the user that needs to be patched. Only required if the op_type is patch
         type: str
     allowed_auth_methods:
-        description: 
+        description:
           - List of login authentication methods allowed to the user.
           - Default value - ["password"] i.e. Password Authentication is allowed by default.
           - Setting it to empty, i.e [], means no authentication method is allowed to the user.
           - If both enable_cert_auth and allowed_auth_methods are provided in the request, enable_cert_auth is ignored.
         type: list
     app_metadata:
-        description: A schema-less object, which can be used by applications to store information about the resource. app_metadata is typically used by applications to store information which the end-users are not themselves allowed to change, like group membership or security roles.
+        description: 
+            - A schema-less object, which can be used by applications to store information about the resource
+            - app_metadata is typically used by applications to store information which the end-users are not themselves allowed to change, like group membership
         required: false
         type: dict
         default: null
@@ -98,7 +100,9 @@ options:
         required: false
         type: str
     connection:
-        description: This attribute is required to create a user, but is not included in user resource responses. Can be the name of a connection or "local_account" for a local user, defaults to "local_account".
+        description: 
+            - This attribute is required to create a user, but is not included in user resource responses. 
+            - Can be the name of a connection or "local_account" for a local user, defaults to "local_account".
         required: false
         type: str
         default: null
@@ -107,7 +111,7 @@ options:
         required: false
         type: str
     enable_cert_auth:
-        description: 
+        description:
           - Deprecated
           - Use allowed_auth_methods instead.
           - If both enable_cert_auth and allowed_auth_methods are provided in the request, enable_cert_auth is ignored.
@@ -124,8 +128,8 @@ options:
         type: dict
         suboptions:
           prevent_ui_login:
-            description: 
-              - If true, user is not allowed to login from Web UI. 
+            description:
+              - If true, user is not allowed to login from Web UI.
               - Default - false
             required: false
             type: bool
@@ -134,18 +138,23 @@ options:
         required: false
         type: str
     password:
-        description: 
+        description:
           - The password used to secure the users account. Allowed passwords are defined by the password policy.
-          - Password is optional when "certificate_subject_dn" is set and "user_certificate" is in allowed_auth_methods.In all other cases, password is required
+          - Password is optional when "certificate_subject_dn" is set and "user_certificate" is in allowed_auth_methods.
+          - In all other cases, password is required
           - It is not included in user resource responses.
         required: false
         type: str
     password_change_required:
-        description: Password change required flag. If set to true, user will be required to change their password on next successful login.
+        description: 
+            - Password change required flag.
+            - If set to true, user will be required to change their password on next successful login.
         required: false
         type: bool
     user_id:
-        description: The user_id is the ID of an existing root domain user. This field is used only when adding an existing root domain user to a different domain.
+        description:
+            - The user_id is the ID of an existing root domain user.
+            - This field is used only when adding an existing root domain user to a different domain.
         required: false
         type: str
     user_metadata:
