@@ -190,6 +190,8 @@ argument_spec = dict(
     tweak_algorithm=dict(type="str", options=["SHA1", "SHA256", "None"]),
     disable_versioning=dict(type="bool"),
     use_external_versioning=dict(type="bool"),
+    masking_format_id=dict(type="str"),
+    access_policy_name=dict(type="str")
 )
 
 
@@ -202,7 +204,7 @@ def setup_module_object():
         argument_spec=argument_spec,
         required_if=(
             ["op_type", "patch", ["policy_name"]],
-            ["op_type", "create", ["algorithm", "key", "name"]],
+            ["op_type", "create", ["access_policy_name", "algorithm", "key", "name"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
@@ -226,6 +228,8 @@ def main():
         try:
             response = createProtectionPolicy(
                 node=module.params.get("localNode"),
+                access_policy_name=module.params.get("access_policy_name"),
+                masking_format_id=module.params.get("masking_format_id"),
                 algorithm=module.params.get("algorithm"),
                 key=module.params.get("key"),
                 name=module.params.get("name"),
@@ -260,6 +264,8 @@ def main():
             response = updateProtectionPolicy(
                 node=module.params.get("localNode"),
                 policy_name=module.params.get("policy_name"),
+                access_policy_name=module.params.get("access_policy_name"),
+                masking_format_id=module.params.get("masking_format_id"),
                 algorithm=module.params.get("algorithm"),
                 key=module.params.get("key"),
                 allow_single_char_input=module.params.get(
