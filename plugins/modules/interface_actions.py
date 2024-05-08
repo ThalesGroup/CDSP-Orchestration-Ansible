@@ -16,6 +16,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules im
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.interfaces import (
     addCertificateToInterface,
+    getCertificateFromInterface,
     enableInterface,
     disableInterface,
     restoreDefaultTlsCiphers,
@@ -253,6 +254,7 @@ argument_spec = dict(
         type="str",
         options=[
             "put_certificate",
+            "get_certificate",
             "enable",
             "disable",
             "restore-default-tls-ciphers",
@@ -284,8 +286,8 @@ def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ["op_type", "put_certificate", ["certificate"]],
-            ["op_type", "put_certificate", ["format"]],
+            ["op_type", "put_certificate", ["certificate", "format", "interface_id"]],
+            ["op_type", "get_certificate", ["interface_id"]],
             ["op_type", "csr", ["cn"]],
             ["op_type", "use-certificate", ["copy_from"]],
         ),
@@ -316,6 +318,24 @@ def main():
                 cert_format=module.params.get("format"),
                 generate=module.params.get("generate"),
                 password=module.params.get("password"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
+
+    elif module.params.get("op_type") == "get_certificate":
+        try:
+            response = getCertificateFromInterface(
+                node=module.params.get("localNode"),
+                interface_id=module.params.get("interface_id"),
             )
             result["response"] = response
         except CMApiException as api_e:

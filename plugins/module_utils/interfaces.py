@@ -17,7 +17,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
     POSTData,
     PATCHData,
     POSTWithoutData,
-    DeleteWithoutData,
+    GETData,
     PUTData,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
@@ -96,6 +96,20 @@ def addCertificateToInterface(**kwargs):
     try:
         response = PUTData(
             payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+        )
+        return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise
+
+def getCertificateFromInterface(**kwargs):
+    url = "configs/interfaces/" + kwargs["interface_id"] + "/certificate"
+
+    try:
+        response = GETData(
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
