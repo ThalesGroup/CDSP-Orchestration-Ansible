@@ -149,8 +149,8 @@ def main():
       try:
         response = restartCMServices(
           node=module.params.get('localNode'),
-          delay=module.params.get('cn'),
-          services=module.params.get('algorithm'),
+          delay=module.params.get('delay'),
+          services=module.params.get('services'),
         )
         result['response'] = response
       except CMApiException as api_e:
