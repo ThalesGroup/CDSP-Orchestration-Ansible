@@ -24,8 +24,7 @@ def restartCMServices(**kwargs):
       __resp = POSTData(
           payload=payload,
           cm_node=kwargs['node'],
-          cm_api_endpoint="system/services/restart",
-          id="id",
+          cm_api_endpoint="system/services/restart"
         )
       
       return ast.literal_eval(str(__resp))
