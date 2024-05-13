@@ -315,7 +315,7 @@ def main():
                 node=module.params.get("localNode"),
                 interface_id=module.params.get("interface_id"),
                 certificate=module.params.get("certificate"),
-                cert_format=module.params.get("format"),
+                format=module.params.get("format"),
                 generate=module.params.get("generate"),
                 password=module.params.get("password"),
             )
