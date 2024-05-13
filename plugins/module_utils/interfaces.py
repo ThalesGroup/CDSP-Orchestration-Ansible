@@ -17,7 +17,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
     POSTData,
     PATCHData,
     POSTWithoutData,
-    GETData,
+    GETAPIData,
     PUTData,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
@@ -109,7 +109,7 @@ def getCertificateFromInterface(**kwargs):
     url = "configs/interfaces/" + kwargs["interface_id"] + "/certificate"
 
     try:
-        response = GETData(
+        response = GETAPIData(
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )

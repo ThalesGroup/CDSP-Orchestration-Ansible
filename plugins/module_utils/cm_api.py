@@ -458,9 +458,67 @@ def GETData(cm_node=None, cm_api_endpoint=None):
     except HTTPError as err:
         raise err
 
+#GETData just returns ID for a particular filter
+#This method will simply return the GET API data 
+def GETAPIData(cm_node=None, cm_api_endpoint=None):
+    # Create the session object
+    node = ast.literal_eval(cm_node)
+    pattern_2xx = re.compile(r"20[0-9]")
+    pattern_4xx = re.compile(r"40[0-9]")
+    cmSessionObject = CMAPIObject(
+        cm_api_user=node["user"],
+        cm_api_pwd=node["password"],
+        cm_url=node["server_ip"],
+        auth_domain_path=node["auth_domain_path"],
+        cm_api_endpoint=cm_api_endpoint,
+        verify=False,
+    )
+
+    try:
+        r = Request(
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+        )
+        _res = r.open(
+            method="GET",
+            url=cmSessionObject["url"],
+        )
+        response = json.loads(_res.read())
+        status_code = _res.getcode()
+
+        if is_json(str(response)):
+            if "codeDesc" in response.json():
+                raise CMApiException(
+                    message="Error in API Call < " + response["codeDesc"] + " >",
+                    api_error_code=status_code,
+                )
+            else:
+                __ret = {
+                    "message": "Resource fetched successfully",
+                    "data": str(response),
+                }
+        else:
+            if pattern_2xx.search(str(status_code)):
+                __ret = {
+                    "message": "Resource fetched successfully",
+                    "data": str(response),
+                }
+            elif pattern_4xx.search(str(status_code)):
+                raise CMApiException(
+                    message="Error fetching data " + str(response),
+                    api_error_code=status_code,
+                )
+            else:
+                raise CMApiException(
+                    message="Error fetching data " + str(response),
+                    api_error_code=status_code,
+                )
+        return __ret        
+    except HTTPError as err:
+        raise err
+    except json.decoder.JSONDecodeError as jsonErr:
+        return jsonErr
 
 # Below method is outdated...need to be cleaned up later
-
 
 def GETIdByName(name=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
