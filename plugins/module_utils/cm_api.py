@@ -494,13 +494,13 @@ def GETAPIData(cm_node=None, cm_api_endpoint=None):
             else:
                 __ret = {
                     "message": "Resource fetched successfully",
-                    "data": str(response),
+                    "data": response,
                 }
         else:
             if pattern_2xx.search(str(status_code)):
                 __ret = {
                     "message": "Resource fetched successfully",
-                    "data": str(response),
+                    "data": response,
                 }
             elif pattern_4xx.search(str(status_code)):
                 raise CMApiException(
