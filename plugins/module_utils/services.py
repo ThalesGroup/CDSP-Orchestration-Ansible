@@ -8,7 +8,7 @@ __metaclass__ = type
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.api import POSTData
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
 
 def restartCMServices(**kwargs):
