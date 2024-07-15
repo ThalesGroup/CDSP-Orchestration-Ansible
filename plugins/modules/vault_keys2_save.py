@@ -756,7 +756,7 @@ _wrap_RSAAES = dict(
 
 argument_spec = dict(
     op_type=dict(
-        type="str", options=["create", "patch", "create_version"], required=True
+        type="str", choices=["create", "patch", "create_version"], required=True
     ),
     cm_key_id=dict(type="str"),
     activationDate=dict(type="str", required=False),

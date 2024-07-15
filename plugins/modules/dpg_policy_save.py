@@ -333,7 +333,7 @@ _proxy_config = dict(
 argument_spec = dict(
     op_type=dict(
         type="str",
-        options=["create", "patch", "add-api-url", "update-api-url", "delete-api-url"],
+        choices=["create", "patch", "add-api-url", "update-api-url", "delete-api-url"],
         required=True,
     ),
     policy_id=dict(type="str"),

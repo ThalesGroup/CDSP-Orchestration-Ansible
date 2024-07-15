@@ -261,19 +261,19 @@ _csr_params = dict(
   keyUsage=dict(type='list', element='str'),
   maxPathLen=dict(type='int'),
   names=dict(type='list', element='dict', options=_name),
-  signatureAlgorithm=dict(type='str', options=['sha512WithRSA', 'sha384WithRSA', 'sha256WithRSA', 'sha1WithRSA', 'ecdsaWithSHA512', 'ecdsaWithSHA384', 'ecdsaWithSHA256', 'ecdsaWithSHA1']),
+  signatureAlgorithm=dict(type='str', choices=['sha512WithRSA', 'sha384WithRSA', 'sha256WithRSA', 'sha1WithRSA', 'ecdsaWithSHA512', 'ecdsaWithSHA384', 'ecdsaWithSHA256', 'ecdsaWithSHA1']),
   subjectKeyIdentifierHash=dict(type='bool'),
 )
 
 _keyGenParams = dict(
-  algorithm=dict(type='str', options=['RSA', 'EC'], default='RSA'),
-  curveid=dict(type='str', options=['secp224r1', 'secp384r1', 'secp521r1', 'prime256v1']),
+  algorithm=dict(type='str', choices=['RSA', 'EC'], default='RSA'),
+  curveid=dict(type='str', choices=['secp224r1', 'secp384r1', 'secp521r1', 'prime256v1']),
   keyName=dict(type='str'),
   size=dict(type='str'),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=[
+    op_type=dict(type='str', choices=[
       'create', 
       'patch',
       'issue-cert',
@@ -287,7 +287,7 @@ argument_spec = dict(
     cert_id=dict(type='str'),
     # Add local CA
     cn=dict(type='str'),
-    algorithm=dict(type='str', options=['RSA', 'ECDSA']),
+    algorithm=dict(type='str', choices=['RSA', 'ECDSA']),
     dnsNames=dict(type='list', element='str'),
     emailAddresses=dict(type='list', element='str'),
     ipAddresses=dict(type='list', element='str'),
@@ -299,12 +299,12 @@ argument_spec = dict(
     allow_user_authentication=dict(type='bool'),
     # Issue cert from Local CA
     csr=dict(type='str'),
-    purpose=dict(type='str', options=['server', 'client', 'ca']),
+    purpose=dict(type='str', choices=['server', 'client', 'ca']),
     duration=dict(type='int'),
     notAfter=dict(type='str'),
     notBefore=dict(type='str'),
     # Revoke Cert
-    reason=dict(type='int', options=['unspecified', 'keyCompromise', 'cACompromise', 'affiliationChanged', 'superseded', 'cessationOfOperation', 'certificateHold', 'removeFromCRL', 'privilegeWithdrawn', 'aACompromise']),
+    reason=dict(type='int', choices=['unspecified', 'keyCompromise', 'cACompromise', 'affiliationChanged', 'superseded', 'cessationOfOperation', 'certificateHold', 'removeFromCRL', 'privilegeWithdrawn', 'aACompromise']),
     # Create CSR
     csrParams=dict(type='dict', options=_csr_params),
     keyGenParams=dict(type='dict', options=_keyGenParams),
@@ -312,7 +312,7 @@ argument_spec = dict(
     keyIDType=dict(type='str'),
     keyVersion=dict(type='int'),
     # create CSR with Key
-    encryptionAlgo=dict(type='str', options=['AES256', 'AES192', 'AES128', 'TDES']),
+    encryptionAlgo=dict(type='str', choices=['AES256', 'AES192', 'AES128', 'TDES']),
     password=dict(type='str'),
     privateKeyBytes=dict(type='str'),
 )

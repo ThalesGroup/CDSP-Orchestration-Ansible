@@ -258,7 +258,7 @@ _login_flags = dict(
 
 argument_spec = dict(
     op_type=dict(
-        type="str", options=["create", "patch", "changepw", "patch_self"], required=True
+        type="str", choices=["create", "patch", "changepw", "patch_self"], required=True
     ),
     cm_user_id=dict(type="str"),
     allowed_auth_methods=dict(

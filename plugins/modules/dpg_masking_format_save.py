@@ -152,7 +152,7 @@ RETURN = """
 """
 
 argument_spec = dict(
-    op_type=dict(type="str", options=["create", "patch"], required=True),
+    op_type=dict(type="str", choices=["create", "patch"], required=True),
     masking_format_id=dict(type="str"),
     name=dict(type="str"),
     starting_characters=dict(type="int"),

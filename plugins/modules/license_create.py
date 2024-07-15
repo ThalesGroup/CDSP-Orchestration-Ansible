@@ -93,7 +93,7 @@ RETURN = """
 """
 
 argument_spec = dict(
-    license=dict(type="str", options=["create", "patch"], required=True),
+    license=dict(type="str", choices=["create", "patch"], required=True),
     bind_type=dict(type="str"),
 )
 

@@ -165,7 +165,7 @@ _process = dict(
 argument_spec = dict(
     op_type=dict(
         type="str",
-        options=[
+        choices=[
             "create",
             "patch",
             "add_process",

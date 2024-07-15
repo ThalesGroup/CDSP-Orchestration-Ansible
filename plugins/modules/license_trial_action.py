@@ -108,7 +108,7 @@ RETURN = """
 """
 
 argument_spec = dict(
-    action_type=dict(type="str", options=["activate", "deactivate"], required=True),
+    action_type=dict(type="str", choices=["activate", "deactivate"], required=True),
     trialId=dict(type="str", required=True),
 )
 

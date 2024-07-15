@@ -208,7 +208,7 @@ RETURN = """
 _guard_point_params = dict(
     guard_point_type=dict(
         type="str",
-        options=[
+        choices=[
             "directory_auto",
             "directory_manual",
             "rawdevice_manual",
@@ -236,7 +236,7 @@ _guard_point_params = dict(
 argument_spec = dict(
     op_type=dict(
         type="str",
-        options=[
+        choices=[
             "create",
             "patch",
             "add_client",
@@ -249,12 +249,12 @@ argument_spec = dict(
     ),
     id=dict(type="str"),
     client_id=dict(type="str"),
-    cluster_type=dict(type="str", options=["NON-CLUSTER", "HDFS"]),
+    cluster_type=dict(type="str", choices=["NON-CLUSTER", "HDFS"]),
     name=dict(type="str"),
     description=dict(type="str"),
     communication_enabled=dict(type="bool"),
     password=dict(type="str"),
-    password_creation_method=dict(type="str", options=["GENERATE", "MANUAL"]),
+    password_creation_method=dict(type="str", choices=["GENERATE", "MANUAL"]),
     profile_id=dict(type="str"),
     client_locked=dict(type="bool"),
     enable_domain_sharing=dict(type="bool"),

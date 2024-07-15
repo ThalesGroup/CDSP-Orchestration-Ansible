@@ -338,14 +338,14 @@ _tls_cipher = dict(
 )
 
 argument_spec = dict(
-    op_type=dict(type="str", options=["create", "patch"], required=True),
+    op_type=dict(type="str", choices=["create", "patch"], required=True),
     interface_id=dict(type="str"),
     port=dict(type="int", required=True),
     auto_gen_ca_id=dict(type="str", required=False),
     auto_registration=dict(type="bool", required=False),
     allow_unregistered=dict(type="bool", required=False),
     cert_user_field=dict(
-        type="str", options=["CN", "SN", "E", "E_ND", "UID", "OU"], required=False
+        type="str", choices=["CN", "SN", "E", "E_ND", "UID", "OU"], required=False
     ),
     custom_uid_size=dict(type="int", required=False),
     custom_uid_v2=dict(type="bool", required=False),
@@ -356,7 +356,7 @@ argument_spec = dict(
         choices=["web", "kmip", "nae", "snmp"],
         default="nae",
     ),
-    kmip_enable_hard_delete=dict(type="int", options=[0, 1], required=False),
+    kmip_enable_hard_delete=dict(type="int", choices=[0, 1], required=False),
     maximum_tls_version=dict(
         type="str", required=False, choices=["tls_1_0", "tls_1_1", "tls_1_2", "tls_1_3"]
     ),

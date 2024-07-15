@@ -130,7 +130,7 @@ _label = dict(
 )
 
 argument_spec = dict(
-    op_type=dict(type="str", options=["create", "patch"], required=True),
+    op_type=dict(type="str", choices=["create", "patch"], required=True),
     id=dict(type="str"),
     ca_id=dict(type="str"),
     cert_duration=dict(type="int"),

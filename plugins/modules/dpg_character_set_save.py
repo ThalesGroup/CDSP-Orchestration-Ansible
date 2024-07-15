@@ -145,7 +145,7 @@ RETURN = """
 """
 
 argument_spec = dict(
-    op_type=dict(type="str", options=["create", "patch"], required=True),
+    op_type=dict(type="str", choices=["create", "patch"], required=True),
     char_set_id=dict(type="str"),
     name=dict(type="str"),
     encoding=dict(type="str"),

@@ -178,7 +178,7 @@ RETURN = """
 """
 
 argument_spec = dict(
-    op_type=dict(type="str", options=["create", "patch"], required=True),
+    op_type=dict(type="str", choices=["create", "patch"], required=True),
     policy_name=dict(type="str"),
     algorithm=dict(type="str"),
     key=dict(type="str"),
@@ -187,7 +187,7 @@ argument_spec = dict(
     character_set_id=dict(type="str"),
     iv=dict(type="str"),
     tweak=dict(type="str"),
-    tweak_algorithm=dict(type="str", options=["SHA1", "SHA256", "None"]),
+    tweak_algorithm=dict(type="str", choices=["SHA1", "SHA256", "None"]),
     disable_versioning=dict(type="bool"),
     use_external_versioning=dict(type="bool"),
     masking_format_id=dict(type="str"),

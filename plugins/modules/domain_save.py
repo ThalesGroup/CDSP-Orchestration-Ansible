@@ -159,7 +159,7 @@ RETURN = """
 _schema_less = dict()
 
 argument_spec = dict(
-    op_type=dict(type="str", options=["create", "patch"], required=True),
+    op_type=dict(type="str", choices=["create", "patch"], required=True),
     domain_id=dict(type="str"),
     admins=dict(type="list", element="str"),
     name=dict(type="str"),

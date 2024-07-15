@@ -164,8 +164,8 @@ RETURN = """
 """
 
 argument_spec = dict(
-    op_type=dict(type="str", options=["add", "remove"], required=True),
-    object_type=dict(type="str", options=["user", "client"], required=True),
+    op_type=dict(type="str", choices=["add", "remove"], required=True),
+    object_type=dict(type="str", choices=["user", "client"], required=True),
     object_id=dict(type="str", required=True),
     name=dict(type="str", required=True),
 )

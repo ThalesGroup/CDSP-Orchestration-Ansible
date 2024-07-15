@@ -146,7 +146,7 @@ _joining_node = dict(
     verify=dict(type="bool", required=True),
 )
 argument_spec = dict(
-    op_type=dict(type="str", options=["new", "join"], required=True),
+    op_type=dict(type="str", choices=["new", "join"], required=True),
     nodes=dict(type="list", element="dict", options=_joining_node),
 )
 

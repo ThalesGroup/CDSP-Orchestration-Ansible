@@ -225,14 +225,14 @@ _user_set_policy = dict(
     masking_format_id=dict(type="str"),
     reveal_type=dict(
         type="str",
-        options=["Error Replacement Value", "Masked Value", "Ciphertext", "Plaintext"],
+        choices=["Error Replacement Value", "Masked Value", "Ciphertext", "Plaintext"],
     ),
     user_set_id=dict(type="str"),
 )
 argument_spec = dict(
     op_type=dict(
         type="str",
-        options=[
+        choices=[
             "create",
             "patch",
             "add-user-set",
@@ -246,7 +246,7 @@ argument_spec = dict(
     default_masking_format_id=dict(type="str"),
     default_reveal_type=dict(
         type="str",
-        options=["Error Replacement Value", "Masked Value", "Ciphertext", "Plaintext"],
+        choices=["Error Replacement Value", "Masked Value", "Ciphertext", "Plaintext"],
     ),
     description=dict(type="str"),
     name=dict(type="str"),
@@ -256,7 +256,7 @@ argument_spec = dict(
     masking_format_id=dict(type="str"),
     reveal_type=dict(
         type="str",
-        options=["Error Replacement Value", "Masked Value", "Ciphertext", "Plaintext"],
+        choices=["Error Replacement Value", "Masked Value", "Ciphertext", "Plaintext"],
     ),
     user_set_id=dict(type="str"),
     # op_type = update-user-set or delete-user-set

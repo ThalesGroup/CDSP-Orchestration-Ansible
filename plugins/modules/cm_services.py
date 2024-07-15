@@ -109,7 +109,7 @@ RETURN = """
 """
 
 argument_spec = dict(
-    op_type=dict(type='str', options=[
+    op_type=dict(type='str', choices=[
       'restart',
     ], required=True),
     delay=dict(type='int'),

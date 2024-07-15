@@ -258,7 +258,7 @@ RETURN = """
 _guard_point_params = dict(
     guard_point_type=dict(
         type="str",
-        options=[
+        choices=[
             "directory_auto",
             "directory_manual",
             "rawdevice_manual",
@@ -286,7 +286,7 @@ _guard_point_params = dict(
 argument_spec = dict(
     op_type=dict(
         type="str",
-        options=[
+        choices=[
             "create",
             "patch",
             "add_guard_point",
@@ -303,12 +303,12 @@ argument_spec = dict(
     ),
     id=dict(type="str"),
     name=dict(type="str"),
-    client_type=dict(type="str", options=["CTE-U", "FS"]),
+    client_type=dict(type="str", choices=["CTE-U", "FS"]),
     client_locked=dict(type="bool"),
     communication_enabled=dict(type="bool"),
     description=dict(type="str"),
     password=dict(type="str"),
-    password_creation_method=dict(type="str", options=["GENERATE", "MANUAL"]),
+    password_creation_method=dict(type="str", choices=["GENERATE", "MANUAL"]),
     profile_identifier=dict(type="str"),
     registration_allowed=dict(type="bool"),
     system_locked=dict(type="bool"),
@@ -319,7 +319,7 @@ argument_spec = dict(
     disable_capability=dict(type="str"),
     dynamic_parameters=dict(type="str"),
     enable_domain_sharing=dict(type="bool"),
-    enabled_capabilities=dict(type="str", options=["LDT", "EKP", "ES"]),
+    enabled_capabilities=dict(type="str", choices=["LDT", "EKP", "ES"]),
     max_num_cache_log=dict(type="int"),
     max_space_cache_log=dict(type="int"),
     profile_id=dict(type="str"),

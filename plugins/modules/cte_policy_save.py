@@ -277,7 +277,7 @@ _data_transform_rules = dict(
     key_id=dict(type="str"),
     key_type=dict(
         type="str",
-        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+        choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
     ),
     resource_set_id=dict(type="str"),
 )
@@ -286,12 +286,12 @@ _idt_key_rules = dict(
     current_key=dict(type="str"),
     current_key_type=dict(
         type="str",
-        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+        choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
     ),
     transformation_key=dict(type="str"),
     transformation_key_type=dict(
         type="str",
-        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+        choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
     ),
 )
 
@@ -299,7 +299,7 @@ _key_rules = dict(
     key_id=dict(type="str"),
     key_type=dict(
         type="str",
-        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+        choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
     ),
     resource_set_id=dict(type="str"),
 )
@@ -308,14 +308,14 @@ _current_key = dict(
     key_id=dict(type="str"),
     key_type=dict(
         type="str",
-        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+        choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
     ),
 )
 _transformation_key = dict(
     key_id=dict(type="str"),
     key_type=dict(
         type="str",
-        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+        choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
     ),
 )
 
@@ -331,8 +331,8 @@ _metadata = dict(
 )
 
 _security_rules = dict(
-    action=dict(type="str", options=["read", "write", "all_ops", "key_op"]),
-    effect=dict(type="str", options=["permit", "deny", "audit", "applykey"]),
+    action=dict(type="str", choices=["read", "write", "all_ops", "key_op"]),
+    effect=dict(type="str", choices=["permit", "deny", "audit", "applykey"]),
     exclude_process_set=dict(type="bool"),
     exclude_resource_set=dict(type="bool"),
     exclude_user_set=dict(type="bool"),
@@ -345,7 +345,7 @@ _security_rules = dict(
 argument_spec = dict(
     op_type=dict(
         type="str",
-        options=[
+        choices=[
             "create",
             "patch",
             "add_data_transfer_rule",
@@ -367,7 +367,7 @@ argument_spec = dict(
     policy_id=dict(type="str"),
     name=dict(type="str"),
     policy_type=dict(
-        type="str", options=["Standard", "LDT", "IDT", "CSI", "Cloud_Object_Storage"]
+        type="str", choices=["Standard", "LDT", "IDT", "CSI", "Cloud_Object_Storage"]
     ),
     data_transform_rules=dict(
         type="list", element="dict", options=_data_transform_rules
@@ -385,7 +385,7 @@ argument_spec = dict(
     key_id=dict(type="str"),
     key_type=dict(
         type="str",
-        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+        choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
     ),
     resource_set_id=dict(type="str"),
     dataTxRuleId=dict(type="str"),
@@ -396,8 +396,8 @@ argument_spec = dict(
     transformation_keys=dict(type="dict", options=_transformation_key),
     ldtRuleId=dict(type="str"),
     # params for op_type add_security_rule
-    action=dict(type="str", options=["read", "write", "all_ops", "key_op"]),
-    effect=dict(type="str", options=["permit", "deny", "audit", "applykey"]),
+    action=dict(type="str", choices=["read", "write", "all_ops", "key_op"]),
+    effect=dict(type="str", choices=["permit", "deny", "audit", "applykey"]),
     exclude_process_set=dict(type="bool"),
     exclude_resource_set=dict(type="bool"),
     exclude_user_set=dict(type="bool"),
@@ -410,12 +410,12 @@ argument_spec = dict(
     current_key=dict(type="str"),
     current_key_type=dict(
         type="str",
-        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+        choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
     ),
     transformation_key=dict(type="str"),
     transformation_key_type=dict(
         type="str",
-        options=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
+        choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
     ),
 )
 

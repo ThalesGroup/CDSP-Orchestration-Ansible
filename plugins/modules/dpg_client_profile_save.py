@@ -171,7 +171,7 @@ _tls_to_appserver = dict(
     tls_enabled=dict(type="bool"),
 )
 _auth_method_used = dict(
-    scheme_name=dict(type="str", options=["Basic", "Bearer"], default="Basic"),
+    scheme_name=dict(type="str", choices=["Basic", "Bearer"], default="Basic"),
     token_field=dict(type="str"),
 )
 _configuration = dict(
@@ -193,7 +193,7 @@ _configuration = dict(
     use_persistent_connections=dict(type="bool", default=True),
     size_of_connection_pool=dict(type="int", default=300),
     load_balancing_algorithm=dict(
-        type="str", options=["round-robin", "random"], default="round-robin"
+        type="str", choices=["round-robin", "random"], default="round-robin"
     ),
     connection_idle_timeout=dict(type="int", default=600000),
     connection_retry_interval=dict(type="int", default=600000),
@@ -201,16 +201,16 @@ _configuration = dict(
     credentials_encrypted=dict(type="bool", default=False),
     asymmetric_key_cache_enabled=dict(type="bool", default=True),
     log_level=dict(
-        type="str", options=["ERROR", "WARN", "INFO", "DEBUG"], default="WARN"
+        type="str", choices=["ERROR", "WARN", "INFO", "DEBUG"], default="WARN"
     ),
     log_rotation=dict(
         type="str",
-        options=["None", "Daily", "Weekly", "Monthly", "Size"],
+        choices=["None", "Daily", "Weekly", "Monthly", "Size"],
         default="Daily",
     ),
     log_size_limit=dict(type="str", default="100k"),
     log_type=dict(
-        type="str", options=["Console", "File", "Multi", "Syslog"], default="Console"
+        type="str", choices=["Console", "File", "Multi", "Syslog"], default="Console"
     ),
     key_non_exportable_policy=dict(type="bool", default=False),
     connection_timeout=dict(type="int", default=60000),
@@ -236,9 +236,9 @@ _csr_param = dict(
 )
 
 argument_spec = dict(
-    op_type=dict(type="str", options=["create", "patch"], required=True),
+    op_type=dict(type="str", choices=["create", "patch"], required=True),
     profile_id=dict(type="str"),
-    app_connector_type=dict(type="str", options=["DPG", "CADP For Java"]),
+    app_connector_type=dict(type="str", choices=["DPG", "CADP For Java"]),
     name=dict(type="str"),
     ca_id=dict(type="str"),
     cert_duration=dict(type="int"),

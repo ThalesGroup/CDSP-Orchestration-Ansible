@@ -532,11 +532,11 @@ _schema_less = dict()
 
 argument_spec = dict(
     key_version=dict(type="int", required=False),
-    id_type=dict(type="str", options=["name", "id", "uri", "alias"], required=False),
+    id_type=dict(type="str", choices=["name", "id", "uri", "alias"], required=False),
     includeMaterial=dict(type="bool", default=False, required=False),
     op_type=dict(
         type="str",
-        options=[
+        choices=[
             "destroy",
             "archive",
             "recover",

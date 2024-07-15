@@ -147,7 +147,7 @@ RETURN = """
 """
 
 argument_spec = dict(
-    op_type=dict(type="str", options=["create", "patch"], required=True),
+    op_type=dict(type="str", choices=["create", "patch"], required=True),
     user_set_id=dict(type="str"),
     name=dict(type="str"),
     description=dict(type="str"),

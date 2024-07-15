@@ -252,7 +252,7 @@ _name = dict(
 argument_spec = dict(
     op_type=dict(
         type="str",
-        options=[
+        choices=[
             "put_certificate",
             "get_certificate",
             "enable",
@@ -266,7 +266,7 @@ argument_spec = dict(
     ),
     interface_id=dict(type="str", required=True),
     certificate=dict(type="str"),
-    format=dict(type="str", options=["PEM", "PKCS12"]),
+    format=dict(type="str", choices=["PEM", "PKCS12"]),
     generate=dict(type="bool", required=False),
     password=dict(type="str", required=False),
     cn=dict(type="str"),

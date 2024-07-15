@@ -181,7 +181,7 @@ _resource = dict(
 _classification_tag_attribute = dict(
     data_type=dict(type="str"),
     name=dict(type="str"),
-    operator=dict(type="str", options=["eq", "lt", "ne", "le", "gt", "ge"]),
+    operator=dict(type="str", choices=["eq", "lt", "ne", "le", "gt", "ge"]),
     value=dict(type="str"),
 )
 
@@ -194,7 +194,7 @@ _classification_tag = dict(
 argument_spec = dict(
     op_type=dict(
         type="str",
-        options=[
+        choices=[
             "create",
             "patch",
             "add_resource",
@@ -209,7 +209,7 @@ argument_spec = dict(
     description=dict(type="str"),
     classification_tags=dict(type="list", element="dict", options=_classification_tag),
     resources=dict(type="list", element="dict", options=_resource),
-    type=dict(type="str", options=["Directory", "Classification"]),
+    type=dict(type="str", choices=["Directory", "Classification"]),
     directory=dict(type="str"),
     file=dict(type="str"),
     hdfs=dict(type="bool"),
