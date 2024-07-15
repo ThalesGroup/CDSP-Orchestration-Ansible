@@ -250,7 +250,7 @@ argument_spec = dict(
     ),
     description=dict(type="str"),
     name=dict(type="str"),
-    user_set_policy=dict(type="list", element="dict", options=_user_set_policy),
+    user_set_policy=dict(type="list", elements="dict", options=_user_set_policy),
     # op_type = add-user-set
     error_replacement_value=dict(type="str"),
     masking_format_id=dict(type="str"),

@@ -149,7 +149,7 @@ argument_spec = dict(
     char_set_id=dict(type="str"),
     name=dict(type="str"),
     encoding=dict(type="str"),
-    range=dict(type="list", element="str"),
+    range=dict(type="list", elements="str"),
 )
 
 

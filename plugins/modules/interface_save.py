@@ -314,8 +314,8 @@ _meta = dict(
     nae=dict(type="dict", options=_nae_mask_system_groups, required=False),
 )
 _trusted_cas = dict(
-    external=dict(type="list", element="str", required=False),
-    local=dict(type="list", element="str", required=False),
+    external=dict(type="list", elements="str", required=False),
+    local=dict(type="list", elements="str", required=False),
 )
 _name = dict(
     C=dict(type="str", required=False),
@@ -326,10 +326,10 @@ _name = dict(
 )
 _local_auto_gen_attribute = dict(
     cn=dict(type="str", required=True),
-    dns_names=dict(type="list", element="str", required=False),
-    email_addresses=dict(type="list", element="str", required=False),
-    ip_addresses=dict(type="list", element="str", required=False),
-    names=dict(type="list", element="dict", options=_name, required=False),
+    dns_names=dict(type="list", elements="str", required=False),
+    email_addresses=dict(type="list", elements="str", required=False),
+    ip_addresses=dict(type="list", elements="str", required=False),
+    names=dict(type="list", elements="dict", options=_name, required=False),
     uid=dict(type="str", required=False),
 )
 _tls_cipher = dict(

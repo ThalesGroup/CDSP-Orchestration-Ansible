@@ -37,39 +37,6 @@ description:
 version_added: "1.0.0"
 author: Anurag Jain, Developer Advocate Thales Group
 options:
-    localNode:
-        description:
-            - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-            - holds IP/FQDN of the server, username, password, and port 
-        required: true
-        type: dict
-        suboptions:
-          server_ip:
-            description: CM Server IP or FQDN
-            type: str
-            required: true
-          server_private_ip:
-            description: internal or private IP of the CM Server, if different from the server_ip
-            type: str
-            required: true
-          server_port:
-            description: Port on which CM server is listening
-            type: int
-            required: true
-            default: 5432
-          user:
-            description: admin username of CM
-            type: str
-            required: true
-          password:
-            description: admin password of CM
-            type: str
-            required: true
-          verify:
-            description: if SSL verification is required
-            type: bool
-            required: true
-            default: false
     key_version:
         description:
           - Query Parameter
@@ -110,6 +77,7 @@ options:
           - The reason the key is being reactivated. Choices are DeactivatedToActive, ActiveProtectStopToActive or DeactivatedToActiveProtectStop
           - Required if op_type is either revoke or reactivate
         type: str
+        choices=[Unspecified, KeyCompromise, CACompromise, AffiliationChanged, Superseded, CessationOfOperation, PrivilegeWithdrawn, DeactivatedToActive, ActiveProtectStopToActive, DeactivatedToActiveProtectStop],
         default: null
     compromiseOccurrenceDate:
         description: 
@@ -234,7 +202,7 @@ options:
             default: null
           okmLen:
             description: The desired output key material length in integer.
-            type: str
+            type: int
             required: false
             default: null
           salt:
@@ -579,7 +547,7 @@ argument_spec = dict(
     pemWrap=dict(type="bool", required=False, default=False),
     secretDataEncoding=dict(type="str", required=False),
     secretDataLink=dict(type="str", required=False),
-    signingAlgo=dict(type="str", choice=["RSA-PSS", "RSA"], required=False),
+    signingAlgo=dict(type="str", choices=["RSA", "RSA-PSS"], required=False),
     wrapHKDF=dict(type="dict", options=_wrap_HKDF, required=False),
     wrapJWE=dict(type="dict", options=_wrap_JWE, required=False),
     wrapKeyIDType=dict(type="str", choices=["name", "id", "alias"], required=False),

@@ -270,10 +270,10 @@ argument_spec = dict(
     generate=dict(type="bool", required=False),
     password=dict(type="str", required=False),
     cn=dict(type="str"),
-    dns_names=dict(type="list", element="str", required=False),
-    email_addresses=dict(type="list", element="str", required=False),
-    ip_addresses=dict(type="list", element="str", required=False),
-    names=dict(type="list", element="dict", options=_name, required=False),
+    dns_names=dict(type="list", elements="str", required=False),
+    email_addresses=dict(type="list", elements="str", required=False),
+    ip_addresses=dict(type="list", elements="str", required=False),
+    names=dict(type="list", elements="dict", options=_name, required=False),
     copy_from=dict(type="str"),
 )
 

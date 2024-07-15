@@ -178,7 +178,7 @@ argument_spec = dict(
     processIndex=dict(type="int"),
     name=dict(type="str"),
     description=dict(type="str"),
-    processes=dict(type="list", element="dict", options=_process),
+    processes=dict(type="list", elements="dict", options=_process),
     directory=dict(type="str"),
     file=dict(type="str"),
     signature=dict(type="str"),

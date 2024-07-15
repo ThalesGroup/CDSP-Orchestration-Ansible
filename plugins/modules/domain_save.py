@@ -161,7 +161,7 @@ _schema_less = dict()
 argument_spec = dict(
     op_type=dict(type="str", choices=["create", "patch"], required=True),
     domain_id=dict(type="str"),
-    admins=dict(type="list", element="str"),
+    admins=dict(type="list", elements="str"),
     name=dict(type="str"),
     allow_user_management=dict(type="bool", required=False, default=False),
     hsm_connection_id=dict(type="str", required=False),

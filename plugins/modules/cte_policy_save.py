@@ -370,15 +370,15 @@ argument_spec = dict(
         type="str", choices=["Standard", "LDT", "IDT", "CSI", "Cloud_Object_Storage"]
     ),
     data_transform_rules=dict(
-        type="list", element="dict", options=_data_transform_rules
+        type="list", elements="dict", options=_data_transform_rules
     ),
     description=dict(type="str"),
-    idt_key_rules=dict(type="list", element="dict", options=_idt_key_rules),
-    key_rules=dict(type="list", element="dict", options=_key_rules),
-    ldt_key_rules=dict(type="list", element="dict", options=_ldt_key_rules),
+    idt_key_rules=dict(type="list", elements="dict", options=_idt_key_rules),
+    key_rules=dict(type="list", elements="dict", options=_key_rules),
+    ldt_key_rules=dict(type="list", elements="dict", options=_ldt_key_rules),
     metadata=dict(type="dict", options=_metadata),
     never_deny=dict(type="bool"),
-    security_rules=dict(type="list", element="dict", options=_security_rules),
+    security_rules=dict(type="list", elements="dict", options=_security_rules),
     force_restrict_update=dict(type="bool"),
     order_number=dict(type="int"),
     # params for op_type add_data_transfer_rule

@@ -182,7 +182,7 @@ argument_spec = dict(
     userIndex=dict(type="int"),
     name=dict(type="str"),
     description=dict(type="str"),
-    users=dict(type="list", element="dict", options=_user),
+    users=dict(type="list", elements="dict", options=_user),
     gid=dict(type="int"),
     gname=dict(type="str"),
     os_domain=dict(type="str"),

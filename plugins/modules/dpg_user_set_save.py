@@ -151,7 +151,7 @@ argument_spec = dict(
     user_set_id=dict(type="str"),
     name=dict(type="str"),
     description=dict(type="str"),
-    users=dict(type="list", element="str"),
+    users=dict(type="list", elements="str"),
 )
 
 

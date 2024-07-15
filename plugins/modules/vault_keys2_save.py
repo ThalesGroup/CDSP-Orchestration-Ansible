@@ -33,39 +33,6 @@ description:
 version_added: "1.0.0"
 author: Anurag Jain, Developer Advocate Thales Group
 options:
-    localNode:
-        description:
-            - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-            - holds IP/FQDN of the server, username, password, and port 
-        required: true
-        type: dict
-        suboptions:
-          server_ip:
-            description: CM Server IP or FQDN
-            type: str
-            required: true
-          server_private_ip:
-            description: internal or private IP of the CM Server, if different from the server_ip
-            type: str
-            required: true
-          server_port:
-            description: Port on which CM server is listening
-            type: int
-            required: true
-            default: 5432
-          user:
-            description: admin username of CM
-            type: str
-            required: true
-          password:
-            description: admin password of CM
-            type: str
-            required: true
-          verify:
-            description: if SSL verification is required
-            type: bool
-            required: true
-            default: false
     op_type:
         description: Operation to be performed
         choices: [create, patch, create_version]
@@ -654,15 +621,15 @@ _cte = dict(
     cte_versioned=dict(type="bool"),
 )
 _permission = dict(
-    UseKey=dict(type="list", element="str"),
-    ReadKey=dict(type="list", element="str"),
-    ExportKey=dict(type="list", element="str"),
-    MACWithKey=dict(type="list", element="str"),
-    SignWithKey=dict(type="list", element="str"),
-    DecryptWithKey=dict(type="list", element="str"),
-    EncryptWithKey=dict(type="list", element="str"),
-    MACVerifyWithKey=dict(type="list", element="str"),
-    SignVerifyWithKey=dict(type="list", element="str"),
+    UseKey=dict(type="list", elements="str"),
+    ReadKey=dict(type="list", elements="str"),
+    ExportKey=dict(type="list", elements="str"),
+    MACWithKey=dict(type="list", elements="str"),
+    SignWithKey=dict(type="list", elements="str"),
+    DecryptWithKey=dict(type="list", elements="str"),
+    EncryptWithKey=dict(type="list", elements="str"),
+    MACVerifyWithKey=dict(type="list", elements="str"),
+    SignVerifyWithKey=dict(type="list", elements="str"),
 )
 _meta = dict(
     ownerId=dict(type="str", required=False),
@@ -690,7 +657,7 @@ _hkdfParam = dict(
 )
 _public_key_param = dict(
     activationDate=dict(type="int", required=False),
-    aliases=dict(type="list", element="dict", options=_alias, required=False),
+    aliases=dict(type="list", elements="dict", options=_alias, required=False),
     archiveDate=dict(type="int", required=False),
     deactivationDate=dict(type="int", required=False),
     meta=dict(type="dict", options=_schema_less, required=False),
@@ -778,7 +745,7 @@ argument_spec = dict(
         ],
         default="aes",
     ),
-    aliases=dict(type="list", element="dict", options=_alias, required=False),
+    aliases=dict(type="list", elements="dict", options=_alias, required=False),
     archiveDate=dict(type="str", required=False),
     certType=dict(type="str", choices=["x509-pem", "x509-der"], required=False),
     compromiseDate=dict(type="str", required=False),

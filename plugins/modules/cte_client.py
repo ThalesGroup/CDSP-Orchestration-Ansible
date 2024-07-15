@@ -323,12 +323,12 @@ argument_spec = dict(
     max_num_cache_log=dict(type="int"),
     max_space_cache_log=dict(type="int"),
     profile_id=dict(type="str"),
-    shared_domain_list=dict(type="list", element="str"),
+    shared_domain_list=dict(type="list", elements="str"),
     # Params for adding guard paths to client
-    guard_paths=dict(type="list", element="str"),
+    guard_paths=dict(type="list", elements="str"),
     guard_point_params=dict(type="dict", options=_guard_point_params),
     # Params for other ops on CTE client
-    client_id_list=dict(type="list", element="str"),
+    client_id_list=dict(type="list", elements="str"),
     force_del_client=dict(type="bool"),
     auth_binaries=dict(type="str"),
     client_auth_binaries_from=dict(type="str"),
@@ -340,7 +340,7 @@ argument_spec = dict(
     guard_enabled=dict(type="bool"),
     mfa_enabled=dict(type="bool"),
     network_share_credentials_id=dict(type="str"),
-    guard_point_id_list=dict(type="list", element="str"),
+    guard_point_id_list=dict(type="list", elements="str"),
     early_access=dict(type="bool"),
 )
 

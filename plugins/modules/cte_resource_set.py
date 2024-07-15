@@ -186,7 +186,7 @@ _classification_tag_attribute = dict(
 )
 
 _classification_tag = dict(
-    attributes=dict(type="list", element="dict", options=_classification_tag_attribute),
+    attributes=dict(type="list", elements="dict", options=_classification_tag_attribute),
     description=dict(type="str"),
     name=dict(type="str"),
 )
@@ -207,8 +207,8 @@ argument_spec = dict(
     resourceIndex=dict(type="int"),
     name=dict(type="str"),
     description=dict(type="str"),
-    classification_tags=dict(type="list", element="dict", options=_classification_tag),
-    resources=dict(type="list", element="dict", options=_resource),
+    classification_tags=dict(type="list", elements="dict", options=_classification_tag),
+    resources=dict(type="list", elements="dict", options=_resource),
     type=dict(type="str", choices=["Directory", "Classification"]),
     directory=dict(type="str"),
     file=dict(type="str"),

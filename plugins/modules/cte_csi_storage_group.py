@@ -216,8 +216,8 @@ argument_spec = dict(
     name=dict(type="str"),
     client_profile=dict(type="str"),
     description=dict(type="str"),
-    client_list=dict(type="list", element="str"),
-    policy_list=dict(type="list", element="str"),
+    client_list=dict(type="list", elements="str"),
+    policy_list=dict(type="list", elements="str"),
     guard_enabled=dict(type="bool"),
 )
 
