@@ -8,26 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.users import (
-    create,
-    patch,
-    changepw,
-    patch_self,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-module = None
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: usermgmt_users_save
 short_description: Create and manage users in CipherTrust Manager
@@ -36,6 +19,39 @@ description:
 version_added: "1.0.0"
 author: Anurag Jain, Developer Advocate Thales Group
 options:
+    localNode:
+        description:
+            - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
+            - holds IP/FQDN of the server, username, password, and port 
+        required: true
+        type: dict
+        suboptions:
+          server_ip:
+            description: CM Server IP or FQDN
+            type: str
+            required: true
+          server_private_ip:
+            description: internal or private IP of the CM Server, if different from the server_ip
+            type: str
+            required: true
+          server_port:
+            description: Port on which CM server is listening
+            type: int
+            required: true
+            default: 5432
+          user:
+            description: admin username of CM
+            type: str
+            required: true
+          password:
+            description: admin password of CM
+            type: str
+            required: true
+          verify:
+            description: if SSL verification is required
+            type: bool
+            required: true
+            default: false
     op_type:
         description: Operation to be performed
         choices: [create, patch, changepw, patch_self]
@@ -146,9 +162,9 @@ options:
           - The domain where user needs to be authenticated. This is the domain where user is created. Defaults to the root domain.
           - required only for changew op_type, not mandatory though
         type: str
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create new user"
     thalesgroup.ciphertrust.usermgmt_users_save:
       localNode: 
@@ -208,11 +224,24 @@ EXAMPLES = """
         auth_domain_path:
       op_type: "patch_self"
       name: "CM Admin"
-"""
+'''
 
-RETURN = """
+RETURN = '''
+'''
 
-"""
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.users import (
+    create,
+    patch,
+    changepw,
+    patch_self,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _metadata = dict()
 _login_flags = dict(

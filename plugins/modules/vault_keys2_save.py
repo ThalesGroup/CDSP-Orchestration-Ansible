@@ -8,23 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 import (
-    create,
-    patch,
-    version_create,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: vault_keys2_create
 short_description: Create or update keys in CipherTrust Manager managed vault
@@ -33,6 +19,39 @@ description:
 version_added: "1.0.0"
 author: Anurag Jain, Developer Advocate Thales Group
 options:
+    localNode:
+        description:
+            - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
+            - holds IP/FQDN of the server, username, password, and port 
+        required: true
+        type: dict
+        suboptions:
+          server_ip:
+            description: CM Server IP or FQDN
+            type: str
+            required: true
+          server_private_ip:
+            description: internal or private IP of the CM Server, if different from the server_ip
+            type: str
+            required: true
+          server_port:
+            description: Port on which CM server is listening
+            type: int
+            required: true
+            default: 5432
+          user:
+            description: admin username of CM
+            type: str
+            required: true
+          password:
+            description: admin password of CM
+            type: str
+            required: true
+          verify:
+            description: if SSL verification is required
+            type: bool
+            required: true
+            default: false
     op_type:
         description: Operation to be performed
         choices: [create, patch, create_version]
@@ -574,9 +593,9 @@ options:
         required: false
         default: false
 
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create Key"
   thalesgroup.ciphertrust.vault_keys2_create:
     localNode:
@@ -604,11 +623,23 @@ EXAMPLES = """
     op_type: patch
     cm_key_id: "4ae2649a705e479589ef65759d3287f6ff452a788531445fbc7f0240516d028d"
     unexportable: false
-"""
+'''
 
-RETURN = """
+RETURN = '''
+'''
 
-"""
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 import (
+    create,
+    patch,
+    version_create,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _alias = dict(
     alias=dict(type="str", required=True),
