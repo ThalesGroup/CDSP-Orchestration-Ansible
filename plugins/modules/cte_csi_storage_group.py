@@ -8,27 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
-    createCSIStorageGroup,
-    updateCSIStorageGroup,
-    csiGroupAddClient,
-    csiGroupAddGuardPoint,
-    csiGroupRemoveClient,
-    csiGroupUpdateGuardPoint,
-    csiGroupRemoveGuardPoint,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: cte_csi_storage_group
 short_description: Manage CTE CSI Storage Group
@@ -121,9 +103,9 @@ options:
     guard_enabled:
       description: Enable or disable the GuardPolicy. Set to true to enable, false to disable.
       type: boolean
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create CSI Storage Group"
   thalesgroup.ciphertrust.cte_csi_storage_group:
     localNode:
@@ -153,7 +135,7 @@ EXAMPLES = """
         verify: false
         auth_domain_path:
     op_type: create
-    id: "{{ csi_sg['response']['id'] }}"
+    id: "sg_id"
     description: "Test CSIStorageGroup Updated"
     client_profile: DefaultClientProfile
 
@@ -168,7 +150,7 @@ EXAMPLES = """
         verify: false
         auth_domain_path:
     op_type: add_client
-    id: "{{ csi_sg['response']['id'] }}"
+    id: "sg_id"
     client_list:
       - Client1
       - Client2
@@ -184,15 +166,31 @@ EXAMPLES = """
         verify: false
         auth_domain_path:
     op_type: add_guard_point
-    id: "{{ csi_sg['response']['id'] }}"
+    id: "sg_id"
     policy_list:
       - CSI_Policy_1
       - CSI_Policy_2
-"""
+'''
 
-RETURN = """
+RETURN = '''
+'''
 
-"""
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createCSIStorageGroup,
+    updateCSIStorageGroup,
+    csiGroupAddClient,
+    csiGroupAddGuardPoint,
+    csiGroupRemoveClient,
+    csiGroupUpdateGuardPoint,
+    csiGroupRemoveGuardPoint,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 argument_spec = dict(
     op_type=dict(

@@ -11,22 +11,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
-    createCTEPolicy,
-    ctePolicyAddRule,
-    updateCTEPolicy,
-    ctePolicyPatchRule,
-    ctePolicyDeleteRule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: cte_policy_save
 short_description: Manage policies as collection of rules that govern data access and encryption
@@ -199,9 +184,9 @@ options:
       description: Specify the type of the key. Must be one of name, id, slug, alias, uri, uuid, muid or key_id. If not specified, the type of the key is inferred.
       choices: [name, id, slug, alias, uri, uuid, muid, key_id]
       type: str
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     localNode:
@@ -247,7 +232,7 @@ EXAMPLES = """
         verify: false
         auth_domain_path:
     op_type: add_data_transfer_rule
-    policy_id: "{{ policy['response']['id'] }}"
+    policy_id: "policyID"
     rule_name="datatxrules"
     key_id=key_id: CTE_standard_pol_key
     resource_set_id: RS-Ans-002
@@ -264,14 +249,28 @@ EXAMPLES = """
         verify: false
         auth_domain_path:
     op_type: remove_data_transfer_rule
-    policy_id: "{{ policy['response']['id'] }}"
+    policy_id: "policyID"
     rule_name="datatxrules"
-    rule_id="{{ datatxrule['response']['id'] }}"
-"""
+    rule_id="ruleID"
+'''
 
-RETURN = """
+RETURN = '''
+'''
 
-"""
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createCTEPolicy,
+    ctePolicyAddRule,
+    updateCTEPolicy,
+    ctePolicyPatchRule,
+    ctePolicyDeleteRule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _data_transform_rules = dict(
     key_id=dict(type="str"),

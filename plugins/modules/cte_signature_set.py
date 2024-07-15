@@ -8,28 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
-    createSignatureSet,
-    updateSignatureSet,
-    addSignatureToSet,
-    deleteSignatureInSetById,
-    sendSignAppRequest,
-    querySignAppRequest,
-    cancelSignAppRequest,
-    getSignatureFromSetByFilter,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: cte_signature_set
 short_description: Create and manage CTE Signature Sets
@@ -110,9 +91,9 @@ options:
       description:
         - ID of the client where the signing request is to be sent
       type: str
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create CTE Signature Set"
   thalesgroup.ciphertrust.cte_signature_set:
     localNode:
@@ -141,7 +122,7 @@ EXAMPLES = """
         verify: false
         auth_domain_path:
     op_type: add_signature
-    id: "{{ signature_set['response']['id'] }}"
+    id: "signatureSetID"
     source_list:
       - "/usr/bin"
   register: signature
@@ -157,8 +138,8 @@ EXAMPLES = """
         verify: false
         auth_domain_path:
     op_type: delete_signature
-    id: "{{ signature_set['response']['id'] }}"
-    signature_id: "{{ signature['response']['id'] }}"
+    id: "signatureSetID"
+    signature_id: "signatureSetID"
 
 - name: "Sends a signature signing request to the client"
   thalesgroup.ciphertrust.cte_signature_set:
@@ -171,13 +152,31 @@ EXAMPLES = """
         verify: false
         auth_domain_path:
     op_type: sign_app
-    id: "{{ signature_set['response']['id'] }}"
+    id: "signatureSetID"
     client_id: Client1
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createSignatureSet,
+    updateSignatureSet,
+    addSignatureToSet,
+    deleteSignatureInSetById,
+    sendSignAppRequest,
+    querySignAppRequest,
+    cancelSignAppRequest,
+    getSignatureFromSetByFilter,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _signature = dict(
     file_name=dict(type="str"),

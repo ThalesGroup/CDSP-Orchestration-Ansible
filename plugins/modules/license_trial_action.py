@@ -8,22 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
-    activateTrial,
-    deactivateTrial,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: license_trial_action
 short_description: Activate or deactivate CipherTrust Manager trial license
@@ -75,9 +62,9 @@ options:
         required: true
         type: str
 
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Activate Trial License"
   thalesgroup.ciphertrust.license_trial_action:
     localNode:
@@ -101,11 +88,23 @@ EXAMPLES = """
         verify: false
     action_type: deactivate
     trialId: trial_id
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
+    activateTrial,
+    deactivateTrial,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 argument_spec = dict(
     action_type=dict(type="str", choices=["activate", "deactivate"], required=True),

@@ -8,25 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
-    createUserSet,
-    updateUserSet,
-    addUserToSet,
-    updateUserInSetByIndex,
-    deleteUserInSetByIndex,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: cte_user_set
 short_description: Create and manage CTE user-sets
@@ -108,9 +92,9 @@ options:
     uname:
       description: Name of the user which shall be added in user-set
       type: str
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create CTE Userset"
   thalesgroup.ciphertrust.cte_user_set:
     localNode:
@@ -146,17 +130,32 @@ EXAMPLES = """
         verify: false
         auth_domain_path:
     op_type: add_user
-    id: "{{ userset['response']['id'] }}"
+    id: "usersetID"
     users:
       - uname: root0001
         uid: 1001
         gname: rootGroup
         gid: 1000
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createUserSet,
+    updateUserSet,
+    addUserToSet,
+    updateUserInSetByIndex,
+    deleteUserInSetByIndex,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _user = dict(
     gid=dict(type="int"),

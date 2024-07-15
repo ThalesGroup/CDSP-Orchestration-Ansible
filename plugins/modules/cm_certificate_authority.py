@@ -8,28 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.ca import (
-    createLocalCA,
-    updateLocalCA,
-    selfSign,
-    issueCertificate,
-    revokeCert,
-    resumeCert,
-    createCSR,
-    createCSRAndKey,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: cm_certificate_authority
 short_description: Create and manage CipherTrust Manager Local CA
@@ -154,7 +135,7 @@ options:
     privateKeyBytes:
       description: Private Key bytes of the key which is to be used while creating CSR(Algorithm and size should be according to this key). If not given will generate key internally as per algorithm and size.
       type: str
-"""
+'''
 
 EXAMPLES = '''
 - name: "Create CM Local CA"
@@ -191,7 +172,7 @@ EXAMPLES = '''
       verify: false
       auth_domain_path:
     op_type: self-sign
-    id: "{{ ca['response']['id'] }}"
+    id: "ca_id"
     duration: 365
 
 - name: Create CSR
@@ -231,17 +212,34 @@ EXAMPLES = '''
       verify: false
       auth_domain_path:
     op_type: issue-cert
-    id: "{{ ca['response']['id'] }}"
-    csr: "{{ csr['response']['data']['csr'] }}"
+    id: "ca_id"
+    csr: "csr"
     purpose: server
     duration: 365
     name: AnsibleServerCert
   register: cert
 '''
 
-RETURN = """
+RETURN = '''
+'''
 
-"""
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.ca import (
+    createLocalCA,
+    updateLocalCA,
+    selfSign,
+    issueCertificate,
+    revokeCert,
+    resumeCert,
+    createCSR,
+    createCSRAndKey,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _name = dict(
   C=dict(type='int'),

@@ -8,21 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.services import (
-    restartCMServices,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: cm_services
 short_description: Reset, restart CipherTrust Manager Services as well as check the status
@@ -84,7 +72,7 @@ options:
       description: An array of services to restart. If this parameter is ommitted, the entire application is restarted. Options include - nae-kmip, web
       type: list
       elements: str
-"""
+'''
 
 EXAMPLES = '''
 - name: "Restart CM Services"
@@ -104,16 +92,26 @@ EXAMPLES = '''
       - web
 '''
 
-RETURN = """
+RETURN = '''
+'''
 
-"""
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.services import (
+    restartCMServices,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 argument_spec = dict(
     op_type=dict(type='str', choices=[
       'restart',
     ], required=True),
     delay=dict(type='int'),
-    services=dict(type='list', element='str'),
+    services=dict(type='list', elements='str'),
 )
 
 

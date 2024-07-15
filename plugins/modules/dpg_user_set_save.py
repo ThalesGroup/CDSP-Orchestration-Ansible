@@ -8,22 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
-    createUserSet,
-    updateUserSet,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: dpg_user_set_save
 short_description: Create and manage DPG user sets
@@ -91,9 +78,9 @@ options:
       elements: str
       default: []
       required: false
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create User Set"
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode:
@@ -140,11 +127,23 @@ EXAMPLES = """
         auth_domain_path:
     key: <UserSetID>
     resource_type: "user-sets"
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
+    createUserSet,
+    updateUserSet,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 argument_spec = dict(
     op_type=dict(type="str", choices=["create", "patch"], required=True),

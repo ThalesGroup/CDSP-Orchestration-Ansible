@@ -8,25 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
-    createResourceSet,
-    updateResourceSet,
-    addResourceToSet,
-    updateResourceInSetByIndex,
-    deleteResourceInSetByIndex,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: cte_resource_set
 short_description: Create and manage CTE resource-sets
@@ -124,9 +108,9 @@ options:
       description:
         - Flag to include subfolders in the Resource
       type: boolean
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create CTE ResourceSet"
   thalesgroup.ciphertrust.cte_resource_set:
     localNode:
@@ -159,17 +143,32 @@ EXAMPLES = """
         verify: false
         auth_domain_path:
     op_type: add_resource
-    id: "{{ resource_set['response']['id'] }}"
+    id: "resourceSetID"
     resources:
       - directory: "/tmp"
         file: "*"
         include_subfolders: true
         hdfs: false
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createResourceSet,
+    updateResourceSet,
+    addResourceToSet,
+    updateResourceInSetByIndex,
+    deleteResourceInSetByIndex,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _resource = dict(
     directory=dict(type="str"),

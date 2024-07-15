@@ -8,22 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.domains import (
-    create,
-    patch,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: domain_save
 short_description: Create or manage domains
@@ -120,9 +107,9 @@ options:
         required: false
         default: none
         type: str
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create Domain"
   thalesgroup.ciphertrust.domain_save:
     localNode:
@@ -151,11 +138,24 @@ EXAMPLES = """
     op_type: patch
     domain_id: "ID_STRING"
     connection_id: "ID_STRING"
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.domains import (
+    create,
+    patch,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
+
 _schema_less = dict()
 
 argument_spec = dict(

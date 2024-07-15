@@ -8,22 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.interfaces import (
-    create,
-    patch,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: interface_save
 short_description: Create or update an interface or service CipherTrust Manager is hosting
@@ -283,9 +270,9 @@ options:
           type: bool
           default: null
           required: true
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create Interface"
   thalesgroup.ciphertrust.interface_save:
     localNode:
@@ -301,11 +288,23 @@ EXAMPLES = """
     interface_type: nae
     mode: no-tls-pw-opt
     network_interface: all
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.interfaces import (
+    create,
+    patch,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _nae_mask_system_groups = dict(
     mask_system_groups=dict(type="bool", required=False),

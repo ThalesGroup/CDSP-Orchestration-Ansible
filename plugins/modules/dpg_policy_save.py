@@ -8,25 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
-    createDPGPolicy,
-    updateDPGPolicy,
-    dpgPolicyAddAPIUrl,
-    dpgPolicyUpdateAPIUrl,
-    dpgPolicyDeleteAPIUrl,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: dpg_policy_save
 short_description: Manage DPG execution behavior for REST URLs and associated encryption parameters
@@ -160,9 +144,9 @@ options:
       description: API tokens to be protected in a DELETE Request
       type: list
       element: dict
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
@@ -176,7 +160,7 @@ EXAMPLES = """
     op_type: create
     name: DPGPolicyName
     proxy_config:
-    - api_url: "/api/sample/resource/{id}"
+    - api_url: "/api/sample/resource/id"
       destination_url: "http://localhost:8080"
       json_request_post_tokens:
       - name: "creditCard.[*].CCNumber"
@@ -218,7 +202,7 @@ EXAMPLES = """
         auth_domain_path:
     op_type: add-api-url
     policy_id: <DPGPolicyID>
-    api_url: "/api/v2/sample/resource/{id}"
+    api_url: "/api/v2/sample/resource/id"
     destination_url: "http://localhost:8080"
     json_request_post_tokens:
     - name: "creditCard.[*].cvv"
@@ -266,11 +250,26 @@ EXAMPLES = """
         password: "CipherTrust Manager Password"
         verify: false
         auth_domain_path:
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
+    createDPGPolicy,
+    updateDPGPolicy,
+    dpgPolicyAddAPIUrl,
+    dpgPolicyUpdateAPIUrl,
+    dpgPolicyDeleteAPIUrl,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _api_token = dict(
     name=dict(type="str"),

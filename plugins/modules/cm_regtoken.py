@@ -8,22 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.regtokens import (
-    create,
-    patch,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: cm_regtoken
 short_description: Create or update registration token
@@ -96,9 +83,9 @@ options:
     name_prefix:
         description: Prefix for the client name. For a client registered using this registration token, name_prefix, if specified, client name will be constructed as 'name_prefix{nth client registered using this registation token}', If name_prefix is not specified, CipherTrust Manager server will generate a random name for the client.
         type: str
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create Registration Token"
   thalesgroup.ciphertrust.cm_regtoken:
     localNode:
@@ -117,11 +104,22 @@ EXAMPLES = """
     lifetime: 30d
     max_clients: 100
     name_prefix: "ansible_client"
-"""
+'''
 
-RETURN = """
+RETURN = '''
+'''
 
-"""
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.regtokens import (
+    create,
+    patch,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _schema_less = dict()
 

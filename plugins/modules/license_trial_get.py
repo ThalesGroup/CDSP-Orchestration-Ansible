@@ -8,21 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
-    getTrialLicenseId,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: license_trial_get
 short_description: Retrieve trial license ID if available
@@ -65,9 +53,9 @@ options:
             required: true
             default: false
 
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Get Trial License ID"
   thalesgroup.ciphertrust.license_trial_get:
     localNode:
@@ -77,11 +65,22 @@ EXAMPLES = """
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
+    getTrialLicenseId,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 argument_spec = dict()
 

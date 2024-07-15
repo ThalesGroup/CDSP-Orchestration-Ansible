@@ -8,20 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
-    GETIdByQueryParam,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
 
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: cm_resource_get_id_from_name
 short_description: Get CipherTrust Manager resource ID from resource name
@@ -94,9 +83,9 @@ options:
             - This is a string type of option that will hold the value of filter query parameter
         required: true
         type: str
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Get Key ID"
   thalesgroup.ciphertrust.cm_resource_get_id_from_name:
     localNode:
@@ -109,15 +98,26 @@ EXAMPLES = """
     query_param: "name"
     query_param_value: "AnsibleKey"
     resource_type: "keys"
-"""
+'''
 
-RETURN = """
+RETURN = '''
 id:
     description: String with the ID returned by the CipherTrust Manager
     returned: changed or success
     type: string
     sample: 123456789
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    GETIdByQueryParam,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _arr_resource_type_choices = [
     "keys",

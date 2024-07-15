@@ -8,25 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
-    createProcessSet,
-    updateProcessSet,
-    addProcessToSet,
-    updateProcessInSetByIndex,
-    deleteProcessInSetByIndex,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: cte_process_set
 short_description: Create and manage CTE process-sets
@@ -109,9 +93,9 @@ options:
       description:
         - Signature-set ID or Name which shall be associated with the process-set
       type: str
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create CTE ProcessSet"
   thalesgroup.ciphertrust.cte_process_set:
     localNode:
@@ -145,16 +129,30 @@ EXAMPLES = """
         verify: false
         auth_domain_path:
     op_type: add_process
-    id: "{{ process_set['response']['id'] }}"
+    id: "processSetID"
     processes:
       - signature: TestSignSet
         directory: "/home/testAnother"
         file: "*"
-"""
+'''
 
-RETURN = """
+RETURN = '''
+'''
 
-"""
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createProcessSet,
+    updateProcessSet,
+    addProcessToSet,
+    updateProcessInSetByIndex,
+    deleteProcessInSetByIndex,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _process = dict(
     directory=dict(type="str"),

@@ -8,22 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
-    createProtectionPolicy,
-    updateProtectionPolicy,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: dpg_protection_policy_save
 short_description: Manage DPG protection policies governing crypto operations
@@ -122,9 +109,9 @@ options:
       - Added in CM v2.12
       required: false
       type: bool
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create Protection Policy"
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode:
@@ -171,11 +158,23 @@ EXAMPLES = """
         password: "CipherTrust Manager Password"
         verify: false
         auth_domain_path:
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
+    createProtectionPolicy,
+    updateProtectionPolicy,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 argument_spec = dict(
     op_type=dict(type="str", choices=["create", "patch"], required=True),

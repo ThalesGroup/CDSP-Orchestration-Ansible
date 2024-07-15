@@ -8,27 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
-    createClientGroup,
-    updateClientGroup,
-    clientGroupAddClients,
-    clientGroupAddGuardPoint,
-    clientGroupAuthBinaries,
-    clientGroupDeleteClient,
-    clientGroupLDTPause,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: cte_client_group
 short_description: Manage CTE client groups
@@ -145,9 +127,9 @@ options:
     paused:
       description: Mouse over a property in the schema to view its details
       type: bool
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create CTE Client Group"
   thalesgroup.ciphertrust.cte_client_group:
     localNode:
@@ -199,11 +181,27 @@ EXAMPLES = """
       data_lineage_enabled: false
       early_access: true
       preserve_sparse_regions: true
-"""
+'''
 
-RETURN = """
+RETURN = '''
+'''
 
-"""
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createClientGroup,
+    updateClientGroup,
+    clientGroupAddClients,
+    clientGroupAddGuardPoint,
+    clientGroupAuthBinaries,
+    clientGroupDeleteClient,
+    clientGroupLDTPause,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _guard_point_params = dict(
     guard_point_type=dict(

@@ -8,15 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
-    getLockdata,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: licensing_lockdata_get
 short_description: Get license lockdata used to get license code
@@ -58,9 +52,9 @@ options:
             type: bool
             required: true
             default: false
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Get Licensing Lockdata"
   thalesgroup.ciphertrust.licensing_lockdata_get:
     localNode:
@@ -70,12 +64,16 @@ EXAMPLES = """
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
 
+from ansible.module_utils.basic import AnsibleModule
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
+    getLockdata,
+)
 
 def main():
     localNode = dict(

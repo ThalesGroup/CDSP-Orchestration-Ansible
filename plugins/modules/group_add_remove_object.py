@@ -8,24 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.groups import (
-    addUserToGroup,
-    addClientToGroup,
-    deleteUserFromGroup,
-    deleteClientFromGroup,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: group_add_remove_object
 short_description: Add or remove user or client from group
@@ -95,9 +80,9 @@ options:
         type: str
         required: true
         default: null
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Add User to a Group"
   thalesgroup.ciphertrust.group_add_remove_object:
     localNode:
@@ -157,11 +142,25 @@ EXAMPLES = """
     object_type: client
     object_id: client_id_on_CM
     name: "group_name"
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.groups import (
+    addUserToGroup,
+    addClientToGroup,
+    deleteUserFromGroup,
+    deleteClientFromGroup,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 argument_spec = dict(
     op_type=dict(type="str", choices=["add", "remove"], required=True),

@@ -8,22 +8,9 @@
 #
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
-    ThalesCipherTrustModule,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
-    createClientProfile,
-    updateClientProfile,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: dpg_client_profile_save
 short_description: Manage DPG client profile
@@ -120,9 +107,9 @@ options:
       description: Policy mapped with client profile.
       type: str
       required: false
-"""
+'''
 
-EXAMPLES = """
+EXAMPLES = '''
 - name: "Create DPG Client Profile"
   thalesgroup.ciphertrust.dpg_client_profile_save:
     localNode:
@@ -158,11 +145,23 @@ EXAMPLES = """
     op_type: patch
     profile_id: <DPGClientProfileID>
     lifetime: 180d
-"""
+'''
 
-RETURN = """
+RETURN = '''
 
-"""
+'''
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
+    createClientProfile,
+    updateClientProfile,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _schema_less = dict()
 
