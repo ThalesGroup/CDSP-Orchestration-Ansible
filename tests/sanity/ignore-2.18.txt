@@ -1,0 +1,2 @@
+plugins/modules/vault_keys2_save.py validate-modules:missing-gplv3-license
+plugins/modules/vault_keys2_save.py validate-modules:no-log-needed
