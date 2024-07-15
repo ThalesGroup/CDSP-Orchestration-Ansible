@@ -656,13 +656,13 @@ _hkdfParam = dict(
     salt=dict(type="str", required=False),
 )
 _public_key_param = dict(
-    activationDate=dict(type="int", required=False),
+    activationDate=dict(type="str", required=False),
     aliases=dict(type="list", elements="dict", options=_alias, required=False),
-    archiveDate=dict(type="int", required=False),
-    deactivationDate=dict(type="int", required=False),
+    archiveDate=dict(type="str", required=False),
+    deactivationDate=dict(type="str", required=False),
     meta=dict(type="dict", options=_schema_less, required=False),
-    name=dict(type="int", required=False),
-    state=dict(type="int", required=False),
+    name=dict(type="str", required=False),
+    state=dict(type="str", required=False),
     undeletable=dict(type="bool", default=False, required=False),
     unexportable=dict(type="bool", default=False, required=False),
     usageMask=dict(type="int", required=False),

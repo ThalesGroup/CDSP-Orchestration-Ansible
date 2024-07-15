@@ -28,14 +28,15 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
     AnsibleCMException,
 )
 
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: vault_keys2_op
 short_description: Perform operations on keys
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with key operations API
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author: 
+    - Anurag Jain, Developer Advocate Thales Group
 options:
     key_version:
         description:
@@ -330,7 +331,7 @@ options:
         type: dict
         suboptions:
           aesKeySize:
-            description: Size of AES key for RSA AES KWP. 
+            description: Size of AES key for RSA AES KWP
             type: int
             choices: [128, 192, 256]
             required: false
@@ -389,7 +390,7 @@ options:
         required: false
         default: null
 
-"""
+'''
 
 EXAMPLES = """
 - name: "Create Key"
