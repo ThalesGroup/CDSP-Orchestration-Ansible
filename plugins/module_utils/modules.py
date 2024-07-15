@@ -90,15 +90,20 @@ class ThalesCipherTrustModule:
 
 def _ciphertrust_common_argument_spec():
     """ """
+    _node_params = dict(
+        server_ip=dict(type="str", required=True),
+        server_private_ip=dict(type="str", required=True),
+        server_port=dict(type="int", required=True),
+        user=dict(type="str", required=True),
+        password=dict(type="str", required=True),
+        verify=dict(type="bool", required=True),
+        auth_domain_path=dict(type="str", required=True),
+    )
     return dict(
         localNode=dict(
-            server_ip=dict(type="str", required=True),
-            server_private_ip=dict(type="str", required=True),
-            server_port=dict(type="int", required=True),
-            user=dict(type="str", required=True),
-            password=dict(type="str", required=True),
-            verify=dict(type="bool", required=True),
-            auth_domain_path=dict(type="str"), required=True
+            type="dict",
+            required=True,
+            options=_node_params,
         )
     )
 
