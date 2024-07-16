@@ -56,7 +56,7 @@ options:
           required: true  
     op_type:
       description: Operation to be performed
-      choices: [create, patch, issue-cert, self-sign, revoke-cert, resume-cert, create-csr, create-csr-key]
+      choices: ['create', 'patch', 'issue-cert', 'self-sign', 'revoke-cert', 'resume-cert', 'create-csr', 'create-csr-key']
       required: true
       type: str
     cn:
@@ -65,6 +65,7 @@ options:
     algorithm:
       description: RSA or ECDSA (default) algorithms are supported. Signature algorithm (SHA512WithRSA, SHA384WithRSA, SHA256WithRSA, SHA1WithRSA, ECDSAWithSHA512, ECDSAWithSHA384, ECDSAWithSHA256) is selected based on the algorithm and size.
       type: str
+      choices: ['RSA', 'ECDSA']
     dnsNames:
       description: Subject Alternative Names (SAN) values
       type: str
@@ -106,14 +107,86 @@ options:
       type: str
     reason:
       description: Specify one of the reason.
-      choices: [unspecified, keyCompromise, cACompromise, affiliationChanged, superseded, cessationOfOperation, certificateHold, removeFromCRL, privilegeWithdrawn, aACompromise]
+      choices: ['unspecified', 'keyCompromise', 'cACompromise', 'affiliationChanged', 'superseded', 'cessationOfOperation', 'certificateHold', 'removeFromCRL', 'privilegeWithdrawn', 'aACompromise']
       type: str
     csrParams:
       description: Parameters to be used during creating CSR like the subject, x509 extensions and signature algorithm used.
       type: dict
+      suboptions:
+        cn:
+          description: Common Name
+          type: str
+        dnsNames:
+          description: Subject Alternative Names (SAN) values
+          type: list
+          elements: str
+        emailAddresses:
+          description: E-mail addresses
+          type: list
+          elements: str
+        extendedKeyUsage:
+          description: List of names of the permitted extended key usages added as CSR extensions. Valid values can be one or more of -  any, serverAuth, clientAuth, codeSigning, emailProtection, ipsecEndSystem, ipsecTunnel, ipsecUser, timeStamping, ocspSigning ,microsoftServerGatedCrypto, netscapeServerGatedCrypto, microsoftCommercialCodeSigning, microsoftKernelCodeSigning. These keyUsage are allowed for CSR creation.
+          type: list
+          elements: str
+        ipAddresses:
+          description: IP addresses
+          type: list
+          elements: str
+        keyUsage:
+          description: List of names of the permitted key usages added as CSR extensions. Valid values can be one or more of - digitalSignature, contentCommitment, keyEncipherment, dataEncipherment, keyAgreement, keyCertSign, crlSign, encipherOnly, decipherOnly. These keyUsage are allowed for CSR creation.
+          type: list
+          elements: str
+        isCA:
+          description: If set, the value of the basic constraints extension value for CA is set to that boolean value and unset otherwise.
+          type: bool
+        maxPathLen:
+          description: This parameter is valid only when is CA parameter is set to true and specifies the maximum number of CAs that can appear below this one in a chain. If maxPathLen is -1, pathlen is unset.
+          type: int
+        signatureAlgorithm:
+          description: Signature algorithm used for creating the CSR.
+          choices: ['sha512WithRSA', 'sha384WithRSA', 'sha256WithRSA', 'sha1WithRSA', 'ecdsaWithSHA512', 'ecdsaWithSHA384', 'ecdsaWithSHA256', 'ecdsaWithSHA1']
+          type: str
+        subjectKeyIdentifierHash:
+          description: If set to true, the Subject Key Identifier extension is set to the hash specified by RFC5280, else unset
+          type: bool
+        names:
+          description: Name fields are "O=organization, OU=organizational unit, L=location, ST=state/province, C=country". Fields can be duplicated if present in different objects.
+          type: list
+          elements: dict
+          contains:
+            C:
+              description: Country, for example "US"
+              type: str
+            L:
+              description: Location, for example "Belcamp"
+              type: str
+            O:
+              description: Organization, for example "Thales Group"
+              type: str
+            OU:
+              description: Organizational Unit, for example "RnD"
+              type: str
+            ST:
+              description: State/province, for example "MD"
+              type: str
     keyGenParams:
       description: Parameters to be used for creating an asymmetric key to be used for CSR creation.
       type: dict
+      suboptions:
+        algorithm:
+          description: Algorithm of key to be generated for CSR creation. Permitted values are 'RSA' or 'EC' and defaults to 'RSA'
+          type: str
+          choices: ['RSA', 'ECDSA']
+        curveid:
+          description: Cryptographic curve id for elliptic key
+          type: str
+          choices: ['secp224r1', 'secp384r1', 'secp521r1', 'prime256v1']
+        keyName:
+          description: Name of key to be generated for CSR creation
+          type: str
+        size:
+          description: Size of key to be generated for CSR creation. Refer create key API for sizes for EC and RSA keys and their default values.
+          type: str
     keyID:
       description: Type of the identifier, keyID, for the private key to be used for creating CSR.
       type: str
@@ -249,14 +322,14 @@ _name = dict(
 
 _csr_params = dict(
   cn=dict(type='str'),
-  dnsNames=dict(type='list', element='str'),
-  emailAddresses=dict(type='list', element='str'),
-  extendedKeyUsage=dict(type='list', element='str'),
-  ipAddresses=dict(type='list', element='str'),
+  dnsNames=dict(type='list', elements="str"),
+  emailAddresses=dict(type='list', elements="str"),
+  extendedKeyUsage=dict(type='list', elements="str"),
+  ipAddresses=dict(type='list', elements="str"),
   isCA=dict(type='bool'),
-  keyUsage=dict(type='list', element='str'),
+  keyUsage=dict(type='list', elements="str"),
   maxPathLen=dict(type='int'),
-  names=dict(type='list', element='dict', options=_name),
+  names=dict(type='list', elements="dict", options=_name),
   signatureAlgorithm=dict(type='str', choices=['sha512WithRSA', 'sha384WithRSA', 'sha256WithRSA', 'sha1WithRSA', 'ecdsaWithSHA512', 'ecdsaWithSHA384', 'ecdsaWithSHA256', 'ecdsaWithSHA1']),
   subjectKeyIdentifierHash=dict(type='bool'),
 )
@@ -284,11 +357,11 @@ argument_spec = dict(
     # Add local CA
     cn=dict(type='str'),
     algorithm=dict(type='str', choices=['RSA', 'ECDSA']),
-    dnsNames=dict(type='list', element='str'),
-    emailAddresses=dict(type='list', element='str'),
-    ipAddresses=dict(type='list', element='str'),
+    dnsNames=dict(type='list', elements="str"),
+    emailAddresses=dict(type='list', elements="str"),
+    ipAddresses=dict(type='list', elements="str"),
     name=dict(type='str'),
-    names=dict(type='list', element='dict', options=_name),
+    names=dict(type='list', elements="dict", options=_name),
     size=dict(type='int'),
     # Update local CA
     allow_client_authentication=dict(type='bool'),
