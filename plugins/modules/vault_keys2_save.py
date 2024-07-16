@@ -294,9 +294,11 @@ options:
                 description: Specify encryption mode
                 type: str
               cte_versioned:
-                description: if the key is versioned
+                description: CTE versioned
                 type: bool
-          versionedKey
+          versionedKey:
+            description: if the key is versioned
+            type: bool
         required: false
         default: null
     muid:
