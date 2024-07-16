@@ -17,7 +17,10 @@ module: cte_client
 short_description: Manage CTE clients
 description:
     - Create, manage, and perform operations on a CTE client
-    - A client is a computer system where the data needs to be protected. A compatible CTE Agent software is installed on the client. The CTE Agent can protect data on the client or devices connected to it. A client can be associated with multiple GuardPoints for encryption of various paths.
+    - A client is a computer system where the data needs to be protected.
+    - A compatible CTE Agent software is installed on the client.
+    - The CTE Agent can protect data on the client or devices connected to it.
+    - A client can be associated with multiple GuardPoints for encryption of various paths.
 version_added: "1.0.0"
 author: Anurag Jain, Developer Advocate Thales Group
 options:
@@ -58,65 +61,102 @@ options:
           required: true
     op_type:
       description: Operation to be performed
-      choices: [create, patch, add_guard_point, unenroll, delete, delete_id, auth_binaries, ldt_pause, patch_guard_point, gp_unguard, gp_enable_early_access]
+      choices: ['create', 'patch', 'add_guard_point', 'unenroll', 'delete', 'delete_id', 'auth_binaries', 'ldt_pause', 'patch_guard_point', 'gp_unguard', 'gp_enable_early_access']
       required: true
       type: str
     id:
       description: CTE Client ID to be patched or updated
       type: str
     name:
-      description: Name to uniquely identify the client. This name will be visible on the CipherTrust Manager. Also can be name of the CTE client to be unenrolled.
+      description:
+        - Name to uniquely identify the client
+        - This name will be visible on the CipherTrust Manager
+        - Also can be name of the CTE client to be unenrolled
       type: str
     client_type:
-      description: Type of CTE Client. The default value is FS. Valid values are CTE-U and FS.
-      choices: [CTE-U, FS]
+      description:
+        - Type of CTE Client
+        - The default value is FS
+        - Valid values are CTE-U and FS
+      choices: ['CTE-U', 'FS']
       type: str
     client_locked:
-      description: Whether the CTE client is locked. The default value is false. Enable this option to lock the configuration of the CTE Agent on the client. Set to true to lock the configuration, set to false to unlock. Locking the Agent configuration prevents updates to any policies on the client.
+      description:
+        - Whether the CTE client is locked
+        - The default value is false
+        - Enable this option to lock the configuration of the CTE Agent on the client
+        - Set to true to lock the configuration, set to false to unlock
+        - Locking the Agent configuration prevents updates to any policies on the client
       type: boolean
     communication_enabled:
-      description: Whether communication with the client is enabled. The default value is false. Can be set to true only if registration_allowed is true
+      description:
+        - Whether communication with the client is enabled
+        - The default value is false
+        - Can be set to true only if registration_allowed is true
       type: boolean
     description:
       description: Description to identify the client.
       type: str
     password:
-      description: Password for the client. Required when password_creation_method is MANUAL
+      description:
+        - Password for the client
+        - Required when password_creation_method is MANUAL
       type: str
     password_creation_method:
-      description: Password creation method for the client. Valid values are MANUAL and GENERATE. The default value is GENERATE.
-      choices: [MANUAL, GENERATE]
+      description:
+        - Password creation method for the client
+        - Valid values are MANUAL and GENERATE
+        - The default value is GENERATE.
+      choices: ['MANUAL', 'GENERATE']
+      default: GENERATE
       type: str
     profile_identifier:
-      description: Identifier of the Client Profile to be associated with the client. If not provided, the default profile will be linked.
+      description:
+        - Identifier of the Client Profile to be associated with the client
+        - If not provided, the default profile will be linked
       type: str
     registration_allowed:
-      description: Whether client's registration with the CipherTrust Manager is allowed. The default value is false. Set to true to allow registration.
+      description:
+        - Whether client's registration with the CipherTrust Manager is allowed
+        - The default value is false. Set to true to allow registration
       type: boolean
     system_locked:
-      description: Whether the system is locked. The default value is false. Enable this option to lock the important operating system files of the client. When enabled, patches to the operating system of the client will fail due to the protection of these files.
+      description:
+        - Whether the system is locked
+        - The default value is false
+        - Enable this option to lock the important operating system files of the client
+        - When enabled, patches to the operating system of the client will fail due to the protection of these files
       type: boolean
     user_space_client:
-      description: TBD
+      description: User space client
       type: str
     client_mfa_enabled:
       description: Whether MFA is enabled on the client
       type: boolean
     del_client:
-      description: Whether to mark the client for deletion from the CipherTrust Manager. The default value is false
+      description:
+        - Whether to mark the client for deletion from the CipherTrust Manager
+        - The default value is false
       type: boolean
     disable_capability:
-      description: Client capability to be disabled. Only EKP - Encryption Key Protection can be disabled
+      description:
+        - Client capability to be disabled
+        - Only EKP (Encryption Key Protection) can be disabled
       type: str
     dynamic_parameters:
-      description: Array of parameters to be updated after the client is registered. Specify the parameters in the name-value pair JSON format strings. Make sure to specify all the parameters even if you want to update one or more parameters.
+      description:
+        - Array of parameters to be updated after the client is registered
+        - Specify the parameters in the name-value pair JSON format strings
+        - Make sure to specify all the parameters even if you want to update one or more parameters
       type: str
     enable_domain_sharing:
       description: Whether domain sharing is enabled for the client.
       type: boolean
     enabled_capabilities:
-      description: Client capabilities to be enabled. Separate values with comma.
-      choices: [LDT, EKP, ES]
+      description:
+        - Client capabilities to be enabled
+        - Separate values with comma
+        - Choices are LDT, EKP or ES
       type: str
     max_num_cache_log:
       description: Maximum number of logs to cache
@@ -132,21 +172,110 @@ options:
       type: list
       elements: str
     guard_paths:
-      description: List of GuardPaths to be created.
+      description: List of GuardPaths to be created
       type: list
       elements: str
     guard_point_params:
       description: Parameters for creating a GuardPoint.
       type: dict
+      suboptions:
+        guard_point_type:
+          description: Type of the GuardPoint.
+          type: str
+          required: true
+          choices:
+            - directory_auto
+            - directory_manual
+            - rawdevice_manual
+            - rawdevice_auto
+            - cloudstorage_auto
+            - cloudstorage_manual
+        policy_id:
+          description:
+            - ID of the policy applied with this GuardPoint
+            - This parameter is not valid for Ransomware GuardPoints as they will not be associated with any CTE policy
+          type: str
+          required: true
+        automount_enabled:
+          description:
+            - Whether automount is enabled with the GuardPoint
+            - Supported for Standard and LDT policies
+          type: bool
+        cifs_enabled:
+          description:
+            - Whether to enable CIFS
+            - Available on LDT enabled windows clients only
+            - The default value is false
+            - If you enable the setting, it cannot be disabled
+            - Supported for only LDT policies.
+          type: bool
+        data_classification_enabled:
+          description:
+            - Whether data classification (tagging) is enabled
+            - Enabled by default if the aligned policy contains ClassificationTags
+            - Supported for Standard and LDT policies.
+          type: bool
+        data_lineage_enabled:
+          description:
+            - Whether data lineage (tracking) is enabled
+            - Enabled only if data classification is enabled
+            - Supported for Standard and LDT policies.
+          type: bool
+        disk_name:
+          description:
+            - Name of the disk if the selected raw partition is a member of an Oracle ASM disk group
+          type: str
+        diskgroup_name:
+          description:
+            - Name of the disk group if the selected raw partition is a member of an Oracle ASM disk group
+          type: str
+        early_access:
+          description:
+            - Whether secure start (early access) is turned on
+            - Secure start is applicable to Windows clients only
+            - Supported for Standard and LDT policies
+            - The default value is false
+          type: bool
+        intelligent_protection:
+          description:
+            - Flag to enable intelligent protection for this GuardPoint
+            - This flag is valid for GuardPoints with classification based policy only
+            - Can only be set during GuardPoint creation
+          type: bool
+        is_idt_capable_device:
+          description:
+            - Whether the device where GuardPoint is applied is IDT capable or not
+            - Supported for IDT policies.
+          type: bool
+        mfa_enabled:
+          description: Whether MFA is enabled
+          type: bool
+        network_share_credentials_id:
+          description:
+            - ID/Name of the credentials if the GuardPoint is applied to a network share
+            - Supported for only LDT policies.
+          type: str
+        preserve_sparse_regions:
+          description:
+            - Whether to preserve sparse file regions
+            - Available on LDT enabled clients only
+            - The default value is true
+            - If you disable the setting, it cannot be enabled again
+            - Supported for only LDT policies.
+          type: bool
     client_id_list:
-      description: IDs of the clients to be deleted. The IDs could be the name, ID (a UUIDv4), URI, or slug of the clients.
+      description:
+        - IDs of the clients to be deleted
+        - The IDs could be the name, ID, URI, or slug of the clients.
       type: list
       elements: str
     force_del_client:
       description:
         - Deletes the client forcefully from the CipherTrust Manager. Set the value to true.
-        - WARNING! Use the force_del_client option with caution. It does not wait for any response from the CTE Agent before deleting the client's entry from the CipherTrust Manager. This action is irreversible.
-      type: boolean
+        - WARNING! Use the force_del_client option with caution
+        - It does not wait for any response from the CTE Agent before deleting the client's entry from the CipherTrust Manager
+        - This action is irreversible
+      type: bool
     auth_binaries:
       description: Array of authorized binaries in the privilege-filename pair JSON format.
       type: str
@@ -155,35 +284,48 @@ options:
       type: str
     re_sign:
       description: Whether to re-sign the client settings.
-      type: boolean
+      type: bool
     paused:
-      description: Suspend/resume the rekey operation on an LDT GuardPoint. Set the value to true to pause (suspend) the rekey. Set the value to false to resume rekey.
-      type: boolean
+      description:
+        - Suspend/resume the rekey operation on an LDT GuardPoint
+        - Set the value to true to pause (suspend) the rekey
+        - Set the value to false to resume rekey.
+      type: bool
     gp_id:
       description: Guard Point ID to be patched or updated within a CTE client
       type: str
     data_classification_enabled:
-      description: Whether data classification (tagging) is enabled. Enabled by default if the aligned policy contains ClassificationTags. Supported for Standard and LDT policies.
-      type: boolean
+      description:
+        - Whether data classification (tagging) is enabled
+        - Enabled by default if the aligned policy contains ClassificationTags
+        - Supported for Standard and LDT policies.
+      type: bool
     data_lineage_enabled:
-      description: Whether data lineage (tracking) is enabled. Enabled only if data classification is enabled. Supported for Standard and LDT policies
-      type: boolean
+      description:
+        - Whether data lineage (tracking) is enabled
+        - Enabled only if data classification is enabled
+        - Supported for Standard and LDT policies
+      type: bool
     guard_enabled:
       description: Whether the GuardPoint is enabled.
       type: boolean
     mfa_enabled:
       description: Whether MFA is enabled
-      type: boolean
+      type: bool
     network_share_credentials_id:
-      description: ID/Name of the credentials if the GuardPoint is applied to a network share. Supported for only LDT policies.
+      description:
+        - ID/Name of the credentials if the GuardPoint is applied to a network share
+        - Supported for only LDT policies.
       type: str
     guard_point_id_list:
-      description: IDs of the GuardPoints to be dissociated from the client. The IDs can be the name, ID (a UUIDv4), URI, or slug of the GuardPoints.
+      description:
+        - IDs of the GuardPoints to be dissociated from the client
+        - The IDs can be the name, ID, URI, or slug of the GuardPoints.
       type: list
       elements: str
     early_access:
       description: Whether to enable early access on the GuardPoint
-      type: boolean
+      type: bool
 """
 
 EXAMPLES = """
@@ -316,7 +458,7 @@ argument_spec = dict(
     disable_capability=dict(type="str"),
     dynamic_parameters=dict(type="str"),
     enable_domain_sharing=dict(type="bool"),
-    enabled_capabilities=dict(type="str", choices=["LDT", "EKP", "ES"]),
+    enabled_capabilities=dict(type="str"),
     max_num_cache_log=dict(type="int"),
     max_space_cache_log=dict(type="int"),
     profile_id=dict(type="str"),
