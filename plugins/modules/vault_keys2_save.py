@@ -22,7 +22,7 @@ options:
     localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -60,8 +60,8 @@ options:
         required: true
         type: str
     cm_key_id:
-        description: 
-          - CM ID of the key that needs to be patched. 
+        description:
+          - CM ID of the key that needs to be patched.
           - Only required if the op_type is patch or create_version
         type: str
         default: null
@@ -71,17 +71,17 @@ options:
         type: str
         default: null
     algorithm:
-        description: 
-          - Cryptographic algorithm this key is used with. 
+        description:
+          - Cryptographic algorithm this key is used with.
           - Defaults to 'aes'
         type: str
         required: false
         choices: [aes, tdes, rsa, ec, hmac-sha1, hmac-sha256, hmac-sha384, hmac-sha512, seed, aria, opaque]
         default: aes
     aliases:
-        description: 
-          - Aliases associated with the key. 
-          - The alias and alias-type must be specified. 
+        description:
+          - Aliases associated with the key.
+          - The alias and alias-type must be specified.
           - The alias index is assigned by this operation, and need not be specified.
         type: list
         element: dict
@@ -121,8 +121,8 @@ options:
         required: false
         default: null
     curveid:
-        description: 
-          - Cryptographic curve id for elliptic key. 
+        description:
+          - Cryptographic curve id for elliptic key.
           - Key algorithm must be 'EC'
         choices: [secp224k1, secp224r1, secp256k1, secp384r1, secp521r1, prime256v1, brainpoolP224r1, brainpoolP224t1, brainpoolP256r1, brainpoolP256t1, brainpoolP384r1, brainpoolP384t1, brainpoolP512r1, brainpoolP512t1]
         type: str
@@ -144,7 +144,7 @@ options:
         required: false
         default: null
     encoding:
-        description: 
+        description:
           - Specifies the encoding used for the 'material' field.
           - This parameter is used during importing keys when key material is not empty or while returning the key material after the key is created ('includeMaterial' is true)
           - For wrapping scenarios and PKCS12 format, the only valid option is base64. In case of "Symmetric Keys" when 'format' parameter has 'base64' value and 'encoding' parameter also contains some value. The encoding parameter takes the priority. Following are the options for Symmetric Keys are hex or base64
@@ -152,7 +152,7 @@ options:
         required: false
         default: null
     format:
-        description: 
+        description:
           - This parameter is used while importing keys ('material' is not empty), and also when returning the key material after the key is created ('includeMaterial' is true).
           - For Asymmetric keys, When this parameter is not specified, while importing keys, the format of the material is inferred from the material itself. When this parameter is specified, while importing keys, the only allowed format is 'pkcs12', and this only applies to the 'rsa' algorithm (the 'material' should contain the base64 encoded value of the PFX file in this case). Options are pkcs1, pkcs8 (default) or pkcs12
           - For Symmetric keys, When importing keys if specified, the value must be given according to the format of the material. Options are raw or opaque
@@ -169,8 +169,8 @@ options:
         type: dict
         suboptions:
           hashAlgorithm:
-            description: 
-              - Hash Algorithm is used for HKDF. 
+            description:
+              - Hash Algorithm is used for HKDF.
               - This is required if ikmKeyName is specified, default is hmac-sha256.
             type: str
             choices: [hmac-sha1, hmac-sha224, hmac-sha256, hmac-sha384, hmac-sha512]
@@ -245,7 +245,7 @@ options:
         description: Additional identifier of the key. This is optional and applicable for import key only. If set, the value is imported as the key's muid.
         type: str
         required: false
-        default: null    
+        default: null
     name:
         description: Optional friendly name, The key name should not contain special characters such as angular brackets (<,>) and backslash ().
         type: str
@@ -258,7 +258,7 @@ options:
         required: false
         default: null
     padded:
-        description: 
+        description:
           - This parameter determines the padding for the wrap algorithm while unwrapping a symmetric key
           - If true, the RFC 5649(AES Key Wrap with Padding) is followed and if false, RFC 3394(AES Key Wrap) is followed for unwrapping the material for the symmetric key.
           - If a certificate is being unwrapped with the "wrappingMethod" set to "encrypt", the "padded" parameter has to be set to true.
@@ -286,9 +286,9 @@ options:
             type: str
             default: null
           aliases:
-            description: 
-              - Aliases associated with the key. 
-              - The alias and alias-type must be specified. 
+            description:
+              - Aliases associated with the key.
+              - The alias and alias-type must be specified.
               - The alias index is assigned by this operation, and need not be specified.
             type: list
             element: dict
@@ -314,7 +314,7 @@ options:
             required: false
             default: null
           state:
-            description: 
+            description:
               - Optional initial key state (Pre-Active) upon creation
               - Defaults to Active
             type: str
@@ -331,9 +331,9 @@ options:
             required: false
             default: false
           usageMaske:
-            description: 
-                - Cryptographic usage mask. 
-                - Add the usage masks to allow certain usages. 
+            description:
+                - Cryptographic usage mask.
+                - Add the usage masks to allow certain usages.
                 - Sign (1)
                 - Verify (2)
                 - Encrypt (4)
@@ -374,32 +374,32 @@ options:
         required: false
         default: null
     rotationFrequencyDays:
-        description: 
-            - Number of days from current date to rotate the key. 
-            - It should be greater than or equal to 0. 
-            - Default is an empty string. 
+        description:
+            - Number of days from current date to rotate the key.
+            - It should be greater than or equal to 0.
+            - Default is an empty string.
             - If set to 0, rotationFrequencyDays set to an empty string and auto rotation of key will be disabled.
         type: str
         required: false
         default: null
     secretDataEncoding:
-        description: 
-            - For pkcs12 format, this field specifies the encoding method used for the secretDataLink material. 
-            - Ignore this field if secretData is created from REST and is in plain format. 
+        description:
+            - For pkcs12 format, this field specifies the encoding method used for the secretDataLink material.
+            - Ignore this field if secretData is created from REST and is in plain format.
             - Specify the value of this field as HEX format if secretData is created from KMIP.
         type: str
         required: false
         default: null
     secretDataLink:
-        description: 
-            - For pkcs12 format, either secretDataLink or password should be specified. 
+        description:
+            - For pkcs12 format, either secretDataLink or password should be specified.
             - The value can be either ID or name of Secret Data.
         type: str
         required: false
         default: null
     signingAlgo:
-        description: 
-            - This parameter specifies the algorithm to be used for generating the signature for the verification of the "macSignBytes" during import of key material. 
+        description:
+            - This parameter specifies the algorithm to be used for generating the signature for the verification of the "macSignBytes" during import of key material.
             - The "wrappingMethod" should be "mac/sign" to verify the signature("macSignBytes") of the key material("material").
         choices: [RSA, RSA-PSS]
         type: str
@@ -541,7 +541,7 @@ options:
         type: dict
         suboptions:
           aesKeySize:
-            description: Size of AES key for RSA AES KWP. 
+            description: Size of AES key for RSA AES KWP.
             type: int
             choices: [128, 192, 256]
             required: false
@@ -581,14 +581,14 @@ options:
         required: false
         default: false
     allVersions:
-        description: 
+        description:
           - To update the group permissions/custom attribute or both in metadata of all versions of the key. By default it is set to false. Set to true, only when to update the group/custom attribute or both permissions of all versions of the key.
           - Only applicable for op_type "patch"
         type: bool
         required: false
         default: false
     offset:
-        description: 
+        description:
           - An Offset MAY be used to indicate the difference between the Creation Date and the Activation Date of the replacement key. If no Offset is specified, the Activation Date, Process Start Date, Protect Stop Date and Deactivation Date values are copied from the existing key. If Offset is set and dates exist for the existing key, then the dates of the replacement key are set based on the dates of the existing key by adding the offset.
           - Only applicable for op_type "create_version"
         type: int

@@ -18,11 +18,11 @@ description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically delete resource APIs.
 version_added: "1.0.0"
 author: Anurag Jain, Developer Advocate Thales Group
-options:    
+options:
     localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -81,7 +81,7 @@ EXAMPLES = '''
 # Delete Resource at CipherTrust Manager
 - name: "Delete key on Ciphertrust Manager"
   thalesgroup.ciphertrust.cm_resource_delete:
-    localNode: 
+    localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"
         server_port: 5432

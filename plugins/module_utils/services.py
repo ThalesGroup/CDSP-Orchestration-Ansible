@@ -26,7 +26,7 @@ def restartCMServices(**kwargs):
           cm_node=kwargs['node'],
           cm_api_endpoint="system/services/restart"
         )
-      
+
       return ast.literal_eval(str(__resp))
     except CMApiException as api_e:
       raise

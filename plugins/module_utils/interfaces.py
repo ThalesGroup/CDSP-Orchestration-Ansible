@@ -25,7 +25,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
     AnsibleCMException,
 )
 
-
 def is_json(myjson):
     try:
         json.loads(myjson)

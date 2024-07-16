@@ -18,11 +18,11 @@ description:
     - The module is to create or update client registration token
 version_added: "1.0.0"
 author: Anurag Jain, Developer Advocate Thales Group
-options:    
+options:
     localNode:
       description:
-        - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - This holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
+        - Holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -63,23 +63,34 @@ options:
         description: registration token ID to be updated
         type: str
     ca_id:
-        description: ID of the trusted Certificate Authority that will be used to sign client certificate during registration process. By default local Certificate Authority will be used to issue certificates.
+        description:
+         - ID of the trusted Certificate Authority that will be used to sign client certificate during registration process
+         - By default local Certificate Authority will be used to issue certificates.
         type: str
     cert_duration:
         description: Duration in days for which the CipherTrust Manager client's certificate is valid, default (730).
         type: int
         default: 730
     label:
-        description: Label is the key value pair. In case of KMIP client registration, Key is KmipClientProfile and in case of PA client registration Key is ClientProfile. Value for the key is the profile name of protectapp/Kmip client profile to be mapped with the token for protectapp/Kmip client registration.
+        description:
+          - Label is the key value pair.
+          - In case of KMIP client registration, Key is KmipClientProfile and in case of PA client registration Key is ClientProfile.
+          - Value for the key is the profile name of protectapp/Kmip client profile to be mapped with the token for protectapp/Kmip client registration.
         type: dict
     lifetime:
-        description: Duration in minutes/hours/days for which this token can be used for registering CipherTrust Manager clients. No limit by default. For 'x' amount of time, it should formatted as xm for x minutes, xh for hours and xd for days.
+        description:
+          - Duration in minutes/hours/days for which this token can be used for registering CipherTrust Manager clients.
+          - No limit by default. For 'x' amount of time, it should formatted as xm for x minutes, xh for hours and xd for days.
         type: str
     max_clients:
         description: Maximum number of clients that can be registered using this registration token. No limit by default.
         type: int
     name_prefix:
-        description: Prefix for the client name. For a client registered using this registration token, name_prefix, if specified, client name will be constructed as 'name_prefix{nth client registered using this registation token}', If name_prefix is not specified, CipherTrust Manager server will generate a random name for the client.
+        description:
+          - Prefix for the client name.
+          - For a client registered using this registration token, name_prefix.
+          - If specified, client name will be constructed as 'name_prefix{nth client registered using this registation token}'
+          - If name_prefix is not specified, CipherTrust Manager server will generate a random name for the client
         type: str
 '''
 

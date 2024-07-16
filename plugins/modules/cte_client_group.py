@@ -22,7 +22,7 @@ options:
     localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -64,7 +64,7 @@ options:
       type: str
     client_id:
       description: Identifier of the client within the group that needs to be acted upon
-      type: str     
+      type: str
     cluster_type:
       description: Cluster type of the ClientGroup, valid values are NON-CLUSTER and HDFS.
       choices: [NON-CLUSTER, HDFS]

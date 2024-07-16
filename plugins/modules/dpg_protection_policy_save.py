@@ -23,7 +23,7 @@ options:
     localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -74,7 +74,7 @@ options:
       description: Unique name for the protection policy
       type: str
     allow_single_char_input:
-      description: 
+      description:
       - If true, null or single-character inputs are passed untransformed. If false, row transformation fails
       - Obsolete post CM v2.12
       type: bool
@@ -96,13 +96,13 @@ options:
       required: false
       type: str
     disable_versioning:
-      description: 
+      description:
       - If set to true, versioning is not maintained for the protection policies. The default value is false.
       - Added in CM v2.12
       required: false
       type: bool
     use_external_versioning:
-      description: 
+      description:
       - If set to true, external versioning is enabled for the protection policy. The version details are stored in a separate external parameter. The default value is false.
       - Added in CM v2.12
       required: false

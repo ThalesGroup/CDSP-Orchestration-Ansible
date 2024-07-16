@@ -32,7 +32,6 @@ def is_json(myjson):
         return False
     return True
 
-
 def getLockdata(node):
     result = dict()
 

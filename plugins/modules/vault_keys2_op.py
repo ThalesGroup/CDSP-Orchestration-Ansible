@@ -17,13 +17,13 @@ short_description: Perform operations on keys
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with key operations API
 version_added: "1.0.0"
-author: 
+author:
     - Anurag Jain, Developer Advocate Thales Group
 options:
     localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -84,13 +84,13 @@ options:
         required: true
         type: str
     cm_key_id:
-        description: 
+        description:
           - CM ID of the key that needs to be patched.
         type: str
         required: true
         default: null
     reason:
-        description: 
+        description:
           - The reason the key is being revoked. Choices are Unspecified, KeyCompromise, CACompromise, AffiliationChanged, Superseded, CessationOfOperation or PrivilegeWithdrawn
           - The reason the key is being reactivated. Choices are DeactivatedToActive, ActiveProtectStopToActive or DeactivatedToActiveProtectStop
           - Required if op_type is either revoke or reactivate
@@ -98,29 +98,29 @@ options:
         choices: ['Unspecified', 'KeyCompromise', 'CACompromise', 'AffiliationChanged', 'Superseded', 'CessationOfOperation', 'PrivilegeWithdrawn', 'DeactivatedToActive', 'ActiveProtectStopToActive', 'DeactivatedToActiveProtectStop']
         default: null
     compromiseOccurrenceDate:
-        description: 
-          - Date/time when the object was first believed to be compromised, if known. 
+        description:
+          - Date/time when the object was first believed to be compromised, if known.
           - Only valid if the revocation reason is CACompromise or KeyCompromise, otherwise ignored.
           - Defaults to key's creation time.
         type: str
         required: false
         default: null
     message:
-        description: 
+        description:
           - Message explaining revocation.
           - Message explaining reactivation.
         type: str
         required: false
         default: null
     combineXts:
-        description: 
+        description:
           - If set to true, then full material of XTS/CBC-CS1 key will be exported.
           - Only applicable for op_type "export"
         type: bool
         default: false
         required: false
     encoding:
-        description: 
+        description:
           - Specifies the encoding used for the material field.
           - For wrapping scenarios and PKCS12 format, the only valid option is base64. In case of "Symmetric Keys" when 'format' parameter has 'base64' value and 'encoding' parameter also contains some value. The encoding parameter takes the priority. Options for Symmetric Keys are hex or base64
           - Only applicable for op_type "export"
@@ -128,7 +128,7 @@ options:
         required: false
         default: null
     keyFormat:
-        description: 
+        description:
           - The format of the returned key material. If the algorithm is 'rsa' or 'ec'. The value can be one of 'pkcs1', 'pkcs8' , 'pkcs12', or 'jwe'. The default value is 'pkcs8'. If algorithm is ‘rsa’ and format is 'pkcs12', the key material will contain the base64-encoded value of the PFX file. The value 'base64' is used for symmetric keys, for which the format of the returned key material is base64-encoded if wrapping is applied (i.e., either 'wrapKeyName' or 'wrapPublicKey' is specified),otherwise, the format is hex-encoded, unless 'base64' is given. If the "format" is 'jwe' then the "material" for the symmetric key, asymmetric key or certificate will be wrapped in JWE format. "wrapKeyName"(should be a public key) or "wrapPublicKey" and "wrapJWE" parameters are required for 'jwe' format. The value 'opaque' is supported for symmetric keys with 'opaque' format only.
           - Only applicable for op_type "export"
         type: str
@@ -136,7 +136,7 @@ options:
         required: false
         default: null
     macSignKeyIdentifier:
-        description: 
+        description:
           - This parameter specifies the identifier of the key used for generating the MAC or signature("macSignBytes") of the key whose key material is to be exported
           - The "wrappingMethod" should be "mac/sign" to generate the MAC/signature.
           - To generate a MAC, the key should be a HMAC key.
@@ -146,7 +146,7 @@ options:
         required: false
         default: null
     macSignKeyIdentifierType:
-        description: 
+        description:
           - This parameter specifies the identifier of the key("macSignKeyIdentifier") used for generating MAC or signature of the key material. The "wrappingMethod" should be "mac/sign" to verify the mac/signature("macSignBytes") of the key material("material")
           - Only applicable for op_type "export"
         type: str
@@ -180,21 +180,21 @@ options:
         default: false
         required: false
     secretDataEncoding:
-        description: 
+        description:
           - For pkcs12 format, this field specifies the encoding method used for the secretDataLink material. Ignore this field if secretData is created from REST and is in plain format. Specify the value of this field as HEX format if secretData is created from KMIP.
           - Only applicable for op_type "export"
         type: str
         required: false
         default: null
     secretDataLink:
-        description: 
+        description:
           - For pkcs12 format, either secretDataLink or password should be specified. The value can be either ID or name of Secret Data.
           - Only applicable for op_type "export"
         type: str
         required: false
         default: null
     signingAlgo:
-        description: 
+        description:
           - This parameter specifies the algorithm to be used for generating the signature for the verification of the "macSignBytes" during import of key material. The "wrappingMethod" should be "mac/sign" to verify the signature("macSignBytes") of the key material("material").
           - Only applicable for op_type "export"
         choices: [RSA, RSA-PSS]
@@ -202,7 +202,7 @@ options:
         required: false
         default: null
     wrapHKDF:
-        description: 
+        description:
           - Information which is used to wrap a Key using HKDF.
           - Only applicable for op_type "export"
         type: dict
@@ -231,7 +231,7 @@ options:
         required: false
         default: null
     wrapJWE:
-        description: 
+        description:
           - Information which is used to wrap a Key using JWE. (JWT ID (JTI) provides a unique identifier for the JWT. JTI will be automatically included in JWE if it is available in JWT identity token.)
           - Only applicable for op_type "export"
         type: dict
@@ -261,7 +261,7 @@ options:
         required: false
         default: null
     wrapKeyIDType:
-        description: 
+        description:
           - IDType specifies how the wrapKeyName should be interpreted.
           - Only applicable for op_type "export"
         type: str
@@ -276,7 +276,7 @@ options:
         required: false
         default: null
     wrapPBE:
-        description: 
+        description:
           - WrapPBE produces a derived key from a password and other parameters like salt, iteration count, hashing algorithm and derived key length. PBE is currently only supported to wrap symmetric keys (AES), private Keys and certificates.
           - Only applicable for op_type "export"
         type: dict
@@ -326,7 +326,7 @@ options:
         required: false
         default: null
     wrapPublicKey:
-        description: 
+        description:
           - If the algorithm is 'aes','tdes','hmac-*', 'seed' or 'aria', this value will be used to encrypt the returned key material. This value is ignored for other algorithms. Value must be an RSA public key, PEM-encoded public key in either PKCS1 or PKCS8 format, or a PEM-encoded X.509 certificate. If set, the returned 'material' value will be a Base64 encoded PKCS#1 v1.5 encrypted key. View "wrapPublicKey" in export parameters for more information. Only applicable if 'includeMaterial' is true.
           - Only applicable for op_type "export"
         type: str
@@ -342,7 +342,7 @@ options:
         required: false
         default: null
     wrapRSAAES:
-        description: 
+        description:
           - Information which is used to wrap/unwrap asymmetric keys using RSA AES KWP method. This method internally requires AES key size to generate a temporary AES key and RSA padding. To use WrapRSAAES, algorithm "RSA/RSAAESKEYWRAPPADDING" must be specified in WrappingEncryptionAlgo.
           - Only applicable for op_type "export"
         type: dict

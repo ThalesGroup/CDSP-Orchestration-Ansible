@@ -459,7 +459,7 @@ def GETData(cm_node=None, cm_api_endpoint=None):
         raise err
 
 #GETData just returns ID for a particular filter
-#This method will simply return the GET API data 
+#This method will simply return the GET API data
 def GETAPIData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = ast.literal_eval(cm_node)
@@ -512,7 +512,7 @@ def GETAPIData(cm_node=None, cm_api_endpoint=None):
                     message="Error fetching data " + str(response),
                     api_error_code=status_code,
                 )
-        return __ret        
+        return __ret
     except HTTPError as err:
         raise err
     except json.decoder.JSONDecodeError as jsonErr:

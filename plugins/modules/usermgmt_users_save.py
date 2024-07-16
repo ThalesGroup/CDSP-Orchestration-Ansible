@@ -22,7 +22,7 @@ options:
     localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -70,7 +70,7 @@ options:
           - If both enable_cert_auth and allowed_auth_methods are provided in the request, enable_cert_auth is ignored.
         type: list
     app_metadata:
-        description: 
+        description:
             - A schema-less object, which can be used by applications to store information about the resource
             - app_metadata is typically used by applications to store information which the end-users are not themselves allowed to change, like group membership
         required: false
@@ -81,8 +81,8 @@ options:
         required: false
         type: str
     connection:
-        description: 
-            - This attribute is required to create a user, but is not included in user resource responses. 
+        description:
+            - This attribute is required to create a user, but is not included in user resource responses.
             - Can be the name of a connection or "local_account" for a local user, defaults to "local_account".
         required: false
         type: str
@@ -127,7 +127,7 @@ options:
         required: false
         type: str
     password_change_required:
-        description: 
+        description:
             - Password change required flag.
             - If set to true, user will be required to change their password on next successful login.
         required: false
@@ -144,9 +144,9 @@ options:
         type: dict
         default: null
     username:
-        description: 
-          - The login name of the user. This is the identifier used to login. 
-          - This attribute is required to create a user, but is omitted when getting or listing user resources. It cannot be updated. 
+        description:
+          - The login name of the user. This is the identifier used to login.
+          - This attribute is required to create a user, but is omitted when getting or listing user resources. It cannot be updated.
           - This attribute may also be used (instead of the user_id) when adding an existing root domain user to a different domain.
           - Mandatory for create operation
         type: str
@@ -155,12 +155,12 @@ options:
         required: false
         type: int
     new_password:
-        description: 
+        description:
           - the new password
           - mandatory for changepw op_type
         type: str
     auth_domain:
-        description: 
+        description:
           - The domain where user needs to be authenticated. This is the domain where user is created. Defaults to the root domain.
           - required only for changew op_type, not mandatory though
         type: str
@@ -169,7 +169,7 @@ options:
 EXAMPLES = '''
 - name: "Create new user"
     thalesgroup.ciphertrust.usermgmt_users_save:
-      localNode: 
+      localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"
         server_port: 5432
@@ -185,7 +185,7 @@ EXAMPLES = '''
 
 - name: "Update user info"
     thalesgroup.ciphertrust.usermgmt_users_save:
-      localNode: 
+      localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"
         server_port: 5432
@@ -201,7 +201,7 @@ EXAMPLES = '''
 
 - name: "Change user password"
     thalesgroup.ciphertrust.usermgmt_users_save:
-      localNode: 
+      localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"
         server_port: 5432
@@ -216,7 +216,7 @@ EXAMPLES = '''
 
 - name: "Update self"
     thalesgroup.ciphertrust.usermgmt_users_save:
-      localNode: 
+      localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"
         server_port: 5432

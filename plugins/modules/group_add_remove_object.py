@@ -22,7 +22,7 @@ options:
     localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -55,7 +55,7 @@ options:
           type: str
           required: true
     op_type:
-        description: 
+        description:
           - Operation to be performed
           - add to add a user or client to a group
           - remove to remove a user or client from a group
@@ -63,7 +63,7 @@ options:
         required: true
         type: str
     object_type:
-        description: 
+        description:
           - Type of object to be added to or removed from a group
         choices: [user, client]
         required: true

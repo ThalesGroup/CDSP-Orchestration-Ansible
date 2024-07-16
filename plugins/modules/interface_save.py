@@ -22,7 +22,7 @@ options:
     localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -71,8 +71,8 @@ options:
         type: int
     auto_gen_ca_id:
         description:
-            - Auto-generate a new server certificate on server startup using the identifier (URI) of a Local CA resource if the current server certificate is issued by a different Local CA. 
-            - This is especially useful when a new node joins the cluster. In this case, the existing data of the joining node is overwritten by the data in the cluster. A new server certificate is generated on the joining node using the existing Local CA of the cluster. 
+            - Auto-generate a new server certificate on server startup using the identifier (URI) of a Local CA resource if the current server certificate is issued by a different Local CA.
+            - This is especially useful when a new node joins the cluster. In this case, the existing data of the joining node is overwritten by the data in the cluster. A new server certificate is generated on the joining node using the existing Local CA of the cluster.
             - Auto-generation of the server certificate can be disabled by setting auto_gen_ca_id to an empty string ("") to allow full control over the server certificate.
         required: false
         default: none
@@ -122,10 +122,10 @@ options:
             - snmp
         type: str
     kmip_enable_hard_delete:
-        description: 
-          - Enables hard delete of keys on KMIP Destroy operation, that is both meta-data and material will be removed from CipherTrust Manager for the key being deleted. 
-          - By default, only key material is removed and meta-data is preserved with the updated key state. 
-          - This setting applies only to KMIP interface. 
+        description:
+          - Enables hard delete of keys on KMIP Destroy operation, that is both meta-data and material will be removed from CipherTrust Manager for the key being deleted.
+          - By default, only key material is removed and meta-data is preserved with the updated key state.
+          - This setting applies only to KMIP interface.
           - Should be set to 1 for enabling the feature or 0 for returning to default behavior.
         required: false
         default: 0
@@ -168,7 +168,7 @@ options:
             - tls_1_3
         type: str
     mode:
-        description: 
+        description:
           - The interface mode can be one of no-tls-pw-opt, no-tls-pw-req, unauth-tls-pw-opt, tls-cert-opt-pw-opt, tls-pw-opt, tls-pw-req, tls-cert-pw-opt, or tls-cert-and-pw. Default mode is no-tls-pw-opt.
         required: false
         default: no-tls-pw-opt

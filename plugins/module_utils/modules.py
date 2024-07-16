@@ -87,7 +87,6 @@ class ThalesCipherTrustModule:
     def boolean(self, *args, **kwargs):
         return self._module.boolean(*args, **kwargs)
 
-
 def _ciphertrust_common_argument_spec():
     """ """
     _node_params = dict(

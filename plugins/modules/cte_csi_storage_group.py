@@ -16,14 +16,14 @@ module: cte_csi_storage_group
 short_description: Manage CTE CSI Storage Group
 description:
     - Define and manage CipherTrust Transparent Encryption (CTE) Container Storage Interface (CSI) and also add guard policies and clients to the same.
-    - This will allow administrator to apply data protection/reveal based on the client or the guard points.  
+    - This will allow administrator to apply data protection/reveal based on the client or the guard points.
 version_added: "1.0.0"
 author: Anurag Jain, Developer Advocate Thales Group
 options:
     localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:

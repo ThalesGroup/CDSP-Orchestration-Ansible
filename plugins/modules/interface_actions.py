@@ -22,7 +22,7 @@ options:
   localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -65,33 +65,33 @@ options:
       required: true
       type: str
   certificate:
-    description: 
+    description:
       - The certificate and key data in PEM format or base64 encoded PKCS12 format. A chain chain of certs may be included - it must be in ascending order (server to root ca).
       - required if op_type is put_certificate
     type: str
     default: none
     required: false
   format:
-    description: 
+    description:
       - The format of the certificate data (PEM or PKCS12).
       - required if op_type is put_certificate
     type: str
     default: none
     required: false
   generate:
-    description: 
+    description:
       - Create a new self-signed certificate
     type: str
     default: none
     required: false
   password:
-    description: 
+    description:
       - Password to the encrypted key
     type: str
     default: none
     required: false
   cn:
-    description: 
+    description:
       - Common name
       - required if op_type is csr
     type: str
@@ -122,7 +122,7 @@ options:
     default: []
     required: false
   copy_from:
-    description: 
+    description:
       - Source interface name
       - required if op_type is use-certificate
     type: str

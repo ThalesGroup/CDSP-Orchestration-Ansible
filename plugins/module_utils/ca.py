@@ -27,7 +27,7 @@ def createLocalCA(**kwargs):
           cm_api_endpoint="ca/local-cas",
           id="id",
         )
-      
+
       return ast.literal_eval(str(__resp))
     except CMApiException as api_e:
       raise
