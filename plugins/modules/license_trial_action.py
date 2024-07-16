@@ -20,38 +20,40 @@ version_added: "1.0.0"
 author: Anurag Jain, Developer Advocate Thales Group
 options:
     localNode:
-        description:
-            - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-            - holds IP/FQDN of the server, username, password, and port 
-        required: true
-        type: dict
-        suboptions:
-          server_ip:
-            description: CM Server IP or FQDN
-            type: str
-            required: true
-          server_private_ip:
-            description: internal or private IP of the CM Server, if different from the server_ip
-            type: str
-            required: true
-          server_port:
-            description: Port on which CM server is listening
-            type: int
-            required: true
-            default: 5432
-          user:
-            description: admin username of CM
-            type: str
-            required: true
-          password:
-            description: admin password of CM
-            type: str
-            required: true
-          verify:
-            description: if SSL verification is required
-            type: bool
-            required: true
-            default: false     
+      description:
+        - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
+        - holds IP/FQDN of the server, username, password, and port 
+      required: true
+      type: dict
+      suboptions:
+        server_ip:
+          description: CM Server IP or FQDN
+          type: str
+          required: true
+        server_private_ip:
+          description: internal or private IP of the CM Server, if different from the server_ip
+          type: str
+          required: true
+        server_port:
+          description: Port on which CM server is listening
+          type: int
+          required: true
+        user:
+          description: admin username of CM
+          type: str
+          required: true
+        password:
+          description: admin password of CM
+          type: str
+          required: true
+        verify:
+          description: if SSL verification is required
+          type: bool
+          required: true
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true
     action_type:
         description: Operation to be performed on the trial license
         choices: [activate, deactivate]

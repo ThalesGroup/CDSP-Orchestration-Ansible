@@ -39,7 +39,6 @@ options:
           description: Port on which CM server is listening
           type: int
           required: true
-          default: 5432
         user:
           description: admin username of CM
           type: str
@@ -52,11 +51,10 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false   
         auth_domain_path:
           description: user's domain path
           type: str
-          required: true  
+          required: true
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_data_transfer_rule, add_ldt_rule, add_key_rule, add_security_rule, patch_data_transfer_rule, patch_ldt_rule, patch_key_rule, patch_security_rule, patch_idt_rule, remove_data_transfer_rule, remove_ldt_rule, remove_key_rule, remove_security_rule]

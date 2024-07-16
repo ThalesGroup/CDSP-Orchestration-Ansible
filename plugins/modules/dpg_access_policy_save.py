@@ -39,7 +39,6 @@ options:
           description: Port on which CM server is listening
           type: int
           required: true
-          default: 5432
         user:
           description: admin username of CM
           type: str

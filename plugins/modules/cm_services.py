@@ -40,7 +40,6 @@ options:
           description: Port on which CM server is listening
           type: int
           required: true
-          default: 5432
         user:
           description: admin username of CM
           type: str
@@ -53,11 +52,10 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false
         auth_domain_path:
           description: user's domain path
           type: str
-          required: true  
+          required: true
     op_type:
       description: Operation to be performed
       choices: [restart]
