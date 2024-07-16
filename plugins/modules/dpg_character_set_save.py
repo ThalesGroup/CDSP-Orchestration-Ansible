@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: dpg_character_set_save
 short_description: Create and manage DPG character-sets
@@ -74,9 +75,9 @@ options:
       description: Allowed range of characters in HEX format
       type: list
       elements: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Character Set"
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode:
@@ -124,11 +125,11 @@ EXAMPLES = '''
         verify: false
         auth_domain_path:
 
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

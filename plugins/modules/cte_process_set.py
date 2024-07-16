@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_process_set
 short_description: Create and manage CTE process-sets
@@ -91,9 +92,9 @@ options:
       description:
         - Signature-set ID or Name which shall be associated with the process-set
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE ProcessSet"
   thalesgroup.ciphertrust.cte_process_set:
     localNode:
@@ -132,10 +133,10 @@ EXAMPLES = '''
       - signature: TestSignSet
         directory: "/home/testAnother"
         file: "*"
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

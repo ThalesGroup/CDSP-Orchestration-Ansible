@@ -91,7 +91,10 @@ def patchConnection(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "connection_type", "connection_id"] and value is not None:
+        if (
+            key not in ["node", "connection_type", "connection_id"]
+            and value is not None
+        ):
             request[key] = value
 
     if kwargs["connection_type"] == "aws":

@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: vault_keys2_create
 short_description: Create or update keys in CipherTrust Manager managed vault
@@ -595,9 +596,9 @@ options:
         required: false
         default: false
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Key"
   thalesgroup.ciphertrust.vault_keys2_create:
     localNode:
@@ -625,10 +626,10 @@ EXAMPLES = '''
     op_type: patch
     cm_key_id: "4ae2649a705e479589ef65759d3287f6ff452a788531445fbc7f0240516d028d"
     unexportable: false
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

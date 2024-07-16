@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: usermgmt_users_save
 short_description: Create and manage users in CipherTrust Manager
@@ -164,9 +165,9 @@ options:
           - The domain where user needs to be authenticated. This is the domain where user is created. Defaults to the root domain.
           - required only for changew op_type, not mandatory though
         type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create new user"
     thalesgroup.ciphertrust.usermgmt_users_save:
       localNode:
@@ -226,10 +227,10 @@ EXAMPLES = '''
         auth_domain_path:
       op_type: "patch_self"
       name: "CM Admin"
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

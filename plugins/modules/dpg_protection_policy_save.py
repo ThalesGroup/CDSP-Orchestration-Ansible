@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: dpg_protection_policy_save
 short_description: Manage DPG protection policies governing crypto operations
@@ -107,9 +108,9 @@ options:
       - Added in CM v2.12
       required: false
       type: bool
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Protection Policy"
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode:
@@ -156,11 +157,11 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
         auth_domain_path:
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
@@ -188,7 +189,7 @@ argument_spec = dict(
     disable_versioning=dict(type="bool"),
     use_external_versioning=dict(type="bool"),
     masking_format_id=dict(type="str"),
-    access_policy_name=dict(type="str")
+    access_policy_name=dict(type="str"),
 )
 
 

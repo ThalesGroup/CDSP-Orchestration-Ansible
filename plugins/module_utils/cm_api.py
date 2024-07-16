@@ -458,8 +458,9 @@ def GETData(cm_node=None, cm_api_endpoint=None):
     except HTTPError as err:
         raise err
 
-#GETData just returns ID for a particular filter
-#This method will simply return the GET API data
+
+# GETData just returns ID for a particular filter
+# This method will simply return the GET API data
 def GETAPIData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = ast.literal_eval(cm_node)
@@ -518,7 +519,9 @@ def GETAPIData(cm_node=None, cm_api_endpoint=None):
     except json.decoder.JSONDecodeError as jsonErr:
         return jsonErr
 
+
 # Below method is outdated...need to be cleaned up later
+
 
 def GETIdByName(name=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object

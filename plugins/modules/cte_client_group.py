@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_client_group
 short_description: Manage CTE client groups
@@ -125,9 +126,9 @@ options:
     paused:
       description: Mouse over a property in the schema to view its details
       type: bool
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE Client Group"
   thalesgroup.ciphertrust.cte_client_group:
     localNode:
@@ -179,10 +180,10 @@ EXAMPLES = '''
       data_lineage_enabled: false
       early_access: true
       preserve_sparse_regions: true
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

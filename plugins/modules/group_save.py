@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: group_save
 short_description: Create or update groups on CipherTrust Manager
@@ -89,9 +90,9 @@ options:
         type: dict
         default: null
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Group"
   thalesgroup.ciphertrust.group_save:
     localNode:
@@ -118,11 +119,11 @@ EXAMPLES = '''
     op_type: patch
     old_name: "group_name"
     name: "new_name"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

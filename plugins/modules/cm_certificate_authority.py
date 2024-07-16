@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cm_certificate_authority
 short_description: Create and manage CipherTrust Manager Local CA
@@ -280,9 +281,9 @@ options:
         - Private Key bytes of the key which is to be used while creating CSR(Algorithm and size should be according to this key).
         - If not given will generate key internally as per algorithm and size.
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CM Local CA"
   thalesgroup.ciphertrust.cm_certificate_authority:
     localNode:
@@ -363,10 +364,10 @@ EXAMPLES = '''
     duration: 365
     name: AnsibleServerCert
   register: cert
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
@@ -387,50 +388,68 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 )
 
 _name = dict(
-  C=dict(type="str"),
-  L=dict(type="str"),
-  O=dict(type="str"),
-  OU=dict(type="str"),
-  ST=dict(type="str"),
+    C=dict(type="str"),
+    L=dict(type="str"),
+    O=dict(type="str"),
+    OU=dict(type="str"),
+    ST=dict(type="str"),
 )
 
 _csr_params = dict(
-  cn=dict(type="str"),
-  dnsNames=dict(type="list", elements="str"),
-  emailAddresses=dict(type="list", elements="str"),
-  extendedKeyUsage=dict(type="list", elements="str"),
-  ipAddresses=dict(type="list", elements="str"),
-  isCA=dict(type="bool"),
-  keyUsage=dict(type="list", elements="str"),
-  maxPathLen=dict(type="int"),
-  names=dict(type="list", elements="dict", options=_name),
-  signatureAlgorithm=dict(type="str", choices=['sha512WithRSA', 'sha384WithRSA', 'sha256WithRSA', 'sha1WithRSA', 'ecdsaWithSHA512', 'ecdsaWithSHA384', 'ecdsaWithSHA256', 'ecdsaWithSHA1']),
-  subjectKeyIdentifierHash=dict(type="bool"),
+    cn=dict(type="str"),
+    dnsNames=dict(type="list", elements="str"),
+    emailAddresses=dict(type="list", elements="str"),
+    extendedKeyUsage=dict(type="list", elements="str"),
+    ipAddresses=dict(type="list", elements="str"),
+    isCA=dict(type="bool"),
+    keyUsage=dict(type="list", elements="str"),
+    maxPathLen=dict(type="int"),
+    names=dict(type="list", elements="dict", options=_name),
+    signatureAlgorithm=dict(
+        type="str",
+        choices=[
+            "sha512WithRSA",
+            "sha384WithRSA",
+            "sha256WithRSA",
+            "sha1WithRSA",
+            "ecdsaWithSHA512",
+            "ecdsaWithSHA384",
+            "ecdsaWithSHA256",
+            "ecdsaWithSHA1",
+        ],
+    ),
+    subjectKeyIdentifierHash=dict(type="bool"),
 )
 
 _keyGenParams = dict(
-  algorithm=dict(type="str", choices=['RSA', 'EC'], default='RSA'),
-  curveid=dict(type="str", choices=['secp224r1', 'secp384r1', 'secp521r1', 'prime256v1']),
-  keyName=dict(type="str"),
-  size=dict(type="str"),
+    algorithm=dict(type="str", choices=["RSA", "EC"], default="RSA"),
+    curveid=dict(
+        type="str", choices=["secp224r1", "secp384r1", "secp521r1", "prime256v1"]
+    ),
+    keyName=dict(type="str"),
+    size=dict(type="str"),
 )
 
 argument_spec = dict(
-    op_type=dict(type="str", choices=[
-      'create',
-      'patch',
-      'issue-cert',
-      'self-sign',
-      'revoke-cert',
-      'resume-cert',
-      'create-csr',
-      'create-csr-key',
-    ], required=True),
+    op_type=dict(
+        type="str",
+        choices=[
+            "create",
+            "patch",
+            "issue-cert",
+            "self-sign",
+            "revoke-cert",
+            "resume-cert",
+            "create-csr",
+            "create-csr-key",
+        ],
+        required=True,
+    ),
     id=dict(type="str"),
     cert_id=dict(type="str"),
     # Add local CA
     cn=dict(type="str"),
-    algorithm=dict(type="str", choices=['RSA', 'ECDSA']),
+    algorithm=dict(type="str", choices=["RSA", "ECDSA"]),
     dnsNames=dict(type="list", elements="str"),
     emailAddresses=dict(type="list", elements="str"),
     ipAddresses=dict(type="list", elements="str"),
@@ -442,12 +461,26 @@ argument_spec = dict(
     allow_user_authentication=dict(type="bool"),
     # Issue cert from Local CA
     csr=dict(type="str"),
-    purpose=dict(type="str", choices=['server', 'client', 'ca']),
+    purpose=dict(type="str", choices=["server", "client", "ca"]),
     duration=dict(type="int"),
     notAfter=dict(type="str"),
     notBefore=dict(type="str"),
     # Revoke Cert
-    reason=dict(type="int", choices=['unspecified', 'keyCompromise', 'cACompromise', 'affiliationChanged', 'superseded', 'cessationOfOperation', 'certificateHold', 'removeFromCRL', 'privilegeWithdrawn', 'aACompromise']),
+    reason=dict(
+        type="int",
+        choices=[
+            "unspecified",
+            "keyCompromise",
+            "cACompromise",
+            "affiliationChanged",
+            "superseded",
+            "cessationOfOperation",
+            "certificateHold",
+            "removeFromCRL",
+            "privilegeWithdrawn",
+            "aACompromise",
+        ],
+    ),
     # Create CSR
     csrParams=dict(type="dict", options=_csr_params),
     keyGenParams=dict(type="dict", options=_keyGenParams),
@@ -455,7 +488,7 @@ argument_spec = dict(
     keyIDType=dict(type="str"),
     keyVersion=dict(type="int"),
     # create CSR with Key
-    encryptionAlgo=dict(type="str", choices=['AES256', 'AES192', 'AES128', 'TDES']),
+    encryptionAlgo=dict(type="str", choices=["AES256", "AES192", "AES128", "TDES"]),
     password=dict(type="str"),
     privateKeyBytes=dict(type="str"),
 )
@@ -469,13 +502,13 @@ def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'create', ['cn']],
-            ['op_type', 'patch', ['id']],
-            ['op_type', 'self-sign', ['id']],
-            ['op_type', 'issue-cert', ['id', 'csr', 'purpose']],
-            ['op_type', 'revoke-cert', ['id', 'cert_id', 'reason']],
-            ['op_type', 'resume-cert', ['id', 'cert_id']],
-            ['op_type', 'create-csr-key', ['cn']],
+            ["op_type", "create", ["cn"]],
+            ["op_type", "patch", ["id"]],
+            ["op_type", "self-sign", ["id"]],
+            ["op_type", "issue-cert", ["id", "csr", "purpose"]],
+            ["op_type", "revoke-cert", ["id", "cert_id", "reason"]],
+            ["op_type", "resume-cert", ["id", "cert_id"]],
+            ["op_type", "create-csr-key", ["cn"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
@@ -495,143 +528,187 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createLocalCA(
-          node=module.params.get('localNode'),
-          cn=module.params.get('cn'),
-          algorithm=module.params.get('algorithm'),
-          dnsNames=module.params.get('dnsNames'),
-          emailAddresses=module.params.get('emailAddresses'),
-          ipAddresses=module.params.get('ipAddresses'),
-          name=module.params.get('name'),
-          names=module.params.get('names'),
-          size=module.params.get('size'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createLocalCA(
+                node=module.params.get("localNode"),
+                cn=module.params.get("cn"),
+                algorithm=module.params.get("algorithm"),
+                dnsNames=module.params.get("dnsNames"),
+                emailAddresses=module.params.get("emailAddresses"),
+                ipAddresses=module.params.get("ipAddresses"),
+                name=module.params.get("name"),
+                names=module.params.get("names"),
+                size=module.params.get("size"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateLocalCA(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          allow_client_authentication=module.params.get('allow_client_authentication'),
-          allow_user_authentication=module.params.get('allow_user_authentication'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateLocalCA(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                allow_client_authentication=module.params.get(
+                    "allow_client_authentication"
+                ),
+                allow_user_authentication=module.params.get(
+                    "allow_user_authentication"
+                ),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'self-sign':
-      try:
-        response = selfSign(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          duration=module.params.get('duration'),
-          notAfter=module.params.get('notAfter'),
-          notBefore=module.params.get('notBefore'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "self-sign":
+        try:
+            response = selfSign(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                duration=module.params.get("duration"),
+                notAfter=module.params.get("notAfter"),
+                notBefore=module.params.get("notBefore"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'issue-cert':
-      try:
-        response = issueCertificate(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          csr=module.params.get('csr'),
-          purpose=module.params.get('purpose'),
-          duration=module.params.get('duration'),
-          name=module.params.get('name'),
-          notAfter=module.params.get('notAfter'),
-          notBefore=module.params.get('notBefore'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "issue-cert":
+        try:
+            response = issueCertificate(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                csr=module.params.get("csr"),
+                purpose=module.params.get("purpose"),
+                duration=module.params.get("duration"),
+                name=module.params.get("name"),
+                notAfter=module.params.get("notAfter"),
+                notBefore=module.params.get("notBefore"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'revoke-cert':
-      try:
-        response = revokeCert(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          cert_id=module.params.get('cert_id'),
-          reason=module.params.get('reason'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "revoke-cert":
+        try:
+            response = revokeCert(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                cert_id=module.params.get("cert_id"),
+                reason=module.params.get("reason"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'resume-cert':
-      try:
-        response = resumeCert(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          cert_id=module.params.get('cert_id'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "resume-cert":
+        try:
+            response = resumeCert(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                cert_id=module.params.get("cert_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'create-csr':
-      try:
-        response = createCSR(
-          node=module.params.get('localNode'),
-          csrParams=module.params.get('csrParams'),
-          keyGenParams=module.params.get('keyGenParams'),
-          keyID=module.params.get('keyID'),
-          keyIDType=module.params.get('keyIDType'),
-          keyVersion=module.params.get('keyVersion'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "create-csr":
+        try:
+            response = createCSR(
+                node=module.params.get("localNode"),
+                csrParams=module.params.get("csrParams"),
+                keyGenParams=module.params.get("keyGenParams"),
+                keyID=module.params.get("keyID"),
+                keyIDType=module.params.get("keyIDType"),
+                keyVersion=module.params.get("keyVersion"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'create-csr-key':
-      try:
-        response = createCSRAndKey(
-          node=module.params.get('localNode'),
-          cn=module.params.get('cn'),
-          algorithm=module.params.get('algorithm'),
-          dnsNames=module.params.get('dnsNames'),
-          emailAddresses=module.params.get('emailAddresses'),
-          ipAddresses=module.params.get('ipAddresses'),
-          name=module.params.get('name'),
-          names=module.params.get('names'),
-          size=module.params.get('size'),
-          encryptionAlgo=module.params.get('encryptionAlgo'),
-          privateKeyBytes=module.params.get('privateKeyBytes'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "create-csr-key":
+        try:
+            response = createCSRAndKey(
+                node=module.params.get("localNode"),
+                cn=module.params.get("cn"),
+                algorithm=module.params.get("algorithm"),
+                dnsNames=module.params.get("dnsNames"),
+                emailAddresses=module.params.get("emailAddresses"),
+                ipAddresses=module.params.get("ipAddresses"),
+                name=module.params.get("name"),
+                names=module.params.get("names"),
+                size=module.params.get("size"),
+                encryptionAlgo=module.params.get("encryptionAlgo"),
+                privateKeyBytes=module.params.get("privateKeyBytes"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")

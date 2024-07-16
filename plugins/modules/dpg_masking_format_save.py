@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: dpg_masking_format_save
 short_description: Manage masking formats for DPG
@@ -82,9 +83,9 @@ options:
     starting_characters:
       description: Number of starting characters to be masked
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Masking Format"
   thalesgroup.ciphertrust.dpg_masking_format_save:
     localNode:
@@ -130,11 +131,11 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
         auth_domain_path:
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

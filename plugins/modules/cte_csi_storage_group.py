@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_csi_storage_group
 short_description: Manage CTE CSI Storage Group
@@ -101,9 +102,9 @@ options:
     guard_enabled:
       description: Enable or disable the GuardPolicy. Set to true to enable, false to disable.
       type: boolean
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CSI Storage Group"
   thalesgroup.ciphertrust.cte_csi_storage_group:
     localNode:
@@ -168,10 +169,10 @@ EXAMPLES = '''
     policy_list:
       - CSI_Policy_1
       - CSI_Policy_2
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

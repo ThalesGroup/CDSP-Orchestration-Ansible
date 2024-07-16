@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: dpg_access_policy_save
 short_description: Manage DPG access policies governing data access
@@ -117,9 +118,9 @@ options:
     policy_user_set_id:
       description: Update or delete the user set in an Access Policy
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Access Policy"
   thalesgroup.ciphertrust.dpg_access_policy_save:
     localNode:
@@ -197,11 +198,11 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
         auth_domain_path:
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

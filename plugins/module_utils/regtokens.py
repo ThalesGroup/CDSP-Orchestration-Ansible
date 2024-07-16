@@ -22,6 +22,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
     AnsibleCMException,
 )
 
+
 def create(**kwargs):
     request = {}
 

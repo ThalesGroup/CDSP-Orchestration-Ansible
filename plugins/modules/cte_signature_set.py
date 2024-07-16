@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_signature_set
 short_description: Create and manage CTE Signature Sets
@@ -89,9 +90,9 @@ options:
       description:
         - ID of the client where the signing request is to be sent
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE Signature Set"
   thalesgroup.ciphertrust.cte_signature_set:
     localNode:
@@ -152,11 +153,11 @@ EXAMPLES = '''
     op_type: sign_app
     id: "signatureSetID"
     client_id: Client1
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

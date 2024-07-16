@@ -3,13 +3,22 @@
 # This is a utility file for interacting with the Thales CipherTrust Manager APIs for operations involving local or external certificate authority
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData, POSTWithoutData
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    POSTData,
+    PATCHData,
+    POSTWithoutData,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
+
 
 def createLocalCA(**kwargs):
     request = {}
@@ -21,18 +30,19 @@ def createLocalCA(**kwargs):
     payload = json.dumps(request)
 
     try:
-      __resp = POSTData(
-          payload=payload,
-          cm_node=kwargs['node'],
-          cm_api_endpoint="ca/local-cas",
-          id="id",
+        __resp = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="ca/local-cas",
+            id="id",
         )
 
-      return ast.literal_eval(str(__resp))
+        return ast.literal_eval(str(__resp))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def updateLocalCA(**kwargs):
     request = {}
@@ -44,16 +54,17 @@ def updateLocalCA(**kwargs):
     payload = json.dumps(request)
 
     try:
-      response = PATCHData(
+        response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="ca/local-cas/" + kwargs['id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="ca/local-cas/" + kwargs["id"],
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def selfSign(**kwargs):
     request = {}
@@ -65,17 +76,18 @@ def selfSign(**kwargs):
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
-          payload=payload,
-          cm_node=kwargs['node'],
-          cm_api_endpoint="ca/local-cas/" + kwargs['id'] + "/self-sign",
-          id="id",
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="ca/local-cas/" + kwargs["id"] + "/self-sign",
+            id="id",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def issueCertificate(**kwargs):
     request = {}
@@ -87,17 +99,18 @@ def issueCertificate(**kwargs):
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
-          payload=payload,
-          cm_node=kwargs['node'],
-          cm_api_endpoint="ca/local-cas/" + kwargs['id'] + "/certs",
-          id="id",
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="ca/local-cas/" + kwargs["id"] + "/certs",
+            id="id",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def revokeCert(**kwargs):
     request = {}
@@ -109,29 +122,39 @@ def revokeCert(**kwargs):
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
-          payload=payload,
-          cm_node=kwargs['node'],
-          cm_api_endpoint="ca/local-cas/" + kwargs['id'] + "/certs/" + kwargs['cert_id'] + "/revoke",
-          id="id",
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="ca/local-cas/"
+            + kwargs["id"]
+            + "/certs/"
+            + kwargs["cert_id"]
+            + "/revoke",
+            id="id",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def resumeCert(**kwargs):
     try:
-      response = POSTWithoutData(
-          cm_node=kwargs['node'],
-          cm_api_endpoint="ca/local-cas/" + kwargs['id'] + "/certs/" + kwargs['cert_id'] + "/resume",
+        response = POSTWithoutData(
+            cm_node=kwargs["node"],
+            cm_api_endpoint="ca/local-cas/"
+            + kwargs["id"]
+            + "/certs/"
+            + kwargs["cert_id"]
+            + "/resume",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def createCSR(**kwargs):
     request = {}
@@ -143,17 +166,18 @@ def createCSR(**kwargs):
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
-          payload=payload,
-          cm_node=kwargs['node'],
-          cm_api_endpoint="vault/csr",
-          id="csr",
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="vault/csr",
+            id="csr",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def createCSRAndKey(**kwargs):
     request = {}
@@ -165,14 +189,14 @@ def createCSRAndKey(**kwargs):
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
-          payload=payload,
-          cm_node=kwargs['node'],
-          cm_api_endpoint="ca/csr",
-          id="csr",
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="ca/csr",
+            id="csr",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise

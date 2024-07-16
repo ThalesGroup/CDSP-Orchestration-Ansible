@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cm_resource_delete
 short_description: Delete CipherTrust Manager resource using ID
@@ -75,9 +76,9 @@ options:
             - client-profiles
             - masking-formats
         type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 # Delete Resource at CipherTrust Manager
 - name: "Delete key on Ciphertrust Manager"
   thalesgroup.ciphertrust.cm_resource_delete:
@@ -90,15 +91,15 @@ EXAMPLES = '''
         verify: false
     key: "resource_id"
     resource_type: "keys"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 message:
     description: String with response
     returned: changed or success
     type: string
     sample: successfully deleted
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

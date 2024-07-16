@@ -15,6 +15,7 @@ module as shown below.
 
 from ansible.module_utils._text import to_native
 
+
 class CMApiException(Exception):
     def __str__(self):
         if self.api_error_code and self.message:

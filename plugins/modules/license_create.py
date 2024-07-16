@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: license_create
 short_description: Add a license to CipherTrust Manager
@@ -63,9 +64,9 @@ options:
         required: false
         type: str
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Add License"
   thalesgroup.ciphertrust.license_create:
     localNode:
@@ -76,11 +77,11 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
     license: license_string
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

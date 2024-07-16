@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_client
 short_description: Manage CTE clients
@@ -183,9 +184,9 @@ options:
     early_access:
       description: Whether to enable early access on the GuardPoint
       type: boolean
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE Client"
   thalesgroup.ciphertrust.cte_client:
     localNode:
@@ -225,10 +226,10 @@ EXAMPLES = '''
       early_access: true
       preserve_sparse_regions: true
     id: "{{ client['response']['id'] }}"
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

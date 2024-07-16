@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_resource_set
 short_description: Create and manage CTE resource-sets
@@ -106,9 +107,9 @@ options:
       description:
         - Flag to include subfolders in the Resource
       type: boolean
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE ResourceSet"
   thalesgroup.ciphertrust.cte_resource_set:
     localNode:
@@ -147,11 +148,11 @@ EXAMPLES = '''
         file: "*"
         include_subfolders: true
         hdfs: false
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
@@ -183,7 +184,9 @@ _classification_tag_attribute = dict(
 )
 
 _classification_tag = dict(
-    attributes=dict(type="list", elements="dict", options=_classification_tag_attribute),
+    attributes=dict(
+        type="list", elements="dict", options=_classification_tag_attribute
+    ),
     description=dict(type="str"),
     name=dict(type="str"),
 )

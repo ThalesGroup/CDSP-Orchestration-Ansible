@@ -23,6 +23,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
     AnsibleCMException,
 )
 
+
 def is_json(myjson):
     try:
         json.loads(myjson)
@@ -205,7 +206,10 @@ def revoke(**kwargs):
     queryString = "?"
 
     for key, value in kwargs.items():
-        if key not in ["node", "cm_key_id", "key_version", "id_type"] and value is not None:
+        if (
+            key not in ["node", "cm_key_id", "key_version", "id_type"]
+            and value is not None
+        ):
             request[key] = value
 
     payload = json.dumps(request)
@@ -245,7 +249,10 @@ def reactivate(**kwargs):
     queryString = "?"
 
     for key, value in kwargs.items():
-        if key not in ["node", "cm_key_id", "key_version", "id_type"] and value is not None:
+        if (
+            key not in ["node", "cm_key_id", "key_version", "id_type"]
+            and value is not None
+        ):
             request[key] = value
 
     payload = json.dumps(request)
@@ -285,7 +292,10 @@ def export(**kwargs):
     queryString = "?"
 
     for key, value in kwargs.items():
-        if key not in ["node", "cm_key_id", "key_version", "id_type"] and value is not None:
+        if (
+            key not in ["node", "cm_key_id", "key_version", "id_type"]
+            and value is not None
+        ):
             request[key] = value
         if key == "keyFormat":
             request["format"] = value

@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: domain_save
 short_description: Create or manage domains
@@ -109,9 +110,9 @@ options:
         required: false
         default: none
         type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Domain"
   thalesgroup.ciphertrust.domain_save:
     localNode:
@@ -140,11 +141,11 @@ EXAMPLES = '''
     op_type: patch
     domain_id: "ID_STRING"
     connection_id: "ID_STRING"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

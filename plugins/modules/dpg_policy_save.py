@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: dpg_policy_save
 short_description: Manage DPG execution behavior for REST URLs and associated encryption parameters
@@ -143,9 +144,9 @@ options:
       description: API tokens to be protected in a DELETE Request
       type: list
       element: dict
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
@@ -249,11 +250,11 @@ EXAMPLES = '''
         password: "CipherTrust Manager Password"
         verify: false
         auth_domain_path:
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

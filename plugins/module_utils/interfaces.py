@@ -25,6 +25,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
     AnsibleCMException,
 )
 
+
 def is_json(myjson):
     try:
         json.loads(myjson)
@@ -103,6 +104,7 @@ def addCertificateToInterface(**kwargs):
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def getCertificateFromInterface(**kwargs):
     url = "configs/interfaces/" + kwargs["interface_id"] + "/certificate"

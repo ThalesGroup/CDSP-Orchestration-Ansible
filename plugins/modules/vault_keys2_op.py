@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: vault_keys2_op
 short_description: Perform operations on keys
@@ -406,9 +407,9 @@ options:
         type: int
         required: false
         default: null
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create Key"
   thalesgroup.ciphertrust.vault_keys2_create:
     localNode:
@@ -423,10 +424,10 @@ EXAMPLES = '''
     algorithm: aes
     size: 256
     usageMask: 3145740
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

@@ -11,7 +11,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_policy_save
 short_description: Manage policies as collection of rules that govern data access and encryption
@@ -182,9 +182,9 @@ options:
       description: Specify the type of the key. Must be one of name, id, slug, alias, uri, uuid, muid or key_id. If not specified, the type of the key is inferred.
       choices: [name, id, slug, alias, uri, uuid, muid, key_id]
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     localNode:
@@ -250,10 +250,10 @@ EXAMPLES = '''
     policy_id: "policyID"
     rule_name="datatxrules"
     rule_id="ruleID"
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

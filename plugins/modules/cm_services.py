@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cm_services
 short_description: Reset, restart CipherTrust Manager Services as well as check the status
@@ -24,7 +25,7 @@ options:
     localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -70,9 +71,9 @@ options:
       description: An array of services to restart. If this parameter is ommitted, the entire application is restarted. Options include - nae-kmip, web
       type: list
       elements: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Restart CM Services"
   thalesgroup.ciphertrust.cm_services:
     localNode:
@@ -88,10 +89,10 @@ EXAMPLES = '''
     services:
       - nae-kmip
       - web
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
@@ -105,11 +106,15 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', choices=[
-      'restart',
-    ], required=True),
-    delay=dict(type='int'),
-    services=dict(type='list', elements='str'),
+    op_type=dict(
+        type="str",
+        choices=[
+            "restart",
+        ],
+        required=True,
+    ),
+    delay=dict(type="int"),
+    services=dict(type="list", elements="str"),
 )
 
 
@@ -120,9 +125,7 @@ def validate_parameters(cm_services):
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
-        required_if=(
-            ['op_type', 'restart', ['services']],
-        ),
+        required_if=(["op_type", "restart", ["services"]],),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
@@ -141,23 +144,28 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'restart':
-      try:
-        response = restartCMServices(
-          node=module.params.get('localNode'),
-          delay=module.params.get('delay'),
-          services=module.params.get('services'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "restart":
+        try:
+            response = restartCMServices(
+                node=module.params.get("localNode"),
+                delay=module.params.get("delay"),
+                services=module.params.get("services"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
 

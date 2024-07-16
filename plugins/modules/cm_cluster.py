@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cm_cluster
 short_description: Create or join CipherTrust Manager node cluster
@@ -89,9 +90,9 @@ options:
             type: bool
             required: true
         default: []
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create new cluster"
   thalesgroup.ciphertrust.cm_cluster:
     localNode:
@@ -120,10 +121,10 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_user_set
 short_description: Create and manage CTE user-sets
@@ -90,9 +91,9 @@ options:
     uname:
       description: Name of the user which shall be added in user-set
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE Userset"
   thalesgroup.ciphertrust.cte_user_set:
     localNode:
@@ -134,11 +135,11 @@ EXAMPLES = '''
         uid: 1001
         gname: rootGroup
         gid: 1000
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,

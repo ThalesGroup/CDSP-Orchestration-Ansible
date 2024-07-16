@@ -8,9 +8,10 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: interface_actions
 short_description: Perform operations on CipherTrust Manager interface
@@ -128,9 +129,9 @@ options:
     type: str
     default: none
     required: false
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Add Cert to Interface"
   thalesgroup.ciphertrust.interface_actions:
     localNode:
@@ -218,11 +219,11 @@ EXAMPLES = '''
     op_type: use-certificate
     interface_id: "interface_identifier"
     copy_from: "Name_Source_Interface"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 
-'''
+"""
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
