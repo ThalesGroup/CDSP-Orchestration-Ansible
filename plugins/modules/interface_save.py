@@ -76,7 +76,6 @@ options:
             - This is especially useful when a new node joins the cluster. In this case, the existing data of the joining node is overwritten by the data in the cluster. A new server certificate is generated on the joining node using the existing Local CA of the cluster.
             - Auto-generation of the server certificate can be disabled by setting auto_gen_ca_id to an empty string ("") to allow full control over the server certificate.
         required: false
-        default: none
         type: str
     auto_registration:
         description:
@@ -88,7 +87,6 @@ options:
         description:
             - Specifies how the user name is extracted from the client certificate.
         required: false
-        default: none
         choices:
             - CN
             - SN
@@ -110,7 +108,6 @@ options:
     default_connection:
         description: The default connection may be "local_account" for local authentication or the LDAP domain for LDAP authentication. This value is applied when the username does not embed the connection name (e.g. "jdoe" effectively becomes "local_account|jdoe"). This value only applies to NAE only and is ignored if set for web and KMIP interfaces.
         required: false
-        default: none
         type: str
     interface_type:
         description: This parameter is used to identify the type of interface, what service to run on the interface.
@@ -137,7 +134,6 @@ options:
     maximum_tls_version:
         description: Maximum TLS version to be configured for NAE or KMIP interface, default is latest maximum supported protocol.
         required: false
-        default: none
         choices:
             - tls_1_0
             - tls_1_1
@@ -147,7 +143,6 @@ options:
     meta:
         description: Meta information related to interface
         required: false
-        default: none
         suboptions:
           nae:
             description: Meta information related to NAE interface
@@ -177,6 +172,7 @@ options:
             - no-tls-pw-opt
             - no-tls-pw-req
             - unauth-tls-pw-opt
+            - unauth-tls-pw-req
             - tls-cert-opt-pw-opt
             - tls-pw-opt
             - tls-pw-req
@@ -186,16 +182,13 @@ options:
     name:
         description: The name of the interface. Not valid for interface_type nae.
         required: false
-        default: none
         type: str
     network_interface:
         description: Defines what ethernet adapter the interface should listen to, use "all" for all.
-        default: none
         required: false
         type: str
     registration_token:
         description: Registration token in case auto registration is true.
-        default: none
         required: false
         type: str
     trusted_cas:
@@ -215,7 +208,6 @@ options:
             description: A list of Local CA IDs
             type: list
             element: str
-            default: none
             required: false
     local_auto_gen_attributes:
       description: Local CSR parameters for interface's certificate. These are for the local node itself, and they do not affect other nodes in the cluster. This gives user a convenient way to supply custom fields for automatic interface certification generation. Without them, the system defaults are used.
@@ -226,36 +218,30 @@ options:
         cn:
           description: Common name
           type: str
-          default: none
           required: true
         dns_names:
           description: Subject Alternative Names (SAN) DNS names
           type: list
           elements: str
-          default: none
           required: false
         email_addresses:
           description: Subject Alternative Names (SAN) Email addresses
           type: list
           elements: str
-          default: none
           required: false
         ip_addresses:
           description: Subject Alternative Names (SAN) IP addresses
           type: list
           elements: str
-          default: none
           required: false
         names:
           description: Name fields like O, OU, L, ST, C
           type: list
           elements: dict
-          default: []
           required: false
         uid:
           description: User ID
           type: str
-          default: none
           required: false
     tls_ciphers:
       description: TLS Ciphers contain the list of cipher suites available in the system for the respective interfaces (KMIP, NAE & WEB) for TLS handshake.
@@ -266,7 +252,6 @@ options:
         cipher_suite:
           description: TLS cipher suite name.
           type: str
-          default: none
           required: true
         enabled:
           description: TLS cipher suite enabled flag. If set to true, cipher suite will be available for TLS handshake.
@@ -358,7 +343,7 @@ argument_spec = dict(
         choices=["web", "kmip", "nae", "snmp"],
         default="nae",
     ),
-    kmip_enable_hard_delete=dict(type="int", choices=[0, 1], required=False),
+    kmip_enable_hard_delete=dict(type="int", choices=[0, 1], default=0, required=False),
     maximum_tls_version=dict(
         type="str", required=False, choices=["tls_1_0", "tls_1_1", "tls_1_2", "tls_1_3"]
     ),

@@ -67,67 +67,80 @@ options:
       type: str
   certificate:
     description:
-      - The certificate and key data in PEM format or base64 encoded PKCS12 format. A chain chain of certs may be included - it must be in ascending order (server to root ca).
+      - The certificate and key data in PEM format or base64 encoded PKCS12 format.
+      - A chain chain of certs may be included - it must be in ascending order (server to root ca).
       - required if op_type is put_certificate
     type: str
-    default: none
     required: false
   format:
     description:
       - The format of the certificate data (PEM or PKCS12).
       - required if op_type is put_certificate
     type: str
-    default: none
     required: false
   generate:
     description:
       - Create a new self-signed certificate
     type: str
-    default: none
     required: false
   password:
     description:
       - Password to the encrypted key
     type: str
-    default: none
     required: false
   cn:
     description:
       - Common name
       - required if op_type is csr
     type: str
-    default: none
     required: false
   dns_names:
     description: Subject Alternative Names (SAN) DNS names
     type: list
     elements: str
-    default: none
     required: false
   email_addresses:
     description: Subject Alternative Names (SAN) Email addresses
     type: list
     elements: str
-    default: none
     required: false
   ip_addresses:
     description: Subject Alternative Names (SAN) IP addresses
     type: list
     elements: str
-    default: none
     required: false
   names:
-    description: Name fields like O, OU, L, ST, C
-    type: list
-    elements: dict
-    default: []
-    required: false
+      description:
+        - Name fields are "O=organization, OU=organizational unit, L=location, ST=state/province, C=country".
+        - Fields can be duplicated if present in different objects.
+      type: list
+      elements: dict
+      suboptions:
+        C:
+          description:
+            - Country, for example "US"
+          type: str
+        L:
+          description:
+            - Location, for example "Belcamp"
+          type: str
+        O:
+          description:
+            - Organization, for example "Thales Group"
+          type: str
+        OU:
+          description:
+            - Organizational Unit, for example "RnD"
+          type: str
+        ST:
+          description:
+            - State/province, for example "MD"
+          type: str
   copy_from:
     description:
       - Source interface name
       - required if op_type is use-certificate
     type: str
-    default: none
     required: false
 """
 

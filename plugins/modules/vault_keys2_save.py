@@ -352,6 +352,16 @@ options:
               - The alias index is assigned by this operation, and need not be specified.
             type: list
             element: dict
+            suboptions:
+              alias:
+                description: alias
+                type: str
+              index:
+                description: alias index
+                type: int
+              type:
+                description: alias type
+                type: str
             required: false
           archiveDate:
             description: Date/time the object becomes archived
@@ -390,7 +400,7 @@ options:
             type: bool
             required: false
             default: false
-          usageMaske:
+          usageMask:
             description:
                 - Cryptographic usage mask.
                 - Add the usage masks to allow certain usages.
