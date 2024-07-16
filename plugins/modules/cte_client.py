@@ -87,13 +87,13 @@ options:
         - Enable this option to lock the configuration of the CTE Agent on the client
         - Set to true to lock the configuration, set to false to unlock
         - Locking the Agent configuration prevents updates to any policies on the client
-      type: boolean
+      type: bool
     communication_enabled:
       description:
         - Whether communication with the client is enabled
         - The default value is false
         - Can be set to true only if registration_allowed is true
-      type: boolean
+      type: bool
     description:
       description: Description to identify the client.
       type: str
@@ -119,25 +119,25 @@ options:
       description:
         - Whether client's registration with the CipherTrust Manager is allowed
         - The default value is false. Set to true to allow registration
-      type: boolean
+      type: bool
     system_locked:
       description:
         - Whether the system is locked
         - The default value is false
         - Enable this option to lock the important operating system files of the client
         - When enabled, patches to the operating system of the client will fail due to the protection of these files
-      type: boolean
+      type: bool
     user_space_client:
       description: User space client
       type: str
     client_mfa_enabled:
       description: Whether MFA is enabled on the client
-      type: boolean
+      type: bool
     del_client:
       description:
         - Whether to mark the client for deletion from the CipherTrust Manager
         - The default value is false
-      type: boolean
+      type: bool
     disable_capability:
       description:
         - Client capability to be disabled
@@ -151,7 +151,7 @@ options:
       type: str
     enable_domain_sharing:
       description: Whether domain sharing is enabled for the client.
-      type: boolean
+      type: bool
     enabled_capabilities:
       description:
         - Client capabilities to be enabled
@@ -308,7 +308,7 @@ options:
       type: bool
     guard_enabled:
       description: Whether the GuardPoint is enabled.
-      type: boolean
+      type: bool
     mfa_enabled:
       description: Whether MFA is enabled
       type: bool

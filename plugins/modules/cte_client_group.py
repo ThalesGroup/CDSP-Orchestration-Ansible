@@ -57,7 +57,7 @@ options:
           required: true
     op_type:
       description: Operation to be performed
-      choices: [create, patch, add_client, add_guard_point, auth-binaries, remove_client, ldt_pause]
+      choices: ['create', 'patch', 'add_client', 'add_guard_point', 'auth-binaries', 'remove_client', 'ldt_pause']
       required: true
       type: str
     id:
@@ -68,7 +68,7 @@ options:
       type: str
     cluster_type:
       description: Cluster type of the ClientGroup, valid values are NON-CLUSTER and HDFS.
-      choices: [NON-CLUSTER, HDFS]
+      choices: ['NON-CLUSTER', 'HDFS']
       type: str
     name:
       description: Name of the ClientGroup
@@ -80,33 +80,48 @@ options:
       description: Whether the File System communication is enabled
       type: bool
     password:
-      description: User supplied password if password_creation_method is MANUAL. The password MUST be minimum 8 characters and MUST contain one alphabet, one number, and one of the !@#$%^&*(){}[] special characters
+      description:
+        - User supplied password if password_creation_method is MANUAL
+        - The password MUST be minimum 8 characters and MUST contain one alphabet, one number, and one special characters
       type: str
     password_creation_method:
       description: Password creation method, GENERATE or MANUAL
-      choices: [GENERATE, MANUAL]
+      choices: ['GENERATE', 'MANUAL']
       type: str
     profile_id:
-      description: ID of the client group profile that is used to schedule custom configuration for logger, logging, and Quality of Service (QoS)
+      description:
+        - ID of the client group profile that is used to schedule custom configuration for logger, logging, and Quality of Service (QoS)
       type: str
     client_locked:
-      description: Is FS Agent locked? Enables locking the configuration of the File System Agent on the client. This will prevent updates to any policies on the client. Default value is false.
+      description:
+        - Is FS Agent locked?
+        - Enables locking the configuration of the File System Agent on the client
+        - This will prevent updates to any policies on the client
+        - Default value is false
       type: bool
       default: false
     enable_domain_sharing:
       description: Whether to enable domain sharing for ClientGroup
       type: bool
     enabled_capabilities:
-      description: Comma separated agent capabilities which are enabled. Currently only RESIGN for re-signing client settings can be enabled.
+      description:
+        - Comma separated agent capabilities which are enabled
+        - Currently only RESIGN for re-signing client settings can be enabled
       type: str
     shared_domain_list:
-      description: List of domains with which ClientGroup needs to be shared.
+      description: List of domains with which ClientGroup needs to be shared
       type: list
     system_locked:
-      description: Whether the system is locked. The default value is false. Enable this option to lock the important operating system files of the client. When enabled, patches to the operating system of the client will fail due to the protection of these files.
+      description:
+        - Whether the system is locked
+        - The default value is false
+        - Enable this option to lock the important operating system files of the client
+        - When enabled, patches to the operating system of the client will fail due to the protection of these files
       type: bool
     client_list:
-      description: List of Client identifier which are to be associated with clientgroup. This identifier can be the Name, ID (a UUIDv4), URI, or slug of the client
+      description:
+        - List of Client identifier which are to be associated with clientgroup
+        - This identifier can be the Name, ID, URI, or slug of the client
       type: list
     inherit_attributes:
       description: Whether the client should inherit attributes from the ClientGroup
@@ -117,6 +132,91 @@ options:
     guard_point_params:
       description: Parameters for creating a GuardPoint
       type: dict
+      suboptions:
+        guard_point_type:
+          description: Type of the GuardPoint.
+          type: str
+          required: true
+          choices:
+            - directory_auto
+            - directory_manual
+            - rawdevice_manual
+            - rawdevice_auto
+            - cloudstorage_auto
+            - cloudstorage_manual
+        policy_id:
+          description:
+            - ID of the policy applied with this GuardPoint
+            - This parameter is not valid for Ransomware GuardPoints as they will not be associated with any CTE policy
+          type: str
+          required: true
+        automount_enabled:
+          description:
+            - Whether automount is enabled with the GuardPoint
+            - Supported for Standard and LDT policies
+          type: bool
+        cifs_enabled:
+          description:
+            - Whether to enable CIFS
+            - Available on LDT enabled windows clients only
+            - The default value is false
+            - If you enable the setting, it cannot be disabled
+            - Supported for only LDT policies.
+          type: bool
+        data_classification_enabled:
+          description:
+            - Whether data classification (tagging) is enabled
+            - Enabled by default if the aligned policy contains ClassificationTags
+            - Supported for Standard and LDT policies.
+          type: bool
+        data_lineage_enabled:
+          description:
+            - Whether data lineage (tracking) is enabled
+            - Enabled only if data classification is enabled
+            - Supported for Standard and LDT policies.
+          type: bool
+        disk_name:
+          description:
+            - Name of the disk if the selected raw partition is a member of an Oracle ASM disk group
+          type: str
+        diskgroup_name:
+          description:
+            - Name of the disk group if the selected raw partition is a member of an Oracle ASM disk group
+          type: str
+        early_access:
+          description:
+            - Whether secure start (early access) is turned on
+            - Secure start is applicable to Windows clients only
+            - Supported for Standard and LDT policies
+            - The default value is false
+          type: bool
+        intelligent_protection:
+          description:
+            - Flag to enable intelligent protection for this GuardPoint
+            - This flag is valid for GuardPoints with classification based policy only
+            - Can only be set during GuardPoint creation
+          type: bool
+        is_idt_capable_device:
+          description:
+            - Whether the device where GuardPoint is applied is IDT capable or not
+            - Supported for IDT policies.
+          type: bool
+        mfa_enabled:
+          description: Whether MFA is enabled
+          type: bool
+        network_share_credentials_id:
+          description:
+            - ID/Name of the credentials if the GuardPoint is applied to a network share
+            - Supported for only LDT policies.
+          type: str
+        preserve_sparse_regions:
+          description:
+            - Whether to preserve sparse file regions
+            - Available on LDT enabled clients only
+            - The default value is true
+            - If you disable the setting, it cannot be enabled again
+            - Supported for only LDT policies.
+          type: bool
     auth_binaries:
       description: Array of authorized binaries in the privilege-filename pair JSON format
       type: str
@@ -223,7 +323,7 @@ _guard_point_params = dict(
     diskgroup_name=dict(type="str"),
     early_access=dict(type="bool"),
     intelligent_protection=dict(type="bool"),
-    is_esg_capable_device=dict(type="bool"),
+    #is_esg_capable_device=dict(type="bool"),
     is_idt_capable_device=dict(type="bool"),
     mfa_enabled=dict(type="bool"),
     network_share_credentials_id=dict(type="str"),
