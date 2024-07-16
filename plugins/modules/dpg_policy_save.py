@@ -78,6 +78,388 @@ options:
       type: list
       element: dict
       required: false
+      suboptions:
+        api_url:
+          description: URL of the application server from which the request will received.
+          type: str
+        destination_url:
+          description: URL of the application server where the request will be served.
+          type: str
+        json_request_post_tokens:
+          description: API tokens to be protected in a POST Request
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        json_response_post_tokens:
+          description: API tokens to be protected in a POST Response
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        json_request_get_tokens:
+          description: API tokens to be protected in a GET Request
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        json_response_get_tokens:
+          description: API tokens to be protected in a GET Response
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        json_request_put_tokens:
+          description: API tokens to be protected in a PUT Request
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        json_response_put_tokens:
+          description: API tokens to be protected in a PUT Response
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        json_request_patch_tokens:
+          description: API tokens to be protected in a PATCH Request
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        json_response_patch_tokens:
+          description: API tokens to be protected in a PATCH Response
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        json_request_delete_tokens:
+          description: API tokens to be protected in a DELETE Request
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        json_response_delete_tokens:
+          description: API tokens to be protected in a DELETE Response
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        url_request_post_tokens:
+          description: API tokens to be protected in a POST Request
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        url_request_get_tokens:
+          description: API tokens to be protected in a GET Request
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        url_request_put_tokens:
+          description: API tokens to be protected in a PUT Request
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        url_request_patch_tokens:
+          description: API tokens to be protected in a PATCH Request
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
+        url_request_delete_tokens:
+          description: API tokens to be protected in a DELETE Request
+          type: list
+          elements: dict
+          suboptions:
+            name:
+              description:
+                - Name
+              type: str
+            operation:
+              description:
+                - API Operation
+              type: str
+            protection_policy:
+              description:
+                - Protection Policy to be associated
+              type: str
+            access_policy:
+              description:
+                - Access Policy to be associated
+              type: str
+            external_version_header:
+              description:
+                - Opetional external version header
+              type: str
     api_url:
       description: URL of the application server from which the request will received.
       type: str
@@ -87,63 +469,378 @@ options:
     json_request_post_tokens:
       description: API tokens to be protected in a POST Request
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     json_response_post_tokens:
       description: API tokens to be protected in a POST Response
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     json_request_get_tokens:
       description: API tokens to be protected in a GET Request
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     json_response_get_tokens:
       description: API tokens to be protected in a GET Response
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     json_request_put_tokens:
       description: API tokens to be protected in a PUT Request
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     json_response_put_tokens:
       description: API tokens to be protected in a PUT Response
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     json_request_patch_tokens:
       description: API tokens to be protected in a PATCH Request
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     json_response_patch_tokens:
       description: API tokens to be protected in a PATCH Response
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     json_request_delete_tokens:
       description: API tokens to be protected in a DELETE Request
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     json_response_delete_tokens:
       description: API tokens to be protected in a DELETE Response
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     url_request_post_tokens:
       description: API tokens to be protected in a POST Request
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     url_request_get_tokens:
       description: API tokens to be protected in a GET Request
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     url_request_put_tokens:
       description: API tokens to be protected in a PUT Request
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     url_request_patch_tokens:
       description: API tokens to be protected in a PATCH Request
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
     url_request_delete_tokens:
       description: API tokens to be protected in a DELETE Request
       type: list
-      element: dict
+      elements: dict
+      suboptions:
+        name:
+          description:
+            - Name
+          type: str
+        operation:
+          description:
+            - API Operation
+          type: str
+        protection_policy:
+          description:
+            - Protection Policy to be associated
+          type: str
+        access_policy:
+          description:
+            - Access Policy to be associated
+          type: str
+        external_version_header:
+          description:
+            - Opetional external version header
+          type: str
 """
 
 EXAMPLES = """
