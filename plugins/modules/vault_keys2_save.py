@@ -236,10 +236,67 @@ options:
         type: dict
         suboptions:
           ownerId:
-            description: Optional owner information for the key, required for non-admin. Value should be the user's user_id
+            description:
+              - Optional owner information for the key, required for non-admin. Value should be the user's user_id
             type: str
             required: false
             default: null
+          permissions:
+            description:
+              - Optional permissions associated with this key
+            type: dict
+            suboptions:
+              UseKey:
+                description: Permission to use key
+                type: list
+                elements: str
+              ReadKey:
+                description: Permission to read key
+                type: list
+                elements: str
+              ExportKey:
+                description: Permission to export key
+                type: list
+                elements: str
+              MACWithKey:
+                description: Permission to use MAC with key
+                type: list
+                elements: str
+              SignWithKey:
+                description: Permission to sign with the key
+                type: list
+                elements: str
+              DecryptWithKey:
+                description: Permission to descrypt with the key
+                type: list
+                elements: str
+              EncryptWithKey:
+                description: Permission to encrypt with the key
+                type: list
+                elements: str
+              MACVerifyWithKey:
+                description: Permission to verify MAC with the key
+                type: list
+                elements: str
+              SignVerifyWithKey:
+                description: Permission to verify sign with the key
+                type: list
+                elements: str
+          cte:
+            description:
+              - CTE specific permissions
+            type: dict
+            suboptions:
+              persistent_on_client:
+                description: Allow persisting key on the client
+                type: bool
+              encryption_mode:
+                description: Specify encryption mode
+                type: str
+              cte_versioned:
+                description: if the key is versioned
+                type: bool
+          versionedKey
         required: false
         default: null
     muid:
@@ -594,7 +651,6 @@ options:
           - Only applicable for op_type "create_version"
         type: int
         required: false
-        default: false
 
 """
 
@@ -858,7 +914,7 @@ argument_spec = dict(
     rotationFrequencyDays=dict(type="str", required=False),
     secretDataEncoding=dict(type="str", required=False),
     secretDataLink=dict(type="str", required=False),
-    signingAlgo=dict(type="str", choice=["RSA-PSS", "RSA"], required=False),
+    signingAlgo=dict(type="str", choices=["RSA-PSS", "RSA"], required=False),
     size=dict(type="int", required=False),
     state=dict(type="str", required=False),
     undeletable=dict(type="bool", required=False, default=False),
