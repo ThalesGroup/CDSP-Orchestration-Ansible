@@ -22,7 +22,8 @@ description:
     - The CTE Agent can protect data on the client or devices connected to it.
     - A client can be associated with multiple GuardPoints for encryption of various paths.
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -129,7 +130,7 @@ options:
       type: bool
     user_space_client:
       description: User space client
-      type: str
+      type: bool
     client_mfa_enabled:
       description: Whether MFA is enabled on the client
       type: bool
@@ -182,7 +183,6 @@ options:
         guard_point_type:
           description: Type of the GuardPoint.
           type: str
-          required: true
           choices:
             - directory_auto
             - directory_manual
@@ -195,7 +195,6 @@ options:
             - ID of the policy applied with this GuardPoint
             - This parameter is not valid for Ransomware GuardPoints as they will not be associated with any CTE policy
           type: str
-          required: true
         automount_enabled:
           description:
             - Whether automount is enabled with the GuardPoint
@@ -415,7 +414,7 @@ _guard_point_params = dict(
     diskgroup_name=dict(type="str"),
     early_access=dict(type="bool"),
     intelligent_protection=dict(type="bool"),
-    is_esg_capable_device=dict(type="bool"),
+    #is_esg_capable_device=dict(type="bool"),
     is_idt_capable_device=dict(type="bool"),
     mfa_enabled=dict(type="bool"),
     network_share_credentials_id=dict(type="str"),
@@ -447,7 +446,7 @@ argument_spec = dict(
     communication_enabled=dict(type="bool"),
     description=dict(type="str"),
     password=dict(type="str"),
-    password_creation_method=dict(type="str", choices=["GENERATE", "MANUAL"]),
+    password_creation_method=dict(type="str", choices=["GENERATE", "MANUAL"], default='GENERATE'),
     profile_identifier=dict(type="str"),
     registration_allowed=dict(type="bool"),
     system_locked=dict(type="bool"),

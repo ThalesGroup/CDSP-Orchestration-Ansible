@@ -18,7 +18,8 @@ short_description: Create or update registration token
 description:
     - The module is to create or update client registration token
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -78,6 +79,10 @@ options:
           - In case of KMIP client registration, Key is KmipClientProfile and in case of PA client registration Key is ClientProfile.
           - Value for the key is the profile name of protectapp/Kmip client profile to be mapped with the token for protectapp/Kmip client registration.
         type: dict
+        suboptions:
+          ClientProfile:
+            description: Client Profile name
+            type: str
     lifetime:
         description:
           - Duration in minutes/hours/days for which this token can be used for registering CipherTrust Manager clients.
@@ -141,7 +146,7 @@ argument_spec = dict(
     op_type=dict(type="str", choices=["create", "patch"], required=True),
     id=dict(type="str"),
     ca_id=dict(type="str"),
-    cert_duration=dict(type="int"),
+    cert_duration=dict(type="int", default=730),
     label=dict(type="dict", options=_label),
     lifetime=dict(type="str"),
     max_clients=dict(type="int"),

@@ -18,7 +18,8 @@ short_description: Create or join CipherTrust Manager node cluster
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with cluster management.
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -63,7 +64,7 @@ options:
     nodes:
         description: list of CM nodes willing to join the cluster
         type: list
-        element: dict
+        elements: dict
         suboptions:
           server_ip:
             description: CM Server IP or FQDN
@@ -89,7 +90,6 @@ options:
             description: if SSL verification is required
             type: bool
             required: true
-        default: []
 """
 
 EXAMPLES = """

@@ -20,7 +20,8 @@ description:
     - Restart CipherTrust Manager Services
     - Get status of CipherTrust Manager Services
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -113,7 +114,7 @@ argument_spec = dict(
         ],
         required=True,
     ),
-    delay=dict(type="int"),
+    delay=dict(type="int", default=5),
     services=dict(type="list", elements="str"),
 )
 

@@ -18,7 +18,8 @@ short_description: Delete CipherTrust Manager resource using ID
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically delete resource APIs.
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -64,17 +65,7 @@ options:
         description:
             - This is a string type of option that can hold the resource type.
         required: true
-        choices:
-            - keys
-            - protection-policies
-            - access-policies
-            - user-sets
-            - interfaces
-            - character-sets
-            - users
-            - dpg-policies
-            - client-profiles
-            - masking-formats
+        choices: ['keys', 'protection-policies', 'access-policies', 'user-sets', 'interfaces', 'character-sets', 'users', 'dpg-policies', 'client-profiles', 'masking-formats', 'resourceset', 'signatureset', 'userset', 'processset', 'cte-policy', 'cte-client-group', 'csigroup', 'cte-client', 'azure-key-vault', 'azure-secret', 'azure-certificate', 'azure-key']
         type: str
 """
 
@@ -94,11 +85,7 @@ EXAMPLES = """
 """
 
 RETURN = """
-message:
-    description: String with response
-    returned: changed or success
-    type: string
-    sample: successfully deleted
+
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (

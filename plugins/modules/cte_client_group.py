@@ -18,7 +18,8 @@ short_description: Manage CTE client groups
 description:
     - This module lets administrator create r manage client groups so that group level policies can be applied to multiple clients
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -111,6 +112,7 @@ options:
     shared_domain_list:
       description: List of domains with which ClientGroup needs to be shared
       type: list
+      elements: str
     system_locked:
       description:
         - Whether the system is locked
@@ -123,12 +125,14 @@ options:
         - List of Client identifier which are to be associated with clientgroup
         - This identifier can be the Name, ID, URI, or slug of the client
       type: list
+      elements: str
     inherit_attributes:
       description: Whether the client should inherit attributes from the ClientGroup
       type: bool
     guard_paths:
       description: List of GuardPaths to be created
       type: list
+      elements: str
     guard_point_params:
       description: Parameters for creating a GuardPoint
       type: dict
@@ -136,7 +140,6 @@ options:
         guard_point_type:
           description: Type of the GuardPoint.
           type: str
-          required: true
           choices:
             - directory_auto
             - directory_manual
@@ -149,7 +152,6 @@ options:
             - ID of the policy applied with this GuardPoint
             - This parameter is not valid for Ransomware GuardPoints as they will not be associated with any CTE policy
           type: str
-          required: true
         automount_enabled:
           description:
             - Whether automount is enabled with the GuardPoint
@@ -353,7 +355,7 @@ argument_spec = dict(
     password=dict(type="str"),
     password_creation_method=dict(type="str", choices=["GENERATE", "MANUAL"]),
     profile_id=dict(type="str"),
-    client_locked=dict(type="bool"),
+    client_locked=dict(type="bool", default=False),
     enable_domain_sharing=dict(type="bool"),
     enabled_capabilities=dict(type="str"),
     shared_domain_list=dict(type="list", elements="str"),
