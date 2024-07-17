@@ -372,9 +372,9 @@ argument_spec = dict(
     max_clients=dict(type="int"),
     nae_iface_port=dict(type="int"),
     policy_id=dict(type="str"),
-    enable_client_autorenewal=dict(type="str")
-    groups=dict(type="list", elements="str")
-    jwt_verification_key=dict(type="str")
+    enable_client_autorenewal=dict(type="str"),
+    groups=dict(type="list", elements="str"),
+    jwt_verification_key=dict(type="str"),
 )
 
 
