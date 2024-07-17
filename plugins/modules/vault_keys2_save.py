@@ -106,11 +106,12 @@ options:
         default: null
         type: str
     certType:
-        description: This specifies the type of certificate object that is being created
-        - Valid values are 'x509-pem' and 'x509-der'
-        - At present, we only support x.509 certificates
-        - The cerfificate data is passed in via the 'material' field
-        - The certificate type is infered from the material if it is left blank.
+        description:
+          - This specifies the type of certificate object that is being created
+          - Valid values are 'x509-pem' and 'x509-der'
+          - At present, we only support x.509 certificates
+          - The cerfificate data is passed in via the 'material' field
+          - The certificate type is infered from the material if it is left blank.
         type: str
         choices: [x509-pem, x509-der]
         required: false
@@ -550,12 +551,12 @@ options:
           - FPE Decrypt (2097152)
           - Add the usage mask values to allow the usages
           - To set all usage mask bits, use 4194303
-          - Equivalent usageMask values for deprecated usages 'fpe' (FPE Encrypt + FPE Decrypt = 3145728)
-          - 'blob' (Encrypt + Decrypt = 12)
-          - 'hmac' (MAC Generate + MAC Verify = 384)
-          - 'encrypt' (Encrypt + Decrypt = 12)
-          - 'sign' (Sign + Verify = 3)
-          - 'any' (4194303 - all usage masks).
+          - Equivalent usageMask values for deprecated usages fpe (FPE Encrypt + FPE Decrypt = 3145728)
+          - blob (Encrypt + Decrypt = 12)
+          - hmac (MAC Generate + MAC Verify = 384)
+          - encrypt (Encrypt + Decrypt = 12)
+          - sign (Sign + Verify = 3)
+          - any (4194303 - all usage masks).
         type: int
         default: null
         required: false
