@@ -86,6 +86,13 @@ options:
         - Name of the signature set
       type: list
       elements: dict
+      suboptions:
+        file_name:
+          description: file name
+          type: str
+        hash_value:
+          description: hash value
+          type: str
     client_id:
       description:
         - ID of the client where the signing request is to be sent

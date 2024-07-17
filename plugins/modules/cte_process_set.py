@@ -79,7 +79,21 @@ options:
     processes:
       description:
         - List of processes to be added to the process set
-      type: str
+      type: list
+      elements: dict
+      suboptions:
+        directory:
+          description:
+            - directory path of the process which shall be associated with the process-set
+          type: str
+        file:
+          description:
+            - file name of the process which shall be associated with the process-set
+          type: str
+        signature:
+          description:
+            - Signature-set ID or Name which shall be associated with the process-set
+          type: str
     directory:
       description:
         - directory path of the process which shall be associated with the process-set

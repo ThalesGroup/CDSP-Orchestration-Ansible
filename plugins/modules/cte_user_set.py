@@ -76,6 +76,23 @@ options:
     users:
       description: List of users to be added to the user set
       type: list
+      elements: dict
+      suboptions:
+        gid:
+          description: Group id of the user which shall be added in user-set
+          type: int
+        gname:
+          description: Group name of the user which shall be added in user-set
+          type: str
+        os_domain:
+          description: OS domain name in case of windows environment
+          type: str
+        uid:
+          description: User id of the user which shall be added in user-set
+          type: int
+        uname:
+          description: Name of the user which shall be added in user-set
+          type: str
     gid:
       description: Group id of the user which shall be added in user-set
       type: int

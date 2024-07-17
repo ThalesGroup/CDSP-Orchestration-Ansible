@@ -81,11 +81,56 @@ options:
         - Classification set to be added to the resource set
       type: list
       elements: dict
+      suboptions:
+        attributes:
+          description:
+            - List of attributes to be added to the tag
+          type: list
+          elements: dict
+          suboptions:
+            data_type:
+              description: Data type of the attribute
+              type: str
+            name:
+              description: Name of the attribute
+              type: str
+            operator:
+              description: Operator to be applied to the attribute
+              type: str
+              choices: ['eq', 'lt', 'ne', 'le', 'gt', 'ge']
+            value:
+              description: Value of the attribute
+              type: str
+        description:
+          description:
+            - Description of the classification tag
+          type: str
+        name:
+          description:
+            - Name of the tag in the classification set
+          type: str
     resources:
       description:
         - List of resources to be added to the resource set
       type: list
       elements: dict
+      suboptions:
+        directory:
+          description:
+            - Directory of the resource to be added to the resource set
+          type: str
+        file:
+          description:
+            - File name of the resource to be added to the resource set
+          type: str
+        hdfs:
+          description:
+            - Whether the specified path is a HDFS path
+          type: str
+        hdfs:
+          description:
+            - Whether to include subfolders to the resource
+          type: str
     type:
       description:
         - Type of the resource set i.e. Directory or Classification. Default value is Directory
