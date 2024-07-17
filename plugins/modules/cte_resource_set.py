@@ -126,11 +126,11 @@ options:
         hdfs:
           description:
             - Whether the specified path is a HDFS path
-          type: str
-        hdfs:
+          type: bool
+        include_subfolders:
           description:
             - Whether to include subfolders to the resource
-          type: str
+          type: bool
     type:
       description:
         - Type of the resource set i.e. Directory or Classification. Default value is Directory
@@ -147,11 +147,11 @@ options:
     hdfs:
       description:
         - Whether the specified path is a HDFS path
-      type: boolean
+      type: bool
     include_subfolders:
       description:
         - Flag to include subfolders in the Resource
-      type: boolean
+      type: bool
 """
 
 EXAMPLES = """
