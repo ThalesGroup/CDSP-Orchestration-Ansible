@@ -92,8 +92,18 @@ options:
         default: null
     reason:
         description:
-          - The reason the key is being revoked. Choices are Unspecified, KeyCompromise, CACompromise, AffiliationChanged, Superseded, CessationOfOperation or PrivilegeWithdrawn
-          - The reason the key is being reactivated. Choices are DeactivatedToActive, ActiveProtectStopToActive or DeactivatedToActiveProtectStop
+          - If the reason the key is being revoked, choices are
+          - Unspecified
+          - KeyCompromise
+          - CACompromise
+          - AffiliationChanged
+          - Superseded
+          - CessationOfOperation
+          - PrivilegeWithdrawn
+          - If the reason the key is being reactivated, choices are
+          - DeactivatedToActive
+          - ActiveProtectStopToActive
+          - DeactivatedToActiveProtectStop
           - Required if op_type is either revoke or reactivate
         type: str
         choices: ['Unspecified', 'KeyCompromise', 'CACompromise', 'AffiliationChanged', 'Superseded', 'CessationOfOperation', 'PrivilegeWithdrawn', 'DeactivatedToActive', 'ActiveProtectStopToActive', 'DeactivatedToActiveProtectStop']
@@ -123,22 +133,24 @@ options:
     encoding:
         description:
           - Specifies the encoding used for the material field.
-          - For wrapping scenarios and PKCS12 format, the only valid option is base64. In case of "Symmetric Keys" when 'format' parameter has 'base64' value and 'encoding' parameter also contains some value. The encoding parameter takes the priority. Options for Symmetric Keys are hex or base64
+          - For wrapping scenarios and PKCS12 format, the only valid option is base64.
+          - In case of "Symmetric Keys" when 'format' parameter has 'base64' value and 'encoding' parameter also contains some value.
+          - The encoding parameter takes the priority.
+          - Options for Symmetric Keys are hex or base64
           - Only applicable for op_type "export"
         type: str
         required: false
         default: null
     keyFormat:
         description:
-          - The format of the returned key material. If the algorithm is 'rsa' or 'ec'. The value can be one of 'pkcs1', 'pkcs8' , 'pkcs12', or 'jwe'. The default value is 'pkcs8'. If algorithm is ‘rsa’ and format is 'pkcs12', the key material will contain the base64-encoded value of the PFX file. The value 'base64' is used for symmetric keys, for which the format of the returned key material is base64-encoded if wrapping is applied (i.e., either 'wrapKeyName' or 'wrapPublicKey' is specified),otherwise, the format is hex-encoded, unless 'base64' is given. If the "format" is 'jwe' then the "material" for the symmetric key, asymmetric key or certificate will be wrapped in JWE format. "wrapKeyName"(should be a public key) or "wrapPublicKey" and "wrapJWE" parameters are required for 'jwe' format. The value 'opaque' is supported for symmetric keys with 'opaque' format only.
-          - Only applicable for op_type "export"
+          - The format of the returned key material
         type: str
         choices: [pkcs1, pkcs8, pkcs12, jwe]
         required: false
         default: null
     macSignKeyIdentifier:
         description:
-          - This parameter specifies the identifier of the key used for generating the MAC or signature("macSignBytes") of the key whose key material is to be exported
+          - This parameter specifies the identifier of the key used for generating the MAC or signature of the key whose key material is to be exported
           - The "wrappingMethod" should be "mac/sign" to generate the MAC/signature.
           - To generate a MAC, the key should be a HMAC key.
           - To generate a signature, the key should be an RSA private key.
@@ -148,7 +160,8 @@ options:
         default: null
     macSignKeyIdentifierType:
         description:
-          - This parameter specifies the identifier of the key("macSignKeyIdentifier") used for generating MAC or signature of the key material. The "wrappingMethod" should be "mac/sign" to verify the mac/signature("macSignBytes") of the key material("material")
+          - This parameter specifies the identifier of the key("macSignKeyIdentifier") used for generating MAC or signature of the key material.
+          - The "wrappingMethod" should be "mac/sign" to verify the mac/signature("macSignBytes") of the key material("material")
           - Only applicable for op_type "export"
         type: str
         choices: [name, id, alias]
