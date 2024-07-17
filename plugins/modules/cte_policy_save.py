@@ -57,7 +57,7 @@ options:
           required: true
     op_type:
       description: Operation to be performed
-      choices: [create, patch, add_data_transfer_rule, add_ldt_rule, add_key_rule, add_security_rule, patch_data_transfer_rule, patch_ldt_rule, patch_key_rule, patch_security_rule, patch_idt_rule, remove_data_transfer_rule, remove_ldt_rule, remove_key_rule, remove_security_rule]
+      choices: ['create', 'patch', 'add_data_transfer_rule', 'add_ldt_rule', 'add_key_rule', 'add_security_rule', 'patch_data_transfer_rule', 'patch_ldt_rule', 'patch_key_rule', 'patch_security_rule', 'patch_idt_rule', 'remove_data_transfer_rule', 'remove_ldt_rule', 'remove_key_rule', 'remove_security_rule']
       required: true
       type: str
     policy_id:
@@ -74,34 +74,249 @@ options:
       required: false
     policy_type:
       description: Type of the policy
-      choices: [Standard, LDT, IDT, CSI, Cloud_Object_Storage]
+      choices: ['Standard', 'LDT', 'IDT', 'CSI', 'Cloud_Object_Storage']
       type: str
     data_transform_rules:
       description: Data transformation rules to link with the policy
       type: list
       elements: dict
+      suboptions:
+        key_id:
+          description:
+            - Identifier of the key to link with the rule
+            - Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id
+            - For decryption, where a clear key is to be supplied, use the string "clear_key" only. Do not specify any other identifier
+          type: str
+        key_type:
+          description:
+            - Specify the type of the key
+            - Must be one of name, id, slug, alias, uri, uuid, muid or key_id
+            - If not specified, the type of the key is inferred
+          type: str
+          choices:
+            - name
+            - id
+            - slug
+            - alias
+            - uri
+            - uuid
+            - muid
+            - key_id
+        resource_set_id:
+          description: ID of the resource set to link with the rule.
+          type: str
     idt_key_rules:
       description: IDT rules to link with the policy
       type: list
       elements: dict
+      suboptions:
+        current_key:
+          description:
+            - Identifier of the key to link with the rule
+            - Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id
+            - For decryption, where a clear key is to be supplied, use the string "clear_key" only. Do not specify any other identifier.
+          type: str
+        current_key_type:
+          description:
+            - Specify the type of the key
+            - Must be one of name, id, slug, alias, uri, uuid, muid or key_id
+            - If not specified, the type of the key is inferred
+          type: str
+          choices:
+            - name
+            - id
+            - slug
+            - alias
+            - uri
+            - uuid
+            - muid
+            - key_id
+        transformation_key:
+          description:
+            - Identifier of the key to link with the rule
+            - Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id
+          type: str
+        transformation_key_type:
+          description:
+            - Specify the type of the key
+            - Must be one of name, id, slug, alias, uri, uuid, muid or key_id
+            - If not specified, the type of the key is inferred
+          type: str
+          choices:
+            - name
+            - id
+            - slug
+            - alias
+            - uri
+            - uuid
+            - muid
+            - key_id
     key_rules:
       description: Key rules to link with the policy
       type: list
       elements: dict
+      suboptions:
+        key_id:
+          description:
+            - Identifier of the key to link with the rule
+            - Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id
+            - For decryption, where a clear key is to be supplied, use the string "clear_key" only. Do not specify any other identifier
+          type: str
+        key_type:
+          description:
+            - Specify the type of the key
+            - Must be one of name, id, slug, alias, uri, uuid, muid or key_id
+            - If not specified, the type of the key is inferred
+          type: str
+          choices:
+            - name
+            - id
+            - slug
+            - alias
+            - uri
+            - uuid
+            - muid
+            - key_id
+        resource_set_id:
+          description: ID of the resource set to link with the rule.
+          type: str
     ldt_key_rules:
       description: LDT rules to link with the policy. Supported for LDT policies.
       type: list
       elements: dict
+      suboptions:
+        current_key:
+          description:
+            - Properties of the current key
+          type: dict
+          suboptions:
+            key_id:
+              description:
+                - Identifier of the key to link with the rule
+                - Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id
+                - For decryption, where a clear key is to be supplied, use the string "clear_key" only. Do not specify any other identifier
+              type: str
+            key_type:
+              description:
+                - Specify the type of the key
+                - Must be one of name, id, slug, alias, uri, uuid, muid or key_id
+                - If not specified, the type of the key is inferred
+              type: str
+              choices:
+                - name
+                - id
+                - slug
+                - alias
+                - uri
+                - uuid
+                - muid
+                - key_id
+        is_exclusion_rule:
+            description:
+            - Whether this is an exclusion rule
+            - If enabled, no need to specify the transformation rule
+            type: bool
+        resource_set_id:
+            description: ID of the resource set to link with the rule.
+            type: str
+        transformation_key:
+          description:
+            - Properties of the transformation key
+          type: dict
+          suboptions:
+            key_id:
+              description:
+                - Identifier of the key to link with the rule
+                - Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id
+                - For decryption, where a clear key is to be supplied, use the string "clear_key" only. Do not specify any other identifier
+              type: str
+            key_type:
+              description:
+                - Specify the type of the key
+                - Must be one of name, id, slug, alias, uri, uuid, muid or key_id
+                - If not specified, the type of the key is inferred
+              type: str
+              choices:
+                - name
+                - id
+                - slug
+                - alias
+                - uri
+                - uuid
+                - muid
+                - key_id
     metadata:
       description: Restrict policy for modification
       type: dict
+      suboptions:
+        restrict_update:
+          description:
+            - To restrict the policy for modification
+            - If its value enabled means user not able to modify the guarded policy
+          type: bool
     never_deny:
-      description: Whether to always allow operations in the policy. By default, it is disabled, that is, operations are not allowed. Supported for Standard, LDT, and Cloud_Object_Storage policies. For Learn Mode activations, never_deny is set to true, by default.
+      description:
+        - Whether to always allow operations in the policy
+        - By default, it is disabled, that is, operations are not allowed
+        - Supported for Standard, LDT, and Cloud_Object_Storage policies
+        - For Learn Mode activations, never_deny is set to true, by default
       type: bool
     security_rules:
       description: Security rules to link with the policy.
       type: list
       elements: dict
+      suboptions:
+        action:
+          description:
+            - Actions applicable to the rule
+          type: str
+          choices:
+            - read
+            - write
+            - all_ops
+            - key_op
+        effect:
+          description:
+            - Effects applicable to the rule. Separate multiple effects by commas. The valid values are
+            - permit
+            - deny
+            - audit
+            - applykey
+          type: str
+        exclude_process_set:
+          description:
+            - Process set to exclude
+            - Supported for Standard, LDT and IDT policies
+          type: bool
+        exclude_resource_set:
+          description:
+            - Resource set to exclude
+            - Supported for Standard, LDT and IDT policies
+          type: bool
+        exclude_user_set:
+          description:
+            - User set to exclude
+            - Supported for Standard, LDT and IDT policies
+          type: bool
+        partial_match:
+          description:
+            - Whether to allow partial match operations
+            - By default, it is disabled
+            - Supported for Standard, LDT and IDT policies
+          type: bool
+        process_set_id:
+          description:
+            - ID of the process set to link to the policy
+          type: str
+        resource_set_id:
+          description:
+            - ID of the resource set to link to the policy
+            - Supported for Standard, LDT and IDT policies
+          type: str
+        user_set_id:
+          description:
+            - ID of the user set to link to the policy
+          type: str
     force_restrict_update:
       description: To remove restriction of policy for modification
       type: bool
@@ -109,17 +324,32 @@ options:
       description: Precedence order of the rule in the parent policy
       type: int
     key_id:
-      description: Identifier of the key to link with the rule. Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id.
+      description:
+        - Identifier of the key to link with the rule
+        - Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id
       type: str
     key_type:
-      description: Precedence order of the rule in the parent policy
-      choices: [name, id, slug, alias, uri, uuid, muid, key_id]
+      description:
+        - Specify the type of the key
+        - Must be one of name, id, slug, alias, uri, uuid, muid or key_id
+        - If not specified, the type of the key is inferred
       type: str
+      choices:
+        - name
+        - id
+        - slug
+        - alias
+        - uri
+        - uuid
+        - muid
+        - key_id
     resource_set_id:
       description: ID of the resource set linked with the rule
       type: str
     dataTxRuleId:
-      description: An identifier for the CTE Data-Transformation Rule. Can be an ID of type UUIDv4 or a URI
+      description:
+        - An identifier for the CTE Data-Transformation Rule
+        - Can be an ID of type UUIDv4 or a URI
       type: str
     keyRuleId:
       description: An identifier for the CTE Key Rule. Can be an ID of type UUIDv4 or a URI
@@ -169,17 +399,24 @@ options:
       description: An identifier for the CTE IDT Key Rule. Can be an ID of type UUIDv4 or a URI
       type: str
     current_key:
-      description: Identifier of the key to link with the rule. Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id.
+      description:
+        - Identifier of the key to link with the rule
+        - Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id
       type: str
     current_key_type:
       description: An identifier for the CTE IDT Key Rule. Can be an ID of type UUIDv4 or a URI
       choices: [name, id, slug, alias, uri, uuid, muid, key_id]
       type: str
     transformation_key:
-      description: Identifier of the key to link with the rule. Supported fields are name, id, slug, alias, uri, uuid, muid or key_id.
+      description:
+        - Identifier of the key to link with the rule
+        - Supported fields are name, id, slug, alias, uri, uuid, muid or key_id.
       type: str
     transformation_key_type:
-      description: Specify the type of the key. Must be one of name, id, slug, alias, uri, uuid, muid or key_id. If not specified, the type of the key is inferred.
+      description:
+        - Specify the type of the key
+        - Must be one of name, id, slug, alias, uri, uuid, muid or key_id
+        - If not specified, the type of the key is inferred.
       choices: [name, id, slug, alias, uri, uuid, muid, key_id]
       type: str
 """
