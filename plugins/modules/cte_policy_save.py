@@ -18,7 +18,8 @@ short_description: Manage policies as collection of rules that govern data acces
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with CTE Policy API
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -282,6 +283,7 @@ options:
             - deny
             - audit
             - applykey
+          choices: ['permit', 'deny', 'audit', 'applykey']
           type: str
         exclude_process_set:
           description:
@@ -357,12 +359,54 @@ options:
     current_keys:
       description: Properties of the current key
       type: dict
+      suboptions:
+        key_id:
+          description:
+            - Identifier of the key to link with the rule
+            - Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id
+          type: str
+        key_type:
+          description:
+            - Specify the type of the key
+            - Must be one of name, id, slug, alias, uri, uuid, muid or key_id
+            - If not specified, the type of the key is inferred
+          type: str
+          choices:
+            - name
+            - id
+            - slug
+            - alias
+            - uri
+            - uuid
+            - muid
+            - key_id
     is_exclusion_rule:
       description: Whether this is an exclusion rule. If enabled, no need to specify the transformation rule.
       type: bool
     transformation_keys:
       description: Properties of the transformation key
       type: dict
+      suboptions:
+        key_id:
+          description:
+            - Identifier of the key to link with the rule
+            - Supported fields are name, id, slug, alias, uri, uuid, muid, and key_id
+          type: str
+        key_type:
+          description:
+            - Specify the type of the key
+            - Must be one of name, id, slug, alias, uri, uuid, muid or key_id
+            - If not specified, the type of the key is inferred
+          type: str
+          choices:
+            - name
+            - id
+            - slug
+            - alias
+            - uri
+            - uuid
+            - muid
+            - key_id
     ldtRuleId:
       description: An identifier for the CTE LDT Key Rule. Can be an ID of type UUIDv4 or a URI
       type: str
@@ -468,8 +512,8 @@ EXAMPLES = """
         auth_domain_path:
     op_type: add_data_transfer_rule
     policy_id: "policyID"
-    rule_name="datatxrules"
-    key_id=key_id: CTE_standard_pol_key
+    rule_name: "datatxrules"
+    key_id: CTE_standard_pol_key
     resource_set_id: RS-Ans-002
   register: datatxrule
 
@@ -485,8 +529,8 @@ EXAMPLES = """
         auth_domain_path:
     op_type: remove_data_transfer_rule
     policy_id: "policyID"
-    rule_name="datatxrules"
-    rule_id="ruleID"
+    rule_name: "datatxrules"
+    rule_id: "ruleID"
 """
 
 RETURN = """

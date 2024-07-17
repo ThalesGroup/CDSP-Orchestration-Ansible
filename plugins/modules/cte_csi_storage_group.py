@@ -19,7 +19,8 @@ description:
     - Define and manage CipherTrust Transparent Encryption (CTE) Container Storage Interface (CSI) and also add guard policies and clients to the same.
     - This will allow administrator to apply data protection/reveal based on the client or the guard points.
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -96,12 +97,14 @@ options:
     client_list:
       description: List of identifiers of clients to be associated with the client group. This identifier can be the name or UUID.
       type: list
+      elements: str
     policy_list:
       description: List of CSI policy identifiers to be associated with the storage group. This identifier can be the name or UUID.
       type: list
+      elements: str
     guard_enabled:
       description: Enable or disable the GuardPolicy. Set to true to enable, false to disable.
-      type: boolean
+      type: bool
 """
 
 EXAMPLES = """
