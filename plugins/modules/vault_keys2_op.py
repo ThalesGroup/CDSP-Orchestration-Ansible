@@ -215,7 +215,7 @@ options:
     signingAlgo:
         description:
           - This parameter specifies the algorithm to be used for generating the signature for the verification of
-          - "macSignBytes" during import of key material
+          - macSignBytes during import of key material
           - The "wrappingMethod" should be "mac/sign" to verify the signature("macSignBytes") of the key material("material")
           - Only applicable for op_type "export"
         choices: [RSA, RSA-PSS]
