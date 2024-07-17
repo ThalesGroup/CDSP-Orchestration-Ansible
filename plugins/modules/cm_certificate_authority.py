@@ -18,7 +18,8 @@ short_description: Create and manage CipherTrust Manager Local CA
 description:
     - Create and edit local Certificate Authority on CipherTrust Manager
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -126,6 +127,7 @@ options:
     purpose:
       description: server, client or ca
       type: str
+      choices: ['server', 'client', 'ca']
     duration:
       description: Duration in days of certificate. Either duration or notAfter date must be specified.
       type: int
@@ -248,6 +250,7 @@ options:
             - Permitted values are 'RSA' or 'EC' and defaults to 'RSA'
           type: str
           choices: ['RSA', 'EC']
+          default: RSA
         curveid:
           description: Cryptographic curve id for elliptic key
           type: str
@@ -280,6 +283,12 @@ options:
       description:
         - Private Key bytes of the key which is to be used while creating CSR(Algorithm and size should be according to this key).
         - If not given will generate key internally as per algorithm and size.
+      type: str
+    cert_id:
+      description: Certificate ID
+      type: str
+    id:
+      description: ID
       type: str
 """
 
@@ -467,7 +476,7 @@ argument_spec = dict(
     notBefore=dict(type="str"),
     # Revoke Cert
     reason=dict(
-        type="int",
+        type="str",
         choices=[
             "unspecified",
             "keyCompromise",
