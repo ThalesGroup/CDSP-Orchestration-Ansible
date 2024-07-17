@@ -124,7 +124,7 @@ options:
         log_type:
           description: Type of the log
           type: str
-          choices=['Console', 'File', 'Multi']
+          choices: ['Console', 'File', 'Multi']
           default: Console
         log_gmt:
           description: This value specifies if timestamp in logs should be formatted in GMT or not. Default disabled
