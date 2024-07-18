@@ -18,7 +18,8 @@ short_description: Create and manage users in CipherTrust Manager
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with user management API
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -70,6 +71,8 @@ options:
           - Setting it to empty, i.e [], means no authentication method is allowed to the user.
           - If both enable_cert_auth and allowed_auth_methods are provided in the request, enable_cert_auth is ignored.
         type: list
+        elements: str
+        default: ["password"]
     app_metadata:
         description:
             - A schema-less object, which can be used by applications to store information about the resource
@@ -85,9 +88,8 @@ options:
         description:
             - This attribute is required to create a user, but is not included in user resource responses.
             - Can be the name of a connection or "local_account" for a local user, defaults to "local_account".
-        required: false
         type: str
-        default: null
+        default: local_account
     email:
         description: E-mail of the user
         required: false
@@ -115,6 +117,7 @@ options:
               - Default - false
             required: false
             type: bool
+            default: false
     name:
         description: Full name of the user.
         required: false

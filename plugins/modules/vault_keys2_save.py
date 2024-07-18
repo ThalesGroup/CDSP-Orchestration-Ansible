@@ -92,7 +92,7 @@ options:
           - The alias and alias-type must be specified.
           - The alias index is assigned by this operation, and need not be specified.
         type: list
-        element: dict
+        elements: dict
         suboptions:
           alias:
             description: An alias for a key name
