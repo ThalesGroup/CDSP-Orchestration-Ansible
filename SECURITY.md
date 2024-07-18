@@ -41,5 +41,5 @@ Settings users should consider that would impact the security posture of deployi
 
 ## Known security gaps & future enhancements
 
-Security improvements you haven’t gotten to yet.
-Inform users those security controls aren’t in place, and perhaps suggest they contribute an implementation
+Security improvements you haven't gotten to yet.
+Inform users those security controls aren't in place, and perhaps suggest they contribute an implementation
