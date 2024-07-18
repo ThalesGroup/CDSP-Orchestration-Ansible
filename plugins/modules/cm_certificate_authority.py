@@ -142,7 +142,17 @@ options:
       type: str
     reason:
       description: Specify one of the reason.
-      choices: ['unspecified', 'keyCompromise', 'cACompromise', 'affiliationChanged', 'superseded', 'cessationOfOperation', 'certificateHold', 'removeFromCRL', 'privilegeWithdrawn', 'aACompromise']
+      choices:
+        - unspecified
+        - keyCompromise
+        - cACompromise
+        - affiliationChanged
+        - superseded
+        - cessationOfOperation
+        - certificateHold
+        - removeFromCRL
+        - privilegeWithdrawn
+        - aACompromise
       type: str
     csrParams:
       description:
@@ -212,7 +222,15 @@ options:
           type: int
         signatureAlgorithm:
           description: Signature algorithm used for creating the CSR.
-          choices: ['sha512WithRSA', 'sha384WithRSA', 'sha256WithRSA', 'sha1WithRSA', 'ecdsaWithSHA512', 'ecdsaWithSHA384', 'ecdsaWithSHA256', 'ecdsaWithSHA1']
+          choices:
+            - sha512WithRSA
+            - sha384WithRSA
+            - sha256WithRSA
+            - sha1WithRSA
+            - ecdsaWithSHA512
+            - ecdsaWithSHA384
+            - ecdsaWithSHA256
+            - ecdsaWithSHA1
           type: str
         subjectKeyIdentifierHash:
           description: If set to true, the Subject Key Identifier extension is set to the hash specified by RFC5280, else unset

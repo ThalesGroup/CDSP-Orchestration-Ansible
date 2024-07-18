@@ -63,7 +63,7 @@
             include_subfolders: true
             hdfs: false
       ignore_errors: true
-      
+
     - name: "Create CTE Policy"
       thalesgroup.ciphertrust.cte_policy_save:
         localNode: "{{ this_node_connection_string }}"
@@ -89,8 +89,6 @@
         data_transform_rules:
           - key_id: CTE_standard_pol_key
             resource_set_id: RS-Ans-001
-        name: Ansible-CTE-Policy-001
-        description: "Created using Ansible"
       ignore_errors: true
       register: policy
 
