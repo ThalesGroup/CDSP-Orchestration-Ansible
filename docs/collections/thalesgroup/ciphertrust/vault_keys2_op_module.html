@@ -13,7 +13,7 @@
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
+
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
@@ -53,16 +53,16 @@
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
 
-          
-          
+
+
           <a href="../../../index.html" class="icon icon-home">
             Ansible collections
           </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
 
 <div class="version">
-  
-    
-  
+
+
+
 </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -73,7 +73,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-  
+
               <p class="caption" role="heading"><span class="caption-text">Collections:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Collection Index</a><ul class="current">
@@ -123,9 +123,9 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
 
-  
+
            <div itemprop="articleBody">
-             
+
   <span class="target" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-op-module"></span><section id="thalesgroup-ciphertrust-vault-keys2-op-module-perform-operations-on-keys">
 <h1>thalesgroup.ciphertrust.vault_keys2_op module – Perform operations on keys<a class="headerlink" href="#thalesgroup-ciphertrust-vault-keys2-op-module-perform-operations-on-keys" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
@@ -183,7 +183,7 @@
 </div></td>
 <td><div class="ansible-option-cell"><p>Date/time when the object was first believed to be compromised, if known.</p>
 <p>Only valid if the revocation reason is CACompromise or KeyCompromise, otherwise ignored.</p>
-<p>Defaults to key’s creation time.</p>
+<p>Defaults to key's creation time.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -191,7 +191,7 @@
 <a class="ansibleOptionLink" href="#parameter-encoding" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Specifies the encoding used for the material field.</p>
-<p>For wrapping scenarios and PKCS12 format, the only valid option is base64. In case of “Symmetric Keys” when ‘format’ parameter has ‘base64’ value and ‘encoding’ parameter also contains some value. The encoding parameter takes the priority. Options for Symmetric Keys are hex or base64</p>
+<p>For wrapping scenarios and PKCS12 format, the only valid option is base64. In case of “Symmetric Keys” when 'format' parameter has 'base64' value and 'encoding' parameter also contains some value. The encoding parameter takes the priority. Options for Symmetric Keys are hex or base64</p>
 <p>Only applicable for op_type “export”</p>
 </div></td>
 </tr>
@@ -246,7 +246,7 @@
 <div class="ansibleOptionAnchor" id="parameter-keyFormat"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-op-module-parameter-keyformat"><strong>keyFormat</strong></p>
 <a class="ansibleOptionLink" href="#parameter-keyFormat" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The format of the returned key material. If the algorithm is ‘rsa’ or ‘ec’. The value can be one of ‘pkcs1’, ‘pkcs8’ , ‘pkcs12’, or ‘jwe’. The default value is ‘pkcs8’. If algorithm is ‘rsa’ and format is ‘pkcs12’, the key material will contain the base64-encoded value of the PFX file. The value ‘base64’ is used for symmetric keys, for which the format of the returned key material is base64-encoded if wrapping is applied (i.e., either ‘wrapKeyName’ or ‘wrapPublicKey’ is specified),otherwise, the format is hex-encoded, unless ‘base64’ is given. If the “format” is ‘jwe’ then the “material” for the symmetric key, asymmetric key or certificate will be wrapped in JWE format. “wrapKeyName”(should be a public key) or “wrapPublicKey” and “wrapJWE” parameters are required for ‘jwe’ format. The value ‘opaque’ is supported for symmetric keys with ‘opaque’ format only.</p>
+<td><div class="ansible-option-cell"><p>The format of the returned key material. If the algorithm is 'rsa' or 'ec'. The value can be one of 'pkcs1', 'pkcs8' , 'pkcs12', or 'jwe'. The default value is 'pkcs8'. If algorithm is 'rsa' and format is 'pkcs12', the key material will contain the base64-encoded value of the PFX file. The value 'base64' is used for symmetric keys, for which the format of the returned key material is base64-encoded if wrapping is applied (i.e., either 'wrapKeyName' or 'wrapPublicKey' is specified),otherwise, the format is hex-encoded, unless 'base64' is given. If the “format” is 'jwe' then the “material” for the symmetric key, asymmetric key or certificate will be wrapped in JWE format. “wrapKeyName”(should be a public key) or “wrapPublicKey” and “wrapJWE” parameters are required for 'jwe' format. The value 'opaque' is supported for symmetric keys with 'opaque' format only.</p>
 <p>Only applicable for op_type “export”</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
@@ -702,7 +702,7 @@
 <div class="ansibleOptionAnchor" id="parameter-wrapPublicKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-op-module-parameter-wrappublickey"><strong>wrapPublicKey</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wrapPublicKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>If the algorithm is ‘aes’,’tdes’,’hmac-*’, ‘seed’ or ‘aria’, this value will be used to encrypt the returned key material. This value is ignored for other algorithms. Value must be an RSA public key, PEM-encoded public key in either PKCS1 or PKCS8 format, or a PEM-encoded X.509 certificate. If set, the returned ‘material’ value will be a Base64 encoded PKCS#1 v1.5 encrypted key. View “wrapPublicKey” in export parameters for more information. Only applicable if ‘includeMaterial’ is true.</p>
+<td><div class="ansible-option-cell"><p>If the algorithm is 'aes','tdes','hmac-*', 'seed' or 'aria', this value will be used to encrypt the returned key material. This value is ignored for other algorithms. Value must be an RSA public key, PEM-encoded public key in either PKCS1 or PKCS8 format, or a PEM-encoded X.509 certificate. If set, the returned 'material' value will be a Base64 encoded PKCS#1 v1.5 encrypted key. View “wrapPublicKey” in export parameters for more information. Only applicable if 'includeMaterial' is true.</p>
 <p>Only applicable for op_type “export”</p>
 </div></td>
 </tr>
@@ -710,8 +710,8 @@
 <div class="ansibleOptionAnchor" id="parameter-wrapPublicKeyPadding"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-op-module-parameter-wrappublickeypadding"><strong>wrapPublicKeyPadding</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wrapPublicKeyPadding" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>WrapPublicKeyPadding specifies the type of padding scheme that needs to be set when importing the Key using the specified wrapkey. Accepted values are “pkcs1”, “oaep”, “oaep256”, “oaep384”, “oaep512”, and will default to “pkcs1” when ‘wrapPublicKeyPadding’ is not set and ‘WrapPublicKey’ is set.</p>
-<p>While creating a new key, wrapPublicKeyPadding parameter should be specified only if ‘includeMaterial’ is true. In this case, key will get created and in response wrapped material using specified wrapPublicKeyPadding and other wrap parameters will be returned.</p>
+<td><div class="ansible-option-cell"><p>WrapPublicKeyPadding specifies the type of padding scheme that needs to be set when importing the Key using the specified wrapkey. Accepted values are “pkcs1”, “oaep”, “oaep256”, “oaep384”, “oaep512”, and will default to “pkcs1” when 'wrapPublicKeyPadding' is not set and 'WrapPublicKey' is set.</p>
+<p>While creating a new key, wrapPublicKeyPadding parameter should be specified only if 'includeMaterial' is true. In this case, key will get created and in response wrapped material using specified wrapPublicKeyPadding and other wrap parameters will be returned.</p>
 <p>Only applicable for op_type “export”</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
@@ -798,7 +798,7 @@
 
            </div>
           </div>
-          
+
 
 <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="usermgmt_users_save_module.html" class="btn btn-neutral float-left" title="thalesgroup.ciphertrust.usermgmt_users_save module – Create and manage users in CipherTrust Manager" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
@@ -811,8 +811,8 @@
     <p>&#169; Copyright ThalesGroup.</p>
   </div>
 
-  
-   
+
+
 
 </footer>
         </div>
