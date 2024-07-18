@@ -207,10 +207,12 @@ def revoke(**kwargs):
 
     for key, value in kwargs.items():
         if (
-            key not in ["node", "cm_key_id", "key_version", "id_type"]
+            key not in ["node", "cm_key_id", "key_version", "id_type", "messageStr"]
             and value is not None
         ):
             request[key] = value
+        if (key == 'messageStr'):
+            request["message"] = value
 
     payload = json.dumps(request)
 
@@ -250,10 +252,12 @@ def reactivate(**kwargs):
 
     for key, value in kwargs.items():
         if (
-            key not in ["node", "cm_key_id", "key_version", "id_type"]
+            key not in ["node", "cm_key_id", "key_version", "id_type", "messageStr"]
             and value is not None
         ):
             request[key] = value
+        if (key == 'messageStr'):
+            request["message"] = value
 
     payload = json.dumps(request)
 

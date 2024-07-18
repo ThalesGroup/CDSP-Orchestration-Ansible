@@ -19,7 +19,7 @@ description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with key operations API
 version_added: "1.0.0"
 author:
-    - Anurag Jain, Developer Advocate Thales Group
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -116,7 +116,7 @@ options:
         type: str
         required: false
         default: null
-    message:
+    messageStr:
         description:
           - Message explaining revocation.
           - Message explaining reactivation.
@@ -610,7 +610,7 @@ argument_spec = dict(
         ],
     ),
     compromiseOccurrenceDate=dict(type="str", required=False),
-    message=dict(type="str", required=False),
+    messageStr=dict(type="str", required=False),
     combineXts=dict(type="bool", required=False, default=False),
     encoding=dict(type="str", required=False),
     keyFormat=dict(
@@ -751,7 +751,7 @@ def main():
                 id_type=module.params.get("id_type"),
                 reason=module.params.get("reason"),
                 compromiseOccurrenceDate=module.params.get("compromiseOccurrenceDate"),
-                message=module.params.get("message"),
+                messageStr=module.params.get("messageStr"),
             )
             result["response"] = response
         except CMApiException as api_e:
@@ -773,7 +773,7 @@ def main():
                 key_version=module.params.get("key_version"),
                 id_type=module.params.get("id_type"),
                 reason=module.params.get("reason"),
-                message=module.params.get("message"),
+                messageStr=module.params.get("messageStr"),
             )
             result["response"] = response
         except CMApiException as api_e:

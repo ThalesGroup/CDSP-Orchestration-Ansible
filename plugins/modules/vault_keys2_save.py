@@ -16,9 +16,11 @@ DOCUMENTATION = """
 module: vault_keys2_create
 short_description: Create or update keys in CipherTrust Manager managed vault
 description:
-    - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with keys management API
+    - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs
+    - For keys management API
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -79,6 +81,11 @@ options:
         required: false
         choices: [aes, tdes, rsa, ec, hmac-sha1, hmac-sha256, hmac-sha384, hmac-sha512, seed, aria, opaque]
         default: aes
+    password:
+        description:
+          - For pkcs12 format, either password or secretDataLink should be specified
+          - This should be the base64 encoded value of the password.
+        type: str
     aliases:
         description:
           - Aliases associated with the key.
@@ -352,7 +359,8 @@ options:
         required: false
         default: false
     processStartDate:
-        description: Date/time when a Managed Symmetric Key Object MAY begin to be used to process cryptographically protected information (e.g., decryption or unwrapping)
+        description:
+          - Date/time when a Managed Symmetric Key Object MAY begin to be used to process cryptographically protected information
         type: str
         required: false
         default: null
@@ -364,8 +372,7 @@ options:
         default: null
     publicKeyParameters:
         description: Information needed to create a public key
-        type: list
-        element: dict
+        type: dict
         suboptions:
           activationDate:
             description: Date/time the object becomes active
@@ -378,7 +385,7 @@ options:
               - The alias and alias-type must be specified.
               - The alias index is assigned by this operation, and need not be specified.
             type: list
-            element: dict
+            elements: dict
             suboptions:
               alias:
                 description: alias
@@ -496,7 +503,8 @@ options:
         default: null
     signingAlgo:
         description:
-            - This parameter specifies the algorithm to be used for generating the signature for the verification of the "macSignBytes" during import of key material.
+            - This parameter specifies the algorithm to be used for generating the signature
+            - Signature for the verification of the "macSignBytes" during import of key material.
             - The "wrappingMethod" should be "mac/sign" to verify the signature("macSignBytes") of the key material("material").
         choices: [RSA, RSA-PSS]
         type: str
@@ -523,7 +531,7 @@ options:
         type: bool
         required: false
         default: false
-    usageMaske:
+    usageMask:
         description:
           - Cryptographic usage mask
           - Add the usage masks to allow certain usages
@@ -583,9 +591,8 @@ options:
             default: null
           okmLen:
             description: The desired output key material length in integer.
-            type: str
+            type: int
             required: false
-            default: null
           salt:
             description: Salt is an optional hex value for HKDF based derivation.
             type: str
@@ -601,10 +608,11 @@ options:
         default: null
     wrapKeyName:
         description:
-          - While creating a new key, If 'includeMaterial' is true, then only the key material will be wrapped with material of the specified key name.
+          - While creating a new key, If 'includeMaterial' is true, then only the key material will be wrapped with key material.
           - The response "material" property will be the base64 encoded ciphertext
           - While importing a key, the key material will be unwrapped with material of the specified key name
-          - The only applicable "wrappingMethod" for the unwrapping is "encrypt" and the wrapping key has to be an AES key or an RSA private key.
+          - The only applicable "wrappingMethod" for the unwrapping is "encrypt"
+          - and the wrapping key has to be an AES key or an RSA private key.
         type: str
         required: false
         default: null
@@ -626,17 +634,24 @@ options:
             required: false
             default: null
           iteration:
-            description: Iteration count increase the cost of producing keys from a password. Iteration must be in range of 1 to 1,00,00,000.
+            description:
+              - Iteration count increase the cost of producing keys from a password
+              - Iteration must be in range of 1 to 1,00,00,000.
             type: int
             required: false
             default: null
           password:
-            description: Base password to generate derive keys. It cannot be used in conjunction with passwordidentifier. password must be in range of 8 bytes to 128 bytes.
+            description:
+              - Base password to generate derive keys
+              - It cannot be used in conjunction with passwordidentifier
+              - Password must be in range of 8 bytes to 128 bytes.
             type: str
             required: false
             default: null
           passwordIdentifier:
-            description: Secret password identifier for password. It cannot be used in conjunction with password.
+            description:
+              - Secret password identifier for password
+              - It cannot be used in conjunction with password.
             type: str
             required: false
             default: null
@@ -647,7 +662,10 @@ options:
             required: false
             default: null
           purpose:
-            description: User defined purpose. If specified will be prefixed to pbeSalt. pbePurpose must not be greater than 128 bytes.
+            description:
+              - User defined purpose
+              - If specified will be prefixed to pbeSalt
+              - pbePurpose must not be greater than 128 bytes.
             type: str
             required: false
             default: null
@@ -788,9 +806,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 )
 
 _alias = dict(
-    alias=dict(type="str", required=True),
-    index=dict(type="int", required=False),
-    type=dict(type="str", required=False),
+    alias=dict(type="str"),
+    index=dict(type="int"),
+    type=dict(type="str"),
 )
 _cte = dict(
     persistent_on_client=dict(type="bool"),
