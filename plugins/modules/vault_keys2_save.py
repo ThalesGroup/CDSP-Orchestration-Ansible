@@ -136,7 +136,21 @@ options:
         description:
           - Cryptographic curve id for elliptic key.
           - Key algorithm must be 'EC'
-        choices: [secp224k1, secp224r1, secp256k1, secp384r1, secp521r1, prime256v1, brainpoolP224r1, brainpoolP224t1, brainpoolP256r1, brainpoolP256t1, brainpoolP384r1, brainpoolP384t1, brainpoolP512r1, brainpoolP512t1]
+        choices:
+          - secp224k1
+          - secp224r1
+          - secp256k1
+          - secp384r1
+          - secp521r1
+          - prime256v1
+          - brainpoolP224r1
+          - brainpoolP224t1
+          - brainpoolP256r1
+          - brainpoolP256t1
+          - brainpoolP384r1
+          - brainpoolP384t1
+          - brainpoolP512r1
+          - brainpoolP512t1
         type: str
         required: false
         default: null
@@ -622,7 +636,18 @@ options:
           hashAlgorithm:
             description: Underlying hashing algorithm that acts as a pseudorandom function to generate derive keys.
             type: str
-            choices: [hmac-sha1, hmac-sha224, hmac-sha256, hmac-sha384, hmac-sha512, hmac-sha512/224, hmac-sha512/256, hmac-sha3-224, hmac-sha3-256, hmac-sha3-384, hmac-sha3-512]
+            choices:
+              - hmac-sha1
+              - hmac-sha224
+              - hmac-sha256
+              - hmac-sha384
+              - hmac-sha512
+              - hmac-sha512/224
+              - hmac-sha512/256
+              - hmac-sha3-224
+              - hmac-sha3-256
+              - hmac-sha3-384
+              - hmac-sha3-512
             required: false
             default: null
           dklen:
@@ -683,7 +708,8 @@ options:
     wrapPublicKeyPadding:
         description:
           - WrapPublicKeyPadding specifies the type of padding scheme that needs to be set when importing the Key using the specified wrapkey
-          - Accepted values are "pkcs1", "oaep", "oaep256", "oaep384", "oaep512", and will default to "pkcs1" when 'wrapPublicKeyPadding' is not set and 'WrapPublicKey' is set.
+          - Accepted values are "pkcs1", "oaep", "oaep256", "oaep384", "oaep512"
+          - Will default to "pkcs1" when 'wrapPublicKeyPadding' is not set and 'WrapPublicKey' is set.
           - While creating a new key, wrapPublicKeyPadding parameter should be specified only if 'includeMaterial' is true
           - In this case, key will get created and in response wrapped material using specified wrapPublicKeyPadding and other wrap parameters will be returned.
         type: str

@@ -108,12 +108,6 @@ def sign(**kwargs):
 
 
 def join(master, node, cert, caChain, mkek_blob):
-    master = master
-    node = node
-    cert = cert
-    caChain = caChain
-    mkek_blob = mkek_blob
-
     master_cm = ast.literal_eval(master)
     node_cm = ast.literal_eval(node)
 

@@ -74,19 +74,16 @@ options:
     app_metadata:
         description:
           - A schema-less object, which can be used by applications to store information about the resource
-          - app_metadata is typically used by applications to store information which the end-users are not themselves allowed to change, like group membership
         type: dict
         default: null
     client_metadata:
         description:
-          - A schema-less object, which can be used by applications to store information about the resource
-          - client_metadata is typically used by applications to store information about the resource, such as client preferences
+          - A schema-less object, which can be used by applications to store information about the resource such as client preferences
         type: dict
         default: null
     user_metadata:
         description:
-          - A schema-less object, which can be used by applications to store information about the resource.
-          - user_metadata is typically used by applications to store information about the resource which the end-users are allowed to modify, such as user preferences.
+          - A schema-less object, which can be used by applications to store information about the resource such as end-user preferences
         type: dict
         default: null
 

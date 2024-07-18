@@ -132,7 +132,10 @@ options:
       description: Duration in days of certificate. Either duration or notAfter date must be specified.
       type: int
     notAfter:
-      description: End date of certificate. Either notAfter or duration must be specified. notAfter overrides duration if both are given.
+      description:
+        - End date of certificate
+        - Either notAfter or duration must be specified
+        - notAfter overrides duration if both are given.
       type: str
     notBefore:
       description: Start date of certificate
@@ -142,7 +145,8 @@ options:
       choices: ['unspecified', 'keyCompromise', 'cACompromise', 'affiliationChanged', 'superseded', 'cessationOfOperation', 'certificateHold', 'removeFromCRL', 'privilegeWithdrawn', 'aACompromise']
       type: str
     csrParams:
-      description: Parameters to be used during creating CSR like the subject, x509 extensions and signature algorithm used.
+      description:
+        - Parameters to be used during creating CSR like the subject, x509 extensions and signature algorithm used.
       type: dict
       suboptions:
         cn:

@@ -58,7 +58,22 @@ options:
           required: true
     op_type:
       description: Operation to be performed
-      choices: ['create', 'patch', 'add_data_transfer_rule', 'add_ldt_rule', 'add_key_rule', 'add_security_rule', 'patch_data_transfer_rule', 'patch_ldt_rule', 'patch_key_rule', 'patch_security_rule', 'patch_idt_rule', 'remove_data_transfer_rule', 'remove_ldt_rule', 'remove_key_rule', 'remove_security_rule']
+      choices:
+        - create
+        - patch
+        - add_data_transfer_rule
+        - add_ldt_rule
+        - add_key_rule
+        - add_security_rule
+        - patch_data_transfer_rule
+        - patch_ldt_rule
+        - patch_key_rule
+        - patch_security_rule
+        - patch_idt_rule
+        - remove_data_transfer_rule
+        - remove_ldt_rule
+        - remove_key_rule
+        - remove_security_rule
       required: true
       type: str
     policy_id:

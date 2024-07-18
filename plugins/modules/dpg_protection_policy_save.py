@@ -113,7 +113,9 @@ options:
       type: bool
     use_external_versioning:
       description:
-      - If set to true, external versioning is enabled for the protection policy. The version details are stored in a separate external parameter. The default value is false.
+      - If set to true, external versioning is enabled for the protection policy
+      - The version details are stored in a separate external parameter
+      - The default value is false
       - Added in CM v2.12
       required: false
       type: bool

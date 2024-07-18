@@ -76,7 +76,7 @@ options:
     app_metadata:
         description:
             - A schema-less object, which can be used by applications to store information about the resource
-            - app_metadata is typically used by applications to store information which the end-users are not themselves allowed to change, like group membership
+            - app_metadata is typically used by applications to store end-user information like group membership
         required: false
         type: dict
         default: null
@@ -143,7 +143,9 @@ options:
         required: false
         type: str
     user_metadata:
-        description: A schema-less object, which can be used by applications to store information about the resource. user_metadata is typically used by applications to store information about the resource which the end-users are allowed to modify, such as user preferences.
+        description:
+          - A schema-less object, which can be used by applications to store information about the resource
+          - user_metadata is typically used by applications to store end-user information such as user preferences.
         required: false
         type: dict
         default: null

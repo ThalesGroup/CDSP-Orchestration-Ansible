@@ -62,7 +62,18 @@ options:
           required: true
     op_type:
       description: Operation to be performed
-      choices: ['create', 'patch', 'add_guard_point', 'unenroll', 'delete', 'delete_id', 'auth_binaries', 'ldt_pause', 'patch_guard_point', 'gp_unguard', 'gp_enable_early_access']
+      choices:
+        - create
+        - patch
+        - add_guard_point
+        - unenroll
+        - delete
+        - delete_id
+        - auth_binaries
+        - ldt_pause
+        - patch_guard_point
+        - gp_unguard
+        - gp_enable_early_access
       required: true
       type: str
     id:
@@ -414,7 +425,7 @@ _guard_point_params = dict(
     diskgroup_name=dict(type="str"),
     early_access=dict(type="bool"),
     intelligent_protection=dict(type="bool"),
-    #is_esg_capable_device=dict(type="bool"),
+    # is_esg_capable_device=dict(type="bool"),
     is_idt_capable_device=dict(type="bool"),
     mfa_enabled=dict(type="bool"),
     network_share_credentials_id=dict(type="str"),

@@ -70,7 +70,29 @@ options:
         description:
             - This is a string type of option that can hold the resource type.
         required: true
-        choices: ['keys', 'protection-policies', 'access-policies', 'user-sets', 'interfaces', 'character-sets', 'users', 'dpg-policies', 'client-profiles', 'masking-formats', 'resourceset', 'signatureset', 'userset', 'processset', 'cte-policy', 'cte-client-group', 'csigroup', 'cte-client', 'azure-key-vault', 'azure-secret', 'azure-certificate', 'azure-key']
+        choices:
+          - keys
+          - protection-policies
+          - access-policies
+          - user-sets
+          - interfaces
+          - character-sets
+          - users
+          - dpg-policies
+          - client-profiles
+          - masking-formats
+          - resourceset
+          - signatureset
+          - userset
+          - processset
+          - cte-policy
+          - cte-client-group
+          - csigroup
+          - cte-client
+          - azure-key-vault
+          - azure-secret
+          - azure-certificate
+          - azure-key
         type: str
     query_param_value:
         description:

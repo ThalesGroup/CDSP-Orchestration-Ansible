@@ -325,7 +325,7 @@ _guard_point_params = dict(
     diskgroup_name=dict(type="str"),
     early_access=dict(type="bool"),
     intelligent_protection=dict(type="bool"),
-    #is_esg_capable_device=dict(type="bool"),
+    # is_esg_capable_device=dict(type="bool"),
     is_idt_capable_device=dict(type="bool"),
     mfa_enabled=dict(type="bool"),
     network_share_credentials_id=dict(type="str"),

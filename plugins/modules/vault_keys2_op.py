@@ -106,7 +106,17 @@ options:
           - DeactivatedToActiveProtectStop
           - Required if op_type is either revoke or reactivate
         type: str
-        choices: ['Unspecified', 'KeyCompromise', 'CACompromise', 'AffiliationChanged', 'Superseded', 'CessationOfOperation', 'PrivilegeWithdrawn', 'DeactivatedToActive', 'ActiveProtectStopToActive', 'DeactivatedToActiveProtectStop']
+        choices:
+          - Unspecified
+          - KeyCompromise
+          - CACompromise
+          - AffiliationChanged
+          - Superseded
+          - CessationOfOperation
+          - PrivilegeWithdrawn
+          - DeactivatedToActive
+          - ActiveProtectStopToActive
+          - DeactivatedToActiveProtectStop
         default: null
     compromiseOccurrenceDate:
         description:
@@ -310,7 +320,18 @@ options:
           hashAlgorithm:
             description: Underlying hashing algorithm that acts as a pseudorandom function to generate derive keys.
             type: str
-            choices: [hmac-sha1, hmac-sha224, hmac-sha256, hmac-sha384, hmac-sha512, hmac-sha512/224, hmac-sha512/256, hmac-sha3-224, hmac-sha3-256, hmac-sha3-384, hmac-sha3-512]
+            choices:
+              - hmac-sha1
+              - hmac-sha224
+              - hmac-sha256
+              - hmac-sha384
+              - hmac-sha512
+              - hmac-sha512/224
+              - hmac-sha512/256
+              - hmac-sha3-224
+              - hmac-sha3-256
+              - hmac-sha3-384
+              - hmac-sha3-512
             required: false
             default: null
           dklen:
