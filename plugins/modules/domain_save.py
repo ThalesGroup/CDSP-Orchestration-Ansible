@@ -18,7 +18,8 @@ short_description: Create or manage domains
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with domains management API
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -67,12 +68,10 @@ options:
     name:
         description: The name of the domain
         required: true
-        default: none
         type: str
     admins:
         description: List of administrators for the domain
         required: true
-        default: none
         type: list
         element: str
     allow_user_management:
@@ -83,12 +82,12 @@ options:
     hsm_connection_id:
         description: The ID of the HSM connection. Required for HSM-anchored domains.
         required: false
-        default: none
         type: str
     hsm_kek_label:
-        description: Optional name field for the domain KEK for an HSM-anchored domain. If not provided, a random UUID is assigned for KEK label.
+        description:
+          - Optional name field for the domain KEK for an HSM-anchored domain.
+          - If not provided, a random UUID is assigned for KEK label.
         required: false
-        default: none
         type: str
     meta:
         description: Optional end-user or service data stored with the domain.
@@ -96,19 +95,19 @@ options:
         default: null
         type: dict
     parent_ca_id:
-        description: This optional parameter is the ID or URI of the parent domain's CA. This CA is used for signing the default CA of a newly created sub-domain. The oldest CA in the parent domain is used if this value is not supplied.
+        description:
+          - This optional parameter is the ID or URI of the parent domain's CA.
+          - This CA is used for signing the default CA of a newly created sub-domain.
+          - The oldest CA in the parent domain is used if this value is not supplied.
         required: false
-        default: none
         type: str
     connection_id:
         description: HSM connection ID pertaining to the domain KEK
         required: false
-        default: none
         type: str
     domain_kek_label:
         description: Label of the target domain KEK
         required: false
-        default: none
         type: str
 """
 

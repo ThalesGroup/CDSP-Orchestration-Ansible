@@ -16,9 +16,11 @@ DOCUMENTATION = """
 module: interface_save
 short_description: Create or update an interface or service CipherTrust Manager is hosting
 description:
-    - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with interface management API
+    - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs
+    - For the interface management API
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -60,6 +62,9 @@ options:
         choices: [create, patch]
         required: true
         type: str
+    allow_unregistered:
+        description: Flag to allow unregistered clients
+        type: bool
     interface_id:
         description:
             - Identifier of the interface to be patched
@@ -67,14 +72,17 @@ options:
         type: str
     port:
         description:
-            - The new interface will listen on the specified port. The port number should not be negative, 0 or the one already in-use.
+            - The new interface will listen on the specified port
+            - The port number should not be negative, 0 or the one already in-use.
         required: true
         type: int
     auto_gen_ca_id:
         description:
-            - Auto-generate a new server certificate on server startup using the identifier (URI) of a Local CA resource if the current server certificate is issued by a different Local CA.
-            - This is especially useful when a new node joins the cluster. In this case, the existing data of the joining node is overwritten by the data in the cluster. A new server certificate is generated on the joining node using the existing Local CA of the cluster.
-            - Auto-generation of the server certificate can be disabled by setting auto_gen_ca_id to an empty string ("") to allow full control over the server certificate.
+            - Auto-generate a new server certificate on server startup using the identifier (URI) of a Local CA resource
+            - This is especially useful when a new node joins the cluster
+            - In this case, the existing data of the joining node is overwritten by the data in the cluster
+            - A new server certificate is generated on the joining node using the existing Local CA of the cluster.
+            - Auto-generation of the server certificate can be disabled by setting auto_gen_ca_id to an empty string
         required: false
         type: str
     auto_registration:
@@ -101,12 +109,17 @@ options:
         default: null
         type: int
     custom_uid_v2:
-        description: This flag specifies which version of custom uid feature is to be used for KMIP interface. If it is set to true, new implementation i.e. Custom uid version 2 will be used.
+        description:
+          - This flag specifies which version of custom uid feature is to be used for KMIP interface
+          - If it is set to true, new implementation i.e. Custom uid version 2 will be used.
         required: false
         default: null
         type: bool
     default_connection:
-        description: The default connection may be "local_account" for local authentication or the LDAP domain for LDAP authentication. This value is applied when the username does not embed the connection name (e.g. "jdoe" effectively becomes "local_account|jdoe"). This value only applies to NAE only and is ignored if set for web and KMIP interfaces.
+        description:
+          - The default connection may be "local_account" for local authentication or the LDAP domain for LDAP authentication
+          - This value is applied when the username does not embed the connection name (e.g. "jdoe" effectively becomes "local_account|jdoe")
+          - This value only applies to NAE only and is ignored if set for web and KMIP interfaces.
         required: false
         type: str
     interface_type:
@@ -121,7 +134,7 @@ options:
         type: str
     kmip_enable_hard_delete:
         description:
-          - Enables hard delete of keys on KMIP Destroy operation, that is both meta-data and material will be removed from CipherTrust Manager for the key being deleted.
+          - Enables hard delete of keys on KMIP Destroy operation
           - By default, only key material is removed and meta-data is preserved with the updated key state.
           - This setting applies only to KMIP interface.
           - Should be set to 1 for enabling the feature or 0 for returning to default behavior.
@@ -143,6 +156,7 @@ options:
     meta:
         description: Meta information related to interface
         required: false
+        type: dict
         suboptions:
           nae:
             description: Meta information related to NAE interface
@@ -165,7 +179,7 @@ options:
         type: str
     mode:
         description:
-          - The interface mode can be one of no-tls-pw-opt, no-tls-pw-req, unauth-tls-pw-opt, tls-cert-opt-pw-opt, tls-pw-opt, tls-pw-req, tls-cert-pw-opt, or tls-cert-and-pw. Default mode is no-tls-pw-opt.
+          - Interface mode
         required: false
         default: no-tls-pw-opt
         choices:
@@ -193,24 +207,24 @@ options:
         type: str
     trusted_cas:
         description:
-          - Collection of local and external CA IDs to trust for client authentication. See section "Certificate Authority" for more details.
+          - Collection of local and external CA IDs to trust for client authentication
+          - See section "Certificate Authority" for more details.
         type: dict
-        default: null
-        required: false
         suboptions:
           external:
             description: A list of External CA IDs
             type: list
-            element: str
-            default: none
-            required: false
+            elements: str
           local:
             description: A list of Local CA IDs
             type: list
-            element: str
-            required: false
+            elements: str
     local_auto_gen_attributes:
-      description: Local CSR parameters for interface's certificate. These are for the local node itself, and they do not affect other nodes in the cluster. This gives user a convenient way to supply custom fields for automatic interface certification generation. Without them, the system defaults are used.
+      description:
+        - Local CSR parameters for interface's certificate
+        - These are for the local node itself, and they do not affect other nodes in the cluster
+        - This gives user a convenient way to supply custom fields for automatic interface certification generation
+        - Without them, the system defaults are used.
       type: dict
       required: false
       default: null
@@ -238,13 +252,34 @@ options:
           description: Name fields like O, OU, L, ST, C
           type: list
           elements: dict
-          required: false
+          suboptions:
+            C:
+              description:
+                - Country, for example "US"
+              type: str
+            L:
+              description:
+                - Location, for example "Belcamp"
+              type: str
+            O:
+              description:
+                - Organization, for example "Thales Group"
+              type: str
+            OU:
+              description:
+                - Organizational Unit, for example "RnD"
+              type: str
+            ST:
+              description:
+                - State/province, for example "MD"
+              type: str
         uid:
           description: User ID
           type: str
           required: false
     tls_ciphers:
-      description: TLS Ciphers contain the list of cipher suites available in the system for the respective interfaces (KMIP, NAE & WEB) for TLS handshake.
+      description:
+        - TLS Ciphers contain the list of cipher suites available in the system for TLS handshake.
       type: dict
       required: false
       default: null
