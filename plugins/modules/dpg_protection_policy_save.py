@@ -19,7 +19,8 @@ description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with domains management API
     - Refer https://thalesdocs.com/ctp/con/dpg/latest/admin/index.html for API documentation
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -64,6 +65,14 @@ options:
     policy_name:
       description:
         - Identifier of the protection policy to be patched
+      type: str
+    access_policy_name:
+      description:
+        - Name of access policy to be associated with the protection policy.
+      type: str
+    masking_format_id:
+      description:
+        - ID of the Static Masking Format
       type: str
     algorithm:
       description: Algorithm to be used during crypto operations

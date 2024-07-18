@@ -19,7 +19,8 @@ description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with user sets management API
     - Refer https://thalesdocs.com/ctp/con/dpg/latest/admin/index.html for API documentation
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -75,7 +76,6 @@ options:
       description: List of users to be added in user set
       type: list
       elements: str
-      default: []
       required: false
 """
 

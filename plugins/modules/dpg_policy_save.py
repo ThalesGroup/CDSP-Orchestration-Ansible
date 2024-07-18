@@ -19,7 +19,8 @@ description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with DPG policy API
     - Refer https://thalesdocs.com/ctp/con/dpg/latest/admin/index.html for API documentation
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -58,7 +59,7 @@ options:
           required: true
     op_type:
       description: Operation to be performed
-      choices: [create, patch]
+      choices: ['create', 'patch', 'add-api-url', 'update-api-url', 'delete-api-url']
       required: true
       type: str
     policy_id:
@@ -73,10 +74,13 @@ options:
       description: Description of the DPG policy
       type: str
       required: false
+    api_url_id:
+      description: API URL ID to be updated
+      type: str
     proxy_config:
       description: List of API urls to be added to the proxy configuration
       type: list
-      element: dict
+      elements: dict
       required: false
       suboptions:
         api_url:

@@ -18,7 +18,8 @@ short_description: Perform operations on CipherTrust Manager interface
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with interface actions API
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
   localNode:
       description:
@@ -57,7 +58,7 @@ options:
           required: true
   op_type:
       description: Operation to be performed
-      choices: [put_certificate, enable, disable, restore-default-tls-ciphers, csr, auto-gen-server-cert, use-certificate]
+      choices: ['put_certificate', 'get_certificate', 'enable', 'disable', 'restore-default-tls-ciphers', 'csr', 'auto-gen-server-cert', 'use-certificate']
       required: true
       type: str
   interface_id:
@@ -77,11 +78,12 @@ options:
       - The format of the certificate data (PEM or PKCS12).
       - required if op_type is put_certificate
     type: str
+    choices: ['PEM', 'PKCS12']
     required: false
   generate:
     description:
       - Create a new self-signed certificate
-    type: str
+    type: bool
     required: false
   password:
     description:
