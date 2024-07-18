@@ -18,7 +18,8 @@ short_description: Add a license to CipherTrust Manager
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with trials management API
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -60,8 +61,13 @@ options:
         required: true
         type: str
     bind_type:
-        description: Binding type for this license. Can be either 'instance' or 'cluster'. If omitted, then CM attempts to bind the license to the cluster. If this step fails with a lock code error, it will attempt to bind to the instance.
+        description:
+          - Binding type for this license
+          - Can be either instance or cluster
+          - If omitted, then CM attempts to bind the license to the cluster
+          - If this step fails with a lock code error, it will attempt to bind to the instance.
         required: false
+        choices: ['instance', 'cluster']
         type: str
 
 """
@@ -95,8 +101,8 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 )
 
 argument_spec = dict(
-    license=dict(type="str", choices=["create", "patch"], required=True),
-    bind_type=dict(type="str"),
+    license=dict(type="str", required=True),
+    bind_type=dict(type="str", choices=['instance', 'cluster']),
 )
 
 

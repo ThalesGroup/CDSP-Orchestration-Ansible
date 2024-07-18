@@ -97,15 +97,12 @@ options:
           alias:
             description: An alias for a key name
             type: str
-            required: true
           index:
             description: Index associated with alias. Each alias within an object has a unique index
             type: int
-            required: false
           type:
             description: Type of alias (allowed values are string and uri)
             type: str
-            required: false
         required: false
     archiveDate:
         description: Date/time the object becomes archived

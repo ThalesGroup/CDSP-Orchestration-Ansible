@@ -172,64 +172,60 @@ options:
 
 EXAMPLES = """
 - name: "Create new user"
-    thalesgroup.ciphertrust.usermgmt_users_save:
-      localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
-      op_type: "create"
-      username: "john.doe"
-      password: "oldPassword12!"
-      email: "john.doe@example.com"
-      name: "John Doe"
+  thalesgroup.ciphertrust.usermgmt_users_save:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+    op_type: "create"
+    username: "john.doe"
+    password: "oldPassword12!"
+    email: "john.doe@example.com"
+    name: "John Doe"
 
 - name: "Update user info"
-    thalesgroup.ciphertrust.usermgmt_users_save:
-      localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
-      op_type: "patch"
-      cm_user_id: "local|UUID"
-      username: "john.doe"
-      email: "aj@example.com"
-      name: "New Name"
+  thalesgroup.ciphertrust.usermgmt_users_save:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+    op_type: "patch"
+    cm_user_id: "local|UUID"
+    username: "john.doe"
+    email: "aj@example.com"
+    name: "New Name"
 
 - name: "Change user password"
-    thalesgroup.ciphertrust.usermgmt_users_save:
-      localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
-      op_type: "changepw"
-      username: "john.doe"
-      password: "oldPassword12!"
-      new_password: "newPassword12!"
+  thalesgroup.ciphertrust.usermgmt_users_save:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+    op_type: "changepw"
+    username: "john.doe"
+    password: "oldPassword12!"
+    new_password: "newPassword12!"
 
 - name: "Update self"
-    thalesgroup.ciphertrust.usermgmt_users_save:
-      localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
-      op_type: "patch_self"
-      name: "CM Admin"
+  thalesgroup.ciphertrust.usermgmt_users_save:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+    op_type: "patch_self"
+    name: "CM Admin"
 """
 
 RETURN = """

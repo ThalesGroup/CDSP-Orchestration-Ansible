@@ -18,7 +18,8 @@ short_description: Get license lockdata used to get license code
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with create group API
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -87,6 +88,7 @@ def main():
         user=dict(type="str", required=True),
         password=dict(type="str", required=True),
         verify=dict(type="bool", required=True),
+        auth_domain_path=dict(type="str", required=True),
     )
     module = AnsibleModule(
         argument_spec=dict(

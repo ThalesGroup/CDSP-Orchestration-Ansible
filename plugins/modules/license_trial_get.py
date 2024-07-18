@@ -18,7 +18,8 @@ short_description: Retrieve trial license ID if available
 description:
     - This is a Thales CipherTrust Manager module for retrieving the ID of a trial license if available for a particular CM instance
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
