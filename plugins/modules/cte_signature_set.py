@@ -18,7 +18,8 @@ short_description: Create and manage CTE Signature Sets
 description:
     - Create and edit CTE signature set or add, edit, or remove a signature to or from the signature set
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -97,6 +98,12 @@ options:
       description:
         - ID of the client where the signing request is to be sent
       type: str
+    file_name:
+        description: file name
+        type: str
+    hash_value:
+        description: hash value
+        type: str
 """
 
 EXAMPLES = """
@@ -114,7 +121,7 @@ EXAMPLES = """
     name: TestSignSet
     source_list:
       - "/usr/bin"
-        "/usr/sbin"
+      - "/usr/sbin"
   register: signature_set
 
 - name: "Add signature to a Signature Set"

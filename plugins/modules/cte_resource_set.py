@@ -18,7 +18,8 @@ short_description: Create and manage CTE resource-sets
 description:
     - Create and edit CTE resource set or add, edit, or remove a resource to or from the resource set
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -67,7 +68,7 @@ options:
     resourceIndex:
       description:
         - Identifier of the CTE Resource within ResourceSet to be patched or deleted
-      type: str
+      type: int
     name:
       description:
         - Name of the resource set

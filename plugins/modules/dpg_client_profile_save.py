@@ -19,7 +19,8 @@ description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with DPG Client Profile API
     - Refer https://thalesdocs.com/ctp/con/dpg/latest/admin/index.html for API documentation
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -85,6 +86,7 @@ options:
         symmetric_key_cache_enabled:
           description: Whether the symmetric key cache is enabled
           type: bool
+          default: True
         symmetric_key_cache_expiry:
           description: Time after which the symmetric key cache will expire
           type: int
@@ -119,8 +121,7 @@ options:
         log_size_limit:
           description: Determines how the client selects a Key Manager from a load balancing group
           type: str
-          choices: ['round-robin', 'random']
-          default: round-robin
+          default: 100k
         log_type:
           description: Type of the log
           type: str
@@ -131,7 +132,7 @@ options:
           type: bool
         log_file_path:
           description: This value specifies the path where log file will be created
-          type: bool
+          type: str
         connection_timeout:
           description: Connection timeout value for clients
           type: int
@@ -182,7 +183,7 @@ options:
           description: Information about the the JWT validation
           type: dict
           suboptions:
-            scheme_name:
+            issuer:
               description:
                 - String that identifies the principal that issued the JWT
                 - If empty, the iss (issuer) field in the JWT won't be checked.
@@ -332,7 +333,7 @@ _configuration = dict(
     ),
     log_size_limit=dict(type="str", default="100k"),
     log_type=dict(
-        type="str", choices=["Console", "File", "Multi", "Syslog"], default="Console"
+        type="str", choices=["Console", "File", "Multi"], default="Console"
     ),
     log_gmt=dict(type="bool"),
     log_file_path=dict(type="str"),

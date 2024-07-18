@@ -61,19 +61,16 @@ options:
         choices: [create, patch]
         required: true
         type: str
-    interface_id:
-        description:
-            - Identifier of the domain to be patched
+    domain_id:
+        description: ID of the domain to be updated
         type: str
     name:
         description: The name of the domain
-        required: true
         type: str
     admins:
         description: List of administrators for the domain
-        required: true
         type: list
-        element: str
+        elements: str
     allow_user_management:
         description: To allow user creation and management in the domain, set it to true
         required: false

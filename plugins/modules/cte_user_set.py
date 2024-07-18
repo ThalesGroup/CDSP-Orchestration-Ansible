@@ -18,7 +18,8 @@ short_description: Create and manage CTE user-sets
 description:
     - Create and edit CTE User set or add, edit, or remove a user to or from the user set
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -66,7 +67,7 @@ options:
     userIndex:
       description:
         - Identifier of the CTE User within UserSet to be patched or deleted
-      type: str
+      type: int
     name:
       description: Name of the user set
       type: str

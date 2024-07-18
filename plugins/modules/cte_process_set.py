@@ -18,7 +18,8 @@ short_description: Create and manage CTE process-sets
 description:
     - Create and edit CTE Process set or add, edit, or remove a process to or from the process set
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
@@ -67,7 +68,7 @@ options:
     processIndex:
       description:
         - Identifier of the CTE Process within ProcessSet to be patched or deleted
-      type: str
+      type: int
     name:
       description:
         - Name of the process set
