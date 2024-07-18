@@ -14,13 +14,12 @@ import json
 import ast
 import re
 from ansible.module_utils.urls import Request
-from ansible.module_utils.basic import missing_required_lib
-from ansible.module_utils.six.moves.urllib.parse import urlencode
+#from ansible.module_utils.basic import missing_required_lib
+#from ansible.module_utils.six.moves.urllib.parse import urlencode
 from ansible.module_utils.six.moves.urllib.error import HTTPError
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
-    AnsibleCMException,
 )
 
 
@@ -443,7 +442,7 @@ def GETData(cm_node=None, cm_api_endpoint=None):
         response = json.loads(_res.read())
         status_code = _res.getcode()
 
-        if response["resources"] == None:
+        if response["resources"] is None:
             raise CMApiException(
                 message="Error fetching data " + str(response),
                 api_error_code=status_code,
@@ -573,7 +572,7 @@ def GETIdByQueryParam(
     )
 
     url = ""
-    if param == None:
+    if param is None:
         url = cmSessionObject["url"]
     else:
         url = cmSessionObject["url"] + "/?skip=0&limit=1&" + param + "=" + value
@@ -587,14 +586,14 @@ def GETIdByQueryParam(
         response = json.loads(_res.read())
         status_code = _res.getcode()
 
-        if response["resources"] == None:
+        if response["resources"] is None:
             raise CMApiException(
                 message="Error fetching data " + str(response),
                 api_error_code=status_code,
             )
 
         if len(response["resources"]) > 0:
-            if id == None:
+            if id is None:
                 return response
             else:
                 __ret = {"id": response["resources"][0][id]}

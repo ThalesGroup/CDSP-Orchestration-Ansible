@@ -24,7 +24,7 @@ def createLocalCA(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key != "node" and value != None:
+        if key != "node" and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -48,7 +48,7 @@ def updateLocalCA(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -70,7 +70,7 @@ def selfSign(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -93,7 +93,7 @@ def issueCertificate(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -116,7 +116,7 @@ def revokeCert(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "cert_id"] and value != None:
+        if key not in ["node", "id", "cert_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -160,7 +160,7 @@ def createCSR(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -183,7 +183,7 @@ def createCSRAndKey(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)

@@ -13,7 +13,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 ---
-module: vault_keys2_create
+module: vault_keys2_save
 short_description: Create or update keys in CipherTrust Manager managed vault
 description:
     - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs

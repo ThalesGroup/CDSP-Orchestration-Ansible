@@ -68,7 +68,7 @@ def createConnection(**kwargs):
     elif kwargs["connection_type"] == "luna_nw_hsm":
         endpoint = "connectionmgmt/services/luna-network/connections"
     else:
-        module.fail_json(msg="connection_type not supported yet")
+        endpoint = ""
 
     payload = json.dumps(request)
 
@@ -138,7 +138,7 @@ def patchConnection(**kwargs):
             "connectionmgmt/services/luna-network/connections" + kwargs["connection_id"]
         )
     else:
-        module.fail_json(msg="connection_type not supported yet")
+        endpoint = ""
 
     payload = json.dumps(request)
 

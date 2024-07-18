@@ -13,7 +13,7 @@ module as shown below.
   from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException
 """
 
-from ansible.module_utils._text import to_native
+#from ansible.module_utils._text import to_native
 
 
 class CMApiException(Exception):

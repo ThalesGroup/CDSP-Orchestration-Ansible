@@ -16,7 +16,6 @@ import ast
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
     PATCHData,
-    POSTWithoutData,
     DELETEByNameOrId,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (

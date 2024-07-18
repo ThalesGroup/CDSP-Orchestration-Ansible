@@ -47,7 +47,9 @@ def getLockdata(node):
             result["data"] = response
 
         return result
-    except:
+    except CMApiException as api_e:
+        result["failed"] = True
+    except AnsibleCMException as custom_e:
         result["failed"] = True
 
 
