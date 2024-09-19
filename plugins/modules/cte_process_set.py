@@ -8,25 +8,23 @@
 #
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import ThalesCipherTrustModule
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import createProcessSet, updateProcessSet, addProcessToSet, updateProcessInSetByIndex, deleteProcessInSetByIndex
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
-
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: cte_process_set
 short_description: Create and manage CTE process-sets
 description:
     - Create and edit CTE Process set or add, edit, or remove a process to or from the process set
 version_added: "1.0.0"
-author: Anurag Jain, Developer Advocate Thales Group
+author:
+  - Anurag Jain (@anugram)
 options:
     localNode:
       description:
         - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port 
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -42,7 +40,6 @@ options:
           description: Port on which CM server is listening
           type: int
           required: true
-          default: 5432
         user:
           description: admin username of CM
           type: str
@@ -55,7 +52,10 @@ options:
           description: if SSL verification is required
           type: bool
           required: true
-          default: false
+        auth_domain_path:
+          description: user's domain path
+          type: str
+          required: true
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_process, patch_process, delete_process]
@@ -68,7 +68,7 @@ options:
     processIndex:
       description:
         - Identifier of the CTE Process within ProcessSet to be patched or deleted
-      type: str
+      type: int
     name:
       description:
         - Name of the process set
@@ -80,7 +80,21 @@ options:
     processes:
       description:
         - List of processes to be added to the process set
-      type: str
+      type: list
+      elements: dict
+      suboptions:
+        directory:
+          description:
+            - directory path of the process which shall be associated with the process-set
+          type: str
+        file:
+          description:
+            - file name of the process which shall be associated with the process-set
+          type: str
+        signature:
+          description:
+            - Signature-set ID or Name which shall be associated with the process-set
+          type: str
     directory:
       description:
         - directory path of the process which shall be associated with the process-set
@@ -93,9 +107,9 @@ options:
       description:
         - Signature-set ID or Name which shall be associated with the process-set
       type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: "Create CTE ProcessSet"
   thalesgroup.ciphertrust.cte_process_set:
     localNode:
@@ -105,6 +119,7 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: create
     name: TestProcessSet
     description: "via Ansible"
@@ -126,64 +141,85 @@ EXAMPLES = '''
         user: "CipherTrust Manager Username"
         password: "CipherTrust Manager Password"
         verify: false
+        auth_domain_path:
     op_type: add_process
-    id: "{{ process_set['response']['id'] }}"
+    id: "processSetID"
     processes:
       - signature: TestSignSet
         directory: "/home/testAnother"
         file: "*"
-'''
+"""
 
-RETURN = '''
+RETURN = """
+"""
 
-'''
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
+    createProcessSet,
+    updateProcessSet,
+    addProcessToSet,
+    updateProcessInSetByIndex,
+    deleteProcessInSetByIndex,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
 
 _process = dict(
-  directory=dict(type='str'),
-  file=dict(type='str'),
-  signature=dict(type='str'),
+    directory=dict(type="str"),
+    file=dict(type="str"),
+    signature=dict(type="str"),
 )
 
 argument_spec = dict(
-    op_type=dict(type='str', options=[
-      'create', 
-      'patch', 
-      'add_process', 
-      'patch_process',
-      'delete_process',
-    ], required=True),
-    id=dict(type='str'),
-    processIndex=dict(type='int'),
-    name=dict(type='str'),
-    description=dict(type='str'),
-    processes=dict(type='list', element='dict', options=_process),
-    directory=dict(type='str'),
-    file=dict(type='str'),
-    signature=dict(type='str'),
+    op_type=dict(
+        type="str",
+        choices=[
+            "create",
+            "patch",
+            "add_process",
+            "patch_process",
+            "delete_process",
+        ],
+        required=True,
+    ),
+    id=dict(type="str"),
+    processIndex=dict(type="int"),
+    name=dict(type="str"),
+    description=dict(type="str"),
+    processes=dict(type="list", elements="dict", options=_process),
+    directory=dict(type="str"),
+    file=dict(type="str"),
+    signature=dict(type="str"),
 )
+
 
 def validate_parameters(cte_process_set_module):
     return True
+
 
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
         required_if=(
-            ['op_type', 'create', ['name']],
-            ['op_type', 'patch', ['id']],
-            ['op_type', 'add_process', ['id']],
-            ['op_type', 'patch_process', ['id', 'processIndex']],
-            ['op_type', 'delete_process', ['id', 'processIndex']],
+            ["op_type", "create", ["name"]],
+            ["op_type", "patch", ["id"]],
+            ["op_type", "add_process", ["id"]],
+            ["op_type", "patch_process", ["id", "processIndex"]],
+            ["op_type", "delete_process", ["id", "processIndex"]],
         ),
         mutually_exclusive=[],
         supports_check_mode=True,
     )
     return module
 
-def main():
 
+def main():
     global module
-    
+
     module = setup_module_object()
     validate_parameters(
         cte_process_set_module=module,
@@ -193,85 +229,111 @@ def main():
         changed=False,
     )
 
-    if module.params.get('op_type') == 'create':
-      try:
-        response = createProcessSet(
-          node=module.params.get('localNode'),
-          name=module.params.get('name'),
-          description=module.params.get('description'),
-          processes=module.params.get('processes'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    if module.params.get("op_type") == "create":
+        try:
+            response = createProcessSet(
+                node=module.params.get("localNode"),
+                name=module.params.get("name"),
+                description=module.params.get("description"),
+                processes=module.params.get("processes"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch':
-      try:
-        response = updateProcessSet(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          description=module.params.get('description'),
-          processes=module.params.get('processes'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch":
+        try:
+            response = updateProcessSet(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                description=module.params.get("description"),
+                processes=module.params.get("processes"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'add_process':
-      try:
-        response = addProcessToSet(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          processes=module.params.get('processes'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "add_process":
+        try:
+            response = addProcessToSet(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                processes=module.params.get("processes"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'patch_process':
-      try:
-        response = updateProcessInSetByIndex(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          processIndex=str(module.params.get('processIndex')),
-          directory=module.params.get('directory'),
-          file=module.params.get('file'),
-          signature=module.params.get('signature'),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "patch_process":
+        try:
+            response = updateProcessInSetByIndex(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                processIndex=str(module.params.get("processIndex")),
+                directory=module.params.get("directory"),
+                file=module.params.get("file"),
+                signature=module.params.get("signature"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get('op_type') == 'delete_process':
-      try:
-        response = deleteProcessInSetByIndex(
-          node=module.params.get('localNode'),
-          id=module.params.get('id'),
-          processIndex=str(module.params.get('processIndex')),
-        )
-        result['response'] = response
-      except CMApiException as api_e:
-        if api_e.api_error_code:
-          module.fail_json(msg="status code: " + str(api_e.api_error_code) + " message: " + api_e.message)
-      except AnsibleCMException as custom_e:
-        module.fail_json(msg=custom_e.message)
+    elif module.params.get("op_type") == "delete_process":
+        try:
+            response = deleteProcessInSetByIndex(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                processIndex=str(module.params.get("processIndex")),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
 
     else:
         module.fail_json(msg="invalid op_type")
-        
+
     module.exit_json(**result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

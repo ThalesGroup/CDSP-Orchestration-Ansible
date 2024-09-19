@@ -1,7 +1,13 @@
-this_node_connection_string:
-  server_ip: <CM_IP_OR_FQDN>
-  server_private_ip: <CM_PRIVATE_IP>
-  server_port: 5432
-  user: <CM_ADMIN_USERNAME>
-  password: <CM_ADMIN_PASSWORD>
-  verify: False
+this_node_connection_string: "{{ cm_connection_string }}"
+
+username: admin
+keyName: AnsibleCTEKey
+keyAlgo: AES
+keySize: 256
+resource_set_1: Ansible_RES_SET_1
+resource_set_2: Ansible_RES_SET_2
+resource_set_3: Ansible_RES_SET_3
+resource_set_1_dir_path: "/home/ansible/dir1"
+resource_set_2_dir_path: "/home/ansible/dir2"
+resource_set_3_dir_path: "/home/ansible/dir3"
+cte_policy_name: Ansible-CTE-Policy

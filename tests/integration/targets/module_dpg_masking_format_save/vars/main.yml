@@ -1,0 +1,11 @@
+this_node_connection_string: "{{ cm_connection_string }}"
+
+# Vars for module_group_save
+masking_format_name: AnsibleIntegrationTest_MaskingFormat
+masking_format_ending_characters: 4
+masking_format_mask_char: X
+masking_format_show: true
+masking_format_starting_characters: 4
+masking_format_ending_characters_upd: 2
+masking_format_mask_char_upd: O
+masking_format_starting_characters_upd: 2

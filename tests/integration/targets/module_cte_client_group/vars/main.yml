@@ -1,0 +1,4 @@
+this_node_connection_string: "{{ cm_connection_string }}"
+
+group_name: AnsibleGroup
+new_group_name: NewGroupName

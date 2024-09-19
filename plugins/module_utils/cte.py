@@ -1,30 +1,39 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 # This is a utility file for interacting with the Thales CipherTrust Manager APIs for CipheTrust Transparent Encryption
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-import os
 import json
 import ast
 
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import POSTData, PATCHData, DeleteWithoutData, GETIdByQueryParam
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException, AnsibleCMException
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    POSTData,
+    PATCHData,
+    DeleteWithoutData,
+    GETIdByQueryParam,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+    AnsibleCMException,
+)
+
 
 def is_json(myjson):
-  try:
-    json.loads(myjson)
-  except ValueError as e:
-    return False
-  return True
+    try:
+        json.loads(myjson)
+    except ValueError as e:
+        return False
+    return True
+
 
 def createCTEPolicy(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -32,7 +41,7 @@ def createCTEPolicy(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/policies",
             id="id",
         )
@@ -42,11 +51,12 @@ def createCTEPolicy(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def updateCTEPolicy(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id"] and value != None:
+        if key not in ["node", "policy_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -54,8 +64,8 @@ def updateCTEPolicy(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/policies/" + kwargs['policy_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/policies/" + kwargs["policy_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -63,12 +73,15 @@ def updateCTEPolicy(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 # Add new rules to the CTE Policy
+
+
 def ctePolicyAddRule(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id", "rule_name"] and value != None:
+        if key not in ["node", "policy_id", "rule_name"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -76,8 +89,11 @@ def ctePolicyAddRule(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/policies/" + kwargs['policy_id'] + "/" + kwargs["rule_name"],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/policies/"
+            + kwargs["policy_id"]
+            + "/"
+            + kwargs["rule_name"],
             id="id",
         )
         return ast.literal_eval(str(response))
@@ -86,11 +102,15 @@ def ctePolicyAddRule(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def ctePolicyPatchRule(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "policy_id", "rule_name", "rule_id"] and value != None:
+        if (
+            key not in ["node", "policy_id", "rule_name", "rule_id"]
+            and value is not None
+        ):
             request[key] = value
 
     payload = json.dumps(request)
@@ -98,8 +118,13 @@ def ctePolicyPatchRule(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/policies/" + kwargs['policy_id'] + "/" + kwargs["rule_name"] + "/" + kwargs["rule_id"],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/policies/"
+            + kwargs["policy_id"]
+            + "/"
+            + kwargs["rule_name"]
+            + "/"
+            + kwargs["rule_id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -107,27 +132,39 @@ def ctePolicyPatchRule(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def ctePolicyDeleteRule(**kwargs):
-    url = "transparent-encryption/policies/" + kwargs['policy_id'] + "/" + kwargs["rule_name"] + "/" + kwargs["rule_id"]
+    url = (
+        "transparent-encryption/policies/"
+        + kwargs["policy_id"]
+        + "/"
+        + kwargs["rule_name"]
+        + "/"
+        + kwargs["rule_id"]
+    )
 
     try:
-      response = DeleteWithoutData(
-      cm_node=kwargs['node'],
-      cm_api_endpoint=url,
-      )
-      return str(response)
+        response = DeleteWithoutData(
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+        )
+        return str(response)
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
+
 # End of add new rules to the CTE Policy
 
 # ProcessSet
+
+
 def createProcessSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -135,7 +172,7 @@ def createProcessSet(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/processsets",
             id="id",
         )
@@ -145,11 +182,12 @@ def createProcessSet(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def updateProcessSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -157,20 +195,21 @@ def updateProcessSet(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/processsets/" + kwargs['id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/processsets/" + kwargs["id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def addProcessToSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -178,20 +217,23 @@ def addProcessToSet(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/processsets/" + kwargs['id'] + "/addprocesses",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/processsets/"
+            + kwargs["id"]
+            + "/addprocesses",
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def updateProcessInSetByIndex(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "processIndex"] and value != None:
+        if key not in ["node", "id", "processIndex"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -199,8 +241,11 @@ def updateProcessInSetByIndex(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/processsets/" + kwargs['id'] + "/updateprocess/" + kwargs['processIndex'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/processsets/"
+            + kwargs["id"]
+            + "/updateprocess/"
+            + kwargs["processIndex"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -208,27 +253,37 @@ def updateProcessInSetByIndex(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def deleteProcessInSetByIndex(**kwargs):
-    url = "transparent-encryption/processsets/" + kwargs['id'] + "/delprocesses?processIndexList=" + kwargs['processIndex']
+    url = (
+        "transparent-encryption/processsets/"
+        + kwargs["id"]
+        + "/delprocesses?processIndexList="
+        + kwargs["processIndex"]
+    )
 
     try:
-      response = DeleteWithoutData(
-      cm_node=kwargs['node'],
-      cm_api_endpoint=url,
-      )
-      return str(response)
+        response = DeleteWithoutData(
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+        )
+        return str(response)
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
+
 # End ProcessSet
 
 # ResourceSet
+
+
 def createResourceSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -236,7 +291,7 @@ def createResourceSet(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/resourcesets",
             id="id",
         )
@@ -246,11 +301,12 @@ def createResourceSet(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def updateResourceSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -258,20 +314,21 @@ def updateResourceSet(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/resourcesets/" + kwargs['id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/resourcesets/" + kwargs["id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def addResourceToSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -279,20 +336,23 @@ def addResourceToSet(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/resourcesets/" + kwargs['id'] + "/addresources",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/resourcesets/"
+            + kwargs["id"]
+            + "/addresources",
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def updateResourceInSetByIndex(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "resourceIndex"] and value != None:
+        if key not in ["node", "id", "resourceIndex"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -300,8 +360,11 @@ def updateResourceInSetByIndex(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/resourcesets/" + kwargs['id'] + "/updateresource/" + kwargs['resourceIndex'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/resourcesets/"
+            + kwargs["id"]
+            + "/updateresource/"
+            + kwargs["resourceIndex"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -309,27 +372,37 @@ def updateResourceInSetByIndex(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def deleteResourceInSetByIndex(**kwargs):
-    url = "transparent-encryption/resourcesets/" + kwargs['id'] + "/delresources?resourceIndexList=" + kwargs['resourceIndex']
+    url = (
+        "transparent-encryption/resourcesets/"
+        + kwargs["id"]
+        + "/delresources?resourceIndexList="
+        + kwargs["resourceIndex"]
+    )
 
     try:
-      response = DeleteWithoutData(
-      cm_node=kwargs['node'],
-      cm_api_endpoint=url,
-      )
-      return str(response)
+        response = DeleteWithoutData(
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+        )
+        return str(response)
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
+
 # End ResourceSet
 
 # SignatureSet
+
+
 def createSignatureSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -337,7 +410,7 @@ def createSignatureSet(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/signaturesets",
             id="id",
         )
@@ -347,11 +420,12 @@ def createSignatureSet(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def updateSignatureSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -359,20 +433,21 @@ def updateSignatureSet(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/signaturesets/" + kwargs['id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/signaturesets/" + kwargs["id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def addSignatureToSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -380,23 +455,28 @@ def addSignatureToSet(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/signaturesets/" + kwargs['id'] + "/addsignatures",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/signaturesets/"
+            + kwargs["id"]
+            + "/addsignatures",
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def getSignatureFromSetByFilter(**kwargs):
     try:
         response = GETIdByQueryParam(
-            cm_node=kwargs['node'],
-            param='file_name',
-            value=kwargs['file_name'],
+            cm_node=kwargs["node"],
+            param="file_name",
+            value=kwargs["file_name"],
             id="id",
-            cm_api_endpoint="transparent-encryption/signaturesets/" + kwargs['id'] + "/signatures",
+            cm_api_endpoint="transparent-encryption/signaturesets/"
+            + kwargs["id"]
+            + "/signatures",
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -404,25 +484,32 @@ def getSignatureFromSetByFilter(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def deleteSignatureInSetById(**kwargs):
-    url = "transparent-encryption/signaturesets/" + kwargs['id'] + "/signatures/" + kwargs['signature_id']
+    url = (
+        "transparent-encryption/signaturesets/"
+        + kwargs["id"]
+        + "/signatures/"
+        + kwargs["signature_id"]
+    )
 
     try:
-      response = DeleteWithoutData(
-        cm_node=kwargs['node'],
-        cm_api_endpoint=url,
-      )
-      return str(response)
+        response = DeleteWithoutData(
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+        )
+        return str(response)
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def sendSignAppRequest(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -430,8 +517,10 @@ def sendSignAppRequest(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/signaturesets/" + kwargs['id'] + "/signapp",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/signaturesets/"
+            + kwargs["id"]
+            + "/signapp",
             id="status",
         )
         return ast.literal_eval(str(response))
@@ -439,12 +528,13 @@ def sendSignAppRequest(**kwargs):
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def querySignAppRequest(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -452,8 +542,10 @@ def querySignAppRequest(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/signaturesets/" + kwargs['id'] + "/querysignapp",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/signaturesets/"
+            + kwargs["id"]
+            + "/querysignapp",
             id="status",
         )
         return ast.literal_eval(str(response))
@@ -461,12 +553,13 @@ def querySignAppRequest(**kwargs):
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def cancelSignAppRequest(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -474,8 +567,10 @@ def cancelSignAppRequest(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/signaturesets/" + kwargs['id'] + "/cancelsignapp",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/signaturesets/"
+            + kwargs["id"]
+            + "/cancelsignapp",
             id="status",
         )
         return ast.literal_eval(str(response))
@@ -483,14 +578,18 @@ def cancelSignAppRequest(**kwargs):
         raise
     except AnsibleCMException as custom_e:
         raise
+
+
 # End SignatureSet
 
 # UserSet
+
+
 def createUserSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -498,7 +597,7 @@ def createUserSet(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/usersets",
             id="id",
         )
@@ -508,11 +607,12 @@ def createUserSet(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def updateUserSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -520,20 +620,21 @@ def updateUserSet(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/usersets/" + kwargs['id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/usersets/" + kwargs["id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def addUserToSet(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -541,20 +642,23 @@ def addUserToSet(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/usersets/" + kwargs['id'] + "/addusers",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/usersets/"
+            + kwargs["id"]
+            + "/addusers",
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def updateUserInSetByIndex(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "userIndex"] and value != None:
+        if key not in ["node", "id", "userIndex"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -562,8 +666,11 @@ def updateUserInSetByIndex(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/usersets/" + kwargs['id'] + "/updateuser/" + kwargs['userIndex'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/usersets/"
+            + kwargs["id"]
+            + "/updateuser/"
+            + kwargs["userIndex"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -571,27 +678,37 @@ def updateUserInSetByIndex(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def deleteUserInSetByIndex(**kwargs):
-    url = "transparent-encryption/usersets/" + kwargs['id'] + "/delusers?userIndexList=" + kwargs['userIndex']
+    url = (
+        "transparent-encryption/usersets/"
+        + kwargs["id"]
+        + "/delusers?userIndexList="
+        + kwargs["userIndex"]
+    )
 
     try:
-      response = DeleteWithoutData(
-        cm_node=kwargs['node'],
-        cm_api_endpoint=url,
-      )
-      return str(response)
+        response = DeleteWithoutData(
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+        )
+        return str(response)
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
+
 # End UserSet
 
 # CSI Storage Group
+
+
 def createCSIStorageGroup(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -599,7 +716,7 @@ def createCSIStorageGroup(**kwargs):
     try:
         response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/csigroups",
             id="id",
         )
@@ -609,11 +726,12 @@ def createCSIStorageGroup(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def updateCSIStorageGroup(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
@@ -621,146 +739,33 @@ def updateCSIStorageGroup(**kwargs):
     try:
         response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/csigroups/" + kwargs['id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/csigroups/" + kwargs["id"],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def csiGroupAddClient(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
+        response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/csigroups/" + kwargs['id'] + "/clients",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/csigroups/"
+            + kwargs["id"]
+            + "/clients",
             id="id",
-      )
-      return ast.literal_eval(str(response))
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
-
-def csiGroupRemoveClient(**kwargs):
-    url = "transparent-encryption/csigroups/" + kwargs['id'] + "/clients/" + kwargs['client_id']
-
-    try:
-      response = DeleteWithoutData(
-      cm_node=kwargs['node'],
-      cm_api_endpoint=url,
-      )
-      return str(response)
-    except CMApiException as api_e:
-      raise
-    except AnsibleCMException as custom_e:
-      raise
-
-def csiGroupAddGuardPoint(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-      response = POSTData(
-            payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/csigroups/" + kwargs['id'] + "/guardpoints",
-            id="id",
-        )
-      return ast.literal_eval(str(response))
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
-
-def csiGroupUpdateGuardPoint(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "gp_id"] and value != None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-      response = PATCHData(
-            payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/csigroups/guardpoints/" + kwargs['gp_id'],
-        )
-      return ast.literal_eval(str(response))
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
-
-def csiGroupRemoveGuardPoint(**kwargs):
-    url = "transparent-encryption/csigroups/guardpoints/" + kwargs['gp_id']
-
-    try:
-      response = DeleteWithoutData(
-      cm_node=kwargs['node'],
-      cm_api_endpoint=url,
-      )
-      return str(response)
-    except CMApiException as api_e:
-      raise
-    except AnsibleCMException as custom_e:
-      raise
-# End CSI Storage Group
-
-# CTE Client Group
-def createClientGroup(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-      response = POSTData(
-            payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clientgroups",
-            id="id",
-        )
-      return ast.literal_eval(str(response))
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
-
-def updateClientGroup(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clientgroups/" + kwargs['id'],
         )
         return ast.literal_eval(str(response))
     except CMApiException as api_e:
@@ -768,350 +773,552 @@ def updateClientGroup(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
-def clientGroupAddClients(**kwargs):
+
+def csiGroupRemoveClient(**kwargs):
+    url = (
+        "transparent-encryption/csigroups/"
+        + kwargs["id"]
+        + "/clients/"
+        + kwargs["client_id"]
+    )
+
+    try:
+        response = DeleteWithoutData(
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+        )
+        return str(response)
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise
+
+
+def csiGroupAddGuardPoint(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
+        response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clientgroups/" + kwargs['id'] + "/clients",
-            id="association_response",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/csigroups/"
+            + kwargs["id"]
+            + "/guardpoints",
+            id="id",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
+
+def csiGroupUpdateGuardPoint(**kwargs):
+    request = {}
+
+    for key, value in kwargs.items():
+        if key not in ["node", "gp_id"] and value is not None:
+            request[key] = value
+
+    payload = json.dumps(request)
+
+    try:
+        response = PATCHData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/csigroups/guardpoints/"
+            + kwargs["gp_id"],
+        )
+        return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise
+
+
+def csiGroupRemoveGuardPoint(**kwargs):
+    url = "transparent-encryption/csigroups/guardpoints/" + kwargs["gp_id"]
+
+    try:
+        response = DeleteWithoutData(
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+        )
+        return str(response)
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise
+
+
+# End CSI Storage Group
+
+# CTE Client Group
+
+
+def createClientGroup(**kwargs):
+    request = {}
+
+    for key, value in kwargs.items():
+        if key not in ["node"] and value is not None:
+            request[key] = value
+
+    payload = json.dumps(request)
+
+    try:
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clientgroups",
+            id="id",
+        )
+        return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise
+
+
+def updateClientGroup(**kwargs):
+    request = {}
+
+    for key, value in kwargs.items():
+        if key not in ["node", "id"] and value is not None:
+            request[key] = value
+
+    payload = json.dumps(request)
+
+    try:
+        response = PATCHData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clientgroups/" + kwargs["id"],
+        )
+        return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise
+
+
+def clientGroupAddClients(**kwargs):
+    request = {}
+
+    for key, value in kwargs.items():
+        if key not in ["node", "id"] and value is not None:
+            request[key] = value
+
+    payload = json.dumps(request)
+
+    try:
+        response = POSTData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clientgroups/"
+            + kwargs["id"]
+            + "/clients",
+            id="association_response",
+        )
+        return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise
+
 
 def clientGroupAddGuardPoint(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
+        response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clientgroups/" + kwargs['id'] + "/guardpoints",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clientgroups/"
+            + kwargs["id"]
+            + "/guardpoints",
             id="guardpoints",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def clientGroupAuthBinaries(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = PATCHData(
+        response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clientgroups/" + kwargs['id'] + "/auth-binaries",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clientgroups/"
+            + kwargs["id"]
+            + "/auth-binaries",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def clientGroupDeleteClient(**kwargs):
-    url = "transparent-encryption/clientgroups/" + kwargs['id'] + "/clients/" + kwargs["client_id"]
+    url = (
+        "transparent-encryption/clientgroups/"
+        + kwargs["id"]
+        + "/clients/"
+        + kwargs["client_id"]
+    )
 
     try:
-      response = DeleteWithoutData(
-      cm_node=kwargs['node'],
-      cm_api_endpoint=url,
-      )
-      return str(response)
+        response = DeleteWithoutData(
+            cm_node=kwargs["node"],
+            cm_api_endpoint=url,
+        )
+        return str(response)
     except CMApiException as api_e:
-      raise
+        raise
     except AnsibleCMException as custom_e:
-      raise
+        raise
+
 
 def clientGroupLDTPause(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
+        response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clientgroups/" + kwargs['id'] + "/ldtpause",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clientgroups/"
+            + kwargs["id"]
+            + "/ldtpause",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
+
 # End CTE Client Group
 
 # CTE Client
 # Creates a CTE client on the CipherTrust Manager. The client need not necessarily have the CTE Agent installed on it.
+
+
 def createClient(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
+        response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/clients",
             id="id",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def patchClient(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = PATCHData(
+        response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clients/" + kwargs['id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clients/" + kwargs["id"],
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
 
+
 # Add GuardPoint to Client
+
+
 def clientAddGuardPoint(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
+        response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clients/" + kwargs['id'] + "/guardpoints",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clients/"
+            + kwargs["id"]
+            + "/guardpoints",
             id="guardpoints",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
 
+
 # UnEnroll CTE client
+
+
 def unEnrollClient(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
+        response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/unenroll",
             id="name",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
 
+
 # Delete list of clients
+
+
 def deleteClients(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node"] and value != None:
+        if key not in ["node"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = PATCHData(
+        response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
+            cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/clients/delete",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
 
+
 # UnEnroll CTE client by ID
+
+
 def deleteClientById(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = PATCHData(
+        response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clients/" + kwargs['id'] + "/delete",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clients/"
+            + kwargs["id"]
+            + "/delete",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
 
+
 # UnEnroll CTE client by ID
+
+
 def updateClientAuthBinaries(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = PATCHData(
+        response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clients/" + kwargs['id'] + "/auth-binaries",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clients/"
+            + kwargs["id"]
+            + "/auth-binaries",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
 
+
 # UnEnroll CTE client by ID
+
+
 def sendLDTPauseCmd(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = POSTData(
+        response = POSTData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clients/" + kwargs['id'] + "/ldtpause",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clients/"
+            + kwargs["id"]
+            + "/ldtpause",
             id="status",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
 
+
 # UnEnroll CTE client by ID
+
+
 def patchGuardPointCTEClient(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "gp_id"] and value != None:
+        if key not in ["node", "id", "gp_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = PATCHData(
+        response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clients/" + kwargs['id'] + "/guardpoints/" + kwargs['gp_id'],
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clients/"
+            + kwargs["id"]
+            + "/guardpoints/"
+            + kwargs["gp_id"],
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
 
+
 # UnGuard Guard Points
+
+
 def unGuardPoints(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id"] and value != None:
+        if key not in ["node", "id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = PATCHData(
+        response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clients/" + kwargs['id'] + "/guardpoints/unguard",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clients/"
+            + kwargs["id"]
+            + "/guardpoints/unguard",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
 
+
 # UnGuard Guard Points
+
+
 def updateGPEarlyAccess(**kwargs):
     request = {}
 
     for key, value in kwargs.items():
-        if key not in ["node", "id", "gp_id"] and value != None:
+        if key not in ["node", "id", "gp_id"] and value is not None:
             request[key] = value
 
     payload = json.dumps(request)
 
     try:
-      response = PATCHData(
+        response = PATCHData(
             payload=payload,
-            cm_node=kwargs['node'],
-            cm_api_endpoint="transparent-encryption/clients/" + kwargs['id'] + "/guardpoints/" + kwargs['gp_id'] + "/early-access",
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clients/"
+            + kwargs["id"]
+            + "/guardpoints/"
+            + kwargs["gp_id"]
+            + "/early-access",
         )
-      return ast.literal_eval(str(response))
+        return ast.literal_eval(str(response))
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
         raise
+
+
 # End CTE Client

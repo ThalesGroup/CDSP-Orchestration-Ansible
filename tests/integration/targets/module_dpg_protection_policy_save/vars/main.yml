@@ -1,0 +1,20 @@
+this_node_connection_string: "{{ cm_connection_string }}"
+
+# Vars for module_group_save
+pp_algorithm: "FPE/FF3/ASCII"
+pp_name: AnsibleIntegrationTest_PP
+#pp_allow_single_char_input: 
+#pp_allow_single_char_input_upd: 
+pp_iv: 16
+pp_tweak: 1628462495815733
+pp_tweak_algorithm: SHA1
+key_name: AnsibleIntegrationTest_Key
+key_algo: aes
+key_len: 256
+usage_mask: 3145740
+char_set_name: AnsibleIntegrationTest_CharSet
+char_set_encoding: "UTF-8"
+char_set_range:
+  - "0030-0039"
+  - "0041-005A"
+  - "0061-007A"

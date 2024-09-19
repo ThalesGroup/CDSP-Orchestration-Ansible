@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 # (c) 2023 Thales Group. All rights reserved.
@@ -14,10 +13,10 @@ module as shown below.
   from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException
 """
 
-from ansible.module_utils._text import to_native
+# from ansible.module_utils._text import to_native
+
 
 class CMApiException(Exception):
-
     def __str__(self):
         if self.api_error_code and self.message:
             return "{0}: {1}".format(self.api_error_code, self.message)
@@ -34,10 +33,10 @@ class CMApiException(Exception):
 
         self.message = message
         self.api_error_code = api_error_code
-        #super().__init__(self.api_error_code + ": " + self.message)
+        # super().__init__(self.api_error_code + ": " + self.message)
+
 
 class AnsibleCMException(Exception):
-
     def __str__(self):
         if self.message:
             return "{0}".format(self.message)
@@ -51,4 +50,4 @@ class AnsibleCMException(Exception):
             super().__init__(message)
 
         self.message = message
-        #super().__init__(self.message)
+        # super().__init__(self.message)

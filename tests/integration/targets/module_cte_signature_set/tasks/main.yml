@@ -31,10 +31,9 @@
   - name: "Create CTE SignatureSet"
     thalesgroup.ciphertrust.cte_signature_set:
       op_type: create
-      name: Test_CTE_SS_Ansible
+      name: "{{ signature_set_name }}"
       description: "Created via Ansible"
-      source_list:
-        - "/usr/bin"
+      source_list: "{{ initial_source_list }}"
       localNode: "{{ this_node_connection_string }}"
     register: _result_create
 
@@ -47,10 +46,7 @@
     thalesgroup.ciphertrust.cte_signature_set:
       op_type: patch
       id: "{{ _result_create.response.id }}"
-      users:
-        source_list:
-          - "/usr/bin"
-          - "/usr/sbin"
+      source_list: "{{ updated_source_list }}"
       localNode: "{{ this_node_connection_string }}"
     register: _result_patch
 
@@ -63,9 +59,7 @@
     thalesgroup.ciphertrust.cte_signature_set:
       op_type: add_signature
       id: "{{ _result_create.response.id }}"
-      signatures:
-        - file_name: "/bin/cat"
-          hash_value: 05A9E97F7B0D5638A2FFBC1E53A31E44D36251BA35BA8A1556E569D3C8D9B497
+      signatures: "{{ add_signature_to_set }}"
       localNode: "{{ this_node_connection_string }}"
     register: _result_add_signature
 
@@ -74,11 +68,11 @@
         - _result_add_signature is not failed
         - _result_add_signature.response.message is match("Resource updated successfully")
 
-  - name: "Get Signature ID from SignatureSet"
+  - name: "Get Signature ID from SignatureSet and File Name filter"
     thalesgroup.ciphertrust.cte_signature_set:
       op_type: get_signature
       id: "{{ _result_create.response.id }}"
-      file_name: "/bin/cat"
+      file_name: "{{ signature_file_name_get_id }}"
     register: _result_get_signature
 
   - assert:
@@ -98,3 +92,14 @@
       that:
         - _result_del_signature is not failed
         - _result_del_signature.response is match("Resource deleted successfully")
+  
+  - name: "Delete Signature Set"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_create.response.id }}"
+      resource_type: "signatureset"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_signature_set
+    
+  - assert:
+      that:
+        - _result_delete_signature_set is not failed

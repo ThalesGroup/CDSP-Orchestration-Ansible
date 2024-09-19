@@ -1,0 +1,82 @@
+---
+# (c) 2023 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+
+## Verify that integration_config was specified
+- block:
+  - assert:
+      that:
+        - this_node_connection_string is defined
+        - masking_format_name is defined
+        - masking_format_ending_characters is defined
+        - masking_format_mask_char is defined
+        - masking_format_show is defined
+        - masking_format_starting_characters is defined
+        - masking_format_ending_characters_upd is defined
+        - masking_format_mask_char_upd is defined
+        - masking_format_starting_characters_upd is defined
+
+- block:
+  - name: "Create Masking Format"
+    thalesgroup.ciphertrust.dpg_masking_format_save:
+      op_type: create
+      name: "{{ masking_format_name }}"
+      ending_characters: "{{ masking_format_ending_characters }}"
+      mask_char: "{{ masking_format_mask_char }}"
+      show: "{{ masking_format_show }}"
+      starting_characters: "{{ masking_format_starting_characters }}"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_create
+
+  - assert:
+      that:
+        - _result_create is not failed
+        - _result_create.response.id is string
+
+  - name: "Save Masking format ID"
+    set_fact:
+      mask_format_id: "{{ _result_create.response.id }}"
+
+  - name: "Patch Masking Format"
+    thalesgroup.ciphertrust.dpg_masking_format_save:
+      op_type: patch
+      masking_format_id: "{{ mask_format_id }}"
+      ending_characters: "{{ masking_format_ending_characters_upd }}"
+      mask_char: "{{ masking_format_mask_char_upd }}"
+      starting_characters: "{{ masking_format_starting_characters_upd }}"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_patch
+
+  - assert:
+      that:
+        - _result_patch is not failed
+        - _result_patch.response.message is match("Resource updated successfully")
+
+  - name: "Delete Masking Format ID"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ mask_format_id }}"
+      resource_type: "masking-formats"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_mask_format
+
+  - assert:
+      that:
+        - _result_delete_mask_format is not failed

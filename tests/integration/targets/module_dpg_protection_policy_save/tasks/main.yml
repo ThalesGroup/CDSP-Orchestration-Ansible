@@ -1,0 +1,149 @@
+---
+# (c) 2023 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+
+## Verify that integration_config was specified
+- block:
+  - assert:
+      that:
+        - this_node_connection_string is defined
+        - pp_algorithm is defined
+        - pp_name is defined
+        #- pp_allow_single_char_input is defined
+        #- pp_allow_single_char_input_upd is defined
+        #- pp_iv is defined
+        - pp_tweak is defined
+        - pp_tweak_algorithm is defined
+        - key_name is defined
+        - key_algo is defined
+        - key_len is defined
+        - usage_mask is defined
+        - char_set_name is defined
+        - char_set_encoding is defined
+        - char_set_range is defined
+
+- block:
+  - name: "Create Key"
+    thalesgroup.ciphertrust.vault_keys2_save:
+      op_type: create
+      name: "{{ key_name }}"
+      algorithm: "{{ key_algo }}"
+      size: "{{ key_len }}"
+      usageMask: "{{ usage_mask }}"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_create_key
+
+  - assert:
+      that:
+        - _result_create_key is not failed
+        - _result_create_key.response.id is string
+
+  - name: "Save key ID"
+    set_fact:
+      key_id: "{{ _result_create_key.response.id }}"
+
+  - name: "Create CharSet"
+    thalesgroup.ciphertrust.dpg_character_set_save:
+      op_type: create
+      name: "{{ char_set_name }}"
+      range: "{{ char_set_range }}"
+      localNode: "{{ this_node_connection_string }}"
+      encoding: "{{ char_set_encoding }}"
+    register: _result_create_charset
+
+  - assert:
+      that:
+        - _result_create_charset is not failed
+        - _result_create_charset.response.id is string
+
+  - name: "Save charset ID"
+    set_fact:
+      char_set_id: "{{ _result_create_charset.response.id }}"
+
+  - name: "Create Protection Policy"
+    thalesgroup.ciphertrust.dpg_protection_policy_save:
+      op_type: create
+      algorithm: "{{ pp_algorithm }}"
+      key: "{{ key_id }}"
+      name: "{{ pp_name }}"
+      #allow_single_char_input: "{{ pp_allow_single_char_input }}"
+      character_set_id: "{{ char_set_id }}"
+      #iv: "{{ pp_iv }}"
+      tweak: 1628462495815733
+      tweak_algorithm: "{{ pp_tweak_algorithm }}"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_create
+
+  - assert:
+      that:
+        - _result_create is not failed
+        - _result_create.response.id is string
+
+  - name: "Save protection policy ID"
+    set_fact:
+      pp_id: "{{ _result_create.response.id }}"
+
+  - name: "Patch Protection Policy"
+    thalesgroup.ciphertrust.dpg_protection_policy_save:
+      op_type: patch
+      policy_name: "{{ pp_name }}"
+      #allow_single_char_input: "{{ pp_allow_single_char_input_upd }}"
+      tweak_algorithm: SHA256
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_patch
+
+  - assert:
+      that:
+        - _result_patch is not failed
+        - _result_patch.response.message is match("Resource updated successfully")
+
+  - name: "Delete Protection Policy by name"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ pp_name }}"
+      resource_type: "protection-policies"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_pp
+
+  - assert:
+      that:
+        - _result_delete_pp is not failed
+
+  - name: "Delete Key"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ key_id }}"
+      resource_type: "keys"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_key
+
+  - assert:
+      that:
+        - _result_delete_key is not failed
+
+  - name: "Delete charset by ID"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ char_set_id }}"
+      resource_type: "character-sets"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_charset
+
+  - assert:
+      that:
+        - _result_delete_charset is not failed

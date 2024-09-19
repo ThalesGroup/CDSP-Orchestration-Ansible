@@ -1,0 +1,324 @@
+---
+# (c) 2023 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+
+## Verify that integration_config was specified
+- block:
+  - assert:
+      that:
+        - this_node_connection_string is defined
+
+- block:
+  # First we will create two protection policies for card type and one for SSN field
+  # Next we will create an access policy for the SSN field
+  # Then we will create the DPG policy to stitch everything together
+  # Finally we will clean up everything
+  - name: "Create Key"
+    thalesgroup.ciphertrust.vault_keys2_save:
+      op_type: create
+      name: "{{ key_name }}"
+      algorithm: "{{ key_algo }}"
+      size: "{{ key_len }}"
+      usageMask: "{{ usage_mask }}"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_create_key
+
+  - assert:
+      that:
+        - _result_create_key is not failed
+        - _result_create_key.response.id is string
+
+  - name: "Save key ID"
+    set_fact:
+      key_id: "{{ _result_create_key.response.id }}"
+
+  - name: "Create CharSet"
+    thalesgroup.ciphertrust.dpg_character_set_save:
+      op_type: create
+      name: "{{ char_set_name }}"
+      range: "{{ char_set_range }}"
+      localNode: "{{ this_node_connection_string }}"
+      encoding: "{{ char_set_encoding }}"
+    register: _result_create_charset
+
+  - assert:
+      that:
+        - _result_create_charset is not failed
+        - _result_create_charset.response.id is string
+
+  - name: "Save charset ID"
+    set_fact:
+      char_set_id: "{{ _result_create_charset.response.id }}"
+
+  - name: "Create Protection Policy CVV"
+    thalesgroup.ciphertrust.dpg_protection_policy_save:
+      op_type: create
+      algorithm: "{{ pp_algorithm_cvv }}"
+      key: "{{ key_id }}"
+      name: "{{ pp_name_cvv }}"
+      character_set_id: "{{ char_set_id }}"
+      tweak: "{{ pp_tweak_cvv }}"
+      tweak_algorithm: "{{ pp_tweak_algorithm_cvv }}"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_create_pp_cvv
+
+  - assert:
+      that:
+        - _result_create_pp_cvv is not failed
+        - _result_create_pp_cvv.response.id is string
+
+  - name: "Save protection policy ID"
+    set_fact:
+      pp_id: "{{ _result_create_pp_cvv.response.id }}"
+
+  - name: "Create Protection Policy CC"
+    thalesgroup.ciphertrust.dpg_protection_policy_save:
+      op_type: create
+      algorithm: "{{ pp_algorithm_cc }}"
+      key: "{{ key_id }}"
+      name: "{{ pp_name_cc }}"
+      tweak: "{{ pp_tweak_cc }}"
+      tweak_algorithm: "{{ pp_tweak_algorithm_cc }}"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_create_pp_cc
+
+  - assert:
+      that:
+        - _result_create_pp_cc is not failed
+        - _result_create_pp_cc.response.id is string
+
+  - name: "Save protection policy ID"
+    set_fact:
+      pp_id: "{{ _result_create_pp_cc.response.id }}"
+
+  - name: "Create UserSet"
+    thalesgroup.ciphertrust.dpg_user_set_save:
+      op_type: create
+      name: "{{ user_set_name }}"
+      description: "{{ user_set_description }}"
+      localNode: "{{ this_node_connection_string }}"
+      users: "{{ user_set_users }}"
+    register: _result_create_user_set
+
+  - assert:
+      that:
+        - _result_create_user_set is not failed
+        - _result_create_user_set.response.id is string
+
+  - name: "Save user set ID"
+    set_fact:
+      user_set_id: "{{ _result_create_user_set.response.id }}"
+
+  - name: "Create Access Policy"
+    thalesgroup.ciphertrust.dpg_access_policy_save:
+      localNode: "{{ this_node_connection_string }}"
+      op_type: create
+      name: "{{ ap_name }}"
+      default_error_replacement_value: "143001"
+      default_reveal_type: "Error Replacement Value"
+      user_set_policy:
+        - reveal_type: Plaintext
+          user_set_id: "{{ user_set_id }}"
+    register: _result_create_ap
+
+  - assert:
+      that:
+        - _result_create_ap is not failed
+        - _result_create_ap.response.id is string
+
+  - name: "Save access policy ID"
+    set_fact:
+      ap_id: "{{ _result_create_ap.response.id }}"
+
+  - name: "Create DPG Policy"
+    thalesgroup.ciphertrust.dpg_policy_save:
+      localNode: "{{ this_node_connection_string }}"
+      op_type: create
+      name: "{{ dpg_policy_name }}"
+      proxy_config:
+      - api_url: "/api/v1/sample/resource/{id}"
+        destination_url: "http://localhost:8080"
+        json_request_post_tokens:
+        - name: "creditCard.[*].CCNumber"
+          operation: "protect"
+          protection_policy: "{{ pp_name_cc }}"
+        json_response_get_tokens:
+        - name: "creditCard.[*].cvv"
+          operation: "reveal"
+          protection_policy: "{{ pp_name_cvv }}"
+          access_policy: "{{ ap_name }}"
+    register: _result_create_policy
+
+  - assert:
+      that:
+        - _result_create_policy is not failed
+        - _result_create_policy.response.id is string
+
+  - name: "Save DPG policy ID"
+    set_fact:
+      policy_id: "{{ _result_create_policy.response.id }}"
+
+  # Update Policy
+  - name: "Patch DPG Policy"
+    thalesgroup.ciphertrust.dpg_policy_save:
+      localNode: "{{ this_node_connection_string }}"
+      op_type: patch
+      policy_id: "{{ policy_id }}"
+      description: "Updated via Ansible"
+    register: _result_update_policy
+
+  - assert:
+      that:
+        - _result_update_policy is not failed
+
+  # Add api_url to the policy
+  - name: "Add api_url to DPG Policy"
+    thalesgroup.ciphertrust.dpg_policy_save:
+      localNode: "{{ this_node_connection_string }}"
+      op_type: add-api-url
+      policy_id: "{{ policy_id }}"
+      api_url: "/api/v2/sample/resource/{id}"
+      destination_url: "http://localhost:8080"
+      json_request_post_tokens:
+      - name: "creditCard.[*].cvv"
+        operation: "protect"
+        protection_policy: "{{ pp_name_cvv }}"
+    register: _result_update_policy_add_api_url
+
+  - assert:
+      that:
+        - _result_update_policy_add_api_url is not failed
+        - _result_update_policy_add_api_url.response.id is string
+
+  - name: "Save api_url ID"
+    set_fact:
+      api_url_id: "{{ _result_update_policy_add_api_url.response.id }}"
+
+  # Update that api_url
+  - name: "Update api_url in DPG Policy"
+    thalesgroup.ciphertrust.dpg_policy_save:
+      localNode: "{{ this_node_connection_string }}"
+      op_type: update-api-url
+      policy_id: "{{ policy_id }}"
+      api_url_id: "{{ api_url_id }}"
+      destination_url: "http://localhost:8081"
+    register: _result_update_policy_upd_api_url
+
+  - assert:
+      that:
+        - _result_update_policy_upd_api_url is not failed
+
+  # Delete that api_url
+  - name: "Delete api_url from DPG Policy"
+    thalesgroup.ciphertrust.dpg_policy_save:
+      localNode: "{{ this_node_connection_string }}"
+      op_type: delete-api-url
+      policy_id: "{{ policy_id }}"
+      api_url_id: "{{ api_url_id }}"
+    register: _result_update_policy_del_api_url
+
+  - assert:
+      that:
+        - _result_update_policy_del_api_url is not failed
+
+  # Delete Policy
+  - name: "Delete DPG Policy by ID"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ policy_id }}"
+      resource_type: "dpg-policies"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_dpg_policy
+
+  - assert:
+      that:
+        - _result_delete_dpg_policy is not failed
+
+  # Final cleanup
+  ## Delete Protection Policies
+  - name: "Delete Protection Policy CVV by name"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ pp_name_cvv }}"
+      resource_type: "protection-policies"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_pp_cvv
+
+  - assert:
+      that:
+        - _result_delete_pp_cvv is not failed
+
+  - name: "Delete Protection Policy CC by name"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ pp_name_cc }}"
+      resource_type: "protection-policies"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_pp_cc
+
+  - assert:
+      that:
+        - _result_delete_pp_cc is not failed
+
+  ## Delete Access Policies
+  - name: "Delete Access Policy"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ ap_id }}"
+      resource_type: "access-policies"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_ap
+
+  - assert:
+      that:
+        - _result_delete_ap is not failed
+
+  ## Delete UserSet
+  - name: "Delete UserSet"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ user_set_id }}"
+      resource_type: "user-sets"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_user_set
+
+  - assert:
+      that:
+        - _result_delete_user_set is not failed
+
+  ## Delete CharacterSet
+  - name: "Delete charset by ID"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ char_set_id }}"
+      resource_type: "character-sets"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_charset
+
+  - assert:
+      that:
+        - _result_delete_charset is not failed
+
+  ## Delete Key
+  - name: "Delete Key"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ key_id }}"
+      resource_type: "keys"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_key
+
+  - assert:
+      that:
+        - _result_delete_key is not failed

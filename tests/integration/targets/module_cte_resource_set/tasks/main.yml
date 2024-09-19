@@ -1,19 +1,6 @@
 ---
 # (c) 2023 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#  http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 
 ####################################################################
 # WARNING: These are designed specifically for Ansible tests       #
@@ -25,20 +12,17 @@
   - assert:
       that:
         - this_node_connection_string is defined
+        - resource_set_name is defined
 
 ## Validate the CTE Resource Set module
 - block:
   - name: "Create CTE ResourceSet"
     thalesgroup.ciphertrust.cte_resource_set:
       op_type: create
-      name: Test_CTE_RS_Ansible
+      name: "{{ resource_set_name }}"
       type: Directory
       description: "Created via Ansible"
-      resources:
-        - directory: "/home/ansible"
-          file: "*"
-          include_subfolders: true
-          hdfs: false
+      resources: "{{ initial_resources_list }}"
       localNode: "{{ this_node_connection_string }}"
     register: _result_create
 
@@ -52,15 +36,7 @@
       op_type: patch
       id: "{{ _result_create.response.id }}"
       description: "Updated via Ansible"
-      resources:
-        - directory: "/home/ansible"
-          file: "*"
-          include_subfolders: true
-          hdfs: false
-        - directory: "/home/dummy"
-          file: "*"
-          include_subfolders: true
-          hdfs: false
+      resources: "{{ updated_resources_list }}"
       localNode: "{{ this_node_connection_string }}"
     register: _result_patch
 
@@ -73,15 +49,7 @@
     thalesgroup.ciphertrust.cte_resource_set:
       op_type: add_resource
       id: "{{ _result_create.response.id }}"
-      resources:
-        - directory: "/home/dummy1"
-          file: "*"
-          include_subfolders: true
-          hdfs: false
-        - directory: "/home/dummy2"
-          file: "*"
-          include_subfolders: true
-          hdfs: false
+      resources: "{{ add_resource_to_set }}"
       localNode: "{{ this_node_connection_string }}"
     register: _result_add_resource
 
@@ -94,11 +62,11 @@
     thalesgroup.ciphertrust.cte_resource_set:
       op_type: patch_resource
       id: "{{ _result_create.response.id }}"
-      resourceIndex: 2
-      directory: "/home/dummy3"
-      file: "*"
-      hdfs: false
-      include_subfolders: true
+      resourceIndex: "{{ resource_index_to_be_updated }}"
+      directory: "{{ idx2_updated_directory }}"
+      file: "{{ idx2_updated_file }}"
+      hdfs: "{{ idx2_updated_hdfs }}"
+      include_subfolders: "{{ idx2_updated_include_subfolders }}"
       localNode: "{{ this_node_connection_string }}"
     register: _result_upd_resource
 
@@ -112,9 +80,20 @@
       op_type: delete_resource
       id: "{{ _result_create.response.id }}"
       localNode: "{{ this_node_connection_string }}"
+      resourceIndex: "{{ resource_index_to_be_deleted }}"
     register: _result_del_resource
 
   - assert:
       that:
         - _result_del_resource is not failed
-        - _result_del_resource.response is match("Resource deleted successfully")
+  
+  - name: "Delete Resource Set"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_create.response.id }}"
+      resource_type: "resourceset"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_resource_set
+    
+  - assert:
+      that:
+        - _result_delete_resource_set is not failed

@@ -1,19 +1,6 @@
 ---
 # (c) 2023 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#  http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 
 ####################################################################
 # WARNING: These are designed specifically for Ansible tests       #
@@ -25,15 +12,113 @@
   - assert:
       that:
         - this_node_connection_string is defined
-        - group_name is defined
-        - new_group_name is defined
 
-## Validate the create group module
+## Validate the CSI storage group module
 - block:
-  - name: "Create Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Get User ID from Name"
+    thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+      localNode: "{{ this_node_connection_string }}"
+      query_param: username
+      query_param_value: "{{ username }}"
+      resource_type: users
+    register: user
+
+  - name: "Create Key"
+    thalesgroup.ciphertrust.vault_keys2_save:
       op_type: create
-      name: "{{ group_name }}"
+      name: "{{ keyName }}"
+      algorithm: "{{ keyAlgo }}"
+      size: "{{ keySize }}"
+      undeletable: false
+      unexportable: false
+      usageMask: 76
+      meta:
+        ownerId: "{{ user['response']['id'] }}"
+        permissions:
+          DecryptWithKey:
+            - "CTE Clients"
+          EncryptWithKey:
+            - "CTE Clients"
+          ExportKey:
+            - "CTE Clients"
+          MACVerifyWithKey:
+            - "CTE Clients"
+          MACWithKey:
+            - "CTE Clients"
+          ReadKey:
+            - "CTE Clients"
+          SignVerifyWithKey:
+            - "CTE Clients"
+          SignWithKey:
+            - "CTE Clients"
+          UseKey:
+            - "CTE Clients"
+        cte:
+          persistent_on_client: true
+          encryption_mode: CBC_CS1
+          cte_versioned: false
+      xts: true
+      localNode: "{{ this_node_connection_string }}"
+    register: key
+
+  - name: "Create CTE ResourceSet"
+    thalesgroup.ciphertrust.cte_resource_set:
+      op_type: create
+      name: "{{ resource_set_name }}"
+      type: Directory
+      description: "Created via Ansible"
+      resources:
+        - directory: "/"
+          file: "*"
+          include_subfolders: true
+          hdfs: false
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_create_rs
+
+  - assert:
+      that:
+        - _result_create_rs is not failed
+        - _result_create_rs.response.id is string
+
+  - name: "Create CTE CSI Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: create
+      localNode: "{{ this_node_connection_string }}"
+      name: "{{ cte_policy_name }}"
+      description: "Created via Ansible"
+      never_deny: false
+      policy_type: CSI
+      metadata:
+        restrict_update: false
+      security_rules:
+        - action: key_op
+          effect: "permit,applykey"
+          partial_match: true
+        - resource_set_id: "{{ _result_create_rs['response']['id'] }}"
+          exclude_resource_set: false
+          partial_match: true
+          action: all_ops
+          effect: "permit,audit,applykey"
+      key_rules:
+        - key_id: "{{ key['response']['id'] }}"
+          resource_set_id: "{{ _result_create_rs['response']['id'] }}"
+      data_transform_rules:
+        - key_id: "{{ key['response']['id'] }}"
+          resource_set_id: "{{ _result_create_rs['response']['id'] }}"
+    register: _result_create_csi_policy
+
+  - assert:
+      that:
+        - _result_create_csi_policy is not failed
+        - _result_create_csi_policy.response.id is string
+
+  - name: "Create CSI Storage Group"
+    thalesgroup.ciphertrust.cte_csi_storage_group:
+      op_type: create
+      name: "{{ storage_group_name }}"
+      k8s_namespace: "{{ namespace }}"
+      k8s_storage_class: "{{ storage_class }}"
+      client_profile: "{{ client_profile }}"
       localNode: "{{ this_node_connection_string }}"
     register: _result_create
 
@@ -42,11 +127,11 @@
         - _result_create is not failed
         - _result_create.response.id is string
 
-  - name: "Patch Group"
-    thalesgroup.ciphertrust.group_save:
+  - name: "Patch CSI Storage Group"
+    thalesgroup.ciphertrust.cte_csi_storage_group:
       op_type: patch
-      old_name: "{{ group_name }}"
-      name: "{{ new_group_name }}"
+      id: "{{ _result_create['response']['id'] }}"
+      description: "Updated via Ansible"
       localNode: "{{ this_node_connection_string }}"
     register: _result_patch
 
@@ -55,58 +140,82 @@
         - _result_patch is not failed
         - _result_patch.response.message is match("Resource updated successfully")
 
-  - name: "Add User to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Add CTE Policy (GuardPolicy) to Storage Group"
+    thalesgroup.ciphertrust.cte_csi_storage_group:
+      op_type: add_guard_point
+      id: "{{ _result_create['response']['id'] }}"
+      policy_list:
+        - "{{ _result_create_csi_policy['response']['id'] }}"
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
+    register: _result_add_policy_to_sg
 
   - assert:
       that:
-        - _result_add_user is not failed
-        - _result_add_user.response.message is match("Resource created successfully")
+        - _result_add_policy_to_sg is not failed
 
-  - name: "Add Client to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
+  # - name: "Update GuardPolicy in Storage Group"
+  #   thalesgroup.ciphertrust.cte_csi_storage_group:
+  #     op_type: patch_guard_point
+  #     gp_id: "{{ _result_add_policy_to_sg['response']['guardpoints'][0]['guardpoint']['id'] }}"
+  #     guard_enabled: true
+  #     localNode: "{{ this_node_connection_string }}"
+  #   register: _result_update_policy_in_sg
+
+  # - assert:
+  #     that:
+  #       - _result_update_policy_in_sg is not failed
+
+  # - name: "Delete GuardPolicy in Storage Group"
+  #   thalesgroup.ciphertrust.cte_csi_storage_group:
+  #     op_type: remove_guard_point
+  #     gp_id: "{{ _result_add_policy_to_sg['response']['guardpoints'][0]['guardpoint']['id'] }}"
+  #     localNode: "{{ this_node_connection_string }}"
+  #   register: _result_remove_policy_in_sg
+
+  # - assert:
+  #     that:
+  #       - _result_remove_policy_in_sg is not failed
+
+  - name: "Delete Storage Group"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_create.response.id }}"
+      resource_type: "csigroup"
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
-
+    register: _result_delete_storage_group
+    
   - assert:
       that:
-        - _result_add_client is not failed
-        - _result_add_client.response.message is match("Resource created successfully")
+        - _result_delete_storage_group is not failed
 
-  - name: "Remove User from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Delete CTE Kubernetes Policy"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_create_csi_policy.response.id }}"
+      resource_type: "cte-policy"
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
-
+    register: _result_delete_cte_kubernetes_policy
+    
   - assert:
       that:
-        - _result_add_user is not failed
-        - _result_add_user.response is match("Resource deleted successfully")
+        - _result_delete_cte_kubernetes_policy is not failed
 
-  - name: "Remove Client from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: client
-      object_id: "{{ client_id }}"
-      name: "{{ new_group_name }}"
+  - name: "Delete CTE Resource Set"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_create_rs.response.id }}"
+      resource_type: "resourceset"
       localNode: "{{ this_node_connection_string }}"
-    register: _result_add_client
-
+    register: _result_delete_rs
+    
   - assert:
       that:
-        - _result_add_client is not failed
-        - _result_add_client.response is match("Resource deleted successfully")
+        - _result_delete_rs is not failed
+
+  - name: "Delete Key"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ key.response.id }}"
+      resource_type: "keys"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_key
+    
+  - assert:
+      that:
+        - _result_delete_key is not failed

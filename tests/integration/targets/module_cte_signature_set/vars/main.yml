@@ -1,7 +1,12 @@
-this_node_connection_string:
-  server_ip: <CM_IP_OR_FQDN>
-  server_private_ip: <CM_PRIVATE_IP>
-  server_port: 5432
-  user: <CM_ADMIN_USERNAME>
-  password: <CM_ADMIN_PASSWORD>
-  verify: False
+this_node_connection_string: "{{ cm_connection_string }}"
+
+signature_set_name: ansible_signature_set
+initial_source_list:
+  - "/usr/bin"
+updated_source_list:
+  - "/usr/bin"
+  - "/usr/sbin"
+add_signature_to_set:
+  - file_name: "/bin/cat"
+    hash_value: 05A9E97F7B0D5638A2FFBC1E53A31E44D36251BA35BA8A1556E569D3C8D9B497
+signature_file_name_get_id: "/bin/cat"

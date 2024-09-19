@@ -1,7 +1,28 @@
-this_node_connection_string:
-  server_ip: <CM_IP_OR_FQDN>
-  server_private_ip: <CM_PRIVATE_IP>
-  server_port: 5432
-  user: <CM_ADMIN_USERNAME>
-  password: <CM_ADMIN_PASSWORD>
-  verify: False
+this_node_connection_string: "{{ cm_connection_string }}"
+
+resource_set_name: ansible_resource_set
+initial_resources_list:
+  - directory: "/home/ansible"
+    file: "*"
+    include_subfolders: true
+    hdfs: false
+updated_resources_list:
+  - directory: "/home/ansible"
+    file: "*"
+    include_subfolders: true
+    hdfs: false
+  - directory: "/home/res1"
+    file: "*"
+    include_subfolders: true
+    hdfs: false
+add_resource_to_set:
+  - directory: "/home/res2"
+    file: "*"
+    include_subfolders: true
+    hdfs: false
+resource_index_to_be_updated: 2
+idx2_updated_directory: "/home/res3"
+idx2_updated_file: "*"
+idx2_updated_hdfs: false
+idx2_updated_include_subfolders: true
+resource_index_to_be_deleted: 1

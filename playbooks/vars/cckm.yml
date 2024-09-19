@@ -1,0 +1,36 @@
+this_node_address: 192.168.2.187
+this_node_private_ip: 1.1.1.1
+this_node_username: "admin"
+this_node_password: "ChangeIt01!"
+this_node_tenant_id: 
+
+this_node_connection_string:
+  server_ip: "{{ this_node_address }}"
+  server_private_ip: "{{ this_node_private_ip }}"
+  server_port: 5432
+  user: "{{ this_node_username }}"
+  password: "{{ this_node_password }}"
+  auth_domain_path: "{{ this_node_tenant_id }}"
+  verify: False
+
+# Azure vars
+subscription_id: <AZURE_SUBSCRIPTION_ID>
+tenant_id: <AZURE_TENANT_ID>
+vault_name: <VAULT_NAME>
+resource_group_name: <RG_NAME>
+az_location: eastus
+secret_name: ansible-secret
+connection_name: ansible
+client_secret: <CLIENT_SECRET>
+client_id: <CLIENT_ID>
+
+# GCP vars
+key_file_data: "<JSON_KEY_DATA>"
+gcp_conn_name: ansible-gcp
+gcp_region: us-east1
+project_id: <GCP_PROJECT_ID>
+key_rings:
+  - name: "projects/{{ project_id }}/locations/{{ gcp_region }}/keyRings/ansible"
+
+key_ring: "projects/{{ project_id }}/locations/{{ gcp_region }}/keyRings/ansible"
+key_name: ansible_generated_key
