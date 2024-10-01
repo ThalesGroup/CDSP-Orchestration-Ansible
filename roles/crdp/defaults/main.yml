@@ -1,0 +1,14 @@
+---
+# defaults file for crdp
+this_node_address: "{{ CM_IP }}"
+this_node_private_ip: 10.10.10.10
+this_node_username: "{{ CM_USERNAME }}"
+this_node_password: "{{ CM_PASSWORD }}"
+
+this_node_connection_string:
+  server_ip: "{{ this_node_address }}"
+  server_private_ip: "{{ this_node_private_ip }}"
+  server_port: 5432
+  user: "{{ this_node_username }}"
+  password: "{{ this_node_password }}"
+  verify: False
