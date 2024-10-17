@@ -1,0 +1,862 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="2.15.0" name="antsibull-docs" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>thalesgroup.ciphertrust.cm_certificate_authority module – Create and manage CipherTrust Manager Local CA &mdash; thalesgroup.ciphertrust Collection  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5707b69d" />
+      <link rel="stylesheet" type="text/css" href="_static/css/ansible.css?v=c5b67dd2" />
+      <link rel="stylesheet" type="text/css" href="_static/antsibull-minimal.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/rtd-ethical-ads.css?v=289b023e" />
+
+  
+    <link rel="shortcut icon" href="_static/images/Ansible-Mark-RGB_Black.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7f41d439"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="thalesgroup.ciphertrust.cm_cluster module – Create or join CipherTrust Manager node cluster" href="cm_cluster_module.html" />
+    <link rel="prev" title="Thalesgroup.Ciphertrust" href="index.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+
+
+
+
+</head>
+
+<body class="wy-body-for-nav"><!-- extra body elements for Ansible beyond RTD Sphinx Theme -->
+
+<div class="DocSite-globalNav ansibleNav">
+  <ul>
+    <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+    <li><a href="https://forum.ansible.com/" target="_blank">Ansible community forum</a></li>
+    <li><a href="https://docs.ansible.com/" target="_blank">Documentation</a></li>
+  </ul>
+</div>
+
+<a class="DocSite-nav" href="https://thalesgroup.github.io/CDSP-Orchestration-Ansible/branch/main/" style="padding-bottom: 30px;">
+
+  <img class="DocSiteNav-logo"
+    src="_static/images/Ansible-Mark-RGB_White.png"
+    alt="Ansible Logo">
+  <div class="DocSiteNav-title">thalesgroup.ciphertrust Collection Docs</div>
+</a>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            thalesgroup.ciphertrust Collection
+          </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
+
+<div class="version">
+  
+    
+  
+</div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <label class="sr-only" for="q">Search docs:</label>
+    <input type="text" class="st-default-search-input" id="q" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+  
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">thalesgroup.ciphertrust.cm_certificate_authority module – Create and manage CipherTrust Manager Local CA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#synopsis">Synopsis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#authors">Authors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#collection-links">Collection links</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cm_cluster_module.html">thalesgroup.ciphertrust.cm_cluster module – Create or join CipherTrust Manager node cluster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_regtoken_module.html">thalesgroup.ciphertrust.cm_regtoken module – Create or update registration token</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_resource_delete_module.html">thalesgroup.ciphertrust.cm_resource_delete module – Delete CipherTrust Manager resource using ID</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_resource_get_id_from_name_module.html">thalesgroup.ciphertrust.cm_resource_get_id_from_name module – Get CipherTrust Manager resource ID from resource name</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_services_module.html">thalesgroup.ciphertrust.cm_services module – Reset, restart CipherTrust Manager Services as well as check the status</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_client_module.html">thalesgroup.ciphertrust.cte_client module – Manage CTE clients</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_client_group_module.html">thalesgroup.ciphertrust.cte_client_group module – Manage CTE client groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_csi_storage_group_module.html">thalesgroup.ciphertrust.cte_csi_storage_group module – Manage CTE CSI Storage Group</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_policy_save_module.html">thalesgroup.ciphertrust.cte_policy_save module – Manage policies as collection of rules that govern data access and encryption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_process_set_module.html">thalesgroup.ciphertrust.cte_process_set module – Create and manage CTE process-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_resource_set_module.html">thalesgroup.ciphertrust.cte_resource_set module – Create and manage CTE resource-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_signature_set_module.html">thalesgroup.ciphertrust.cte_signature_set module – Create and manage CTE Signature Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_user_set_module.html">thalesgroup.ciphertrust.cte_user_set module – Create and manage CTE user-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="domain_save_module.html">thalesgroup.ciphertrust.domain_save module – Create or manage domains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_access_policy_save_module.html">thalesgroup.ciphertrust.dpg_access_policy_save module – Manage DPG access policies governing data access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_character_set_save_module.html">thalesgroup.ciphertrust.dpg_character_set_save module – Create and manage DPG character-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_client_profile_save_module.html">thalesgroup.ciphertrust.dpg_client_profile_save module – Manage DPG client profile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_masking_format_save_module.html">thalesgroup.ciphertrust.dpg_masking_format_save module – Manage masking formats for DPG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_policy_save_module.html">thalesgroup.ciphertrust.dpg_policy_save module – Manage DPG execution behavior for REST URLs and associated encryption parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_protection_policy_save_module.html">thalesgroup.ciphertrust.dpg_protection_policy_save module – Manage DPG protection policies governing crypto operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_user_set_save_module.html">thalesgroup.ciphertrust.dpg_user_set_save module – Create and manage DPG user sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_add_remove_object_module.html">thalesgroup.ciphertrust.group_add_remove_object module – Add or remove user or client from group</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_save_module.html">thalesgroup.ciphertrust.group_save module – Create or update groups on CipherTrust Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface_actions_module.html">thalesgroup.ciphertrust.interface_actions module – Perform operations on CipherTrust Manager interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface_save_module.html">thalesgroup.ciphertrust.interface_save module – Create or update an interface or service CipherTrust Manager is hosting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license_create_module.html">thalesgroup.ciphertrust.license_create module – Add a license to CipherTrust Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license_trial_action_module.html">thalesgroup.ciphertrust.license_trial_action module – Activate or deactivate CipherTrust Manager trial license</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license_trial_get_module.html">thalesgroup.ciphertrust.license_trial_get module – Retrieve trial license ID if available</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licensing_lockdata_get_module.html">thalesgroup.ciphertrust.licensing_lockdata_get module – Get license lockdata used to get license code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usermgmt_users_save_module.html">thalesgroup.ciphertrust.usermgmt_users_save module – Create and manage users in CipherTrust Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vault_keys2_op_module.html">thalesgroup.ciphertrust.vault_keys2_op module – Perform operations on keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vault_keys2_save_module.html">thalesgroup.ciphertrust.vault_keys2_save module – Create or update keys in CipherTrust Manager managed vault</a></li>
+</ul>
+<!-- extra nav elements for Ansible beyond RTD Sphinx Theme -->
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">thalesgroup.ciphertrust Collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">thalesgroup.ciphertrust.cm_certificate_authority module – Create and manage CipherTrust Manager Local CA</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <span class="target" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module"></span><section id="thalesgroup-ciphertrust-cm-certificate-authority-module-create-and-manage-ciphertrust-manager-local-ca">
+<h1>thalesgroup.ciphertrust.cm_certificate_authority module – Create and manage CipherTrust Manager Local CA<a class="headerlink" href="#thalesgroup-ciphertrust-cm-certificate-authority-module-create-and-manage-ciphertrust-manager-local-ca" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/thalesgroup/ciphertrust/">thalesgroup.ciphertrust collection</a> (version 1.0.0).</p>
+<p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
+To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
+<p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">thalesgroup.ciphertrust</span></code>.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">thalesgroup.ciphertrust.cm_certificate_authority</span></code>.</p>
+</div>
+<p class="ansible-version-added">New in thalesgroup.ciphertrust 1.0.0</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id2">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id3">Examples</a></p></li>
+</ul>
+</nav>
+<section id="synopsis">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Create and edit local Certificate Authority on CipherTrust Manager</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Parameters</a><a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-algorithm"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-algorithm"><strong>algorithm</strong></p>
+<a class="ansibleOptionLink" href="#parameter-algorithm" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>RSA or ECDSA (default) algorithms are supported.</p>
+<p>Signature algorithm is selected based on the algorithm and size.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;RSA&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ECDSA&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-allow_client_authentication"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-allow-client-authentication"><strong>allow_client_authentication</strong></p>
+<a class="ansibleOptionLink" href="#parameter-allow_client_authentication" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If set to true, the certificates signed by the specified CA can be used for client authentication.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-allow_user_authentication"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-allow-user-authentication"><strong>allow_user_authentication</strong></p>
+<a class="ansibleOptionLink" href="#parameter-allow_user_authentication" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If set to true, the certificates signed by the specified CA can be used for user authentication.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-cert_id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-cert-id"><strong>cert_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-cert_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Certificate ID</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-cn"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-cn"><strong>cn</strong></p>
+<a class="ansibleOptionLink" href="#parameter-cn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Common Name</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csr"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csr"><strong>csr</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csr" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>CSR in PEM format</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams"><strong>csrParams</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Parameters to be used during creating CSR like the subject, x509 extensions and signature algorithm used.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/cn"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-cn"><strong>cn</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/cn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Common Name</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/dnsNames"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-dnsnames"><strong>dnsNames</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/dnsNames" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Subject Alternative Names (SAN) values</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/emailAddresses"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-emailaddresses"><strong>emailAddresses</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/emailAddresses" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>E-mail addresses</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/extendedKeyUsage"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-extendedkeyusage"><strong>extendedKeyUsage</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/extendedKeyUsage" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of names of the permitted extended key usages added as CSR extensions</p>
+<p>Valid values can be one or more of any</p>
+<p>serverAuth</p>
+<p>clientAuth</p>
+<p>codeSigning</p>
+<p>emailProtection</p>
+<p>ipsecEndSystem</p>
+<p>ipsecTunnel</p>
+<p>ipsecUser</p>
+<p>timeStamping</p>
+<p>ocspSigning</p>
+<p>microsoftServerGatedCrypto</p>
+<p>netscapeServerGatedCrypto</p>
+<p>microsoftCommercialCodeSigning</p>
+<p>microsoftKernelCodeSigning</p>
+<p>These keyUsage are allowed for CSR creation</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/ipAddresses"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-ipaddresses"><strong>ipAddresses</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/ipAddresses" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>IP addresses</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/isCA"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-isca"><strong>isCA</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/isCA" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>If set, the value of the basic constraints extension value for CA is set to that boolean value and unset otherwise.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/keyUsage"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-keyusage"><strong>keyUsage</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/keyUsage" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of names of the permitted key usages added as CSR extensions.</p>
+<p>Valid values can be one or more of</p>
+<p>digitalSignature</p>
+<p>contentCommitment</p>
+<p>keyEncipherment</p>
+<p>dataEncipherment</p>
+<p>keyAgreement</p>
+<p>keyCertSign</p>
+<p>crlSign</p>
+<p>encipherOnly</p>
+<p>decipherOnly</p>
+<p>These keyUsage are allowed for CSR creation.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/maxPathLen"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-maxpathlen"><strong>maxPathLen</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/maxPathLen" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>This parameter is valid only when is CA parameter is set to true</p>
+<p>Specifies the maximum number of CAs that can appear below this one in a chain</p>
+<p>If maxPathLen is -1, pathlen is unset.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/names"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-names"><strong>names</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/names" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Name fields are “O=organization, OU=organizational unit, L=location, ST=state/province, C=country”.</p>
+<p>Fields can be duplicated if present in different objects.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/names/C"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-names-c"><strong>C</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/names/C" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Country, for example “US”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/names/L"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-names-l"><strong>L</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/names/L" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Location, for example “Belcamp”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/names/O"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-names-o"><strong>O</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/names/O" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Organization, for example “Thales Group”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/names/OU"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-names-ou"><strong>OU</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/names/OU" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Organizational Unit, for example “RnD”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/names/ST"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-names-st"><strong>ST</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/names/ST" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>State/province, for example “MD”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/signatureAlgorithm"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-signaturealgorithm"><strong>signatureAlgorithm</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/signatureAlgorithm" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Signature algorithm used for creating the CSR.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;sha512WithRSA&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;sha384WithRSA&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;sha256WithRSA&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;sha1WithRSA&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ecdsaWithSHA512&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ecdsaWithSHA384&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ecdsaWithSHA256&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ecdsaWithSHA1&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-csrParams/subjectKeyIdentifierHash"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-csrparams-subjectkeyidentifierhash"><strong>subjectKeyIdentifierHash</strong></p>
+<a class="ansibleOptionLink" href="#parameter-csrParams/subjectKeyIdentifierHash" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>If set to true, the Subject Key Identifier extension is set to the hash specified by RFC5280, else unset</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-dnsNames"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-dnsnames"><strong>dnsNames</strong></p>
+<a class="ansibleOptionLink" href="#parameter-dnsNames" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Subject Alternative Names (SAN) values</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-duration"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-duration"><strong>duration</strong></p>
+<a class="ansibleOptionLink" href="#parameter-duration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Duration in days of certificate. Either duration or notAfter date must be specified.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-emailAddresses"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-emailaddresses"><strong>emailAddresses</strong></p>
+<a class="ansibleOptionLink" href="#parameter-emailAddresses" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>E-mail addresses</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-encryptionAlgo"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-encryptionalgo"><strong>encryptionAlgo</strong></p>
+<a class="ansibleOptionLink" href="#parameter-encryptionAlgo" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Private key encryption algorithm.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AES256&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AES192&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AES128&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;TDES&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-id"><strong>id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ID</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-ipAddresses"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-ipaddresses"><strong>ipAddresses</strong></p>
+<a class="ansibleOptionLink" href="#parameter-ipAddresses" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>IP addresses</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-keyGenParams"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-keygenparams"><strong>keyGenParams</strong></p>
+<a class="ansibleOptionLink" href="#parameter-keyGenParams" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Parameters to be used for creating an asymmetric key to be used for CSR creation.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-keyGenParams/algorithm"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-keygenparams-algorithm"><strong>algorithm</strong></p>
+<a class="ansibleOptionLink" href="#parameter-keyGenParams/algorithm" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Algorithm of key to be generated for CSR creation.</p>
+<p>Permitted values are ‘RSA’ or ‘EC’ and defaults to ‘RSA’</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">&quot;RSA&quot;</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;EC&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-keyGenParams/curveid"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-keygenparams-curveid"><strong>curveid</strong></p>
+<a class="ansibleOptionLink" href="#parameter-keyGenParams/curveid" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Cryptographic curve id for elliptic key</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;secp224r1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;secp384r1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;secp521r1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;prime256v1&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-keyGenParams/keyName"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-keygenparams-keyname"><strong>keyName</strong></p>
+<a class="ansibleOptionLink" href="#parameter-keyGenParams/keyName" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Name of key to be generated for CSR creation</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-keyGenParams/size"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-keygenparams-size"><strong>size</strong></p>
+<a class="ansibleOptionLink" href="#parameter-keyGenParams/size" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Size of key to be generated for CSR creation</p>
+<p>Refer create key API for sizes for EC and RSA keys and their default values.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-keyID"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-keyid"><strong>keyID</strong></p>
+<a class="ansibleOptionLink" href="#parameter-keyID" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Type of the identifier, keyID, for the private key to be used for creating CSR.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-keyIDType"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-keyidtype"><strong>keyIDType</strong></p>
+<a class="ansibleOptionLink" href="#parameter-keyIDType" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Parameters to be used for creating an asymmetric key to be used for CSR creation.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-keyVersion"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-keyversion"><strong>keyVersion</strong></p>
+<a class="ansibleOptionLink" href="#parameter-keyVersion" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Version of the private key, keyID, to be used for creating CSR.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-localnode"><strong>localNode</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)</p>
+<p>holds IP/FQDN of the server, username, password, and port</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/auth_domain_path"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-localnode-auth-domain-path"><strong>auth_domain_path</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/auth_domain_path" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>user’s domain path</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/password"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-localnode-password"><strong>password</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/password" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>admin password of CM</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/server_ip"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-localnode-server-ip"><strong>server_ip</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/server_ip" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>CM Server IP or FQDN</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/server_port"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-localnode-server-port"><strong>server_port</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/server_port" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Port on which CM server is listening</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/server_private_ip"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-localnode-server-private-ip"><strong>server_private_ip</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/server_private_ip" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>internal or private IP of the CM Server, if different from the server_ip</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/user"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-localnode-user"><strong>user</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/user" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>admin username of CM</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/verify"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-localnode-verify"><strong>verify</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/verify" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>if SSL verification is required</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-name"><strong>name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A unique name of CA, if not provided, will be set to localca-&lt;id&gt;.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-names"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-names"><strong>names</strong></p>
+<a class="ansibleOptionLink" href="#parameter-names" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Name fields are “O=organization, OU=organizational unit, L=location, ST=state/province, C=country”.</p>
+<p>Fields can be duplicated if present in different objects.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-names/C"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-names-c"><strong>C</strong></p>
+<a class="ansibleOptionLink" href="#parameter-names/C" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Country, for example “US”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-names/L"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-names-l"><strong>L</strong></p>
+<a class="ansibleOptionLink" href="#parameter-names/L" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Location, for example “Belcamp”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-names/O"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-names-o"><strong>O</strong></p>
+<a class="ansibleOptionLink" href="#parameter-names/O" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Organization, for example “Thales Group”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-names/OU"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-names-ou"><strong>OU</strong></p>
+<a class="ansibleOptionLink" href="#parameter-names/OU" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Organizational Unit, for example “RnD”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-names/ST"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-names-st"><strong>ST</strong></p>
+<a class="ansibleOptionLink" href="#parameter-names/ST" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>State/province, for example “MD”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-notAfter"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-notafter"><strong>notAfter</strong></p>
+<a class="ansibleOptionLink" href="#parameter-notAfter" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>End date of certificate</p>
+<p>Either notAfter or duration must be specified</p>
+<p>notAfter overrides duration if both are given.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-notBefore"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-notbefore"><strong>notBefore</strong></p>
+<a class="ansibleOptionLink" href="#parameter-notBefore" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Start date of certificate</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-op_type"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-op-type"><strong>op_type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-op_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Operation to be performed</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;create&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;patch&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;issue-cert&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;self-sign&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;revoke-cert&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;resume-cert&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;create-csr&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;create-csr-key&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-password"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-password"><strong>password</strong></p>
+<a class="ansibleOptionLink" href="#parameter-password" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Password to PEM-encrypt the private key. If not specified, the private key is not encrypted in return.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-privateKeyBytes"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-privatekeybytes"><strong>privateKeyBytes</strong></p>
+<a class="ansibleOptionLink" href="#parameter-privateKeyBytes" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Private Key bytes of the key which is to be used while creating CSR(Algorithm and size should be according to this key).</p>
+<p>If not given will generate key internally as per algorithm and size.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-purpose"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-purpose"><strong>purpose</strong></p>
+<a class="ansibleOptionLink" href="#parameter-purpose" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>server, client or ca</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;server&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;client&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ca&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-reason"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-reason"><strong>reason</strong></p>
+<a class="ansibleOptionLink" href="#parameter-reason" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Specify one of the reason.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;unspecified&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;keyCompromise&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;cACompromise&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;affiliationChanged&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;superseded&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;cessationOfOperation&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;certificateHold&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;removeFromCRL&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;privilegeWithdrawn&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;aACompromise&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-size"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cm-certificate-authority-module-parameter-size"><strong>size</strong></p>
+<a class="ansibleOptionLink" href="#parameter-size" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Key size</p>
+</div></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Create</span><span class="nv"> </span><span class="s">CM</span><span class="nv"> </span><span class="s">Local</span><span class="nv"> </span><span class="s">CA&quot;</span>
+<span class="w">  </span><span class="nt">thalesgroup.ciphertrust.cm_certificate_authority</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">localNode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">server_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IP/FQDN</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">CipherTrust</span><span class="nv"> </span><span class="s">Manager&quot;</span>
+<span class="w">      </span><span class="nt">server_private_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Private</span><span class="nv"> </span><span class="s">IP</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">case</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">different</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">above&quot;</span>
+<span class="w">      </span><span class="nt">server_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+<span class="w">      </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Username&quot;</span>
+<span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Password&quot;</span>
+<span class="w">      </span><span class="nt">verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">auth_domain_path</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">op_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create</span>
+<span class="w">    </span><span class="nt">cn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local_ca_ansible</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AnsibleLocalCA</span>
+<span class="w">    </span><span class="nt">algorithm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RSA</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4096</span>
+<span class="w">    </span><span class="nt">names</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">C</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CA</span>
+<span class="w">        </span><span class="nt">ST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ontario</span>
+<span class="w">        </span><span class="nt">L</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ottawa</span>
+<span class="w">        </span><span class="nt">O</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ciphertrust</span>
+<span class="w">        </span><span class="nt">OU</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ca</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Self sign the CA</span>
+<span class="w">  </span><span class="nt">thalesgroup.ciphertrust.cm_certificate_authority</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">localNode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">server_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IP/FQDN</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">CipherTrust</span><span class="nv"> </span><span class="s">Manager&quot;</span>
+<span class="w">      </span><span class="nt">server_private_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Private</span><span class="nv"> </span><span class="s">IP</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">case</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">different</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">above&quot;</span>
+<span class="w">      </span><span class="nt">server_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+<span class="w">      </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Username&quot;</span>
+<span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Password&quot;</span>
+<span class="w">      </span><span class="nt">verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">auth_domain_path</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">op_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">self-sign</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ca_id&quot;</span>
+<span class="w">    </span><span class="nt">duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">365</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create CSR</span>
+<span class="w">  </span><span class="nt">thalesgroup.ciphertrust.cm_certificate_authority</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">localNode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">server_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IP/FQDN</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">CipherTrust</span><span class="nv"> </span><span class="s">Manager&quot;</span>
+<span class="w">      </span><span class="nt">server_private_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Private</span><span class="nv"> </span><span class="s">IP</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">case</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">different</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">above&quot;</span>
+<span class="w">      </span><span class="nt">server_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+<span class="w">      </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Username&quot;</span>
+<span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Password&quot;</span>
+<span class="w">      </span><span class="nt">verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">auth_domain_path</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">op_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create-csr-key</span>
+<span class="w">    </span><span class="nt">cn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csr</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AnsibleCSR</span>
+<span class="w">    </span><span class="nt">algorithm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RSA</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2048</span>
+<span class="w">    </span><span class="nt">ipAddresses</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.1.1.10</span>
+<span class="w">    </span><span class="nt">names</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">C</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CA</span>
+<span class="w">        </span><span class="nt">ST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ontario</span>
+<span class="w">        </span><span class="nt">L</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ottawa</span>
+<span class="w">        </span><span class="nt">O</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ciphertrust</span>
+<span class="w">        </span><span class="nt">OU</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">    </span><span class="nt">encryptionAlgo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AES256</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csr</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Issue Certificate</span>
+<span class="w">  </span><span class="nt">thalesgroup.ciphertrust.cm_certificate_authority</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">localNode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">server_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IP/FQDN</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">CipherTrust</span><span class="nv"> </span><span class="s">Manager&quot;</span>
+<span class="w">      </span><span class="nt">server_private_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Private</span><span class="nv"> </span><span class="s">IP</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">case</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">different</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">above&quot;</span>
+<span class="w">      </span><span class="nt">server_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+<span class="w">      </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Username&quot;</span>
+<span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Password&quot;</span>
+<span class="w">      </span><span class="nt">verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">auth_domain_path</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">op_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">issue-cert</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ca_id&quot;</span>
+<span class="w">    </span><span class="nt">csr</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;csr&quot;</span>
+<span class="w">    </span><span class="nt">purpose</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server</span>
+<span class="w">    </span><span class="nt">duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">365</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AnsibleServerCert</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert</span>
+</pre></div>
+</div>
+<section id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Anurag Jain (&#64;anugram)</p></li>
+</ul>
+</section>
+<section id="collection-links">
+<h3>Collection links<a class="headerlink" href="#collection-links" title="Link to this heading"></a></h3>
+<ul class="ansible-links">
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/issues" rel="noopener external" target="_blank">Issue Tracker</a></span></li>
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://www.thalesgroup.com" rel="noopener external" target="_blank">Homepage</a></span></li>
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/ThalesGroup/CDSP-Orchestration-Ansible" rel="noopener external" target="_blank">Repository (Sources)</a></span></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          
+
+<footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Thalesgroup.Ciphertrust" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cm_cluster_module.html" class="btn btn-neutral float-right" title="thalesgroup.ciphertrust.cm_cluster module – Create or join CipherTrust Manager node cluster" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright thalesgroup.ciphertrust Contributors.</p>
+  </div>
+
+  
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script><!-- extra footer elements for Ansible beyond RTD Sphinx Theme -->
+
+</body>
+</html>

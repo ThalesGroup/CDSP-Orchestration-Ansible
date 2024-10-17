@@ -1,0 +1,1405 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="2.15.0" name="antsibull-docs" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>thalesgroup.ciphertrust.vault_keys2_save module – Create or update keys in CipherTrust Manager managed vault &mdash; thalesgroup.ciphertrust Collection  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5707b69d" />
+      <link rel="stylesheet" type="text/css" href="_static/css/ansible.css?v=c5b67dd2" />
+      <link rel="stylesheet" type="text/css" href="_static/antsibull-minimal.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/rtd-ethical-ads.css?v=289b023e" />
+
+  
+    <link rel="shortcut icon" href="_static/images/Ansible-Mark-RGB_Black.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7f41d439"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="thalesgroup.ciphertrust.vault_keys2_op module – Perform operations on keys" href="vault_keys2_op_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+
+
+
+
+</head>
+
+<body class="wy-body-for-nav"><!-- extra body elements for Ansible beyond RTD Sphinx Theme -->
+
+<div class="DocSite-globalNav ansibleNav">
+  <ul>
+    <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+    <li><a href="https://forum.ansible.com/" target="_blank">Ansible community forum</a></li>
+    <li><a href="https://docs.ansible.com/" target="_blank">Documentation</a></li>
+  </ul>
+</div>
+
+<a class="DocSite-nav" href="https://thalesgroup.github.io/CDSP-Orchestration-Ansible/branch/main/" style="padding-bottom: 30px;">
+
+  <img class="DocSiteNav-logo"
+    src="_static/images/Ansible-Mark-RGB_White.png"
+    alt="Ansible Logo">
+  <div class="DocSiteNav-title">thalesgroup.ciphertrust Collection Docs</div>
+</a>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            thalesgroup.ciphertrust Collection
+          </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
+
+<div class="version">
+  
+    
+  
+</div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <label class="sr-only" for="q">Search docs:</label>
+    <input type="text" class="st-default-search-input" id="q" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+  
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="cm_certificate_authority_module.html">thalesgroup.ciphertrust.cm_certificate_authority module – Create and manage CipherTrust Manager Local CA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_cluster_module.html">thalesgroup.ciphertrust.cm_cluster module – Create or join CipherTrust Manager node cluster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_regtoken_module.html">thalesgroup.ciphertrust.cm_regtoken module – Create or update registration token</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_resource_delete_module.html">thalesgroup.ciphertrust.cm_resource_delete module – Delete CipherTrust Manager resource using ID</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_resource_get_id_from_name_module.html">thalesgroup.ciphertrust.cm_resource_get_id_from_name module – Get CipherTrust Manager resource ID from resource name</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_services_module.html">thalesgroup.ciphertrust.cm_services module – Reset, restart CipherTrust Manager Services as well as check the status</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_client_module.html">thalesgroup.ciphertrust.cte_client module – Manage CTE clients</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_client_group_module.html">thalesgroup.ciphertrust.cte_client_group module – Manage CTE client groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_csi_storage_group_module.html">thalesgroup.ciphertrust.cte_csi_storage_group module – Manage CTE CSI Storage Group</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_policy_save_module.html">thalesgroup.ciphertrust.cte_policy_save module – Manage policies as collection of rules that govern data access and encryption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_process_set_module.html">thalesgroup.ciphertrust.cte_process_set module – Create and manage CTE process-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_resource_set_module.html">thalesgroup.ciphertrust.cte_resource_set module – Create and manage CTE resource-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_signature_set_module.html">thalesgroup.ciphertrust.cte_signature_set module – Create and manage CTE Signature Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_user_set_module.html">thalesgroup.ciphertrust.cte_user_set module – Create and manage CTE user-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="domain_save_module.html">thalesgroup.ciphertrust.domain_save module – Create or manage domains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_access_policy_save_module.html">thalesgroup.ciphertrust.dpg_access_policy_save module – Manage DPG access policies governing data access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_character_set_save_module.html">thalesgroup.ciphertrust.dpg_character_set_save module – Create and manage DPG character-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_client_profile_save_module.html">thalesgroup.ciphertrust.dpg_client_profile_save module – Manage DPG client profile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_masking_format_save_module.html">thalesgroup.ciphertrust.dpg_masking_format_save module – Manage masking formats for DPG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_policy_save_module.html">thalesgroup.ciphertrust.dpg_policy_save module – Manage DPG execution behavior for REST URLs and associated encryption parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_protection_policy_save_module.html">thalesgroup.ciphertrust.dpg_protection_policy_save module – Manage DPG protection policies governing crypto operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_user_set_save_module.html">thalesgroup.ciphertrust.dpg_user_set_save module – Create and manage DPG user sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_add_remove_object_module.html">thalesgroup.ciphertrust.group_add_remove_object module – Add or remove user or client from group</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_save_module.html">thalesgroup.ciphertrust.group_save module – Create or update groups on CipherTrust Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface_actions_module.html">thalesgroup.ciphertrust.interface_actions module – Perform operations on CipherTrust Manager interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface_save_module.html">thalesgroup.ciphertrust.interface_save module – Create or update an interface or service CipherTrust Manager is hosting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license_create_module.html">thalesgroup.ciphertrust.license_create module – Add a license to CipherTrust Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license_trial_action_module.html">thalesgroup.ciphertrust.license_trial_action module – Activate or deactivate CipherTrust Manager trial license</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license_trial_get_module.html">thalesgroup.ciphertrust.license_trial_get module – Retrieve trial license ID if available</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licensing_lockdata_get_module.html">thalesgroup.ciphertrust.licensing_lockdata_get module – Get license lockdata used to get license code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usermgmt_users_save_module.html">thalesgroup.ciphertrust.usermgmt_users_save module – Create and manage users in CipherTrust Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vault_keys2_op_module.html">thalesgroup.ciphertrust.vault_keys2_op module – Perform operations on keys</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">thalesgroup.ciphertrust.vault_keys2_save module – Create or update keys in CipherTrust Manager managed vault</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#synopsis">Synopsis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#authors">Authors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#collection-links">Collection links</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- extra nav elements for Ansible beyond RTD Sphinx Theme -->
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">thalesgroup.ciphertrust Collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">thalesgroup.ciphertrust.vault_keys2_save module – Create or update keys in CipherTrust Manager managed vault</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <span class="target" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module"></span><section id="thalesgroup-ciphertrust-vault-keys2-save-module-create-or-update-keys-in-ciphertrust-manager-managed-vault">
+<h1>thalesgroup.ciphertrust.vault_keys2_save module – Create or update keys in CipherTrust Manager managed vault<a class="headerlink" href="#thalesgroup-ciphertrust-vault-keys2-save-module-create-or-update-keys-in-ciphertrust-manager-managed-vault" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/thalesgroup/ciphertrust/">thalesgroup.ciphertrust collection</a> (version 1.0.0).</p>
+<p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
+To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
+<p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">thalesgroup.ciphertrust</span></code>.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">thalesgroup.ciphertrust.vault_keys2_save</span></code>.</p>
+</div>
+<p class="ansible-version-added">New in thalesgroup.ciphertrust 1.0.0</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id2">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id3">Examples</a></p></li>
+</ul>
+</nav>
+<section id="synopsis">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs</p></li>
+<li><p>For keys management API</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Parameters</a><a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-activationDate"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-activationdate"><strong>activationDate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-activationDate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Date/time the object becomes active</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-algorithm"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-algorithm"><strong>algorithm</strong></p>
+<a class="ansibleOptionLink" href="#parameter-algorithm" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Cryptographic algorithm this key is used with.</p>
+<p>Defaults to ‘aes’</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">&quot;aes&quot;</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;tdes&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;rsa&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ec&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha256&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha384&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha512&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;seed&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;aria&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;opaque&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aliases"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-aliases"><strong>aliases</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aliases" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Aliases associated with the key.</p>
+<p>The alias and alias-type must be specified.</p>
+<p>The alias index is assigned by this operation, and need not be specified.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aliases/alias"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-aliases-alias"><strong>alias</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aliases/alias" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>An alias for a key name</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aliases/index"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-aliases-index"><strong>index</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aliases/index" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Index associated with alias. Each alias within an object has a unique index</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aliases/type"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-aliases-type"><strong>type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aliases/type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Type of alias (allowed values are string and uri)</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-allVersions"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-allversions"><strong>allVersions</strong></p>
+<a class="ansibleOptionLink" href="#parameter-allVersions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>To update the group permissions/custom attribute or both in metadata of all versions of the key</p>
+<p>By default it is set to false</p>
+<p>Set to true, only when to update the group/custom attribute or both permissions of all versions of the key.</p>
+<p>Only applicable for op_type “patch”</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-archiveDate"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-archivedate"><strong>archiveDate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-archiveDate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Date/time the object becomes archived</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-certType"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-certtype"><strong>certType</strong></p>
+<a class="ansibleOptionLink" href="#parameter-certType" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This specifies the type of certificate object that is being created</p>
+<p>Valid values are ‘x509-pem’ and ‘x509-der’</p>
+<p>At present, we only support x.509 certificates</p>
+<p>The cerfificate data is passed in via the ‘material’ field</p>
+<p>The certificate type is infered from the material if it is left blank.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;x509-pem&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;x509-der&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-cm_key_id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-cm-key-id"><strong>cm_key_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-cm_key_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>CM ID of the key that needs to be patched.</p>
+<p>Only required if the op_type is patch or create_version</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-compromiseDate"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-compromisedate"><strong>compromiseDate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-compromiseDate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Date/time the object entered into the compromised state.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-compromiseOccurrenceDate"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-compromiseoccurrencedate"><strong>compromiseOccurrenceDate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-compromiseOccurrenceDate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Date/time when the object was first believed to be compromised, if known</p>
+<p>Only valid if the revocation reason is CACompromise or KeyCompromise, otherwise ignored.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-curveid"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-curveid"><strong>curveid</strong></p>
+<a class="ansibleOptionLink" href="#parameter-curveid" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Cryptographic curve id for elliptic key.</p>
+<p>Key algorithm must be ‘EC’</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;secp224k1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;secp224r1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;secp256k1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;secp384r1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;secp521r1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;prime256v1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;brainpoolP224r1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;brainpoolP224t1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;brainpoolP256r1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;brainpoolP256t1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;brainpoolP384r1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;brainpoolP384t1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;brainpoolP512r1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;brainpoolP512t1&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-deactivationDate"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-deactivationdate"><strong>deactivationDate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-deactivationDate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Date/time the object becomes inactive</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-defaultIV"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-defaultiv"><strong>defaultIV</strong></p>
+<a class="ansibleOptionLink" href="#parameter-defaultIV" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Deprecated</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-destroyDate"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-destroydate"><strong>destroyDate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-destroyDate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Date/time the object was destroyed.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-encoding"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-encoding"><strong>encoding</strong></p>
+<a class="ansibleOptionLink" href="#parameter-encoding" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Specifies the encoding used for the ‘material’ field.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-format"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-format"><strong>format</strong></p>
+<a class="ansibleOptionLink" href="#parameter-format" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This parameter is used while importing keys (‘material’ is not empty)</p>
+<p>For Asymmetric keys, When this parameter is not specified</p>
+<p>For Symmetric keys, When importing keys if specified, the value must be given according to the format of the material.</p>
+<p>Options are raw or opaque</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-generateKeyId"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-generatekeyid"><strong>generateKeyId</strong></p>
+<a class="ansibleOptionLink" href="#parameter-generateKeyId" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If specified as true, the key’s keyId identifier of type long is generated. Defaults to false.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-hkdfCreateParameters"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-hkdfcreateparameters"><strong>hkdfCreateParameters</strong></p>
+<a class="ansibleOptionLink" href="#parameter-hkdfCreateParameters" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Information which is used to create a Key using HKDF.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-hkdfCreateParameters/hashAlgorithm"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-hkdfcreateparameters-hashalgorithm"><strong>hashAlgorithm</strong></p>
+<a class="ansibleOptionLink" href="#parameter-hkdfCreateParameters/hashAlgorithm" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Hash Algorithm is used for HKDF.</p>
+<p>This is required if ikmKeyName is specified, default is hmac-sha256.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha224&quot;</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">&quot;hmac-sha256&quot;</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha384&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha512&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-hkdfCreateParameters/ikmKeyName"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-hkdfcreateparameters-ikmkeyname"><strong>ikmKeyName</strong></p>
+<a class="ansibleOptionLink" href="#parameter-hkdfCreateParameters/ikmKeyName" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Any existing symmetric key. Mandatory while using HKDF key generation.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-hkdfCreateParameters/info"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-hkdfcreateparameters-info"><strong>info</strong></p>
+<a class="ansibleOptionLink" href="#parameter-hkdfCreateParameters/info" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Info is an optional hex value for HKDF based derivation.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-hkdfCreateParameters/salt"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-hkdfcreateparameters-salt"><strong>salt</strong></p>
+<a class="ansibleOptionLink" href="#parameter-hkdfCreateParameters/salt" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Salt is an optional hex value for HKDF based derivation.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-id"><strong>id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This optional parameter specifies the identifier of the key (id)</p>
+<p>It is used only when creating keys with specific key material. If set, the key’s id is set to this value.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-idSize"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-idsize"><strong>idSize</strong></p>
+<a class="ansibleOptionLink" href="#parameter-idSize" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Size of the ID for the key</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-keyId"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-keyid"><strong>keyId</strong></p>
+<a class="ansibleOptionLink" href="#parameter-keyId" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Additional identifier of the key. The format of this value is of type long</p>
+<p>This is optional and applicable for import key only. If set, the value is imported as the key’s keyId.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-labels"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-labels"><strong>labels</strong></p>
+<a class="ansibleOptionLink" href="#parameter-labels" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Optional key/value pairs used to group keys</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-localnode"><strong>localNode</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)</p>
+<p>holds IP/FQDN of the server, username, password, and port</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/auth_domain_path"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-localnode-auth-domain-path"><strong>auth_domain_path</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/auth_domain_path" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>user’s domain path</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/password"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-localnode-password"><strong>password</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/password" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>admin password of CM</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/server_ip"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-localnode-server-ip"><strong>server_ip</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/server_ip" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>CM Server IP or FQDN</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/server_port"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-localnode-server-port"><strong>server_port</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/server_port" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Port on which CM server is listening</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/server_private_ip"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-localnode-server-private-ip"><strong>server_private_ip</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/server_private_ip" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>internal or private IP of the CM Server, if different from the server_ip</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/user"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-localnode-user"><strong>user</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/user" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>admin username of CM</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/verify"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-localnode-verify"><strong>verify</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/verify" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>if SSL verification is required</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-macSignBytes"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-macsignbytes"><strong>macSignBytes</strong></p>
+<a class="ansibleOptionLink" href="#parameter-macSignBytes" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This parameter specifies the MAC/Signature bytes to be used for verification while importing a key</p>
+<p>The “wrappingMethod” should be “mac/sign” and the required parameters for the verification must be set.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-macSignKeyIdentifier"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-macsignkeyidentifier"><strong>macSignKeyIdentifier</strong></p>
+<a class="ansibleOptionLink" href="#parameter-macSignKeyIdentifier" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This parameter specifies the identifier of the key to be used for generating MAC or signature of the key material</p>
+<p>The “wrappingMethod” should be “mac/sign” to verify the MAC/signature(“macSignBytes”) of the key material(“material”)</p>
+<p>For verifying the MAC, the key has to be a HMAC key</p>
+<p>For verifying the signature, the key has to be an RSA private or public key.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-macSignKeyIdentifierType"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-macsignkeyidentifiertype"><strong>macSignKeyIdentifierType</strong></p>
+<a class="ansibleOptionLink" href="#parameter-macSignKeyIdentifierType" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This parameter specifies the identifier of the key(“macSignKeyIdentifier”) used for generating MAC or signature of the key material</p>
+<p>The “wrappingMethod” should be “mac/sign” to verify the mac/signature(“macSignBytes”) of the key material(“material”)</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;name&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;alias&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-material"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-material"><strong>material</strong></p>
+<a class="ansibleOptionLink" href="#parameter-material" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If set, the value will be imported as the key’s material</p>
+<p>If not set, new key material will be generated on the server</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta"><strong>meta</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Optional end-user or service data stored with the key</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/cte"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-cte"><strong>cte</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/cte" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>CTE specific permissions</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/cte/cte_versioned"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-cte-cte-versioned"><strong>cte_versioned</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/cte/cte_versioned" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>CTE versioned</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/cte/encryption_mode"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-cte-encryption-mode"><strong>encryption_mode</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/cte/encryption_mode" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specify encryption mode</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/cte/persistent_on_client"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-cte-persistent-on-client"><strong>persistent_on_client</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/cte/persistent_on_client" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Allow persisting key on the client</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/ownerId"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-ownerid"><strong>ownerId</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/ownerId" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Optional owner information for the key, required for non-admin. Value should be the user’s user_id</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/permissions"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-permissions"><strong>permissions</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/permissions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Optional permissions associated with this key</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/permissions/DecryptWithKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-permissions-decryptwithkey"><strong>DecryptWithKey</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/permissions/DecryptWithKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Permission to descrypt with the key</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/permissions/EncryptWithKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-permissions-encryptwithkey"><strong>EncryptWithKey</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/permissions/EncryptWithKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Permission to encrypt with the key</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/permissions/ExportKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-permissions-exportkey"><strong>ExportKey</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/permissions/ExportKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Permission to export key</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/permissions/MACVerifyWithKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-permissions-macverifywithkey"><strong>MACVerifyWithKey</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/permissions/MACVerifyWithKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Permission to verify MAC with the key</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/permissions/MACWithKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-permissions-macwithkey"><strong>MACWithKey</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/permissions/MACWithKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Permission to use MAC with key</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/permissions/ReadKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-permissions-readkey"><strong>ReadKey</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/permissions/ReadKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Permission to read key</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/permissions/SignVerifyWithKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-permissions-signverifywithkey"><strong>SignVerifyWithKey</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/permissions/SignVerifyWithKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Permission to verify sign with the key</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/permissions/SignWithKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-permissions-signwithkey"><strong>SignWithKey</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/permissions/SignWithKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Permission to sign with the key</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/permissions/UseKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-permissions-usekey"><strong>UseKey</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/permissions/UseKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Permission to use key</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-meta/versionedKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-meta-versionedkey"><strong>versionedKey</strong></p>
+<a class="ansibleOptionLink" href="#parameter-meta/versionedKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>if the key is versioned</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-muid"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-muid"><strong>muid</strong></p>
+<a class="ansibleOptionLink" href="#parameter-muid" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Additional identifier of the key</p>
+<p>This is optional and applicable for import key only</p>
+<p>If set, the value is imported as the key’s muid.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-name"><strong>name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Optional friendly name</p>
+<p>The key name should not contain special characters such as angular brackets (&lt;,&gt;) and backslash ().</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-objectType"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-objecttype"><strong>objectType</strong></p>
+<a class="ansibleOptionLink" href="#parameter-objectType" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This specifies the type of object that is being created</p>
+<p>The object type is inferred for many objects, but must be supplied for the certificate object.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;Symmetric</span> <span class="pre">Key&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;Public</span> <span class="pre">Key&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;Private</span> <span class="pre">Key&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;Secret</span> <span class="pre">Data&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;Opaque</span> <span class="pre">Object&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;Certificate&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-offset"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-offset"><strong>offset</strong></p>
+<a class="ansibleOptionLink" href="#parameter-offset" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>An Offset MAY be used to indicate the difference between the Creation Date and the Activation Date of the replacement key.</p>
+<p>Only applicable for op_type “create_version”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-op_type"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-op-type"><strong>op_type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-op_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Operation to be performed</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;create&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;patch&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;create_version&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-padded"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-padded"><strong>padded</strong></p>
+<a class="ansibleOptionLink" href="#parameter-padded" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This parameter determines the padding for the wrap algorithm while unwrapping a symmetric key</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-password"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-password"><strong>password</strong></p>
+<a class="ansibleOptionLink" href="#parameter-password" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>For pkcs12 format, either password or secretDataLink should be specified</p>
+<p>This should be the base64 encoded value of the password.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-processStartDate"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-processstartdate"><strong>processStartDate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-processStartDate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Date/time when a Managed Symmetric Key Object MAY begin to be used to process cryptographically protected information</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-protectStopDate"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-protectstopdate"><strong>protectStopDate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-protectStopDate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Date/time after which a Managed Symmetric Key Object SHALL NOT be used for applying cryptographic protection</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters"><strong>publicKeyParameters</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Information needed to create a public key</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/activationDate"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-activationdate"><strong>activationDate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/activationDate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Date/time the object becomes active</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/aliases"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-aliases"><strong>aliases</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/aliases" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Aliases associated with the key.</p>
+<p>The alias and alias-type must be specified.</p>
+<p>The alias index is assigned by this operation, and need not be specified.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/aliases/alias"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-aliases-alias"><strong>alias</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/aliases/alias" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>alias</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/aliases/index"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-aliases-index"><strong>index</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/aliases/index" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>alias index</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/aliases/type"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-aliases-type"><strong>type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/aliases/type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>alias type</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/archiveDate"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-archivedate"><strong>archiveDate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/archiveDate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Date/time the object becomes archived</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/deactivationDate"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-deactivationdate"><strong>deactivationDate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/deactivationDate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Date/time the object becomes inactive</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/meta"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-meta"><strong>meta</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/meta" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Optional end-user or service data stored with the key</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/name"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-name"><strong>name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Optional friendly name</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/state"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-state"><strong>state</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Optional initial key state (Pre-Active) upon creation</p>
+<p>Defaults to Active</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/undeletable"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-undeletable"><strong>undeletable</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/undeletable" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Key is not deletable. Defaults to false.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/unexportable"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-unexportable"><strong>unexportable</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/unexportable" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Key is not exportable. Defaults to false.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-publicKeyParameters/usageMask"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-publickeyparameters-usagemask"><strong>usageMask</strong></p>
+<a class="ansibleOptionLink" href="#parameter-publicKeyParameters/usageMask" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Cryptographic usage mask.</p>
+<p>Add the usage masks to allow certain usages.</p>
+<p>Sign (1)</p>
+<p>Verify (2)</p>
+<p>Encrypt (4)</p>
+<p>Decrypt (8)</p>
+<p>Wrap Key (16)</p>
+<p>Unwrap Key (32)</p>
+<p>Export (64)</p>
+<p>MAC Generate (128)</p>
+<p>MAC Verify (256)</p>
+<p>Derive Key (512)</p>
+<p>Content Commitment (1024)</p>
+<p>Key Agreement (2048)</p>
+<p>Certificate Sign (4096)</p>
+<p>CRL Sign (8192)</p>
+<p>Generate Cryptogram (16384)</p>
+<p>Validate Cryptogram (32768)</p>
+<p>Translate Encrypt (65536)</p>
+<p>Translate Decrypt (131072)</p>
+<p>Translate Wrap (262144)</p>
+<p>Translate Unwrap (524288)</p>
+<p>FPE Encrypt (1048576)</p>
+<p>FPE Decrypt (2097152)</p>
+<p>Add the usage mask values to allow the usages</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-revocationMessage"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-revocationmessage"><strong>revocationMessage</strong></p>
+<a class="ansibleOptionLink" href="#parameter-revocationMessage" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Message explaining revocation.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-revocationReason"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-revocationreason"><strong>revocationReason</strong></p>
+<a class="ansibleOptionLink" href="#parameter-revocationReason" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The reason the key is being revoked.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;Unspecified&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;KeyCompromise&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CACompromise&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AffiliationChanged&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;Superseded&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CessationOfOperation&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;PrivilegeWithdrawn&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rotationFrequencyDays"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-rotationfrequencydays"><strong>rotationFrequencyDays</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rotationFrequencyDays" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Number of days from current date to rotate the key.</p>
+<p>It should be greater than or equal to 0.</p>
+<p>Default is an empty string.</p>
+<p>If set to 0, rotationFrequencyDays set to an empty string and auto rotation of key will be disabled.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secretDataEncoding"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-secretdataencoding"><strong>secretDataEncoding</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secretDataEncoding" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>For pkcs12 format, this field specifies the encoding method used for the secretDataLink material.</p>
+<p>Ignore this field if secretData is created from REST and is in plain format.</p>
+<p>Specify the value of this field as HEX format if secretData is created from KMIP.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secretDataLink"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-secretdatalink"><strong>secretDataLink</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secretDataLink" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>For pkcs12 format, either secretDataLink or password should be specified.</p>
+<p>The value can be either ID or name of Secret Data.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-signingAlgo"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-signingalgo"><strong>signingAlgo</strong></p>
+<a class="ansibleOptionLink" href="#parameter-signingAlgo" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This parameter specifies the algorithm to be used for generating the signature</p>
+<p>Signature for the verification of the “macSignBytes” during import of key material.</p>
+<p>The “wrappingMethod” should be “mac/sign” to verify the signature(“macSignBytes”) of the key material(“material”).</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;RSA&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;RSA-PSS&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-size"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-size"><strong>size</strong></p>
+<a class="ansibleOptionLink" href="#parameter-size" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Bit length for the key.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-state"><strong>state</strong></p>
+<a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Optional initial key state (Pre-Active) upon creation. Defaults to Active.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-undeletable"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-undeletable"><strong>undeletable</strong></p>
+<a class="ansibleOptionLink" href="#parameter-undeletable" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Key is not deletable. Defaults to false.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-unexportable"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-unexportable"><strong>unexportable</strong></p>
+<a class="ansibleOptionLink" href="#parameter-unexportable" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Key is not exportable. Defaults to false.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-usageMask"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-usagemask"><strong>usageMask</strong></p>
+<a class="ansibleOptionLink" href="#parameter-usageMask" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Cryptographic usage mask</p>
+<p>Add the usage masks to allow certain usages</p>
+<p>Sign (1)</p>
+<p>Verify (2)</p>
+<p>Encrypt (4)</p>
+<p>Decrypt (8)</p>
+<p>Wrap Key (16)</p>
+<p>Unwrap Key (32)</p>
+<p>Export (64)</p>
+<p>MAC Generate (128)</p>
+<p>MAC Verify (256)</p>
+<p>Derive Key (512)</p>
+<p>Content Commitment (1024)</p>
+<p>Key Agreement (2048)</p>
+<p>Certificate Sign (4096)</p>
+<p>CRL Sign (8192)</p>
+<p>Generate Cryptogram (16384)</p>
+<p>Validate Cryptogram (32768)</p>
+<p>Translate Encrypt (65536)</p>
+<p>Translate Decrypt (131072)</p>
+<p>Translate Wrap (262144)</p>
+<p>Translate Unwrap (524288)</p>
+<p>FPE Encrypt (1048576)</p>
+<p>FPE Decrypt (2097152)</p>
+<p>Add the usage mask values to allow the usages</p>
+<p>To set all usage mask bits, use 4194303</p>
+<p>Equivalent usageMask values for deprecated usages fpe (FPE Encrypt + FPE Decrypt = 3145728)</p>
+<p>blob (Encrypt + Decrypt = 12)</p>
+<p>hmac (MAC Generate + MAC Verify = 384)</p>
+<p>encrypt (Encrypt + Decrypt = 12)</p>
+<p>sign (Sign + Verify = 3)</p>
+<p>any (4194303 - all usage masks).</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-uuid"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-uuid"><strong>uuid</strong></p>
+<a class="ansibleOptionLink" href="#parameter-uuid" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>-Additional identifier of the key</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapHKDF"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wraphkdf"><strong>wrapHKDF</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapHKDF" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Information which is used to wrap a Key using HKDF.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapHKDF/hashAlgorithm"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wraphkdf-hashalgorithm"><strong>hashAlgorithm</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapHKDF/hashAlgorithm" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Hash Algorithm is used for HKDF Wrapping.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha224&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha256&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha384&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha512&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapHKDF/info"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wraphkdf-info"><strong>info</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapHKDF/info" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Info is an optional hex value for HKDF based derivation.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapHKDF/okmLen"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wraphkdf-okmlen"><strong>okmLen</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapHKDF/okmLen" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The desired output key material length in integer.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapHKDF/salt"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wraphkdf-salt"><strong>salt</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapHKDF/salt" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Salt is an optional hex value for HKDF based derivation.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapKeyIDType"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrapkeyidtype"><strong>wrapKeyIDType</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapKeyIDType" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>IDType specifies how the wrapKeyName should be interpreted.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;name&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;alias&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapKeyName"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrapkeyname"><strong>wrapKeyName</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapKeyName" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>While creating a new key, If ‘includeMaterial’ is true, then only the key material will be wrapped with key material.</p>
+<p>The response “material” property will be the base64 encoded ciphertext</p>
+<p>While importing a key, the key material will be unwrapped with material of the specified key name</p>
+<p>The only applicable “wrappingMethod” for the unwrapping is “encrypt”</p>
+<p>and the wrapping key has to be an AES key or an RSA private key.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapPBE"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappbe"><strong>wrapPBE</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapPBE" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>WrapPBE produces a derived key from a password and other parameters like salt</p>
+<p>PBE is currently only supported to wrap symmetric keys (AES), private Keys and certificates.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapPBE/dklen"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappbe-dklen"><strong>dklen</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapPBE/dklen" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Intended length in octets of the derived key. dklen must be in range of 14 bytes to 512 bytes.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapPBE/hashAlgorithm"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappbe-hashalgorithm"><strong>hashAlgorithm</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapPBE/hashAlgorithm" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Underlying hashing algorithm that acts as a pseudorandom function to generate derive keys.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha224&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha256&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha384&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha512&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha512/224&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha512/256&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha3-224&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha3-256&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha3-384&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hmac-sha3-512&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapPBE/iteration"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappbe-iteration"><strong>iteration</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapPBE/iteration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Iteration count increase the cost of producing keys from a password</p>
+<p>Iteration must be in range of 1 to 1,00,00,000.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapPBE/password"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappbe-password"><strong>password</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapPBE/password" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Base password to generate derive keys</p>
+<p>It cannot be used in conjunction with passwordidentifier</p>
+<p>Password must be in range of 8 bytes to 128 bytes.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapPBE/passwordIdentifier"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappbe-passwordidentifier"><strong>passwordIdentifier</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapPBE/passwordIdentifier" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Secret password identifier for password</p>
+<p>It cannot be used in conjunction with password.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapPBE/passwordIdentifierType"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappbe-passwordidentifiertype"><strong>passwordIdentifierType</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapPBE/passwordIdentifierType" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Type of the Passwordidentifier. If not set then default value is name.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;name&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;slug&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapPBE/purpose"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappbe-purpose"><strong>purpose</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapPBE/purpose" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>User defined purpose</p>
+<p>If specified will be prefixed to pbeSalt</p>
+<p>pbePurpose must not be greater than 128 bytes.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapPBE/salt"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappbe-salt"><strong>salt</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapPBE/salt" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A Hex encoded string. pbeSalt must be in range of 16 bytes to 512 bytes.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrappingEncryptionAlgo"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappingencryptionalgo"><strong>wrappingEncryptionAlgo</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrappingEncryptionAlgo" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>It indicates the Encryption Algorithm information for wrapping the key. Format is Algorithm/Mode/Padding</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AES/AESKEYWRAP&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AES/AESKEYWRAPPADDING&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;RSA/RSAAESKEYWRAPPADDING&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrappingHashAlgo"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappinghashalgo"><strong>wrappingHashAlgo</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrappingHashAlgo" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This parameter specifies the hashing algorithm used if “wrappingMethod” corresponds to “mac/sign”</p>
+<p>In case of MAC operation, the hashing algorithm used will be inferred from the type of HMAC key(“macSignKeyIdentifier”).</p>
+<p>In case of SIGN operation, the possible values are sha1, sha224, sha256, sha384 or sha512</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrappingMethod"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappingmethod"><strong>wrappingMethod</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrappingMethod" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This parameter specifies the wrapping method used to wrap/mac/sign the key material.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;encrypt&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;mac/sign&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;pbe&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapPublicKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappublickey"><strong>wrapPublicKey</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapPublicKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If the algorithm is ‘aes’,’tdes’,’hmac-*’, ‘seed’ or ‘aria’, this value will be used to encrypt the returned key material</p>
+<p>This value is ignored for other algorithms</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapPublicKeyPadding"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wrappublickeypadding"><strong>wrapPublicKeyPadding</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapPublicKeyPadding" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>WrapPublicKeyPadding specifies the type of padding scheme that needs to be set when importing the Key using the specified wrapkey</p>
+<p>Accepted values are “pkcs1”, “oaep”, “oaep256”, “oaep384”, “oaep512”</p>
+<p>Will default to “pkcs1” when ‘wrapPublicKeyPadding’ is not set and ‘WrapPublicKey’ is set.</p>
+<p>While creating a new key, wrapPublicKeyPadding parameter should be specified only if ‘includeMaterial’ is true</p>
+<p>In this case, key will get created and in response wrapped material using specified wrapPublicKeyPadding and other wrap parameters will be returned.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;pkcs1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;oaep&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;oaep256&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;oaep384&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;oaep512&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapRSAAES"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wraprsaaes"><strong>wrapRSAAES</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapRSAAES" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Information which is used to wrap/unwrap asymmetric keys using RSA AES KWP method</p>
+<p>This method internally requires AES key size to generate a temporary AES key and RSA padding</p>
+<p>To use WrapRSAAES, algorithm “RSA/RSAAESKEYWRAPPADDING” must be specified in WrappingEncryptionAlgo.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapRSAAES/aesKeySize"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wraprsaaes-aeskeysize"><strong>aesKeySize</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapRSAAES/aesKeySize" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Size of AES key for RSA AES KWP.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">128</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">192</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">256</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wrapRSAAES/padding"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-wraprsaaes-padding"><strong>padding</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wrapRSAAES/padding" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Padding specifies the type of padding scheme that needs to be set when exporting the Key using RSA AES wrap</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;oaep&quot;</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">&quot;oaep256&quot;</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;oaep384&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;oaep512&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-xts"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-save-module-parameter-xts"><strong>xts</strong></p>
+<a class="ansibleOptionLink" href="#parameter-xts" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If set to true, then key created will be XTS/CBC-CS1 Key. Defaults to false. Key algorithm must be ‘AES’.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Create</span><span class="nv"> </span><span class="s">Key&quot;</span>
+<span class="w">  </span><span class="nt">thalesgroup.ciphertrust.vault_keys2_create</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">localNode</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">server_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IP/FQDN</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">CipherTrust</span><span class="nv"> </span><span class="s">Manager&quot;</span>
+<span class="w">        </span><span class="nt">server_private_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Private</span><span class="nv"> </span><span class="s">IP</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">case</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">different</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">above&quot;</span>
+<span class="w">        </span><span class="nt">server_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+<span class="w">        </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Username&quot;</span>
+<span class="w">        </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Password&quot;</span>
+<span class="w">        </span><span class="nt">verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">op_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;key_name&quot;</span>
+<span class="w">    </span><span class="nt">algorithm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aes</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span>
+<span class="w">    </span><span class="nt">usageMask</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3145740</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Patch</span><span class="nv"> </span><span class="s">Key&quot;</span>
+<span class="w">  </span><span class="nt">thalesgroup.ciphertrust.vault_keys2_create</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">localNode</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">server_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IP/FQDN</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">CipherTrust</span><span class="nv"> </span><span class="s">Manager&quot;</span>
+<span class="w">        </span><span class="nt">server_private_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Private</span><span class="nv"> </span><span class="s">IP</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">case</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">different</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">above&quot;</span>
+<span class="w">        </span><span class="nt">server_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+<span class="w">        </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Username&quot;</span>
+<span class="w">        </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Password&quot;</span>
+<span class="w">        </span><span class="nt">verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">op_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">patch</span>
+<span class="w">    </span><span class="nt">cm_key_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4ae2649a705e479589ef65759d3287f6ff452a788531445fbc7f0240516d028d&quot;</span>
+<span class="w">    </span><span class="nt">unexportable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+<section id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Anurag Jain (&#64;anugram)</p></li>
+</ul>
+</section>
+<section id="collection-links">
+<h3>Collection links<a class="headerlink" href="#collection-links" title="Link to this heading"></a></h3>
+<ul class="ansible-links">
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/issues" rel="noopener external" target="_blank">Issue Tracker</a></span></li>
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://www.thalesgroup.com" rel="noopener external" target="_blank">Homepage</a></span></li>
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/ThalesGroup/CDSP-Orchestration-Ansible" rel="noopener external" target="_blank">Repository (Sources)</a></span></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          
+
+<footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="vault_keys2_op_module.html" class="btn btn-neutral float-left" title="thalesgroup.ciphertrust.vault_keys2_op module – Perform operations on keys" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright thalesgroup.ciphertrust Contributors.</p>
+  </div>
+
+  
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script><!-- extra footer elements for Ansible beyond RTD Sphinx Theme -->
+
+</body>
+</html>

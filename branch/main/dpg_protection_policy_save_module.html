@@ -1,0 +1,473 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="2.15.0" name="antsibull-docs" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>thalesgroup.ciphertrust.dpg_protection_policy_save module – Manage DPG protection policies governing crypto operations &mdash; thalesgroup.ciphertrust Collection  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5707b69d" />
+      <link rel="stylesheet" type="text/css" href="_static/css/ansible.css?v=c5b67dd2" />
+      <link rel="stylesheet" type="text/css" href="_static/antsibull-minimal.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/rtd-ethical-ads.css?v=289b023e" />
+
+  
+    <link rel="shortcut icon" href="_static/images/Ansible-Mark-RGB_Black.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7f41d439"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="thalesgroup.ciphertrust.dpg_user_set_save module – Create and manage DPG user sets" href="dpg_user_set_save_module.html" />
+    <link rel="prev" title="thalesgroup.ciphertrust.dpg_policy_save module – Manage DPG execution behavior for REST URLs and associated encryption parameters" href="dpg_policy_save_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+
+
+
+
+</head>
+
+<body class="wy-body-for-nav"><!-- extra body elements for Ansible beyond RTD Sphinx Theme -->
+
+<div class="DocSite-globalNav ansibleNav">
+  <ul>
+    <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+    <li><a href="https://forum.ansible.com/" target="_blank">Ansible community forum</a></li>
+    <li><a href="https://docs.ansible.com/" target="_blank">Documentation</a></li>
+  </ul>
+</div>
+
+<a class="DocSite-nav" href="https://thalesgroup.github.io/CDSP-Orchestration-Ansible/branch/main/" style="padding-bottom: 30px;">
+
+  <img class="DocSiteNav-logo"
+    src="_static/images/Ansible-Mark-RGB_White.png"
+    alt="Ansible Logo">
+  <div class="DocSiteNav-title">thalesgroup.ciphertrust Collection Docs</div>
+</a>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            thalesgroup.ciphertrust Collection
+          </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
+
+<div class="version">
+  
+    
+  
+</div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <label class="sr-only" for="q">Search docs:</label>
+    <input type="text" class="st-default-search-input" id="q" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+  
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="cm_certificate_authority_module.html">thalesgroup.ciphertrust.cm_certificate_authority module – Create and manage CipherTrust Manager Local CA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_cluster_module.html">thalesgroup.ciphertrust.cm_cluster module – Create or join CipherTrust Manager node cluster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_regtoken_module.html">thalesgroup.ciphertrust.cm_regtoken module – Create or update registration token</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_resource_delete_module.html">thalesgroup.ciphertrust.cm_resource_delete module – Delete CipherTrust Manager resource using ID</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_resource_get_id_from_name_module.html">thalesgroup.ciphertrust.cm_resource_get_id_from_name module – Get CipherTrust Manager resource ID from resource name</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cm_services_module.html">thalesgroup.ciphertrust.cm_services module – Reset, restart CipherTrust Manager Services as well as check the status</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_client_module.html">thalesgroup.ciphertrust.cte_client module – Manage CTE clients</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_client_group_module.html">thalesgroup.ciphertrust.cte_client_group module – Manage CTE client groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_csi_storage_group_module.html">thalesgroup.ciphertrust.cte_csi_storage_group module – Manage CTE CSI Storage Group</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_policy_save_module.html">thalesgroup.ciphertrust.cte_policy_save module – Manage policies as collection of rules that govern data access and encryption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_process_set_module.html">thalesgroup.ciphertrust.cte_process_set module – Create and manage CTE process-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_resource_set_module.html">thalesgroup.ciphertrust.cte_resource_set module – Create and manage CTE resource-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_signature_set_module.html">thalesgroup.ciphertrust.cte_signature_set module – Create and manage CTE Signature Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cte_user_set_module.html">thalesgroup.ciphertrust.cte_user_set module – Create and manage CTE user-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="domain_save_module.html">thalesgroup.ciphertrust.domain_save module – Create or manage domains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_access_policy_save_module.html">thalesgroup.ciphertrust.dpg_access_policy_save module – Manage DPG access policies governing data access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_character_set_save_module.html">thalesgroup.ciphertrust.dpg_character_set_save module – Create and manage DPG character-sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_client_profile_save_module.html">thalesgroup.ciphertrust.dpg_client_profile_save module – Manage DPG client profile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_masking_format_save_module.html">thalesgroup.ciphertrust.dpg_masking_format_save module – Manage masking formats for DPG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_policy_save_module.html">thalesgroup.ciphertrust.dpg_policy_save module – Manage DPG execution behavior for REST URLs and associated encryption parameters</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">thalesgroup.ciphertrust.dpg_protection_policy_save module – Manage DPG protection policies governing crypto operations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#synopsis">Synopsis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#authors">Authors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#collection-links">Collection links</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dpg_user_set_save_module.html">thalesgroup.ciphertrust.dpg_user_set_save module – Create and manage DPG user sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_add_remove_object_module.html">thalesgroup.ciphertrust.group_add_remove_object module – Add or remove user or client from group</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_save_module.html">thalesgroup.ciphertrust.group_save module – Create or update groups on CipherTrust Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface_actions_module.html">thalesgroup.ciphertrust.interface_actions module – Perform operations on CipherTrust Manager interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface_save_module.html">thalesgroup.ciphertrust.interface_save module – Create or update an interface or service CipherTrust Manager is hosting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license_create_module.html">thalesgroup.ciphertrust.license_create module – Add a license to CipherTrust Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license_trial_action_module.html">thalesgroup.ciphertrust.license_trial_action module – Activate or deactivate CipherTrust Manager trial license</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license_trial_get_module.html">thalesgroup.ciphertrust.license_trial_get module – Retrieve trial license ID if available</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licensing_lockdata_get_module.html">thalesgroup.ciphertrust.licensing_lockdata_get module – Get license lockdata used to get license code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usermgmt_users_save_module.html">thalesgroup.ciphertrust.usermgmt_users_save module – Create and manage users in CipherTrust Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vault_keys2_op_module.html">thalesgroup.ciphertrust.vault_keys2_op module – Perform operations on keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vault_keys2_save_module.html">thalesgroup.ciphertrust.vault_keys2_save module – Create or update keys in CipherTrust Manager managed vault</a></li>
+</ul>
+<!-- extra nav elements for Ansible beyond RTD Sphinx Theme -->
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">thalesgroup.ciphertrust Collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">thalesgroup.ciphertrust.dpg_protection_policy_save module – Manage DPG protection policies governing crypto operations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <span class="target" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module"></span><section id="thalesgroup-ciphertrust-dpg-protection-policy-save-module-manage-dpg-protection-policies-governing-crypto-operations">
+<h1>thalesgroup.ciphertrust.dpg_protection_policy_save module – Manage DPG protection policies governing crypto operations<a class="headerlink" href="#thalesgroup-ciphertrust-dpg-protection-policy-save-module-manage-dpg-protection-policies-governing-crypto-operations" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/thalesgroup/ciphertrust/">thalesgroup.ciphertrust collection</a> (version 1.0.0).</p>
+<p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
+To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
+<p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">thalesgroup.ciphertrust</span></code>.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">thalesgroup.ciphertrust.dpg_protection_policy_save</span></code>.</p>
+</div>
+<p class="ansible-version-added">New in thalesgroup.ciphertrust 1.0.0</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id2">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id3">Examples</a></p></li>
+</ul>
+</nav>
+<section id="synopsis">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with domains management API</p></li>
+<li><p>Refer <a class="reference external" href="https://thalesdocs.com/ctp/con/dpg/latest/admin/index.html">https://thalesdocs.com/ctp/con/dpg/latest/admin/index.html</a> for API documentation</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Parameters</a><a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-access_policy_name"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-access-policy-name"><strong>access_policy_name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-access_policy_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Name of access policy to be associated with the protection policy.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-algorithm"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-algorithm"><strong>algorithm</strong></p>
+<a class="ansibleOptionLink" href="#parameter-algorithm" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Algorithm to be used during crypto operations</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-allow_single_char_input"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-allow-single-char-input"><strong>allow_single_char_input</strong></p>
+<a class="ansibleOptionLink" href="#parameter-allow_single_char_input" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If true, null or single-character inputs are passed untransformed. If false, row transformation fails</p>
+<p>Obsolete post CM v2.12</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-character_set_id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-character-set-id"><strong>character_set_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-character_set_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ID of the Character Set</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-disable_versioning"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-disable-versioning"><strong>disable_versioning</strong></p>
+<a class="ansibleOptionLink" href="#parameter-disable_versioning" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If set to true, versioning is not maintained for the protection policies. The default value is false.</p>
+<p>Added in CM v2.12</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-iv"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-iv"><strong>iv</strong></p>
+<a class="ansibleOptionLink" href="#parameter-iv" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>IV to be used during crypto operations</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-key"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-key"><strong>key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Name of the key</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-localnode"><strong>localNode</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)</p>
+<p>holds IP/FQDN of the server, username, password, and port</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/auth_domain_path"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-localnode-auth-domain-path"><strong>auth_domain_path</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/auth_domain_path" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>user’s domain path</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/password"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-localnode-password"><strong>password</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/password" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>admin password of CM</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/server_ip"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-localnode-server-ip"><strong>server_ip</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/server_ip" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>CM Server IP or FQDN</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/server_port"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-localnode-server-port"><strong>server_port</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/server_port" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Port on which CM server is listening</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/server_private_ip"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-localnode-server-private-ip"><strong>server_private_ip</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/server_private_ip" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>internal or private IP of the CM Server, if different from the server_ip</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/user"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-localnode-user"><strong>user</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/user" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>admin username of CM</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-localNode/verify"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-localnode-verify"><strong>verify</strong></p>
+<a class="ansibleOptionLink" href="#parameter-localNode/verify" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>if SSL verification is required</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-masking_format_id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-masking-format-id"><strong>masking_format_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-masking_format_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ID of the Static Masking Format</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-name"><strong>name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Unique name for the protection policy</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-op_type"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-op-type"><strong>op_type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-op_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Operation to be performed</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;create&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;patch&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-policy_name"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-policy-name"><strong>policy_name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-policy_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Identifier of the protection policy to be patched</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-tweak"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-tweak"><strong>tweak</strong></p>
+<a class="ansibleOptionLink" href="#parameter-tweak" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tweak data to be used during crypto operations</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-tweak_algorithm"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-tweak-algorithm"><strong>tweak_algorithm</strong></p>
+<a class="ansibleOptionLink" href="#parameter-tweak_algorithm" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tweak algorithm to be used during crypto operations</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SHA1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SHA256&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-use_external_versioning"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-dpg-protection-policy-save-module-parameter-use-external-versioning"><strong>use_external_versioning</strong></p>
+<a class="ansibleOptionLink" href="#parameter-use_external_versioning" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If set to true, external versioning is enabled for the protection policy</p>
+<p>The version details are stored in a separate external parameter</p>
+<p>The default value is false</p>
+<p>Added in CM v2.12</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Create</span><span class="nv"> </span><span class="s">Protection</span><span class="nv"> </span><span class="s">Policy&quot;</span>
+<span class="w">  </span><span class="nt">thalesgroup.ciphertrust.dpg_protection_policy_save</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">localNode</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">server_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IP/FQDN</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">CipherTrust</span><span class="nv"> </span><span class="s">Manager&quot;</span>
+<span class="w">        </span><span class="nt">server_private_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Private</span><span class="nv"> </span><span class="s">IP</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">case</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">different</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">above&quot;</span>
+<span class="w">        </span><span class="nt">server_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+<span class="w">        </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Username&quot;</span>
+<span class="w">        </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Password&quot;</span>
+<span class="w">        </span><span class="nt">verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">auth_domain_path</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">op_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create</span>
+<span class="w">    </span><span class="nt">algorithm</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AES/CBC/PKCS5Padding&quot;</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;CM_KEY_ID&gt;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DemoProtectionPolicy</span>
+<span class="w">    </span><span class="nt">character_set_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;CHAR_SET_ID&gt;</span>
+<span class="w">    </span><span class="nt">iv</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16</span>
+<span class="w">    </span><span class="nt">tweak</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1628462495815733</span>
+<span class="w">    </span><span class="nt">tweak_algorithm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SHA1</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Patch</span><span class="nv"> </span><span class="s">Protection</span><span class="nv"> </span><span class="s">Policy&quot;</span>
+<span class="w">  </span><span class="nt">thalesgroup.ciphertrust.dpg_protection_policy_save</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">localNode</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">server_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IP/FQDN</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">CipherTrust</span><span class="nv"> </span><span class="s">Manager&quot;</span>
+<span class="w">        </span><span class="nt">server_private_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Private</span><span class="nv"> </span><span class="s">IP</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">case</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">different</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">above&quot;</span>
+<span class="w">        </span><span class="nt">server_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+<span class="w">        </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Username&quot;</span>
+<span class="w">        </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Password&quot;</span>
+<span class="w">        </span><span class="nt">verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">auth_domain_path</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">op_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">patch</span>
+<span class="w">    </span><span class="nt">policy_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DemoProtectionPolicy</span>
+<span class="w">    </span><span class="nt">tweak</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1628462495815733</span>
+<span class="w">    </span><span class="nt">tweak_algorithm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SHA256</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Delete</span><span class="nv"> </span><span class="s">Protection</span><span class="nv"> </span><span class="s">Policy</span><span class="nv"> </span><span class="s">by</span><span class="nv"> </span><span class="s">name&quot;</span>
+<span class="w">  </span><span class="nt">thalesgroup.ciphertrust.cm_resource_delete</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DemoProtectionPolicy</span>
+<span class="w">    </span><span class="nt">resource_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;protection-policies&quot;</span>
+<span class="w">    </span><span class="nt">localNode</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">server_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IP/FQDN</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">CipherTrust</span><span class="nv"> </span><span class="s">Manager&quot;</span>
+<span class="w">        </span><span class="nt">server_private_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Private</span><span class="nv"> </span><span class="s">IP</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">case</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">different</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">above&quot;</span>
+<span class="w">        </span><span class="nt">server_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+<span class="w">        </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Username&quot;</span>
+<span class="w">        </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CipherTrust</span><span class="nv"> </span><span class="s">Manager</span><span class="nv"> </span><span class="s">Password&quot;</span>
+<span class="w">        </span><span class="nt">verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">auth_domain_path</span><span class="p">:</span>
+</pre></div>
+</div>
+<section id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Anurag Jain (&#64;anugram)</p></li>
+</ul>
+</section>
+<section id="collection-links">
+<h3>Collection links<a class="headerlink" href="#collection-links" title="Link to this heading"></a></h3>
+<ul class="ansible-links">
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/issues" rel="noopener external" target="_blank">Issue Tracker</a></span></li>
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://www.thalesgroup.com" rel="noopener external" target="_blank">Homepage</a></span></li>
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/ThalesGroup/CDSP-Orchestration-Ansible" rel="noopener external" target="_blank">Repository (Sources)</a></span></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          
+
+<footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dpg_policy_save_module.html" class="btn btn-neutral float-left" title="thalesgroup.ciphertrust.dpg_policy_save module – Manage DPG execution behavior for REST URLs and associated encryption parameters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dpg_user_set_save_module.html" class="btn btn-neutral float-right" title="thalesgroup.ciphertrust.dpg_user_set_save module – Create and manage DPG user sets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright thalesgroup.ciphertrust Contributors.</p>
+  </div>
+
+  
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script><!-- extra footer elements for Ansible beyond RTD Sphinx Theme -->
+
+</body>
+</html>
