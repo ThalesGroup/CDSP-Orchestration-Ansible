@@ -1,4 +1,4 @@
-# Edit
+# Edit -
 name: Publish Collection Docs
 on:
   push:
