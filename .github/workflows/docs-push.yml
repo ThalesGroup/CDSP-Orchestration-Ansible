@@ -36,4 +36,4 @@ jobs:
       artifact-name: ${{ needs.build-docs.outputs.artifact-name }}
       publish-gh-pages-branch: true
     secrets:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.ANTSIBULL_TOKEN }}
