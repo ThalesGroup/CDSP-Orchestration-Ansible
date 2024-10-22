@@ -1,0 +1,306 @@
+ancestor: null
+releases:
+  1.0.0:
+    changes:
+      release_summary: This is the first release of the ThalesGroup CipherTrust Ansible
+        Collection!
+    modules:
+    - description: Create and manage Amazon Web Services Custom Keystore via CipherTrust
+        Cloud Key Manager (CCKM) APIs hosted on Thales CipherTrust Manager.
+      name: cckm_aws_custom_keystore
+      namespace: ''
+    - description: Create, store, and manage keys on Amazon Web Services via CCKM
+        APIs.
+      name: cckm_aws_key
+      namespace: ''
+    - description: Perform get, delete, and update operation on AWS Key Management
+        Service as well as grant permissions to CCKM users to perform specific actions
+        on the AWS KMS via CCKM APIs.
+      name: cckm_aws_kms
+      namespace: ''
+    - description: Create, list, delete, update, revoke, restore, and other operations
+        on Azure certificates via CCKM APIs.
+      name: cckm_az_certificate
+      namespace: ''
+    - description: Perform tasks such as creating, deleting, uploading, synchronizing,
+        update key parameters, scheduling key rotation and restoring keys on Azure
+        via CCKM APIs.
+      name: cckm_az_key
+      namespace: ''
+    - description: Create, list, update, soft-delete, hard-delete, recover, and synchronize
+        Azure secrets via CCKM APIs.
+      name: cckm_az_secret
+      namespace: ''
+    - description: Add, delete, update and list the Azure vaults based on subscription
+        via CCKM APIs.
+      name: cckm_az_vault
+      namespace: ''
+    - description: For managing Google Cloud EKM endpoints that do not reside in a
+        cryptospace, a user must belong to CCKM Admin group and Key User group to
+        perform any operation (create ekm, list ekm, get ekm, update ekm, delete ekm,
+        get policy, update policy, rotate ekm, enable ekm, and disable ekm).
+      name: cckm_gcp_ekm
+      namespace: ''
+    - description: Create and manage Google Cloud Keys .
+      name: cckm_gcp_key
+      namespace: ''
+    - description: Add, list, and patch Google Cloud Key Rings via CCKM APIs.
+      name: cckm_gcp_keyring
+      namespace: ''
+    - description: Create, list, delete, and patch Google Cloud Projects via CCKM
+        APIs.
+      name: cckm_gcp_project
+      namespace: ''
+    - description: Work with Google Workspace client side encryption using CCKM APIs.
+      name: cckm_gcp_workspace_cse
+      namespace: ''
+    - description: Create and manage SFDC Cloud organizations via CCKM APIs.
+      name: cckm_sfdc_cloud_organization
+      namespace: ''
+    - description: Create and manage SFDC tenant secret via CCKM APIs.
+      name: cckm_sfdc_secret
+      namespace: ''
+    - description: Create new or join existing CipherTrust Manager cluster.
+      name: cm_cluster
+      namespace: ''
+    - description: Create or update a CipherTrust Manager Application Registration
+        Token.
+      name: cm_regtoken
+      namespace: ''
+    - description: Delete an existing resource on CipherTrust Manager by given Identifier.
+      name: cm_resource_delete
+      namespace: ''
+    - description: Get the ID of an existing resource on CipherTrust Manager using
+        its name.
+      name: cm_resource_get_id_from_name
+      namespace: ''
+    - description: Create, delete, get, and update an AWS connection using AWS connection
+        parameters on CipherTrust Manager via CipherTrust APIs.
+      name: connection_manager_aws
+      namespace: ''
+    - description: Create, delete, get, and update an Azure connection using Azure
+        connection parameters on CipherTrust Manager via CipherTrust APIs.
+      name: connection_manager_azure
+      namespace: ''
+    - description: Create, delete, get, and update an Elasticsearch connection using
+        Elasticsearch connection parameters on CipherTrust Manager via CipherTrust
+        APIs.
+      name: connection_manager_elasticsearch
+      namespace: ''
+    - description: Create, delete, get, and update a Google cloud connection using
+        connection parameters on CipherTrust Manager via CipherTrust APIs.
+      name: connection_manager_google
+      namespace: ''
+    - description: Create, delete, get, and update a Hadoop connection on CipherTrust
+        Manager via APIs.
+      name: connection_manager_hadoop
+      namespace: ''
+    - description: Create, delete, get, and update a LDAP connection on CipherTrust
+        Manager via CipherTrust APIs.
+      name: connection_manager_ldap
+      namespace: ''
+    - description: Create, delete, get, and update a Loki log forwarder connection
+        on CipherTrust Manager via CipherTrust APIs.
+      name: connection_manager_loki
+      namespace: ''
+    - description: Create, delete, get, and update a Luna HSM connection, that could
+        be an HA or non-HA via CipherTrust APIs.
+      name: connection_manager_luna_hsm
+      namespace: ''
+    - description: Create, delete, get, and update an OIDC connection on CipherTrust
+        Manager via CipherTrust APIs.
+      name: connection_manager_oidc
+      namespace: ''
+    - description: Create, delete, get, and update an Oracle Cloud Infrastructure
+        on CipherTrust Manager via CipherTrust APIs.
+      name: connection_manager_oracle
+      namespace: ''
+    - description: Create, delete, get, and update a Salesforce Cloud connection on
+        CipherTrust Manager via CipherTrust APIs.
+      name: connection_manager_salesforce
+      namespace: ''
+    - description: Create, delete, get, and update SAP Data Custodian connections
+        on CipherTrust Manager via CipherTrust APIs.
+      name: connection_manager_sap_data_custodian
+      namespace: ''
+    - description: Create, delete, get, and update SCP connections on CipherTrust
+        Manager via CipherTrust APIs.
+      name: connection_manager_scp
+      namespace: ''
+    - description: Create, delete, get, and update Server Message Block (SMB) connections
+        on CipherTrust Manager via CipherTrust APIs.
+      name: connection_manager_smb
+      namespace: ''
+    - description: Create, delete, get, and update Syslog connections on CipherTrust
+        Manager via CipherTrust APIs.
+      name: connection_manager_syslog
+      namespace: ''
+    - description: Perform create, patch, delete, add guard points, unguard guard
+        points, pause LDT, and other operations for CipherTrust Transparent Encryption
+        (CTE) client on CipherTrust Manager.
+      name: cte_client
+      namespace: ''
+    - description: Perform create, patch, add/remove clients, add guard points, and
+        other operations for CTE client groups on CipherTrust Manager.
+      name: cte_client_group
+      namespace: ''
+    - description: Perform create, patch, add/remove clients, add/remove guard points,
+        and other operations for CTE CSI storage group on CipherTrust Manager..
+      name: cte_csi_storage_group
+      namespace: ''
+    - description: Create, patch, and add rules to CTE client policies on CipherTrust
+        Manager.
+      name: cte_policy_save
+      namespace: ''
+    - description: Perform create, update, add/patch/delete processes to CTE process
+        sets on CipherTrust Manager.
+      name: cte_process_set
+      namespace: ''
+    - description: Perform create, update, add/patch/delete resources to CTE resource
+        sets on CipherTrust Manager.
+      name: cte_resource_set
+      namespace: ''
+    - description: Perform create, update, add/delete signatures to CTE signature
+        sets on CipherTrust Manager.
+      name: cte_signature_set
+      namespace: ''
+    - description: Perform create, update, add/patch/delete users to CTE user sets
+        on CipherTrust Manager.
+      name: cte_user_set
+      namespace: ''
+    - description: Create of patch a domain on CipherTrust Manager.
+      name: domain_save
+      namespace: ''
+    - description: Create or patch access policy on CipherTrust Manager.
+      name: dpg_access_policy_save
+      namespace: ''
+    - description: Create or patch character sets on CipherTrust Manager.
+      name: dpg_character_set_save
+      namespace: ''
+    - description: Create or patch Data Protection Gateway Client Profiles on CipherTrust
+        Manager.
+      name: dpg_client_profile_save
+      namespace: ''
+    - description: Create or patch masking formats on CipherTrust Manager.
+      name: dpg_masking_format_save
+      namespace: ''
+    - description: Create or patch DPG policy for clients on CipherTrust Manager.
+      name: dpg_policy_save
+      namespace: ''
+    - description: Create or patch protection policy on CipherTrust Manager.
+      name: dpg_protection_policy_save
+      namespace: ''
+    - description: Create or patch userset on CipherTrust Manager.
+      name: dpg_user_set_save
+      namespace: ''
+    - description: Add or remove a user or client from an existing group on CipherTrust
+        Manager.
+      name: group_add_remove_object
+      namespace: ''
+    - description: Create or patch a group on CipherTrust Manager.
+      name: group_save
+      namespace: ''
+    - description: Perform actions like enable/disable, put/use certificate, CSR generation,
+        etc. on an existing interface on CipherTrust Manager.
+      name: interface_actions
+      namespace: ''
+    - description: Create new or patch an existing interface on CipherTrust Manager.
+      name: interface_save
+      namespace: ''
+    - description: Add new license to CipherTrust Manager.
+      name: license_create
+      namespace: ''
+    - description: Activate/de-activate a trial license on CipherTrust Manager.
+      name: license_trial_action
+      namespace: ''
+    - description: Get a trial license ID for CipherTrust Manager.
+      name: license_trial_get
+      namespace: ''
+    - description: Get licensing Lockdata.
+      name: licensing_lockdata_get
+      namespace: ''
+    - description: Create a new or update existing user on CipherTrust Manager.
+      name: usermgmt_users_save
+      namespace: ''
+    - description: Perform operations like destroy, archive, recover, revoke, reactivate,
+        export, and clone existing keys on CipherTrust Manager.
+      name: vault_keys2_op
+      namespace: ''
+    - description: Create a new or update existing cryptography key on CipherTrust
+        Manager..
+      name: vault_keys2_save
+      namespace: ''
+    release_date: '2023-10-10'
+  1.0.1:
+    changes:
+      breaking_changes:
+      - cckm_aws_custom_keystore - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      - cckm_aws_key - module removed from 1.0.1, in favor of a better version to
+        be added in future releases
+      - cckm_aws_kms - module removed from 1.0.1, in favor of a better version to
+        be added in future releases
+      - cckm_az_certificate - module removed from 1.0.1, in favor of a better version
+        to be added in future releases
+      - cckm_az_key - module removed from 1.0.1, in favor of a better version to be
+        added in future releases
+      - cckm_az_secret - module removed from 1.0.1, in favor of a better version to
+        be added in future releases
+      - cckm_az_vault - module removed from 1.0.1, in favor of a better version to
+        be added in future releases
+      - cckm_gcp_ekm - module removed from 1.0.1, in favor of a better version to
+        be added in future releases
+      - cckm_gcp_key - module removed from 1.0.1, in favor of a better version to
+        be added in future releases
+      - cckm_gcp_keyring - module removed from 1.0.1, in favor of a better version
+        to be added in future releases
+      - cckm_gcp_project - module removed from 1.0.1, in favor of a better version
+        to be added in future releases
+      - cckm_gcp_workspace_cse - module removed from 1.0.1, in favor of a better version
+        to be added in future releases
+      - cckm_sfdc_cloud_organization - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      - cckm_sfdc_secret - module removed from 1.0.1, in favor of a better version
+        to be added in future releases
+      - connection_manager_aws - module removed from 1.0.1, in favor of a better version
+        to be added in future releases
+      - connection_manager_azure - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      - connection_manager_elasticsearch - module removed from 1.0.1, in favor of
+        a better version to be added in future releases
+      - connection_manager_google - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      - connection_manager_hadoop - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      - connection_manager_ldap - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      - connection_manager_loki - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      - connection_manager_luna_hsm - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      - connection_manager_oidc - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      - connection_manager_oracle - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      - connection_manager_salesforce - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      - connection_manager_sap_data_custodian - module removed from 1.0.1, in favor
+        of a better version to be added in future releases
+      - connection_manager_scp - module removed from 1.0.1, in favor of a better version
+        to be added in future releases
+      - connection_manager_smb - module removed from 1.0.1, in favor of a better version
+        to be added in future releases
+      - connection_manager_syslog - module removed from 1.0.1, in favor of a better
+        version to be added in future releases
+      major_changes:
+      - cm_certificate_authority - Added new module to manage certificate authorities
+        on CipherTrust Manager
+      - cm_services - Added new module to reset or restart CipherTrust Manager services
+        or check the current status of the service
+      - connection management module utils now allow domain to be part of the connection
+      release_summary: This release has deprecated some of the existing CCKM and cloud
+        connection related modules that will be return in upcoming releases with better
+        coverage and testing done. We have also implemented and verified the collection
+        to work with Thales new connection CipherTrust RESTful Data Protection or
+        CRDP
+    release_date: '2023-12-20'

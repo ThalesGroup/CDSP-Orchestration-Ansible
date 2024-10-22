@@ -1,0 +1,188 @@
+objects:
+  role: {}
+plugins:
+  become: {}
+  cache: {}
+  callback: {}
+  cliconf: {}
+  connection: {}
+  filter: {}
+  httpapi: {}
+  inventory: {}
+  lookup: {}
+  module:
+    cm_certificate_authority:
+      description: Create and manage CipherTrust Manager Local CA
+      name: cm_certificate_authority
+      namespace: ''
+      version_added: 1.0.0
+    cm_cluster:
+      description: Create or join CipherTrust Manager node cluster
+      name: cm_cluster
+      namespace: ''
+      version_added: 1.0.0
+    cm_regtoken:
+      description: Create or update registration token
+      name: cm_regtoken
+      namespace: ''
+      version_added: 1.0.0
+    cm_resource_delete:
+      description: Delete CipherTrust Manager resource using ID
+      name: cm_resource_delete
+      namespace: ''
+      version_added: 1.0.0
+    cm_resource_get_id_from_name:
+      description: Get CipherTrust Manager resource ID from resource name
+      name: cm_resource_get_id_from_name
+      namespace: ''
+      version_added: 1.0.0
+    cm_services:
+      description: Reset, restart CipherTrust Manager Services as well as check the
+        status
+      name: cm_services
+      namespace: ''
+      version_added: 1.0.0
+    cte_client:
+      description: Manage CTE clients
+      name: cte_client
+      namespace: ''
+      version_added: 1.0.0
+    cte_client_group:
+      description: Manage CTE client groups
+      name: cte_client_group
+      namespace: ''
+      version_added: 1.0.0
+    cte_csi_storage_group:
+      description: Manage CTE CSI Storage Group
+      name: cte_csi_storage_group
+      namespace: ''
+      version_added: 1.0.0
+    cte_policy_save:
+      description: Manage policies as collection of rules that govern data access
+        and encryption
+      name: cte_policy_save
+      namespace: ''
+      version_added: 1.0.0
+    cte_process_set:
+      description: Create and manage CTE process-sets
+      name: cte_process_set
+      namespace: ''
+      version_added: 1.0.0
+    cte_resource_set:
+      description: Create and manage CTE resource-sets
+      name: cte_resource_set
+      namespace: ''
+      version_added: 1.0.0
+    cte_signature_set:
+      description: Create and manage CTE Signature Sets
+      name: cte_signature_set
+      namespace: ''
+      version_added: 1.0.0
+    cte_user_set:
+      description: Create and manage CTE user-sets
+      name: cte_user_set
+      namespace: ''
+      version_added: 1.0.0
+    domain_save:
+      description: Create or manage domains
+      name: domain_save
+      namespace: ''
+      version_added: 1.0.0
+    dpg_access_policy_save:
+      description: Manage DPG access policies governing data access
+      name: dpg_access_policy_save
+      namespace: ''
+      version_added: 1.0.0
+    dpg_character_set_save:
+      description: Create and manage DPG character-sets
+      name: dpg_character_set_save
+      namespace: ''
+      version_added: 1.0.0
+    dpg_client_profile_save:
+      description: Manage DPG client profile
+      name: dpg_client_profile_save
+      namespace: ''
+      version_added: 1.0.0
+    dpg_masking_format_save:
+      description: Manage masking formats for DPG
+      name: dpg_masking_format_save
+      namespace: ''
+      version_added: 1.0.0
+    dpg_policy_save:
+      description: Manage DPG execution behavior for REST URLs and associated encryption
+        parameters
+      name: dpg_policy_save
+      namespace: ''
+      version_added: 1.0.0
+    dpg_protection_policy_save:
+      description: Manage DPG protection policies governing crypto operations
+      name: dpg_protection_policy_save
+      namespace: ''
+      version_added: 1.0.0
+    dpg_user_set_save:
+      description: Create and manage DPG user sets
+      name: dpg_user_set_save
+      namespace: ''
+      version_added: 1.0.0
+    group_add_remove_object:
+      description: Add or remove user or client from group
+      name: group_add_remove_object
+      namespace: ''
+      version_added: 1.0.0
+    group_save:
+      description: Create or update groups on CipherTrust Manager
+      name: group_save
+      namespace: ''
+      version_added: 1.0.0
+    interface_actions:
+      description: Perform operations on CipherTrust Manager interface
+      name: interface_actions
+      namespace: ''
+      version_added: 1.0.0
+    interface_save:
+      description: Create or update an interface or service CipherTrust Manager is
+        hosting
+      name: interface_save
+      namespace: ''
+      version_added: 1.0.0
+    license_create:
+      description: Add a license to CipherTrust Manager
+      name: license_create
+      namespace: ''
+      version_added: 1.0.0
+    license_trial_action:
+      description: Activate or deactivate CipherTrust Manager trial license
+      name: license_trial_action
+      namespace: ''
+      version_added: 1.0.0
+    license_trial_get:
+      description: Retrieve trial license ID if available
+      name: license_trial_get
+      namespace: ''
+      version_added: 1.0.0
+    licensing_lockdata_get:
+      description: Get license lockdata used to get license code
+      name: licensing_lockdata_get
+      namespace: ''
+      version_added: 1.0.0
+    usermgmt_users_save:
+      description: Create and manage users in CipherTrust Manager
+      name: usermgmt_users_save
+      namespace: ''
+      version_added: 1.0.0
+    vault_keys2_op:
+      description: Perform operations on keys
+      name: vault_keys2_op
+      namespace: ''
+      version_added: 1.0.0
+    vault_keys2_save:
+      description: Create or update keys in CipherTrust Manager managed vault
+      name: vault_keys2_save
+      namespace: ''
+      version_added: 1.0.0
+  netconf: {}
+  shell: {}
+  strategy: {}
+  test: {}
+  vars: {}
+version: 1.0.1
