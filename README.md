@@ -127,13 +127,13 @@ The above task creates a new key on CipherTrust Manager with details like AES al
       auth_domain_path: ""
     op_type: create
     access_policy_name: protectionPolicy
-    masking_format_id: "masking_format_ID"
+    masking_format_id: "masking_format"
     name: protectionPolicy
     key: dpgKey
     tweak: "1628462495815733"
     tweak_algorithm: "SHA1"
     algorithm: "FPE/AES/UNICODE"
-    character_set_id: "charset_ID"
+    character_set_id: "charset"
 ```
 The above task creates a new protection policy on CipherTrust Manager with details like what masking format to use and what algorithm to use to protect the data. Check [ThalesDocs](https://thalesdocs.com/ctp/cm/latest/admin/adp_ag/adp-prtcn-policy/index.html#managing-protection-policy) to know more about protection policies on CipherTrust Manager
 
@@ -151,9 +151,7 @@ This collection is tested for the following -
 We welcome community contributions to this collection. If you find problems, please open an issue or create a PR against the this repository.
 
 ## Support
-
-
-
+You can use GitHub issues page and [Thales Community Forum](https://supportportal.thalesgroup.com/community) for getting support on the community.
 
 ## Release Notes and Roadmap
 
@@ -164,7 +162,7 @@ See the rendered changelog
 
 [Thales Community Forum](https://supportportal.thalesgroup.com/community)
 [YouTube Channel](https://www.youtube.com/@ThalesCloudSec)
-
+[Thales CipherTrust Platform Community Edition](https://cpl.thalesgroup.com/encryption/ciphertrust-platform-community-edition)
 
 ## License Information
 
