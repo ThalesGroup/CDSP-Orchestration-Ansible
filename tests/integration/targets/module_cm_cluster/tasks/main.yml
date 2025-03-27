@@ -31,20 +31,27 @@
 - block:
   - name: "Create New Cluster"
     thalesgroup.ciphertrust.cm_cluster:
-      op_type: new      
+      op_type: new
       localNode: "{{ this_node_connection_string }}"
-    register: _result_create
+    register: cluster_creation_output
 
   - assert:
       that:
-        - _result_create is not failed
-        - _result_create.response is match("Cluster creation success!")
+        - cluster_creation_output is not failed
+        - cluster_creation_output.response is match("Cluster creation success!")
+
+- block:
+  - name: Pause for 1 minute to create new cluster
+    ansible.builtin.pause:
+      minutes: 1
+    when: cluster_creation_output is succeeded
 
 ## Validate the cluster node join operation
 - block:
   - name: "Join Nodes to above Cluster"
     thalesgroup.ciphertrust.cm_cluster:
       op_type: join
+      localNode: "{{ this_node_connection_string }}"
       nodes: "{{ nodes }}"
     register: _result_join
 
@@ -52,3 +59,15 @@
       that:
         - _result_join is not failed
         - _result_join.response.message is match("Resource created successfully")
+
+- block:
+  - name: Pause for 2 minutes to let node join cluster
+    ansible.builtin.pause:
+      minutes: 2
+
+## Delete Resource at CipherTrust Manager
+- block:
+  - name: "Delete Cluster"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      localNode: "{{ this_node_connection_string }}"
+      resource_type: "cluster"

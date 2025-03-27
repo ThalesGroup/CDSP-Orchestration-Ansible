@@ -58,7 +58,7 @@ options:
           required: true
     op_type:
       description: Operation to be performed
-      choices: ['create', 'patch', 'add_client', 'add_guard_point', 'auth-binaries', 'remove_client', 'ldt_pause']
+      choices: ['create', 'patch', 'add_client', 'add_guard_point', 'update_guardpoint', 'unguard_guardpoints', 'auth-binaries', 'remove_client', 'ldt_pause']
       required: true
       type: str
     id:
@@ -185,6 +185,10 @@ options:
           description:
             - Name of the disk group if the selected raw partition is a member of an Oracle ASM disk group
           type: str
+        dps_id:
+          description:
+            - ID/name of the Designated Primary Set.
+          type: str
         early_access:
           description:
             - Whether secure start (early access) is turned on
@@ -228,6 +232,26 @@ options:
     paused:
       description: Mouse over a property in the schema to view its details
       type: bool
+    dps_id:
+      description:
+        - ID/name of the Designated Primary Set.
+      type: str
+    guard_enabled:
+      description: Whether the GuardPoint is enabled.
+      type: bool
+    mfa_enabled:
+      description: Whether MFA is enabled
+      type: bool
+    network_share_credentials_id:
+      description:
+        - ID/Name of the credentials if the GuardPoint is applied to a network share
+        - Supported for only LDT policies.
+      type: str
+    guard_point_id_list
+      description:
+        - Comma-separated IDs of GuardPoints to be dissociated from a ClientGroup. The IDs can be the Name, ID (a UUIDv4), URI, or slug of the ClientGroup.
+      type: list
+      elements: str
 """
 
 EXAMPLES = """
@@ -295,9 +319,11 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import
     updateClientGroup,
     clientGroupAddClients,
     clientGroupAddGuardPoint,
+    clientGroupUpdateGuardPoint,
     clientGroupAuthBinaries,
     clientGroupDeleteClient,
     clientGroupLDTPause,
+    clientGroupUnguardGuardPoint,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -323,6 +349,7 @@ _guard_point_params = dict(
     data_lineage_enabled=dict(type="bool"),
     disk_name=dict(type="str"),
     diskgroup_name=dict(type="str"),
+    dps_id=dict(type="str"),
     early_access=dict(type="bool"),
     intelligent_protection=dict(type="bool"),
     # is_esg_capable_device=dict(type="bool"),
@@ -340,6 +367,8 @@ argument_spec = dict(
             "patch",
             "add_client",
             "add_guard_point",
+            "update_guardpoint",
+            "unguard_guardpoints",
             "auth-binaries",
             "remove_client",
             "ldt_pause",
@@ -367,6 +396,12 @@ argument_spec = dict(
     auth_binaries=dict(type="str"),
     re_sign=dict(type="bool"),
     paused=dict(type="bool"),
+    dps_id=dict(type="str"),
+    guard_enabled=dict(type="bool"),
+    mfa_enabled=dict(type="bool"),
+    network_share_credentials_id=dict(type="str"),
+    guard_point_id=dict(type="str"),
+    guard_point_id_list=dict(type="list", elements="str"),
 )
 
 
@@ -382,6 +417,7 @@ def setup_module_object():
             ["op_type", "patch", ["id"]],
             ["op_type", "add_client", ["id", "client_list", "inherit_attributes"]],
             ["op_type", "add_guard_point", ["id", "guard_paths", "guard_point_params"]],
+            ["op_type", "unguard_guardpoints", ["guard_point_id_list"]],
             ["op_type", "auth-binaries", ["id"]],
             ["op_type", "remove_client", ["id", "client_id"]],
             ["op_type", "ldt_pause", ["id", "paused"]],
@@ -483,6 +519,48 @@ def main():
                 id=module.params.get("id"),
                 guard_paths=module.params.get("guard_paths"),
                 guard_point_params=module.params.get("guard_point_params"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
+
+    elif module.params.get("op_type") == "update_guardpoint":
+        try:
+            response = clientGroupUpdateGuardPoint(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                guardpoint_id=module.params.get("guard_point_id"),
+                dps_id=module.params.get("dps_id"),
+                guard_enabled=module.params.get("guard_enabled"),
+                mfa_enabled=module.params.get("mfa_enabled"),
+                network_share_credentials_id=module.params.get("network_share_credentials_id"),
+            )
+            result["response"] = response
+        except CMApiException as api_e:
+            if api_e.api_error_code:
+                module.fail_json(
+                    msg="status code: "
+                    + str(api_e.api_error_code)
+                    + " message: "
+                    + api_e.message
+                )
+        except AnsibleCMException as custom_e:
+            module.fail_json(msg=custom_e.message)
+
+    elif module.params.get("op_type") == "unguard_guardpoints":
+        try:
+            response = clientGroupUnguardGuardPoint(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                guard_point_id_list=module.params.get("guard_point_id_list"),
             )
             result["response"] = response
         except CMApiException as api_e:

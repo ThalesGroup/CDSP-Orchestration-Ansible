@@ -304,3 +304,12 @@ releases:
         to work with Thales new connection CipherTrust RESTful Data Protection or
         CRDP
     release_date: '2023-12-20'
+  1.0.2:
+    changes:
+      release_summary: Fix parsing issues arising from the ast library
+      major_changes:
+      - cm_cluster - Fix ast parsing issues that fails the cluster join command
+      - cm_resource_delete - Add support for deleting cluster
+      - cte_client_group - Add support for update guardpoint and unguard guardpoint
+      - cte_policy_save - Fixed the parameters effect to allow comma separated values
+    release_date: '2025-04-05'

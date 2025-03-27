@@ -8,6 +8,7 @@
 #
 
 from __future__ import absolute_import, division, print_function
+import ast
 
 __metaclass__ = type
 
@@ -233,9 +234,11 @@ def main():
                     node=node,
                     csr=strCSR,
                 )
-                cert = output["cert"]
-                caChain = output["cachain"]
-                mkek_blob = output["mkek_blob"]
+                description_str = output['description']
+                description_dict = ast.literal_eval(description_str)
+                cert = description_dict['cert']
+                caChain = description_dict['cachain']
+                mkek_blob = description_dict['mkek_blob']
             except CMApiException as api_e:
                 if api_e.api_error_code:
                     module.fail_json(

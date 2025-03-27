@@ -28,6 +28,93 @@
 
 ## Validate the CTE Client module
 - block:
+  - name: "Get User ID from Name"
+    thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+      localNode: "{{ this_node_connection_string }}"
+      query_param: username
+      query_param_value: "{{ username }}"
+      resource_type: users
+    register: user
+
+  - name: "Create Key"
+    thalesgroup.ciphertrust.vault_keys2_save:
+      op_type: create
+      name: "{{ keyName }}"
+      algorithm: "{{ keyAlgo }}"
+      size: "{{ keySize }}"
+      undeletable: false
+      unexportable: false
+      usageMask: 76
+      meta:
+        ownerId: "{{ user['response']['id'] }}"
+        permissions:
+          DecryptWithKey:
+            - "CTE Clients"
+          EncryptWithKey:
+            - "CTE Clients"
+          ExportKey:
+            - "CTE Clients"
+          MACVerifyWithKey:
+            - "CTE Clients"
+          MACWithKey:
+            - "CTE Clients"
+          ReadKey:
+            - "CTE Clients"
+          SignVerifyWithKey:
+            - "CTE Clients"
+          SignWithKey:
+            - "CTE Clients"
+          UseKey:
+            - "CTE Clients"
+        cte:
+          persistent_on_client: true
+          encryption_mode: CBC
+          cte_versioned: false
+      xts: false
+      localNode: "{{ this_node_connection_string }}"
+    register: key
+
+  - name: "Create CTE ResourceSet"
+    thalesgroup.ciphertrust.cte_resource_set:
+      op_type: create
+      name: "{{ resource_set }}"
+      type: Directory
+      description: "Created via Ansible"
+      resources:
+        - directory: "{{ resource_set_dir_path }}"
+          file: "*"
+          include_subfolders: true
+          hdfs: false
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_create_rs
+
+  - name: "Create CTE Policy"
+    thalesgroup.ciphertrust.cte_policy_save:
+      op_type: create
+      localNode: "{{ this_node_connection_string }}"
+      name: "{{ cte_policy_name }}"
+      description: "Created via Ansible"
+      never_deny: false
+      metadata:
+        restrict_update: false
+      security_rules:
+        - action: key_op
+          effect: "permit,applykey"
+          partial_match: true
+        - resource_set_id: "{{ _result_create_rs['response']['id'] }}"
+          exclude_resource_set: false
+          partial_match: true
+          action: all_ops
+          effect: "permit,audit,applykey"
+      policy_type: Standard
+      key_rules:
+        - key_id: "{{ key['response']['id'] }}"
+          resource_set_id: "{{ _result_create_rs['response']['id'] }}"
+      data_transform_rules:
+        - key_id: "{{ key['response']['id'] }}"
+          resource_set_id: "{{ _result_create_rs['response']['id'] }}"
+    register: _result_policy_create
+
   - name: "Create CTE Client"
     thalesgroup.ciphertrust.cte_client:
       op_type: create
@@ -35,18 +122,20 @@
       description: "Created via Ansible"
       communication_enabled: false
       client_type: FS
+      password_creation_method: GENERATE
+      user_space_client: true
       localNode: "{{ this_node_connection_string }}"
-    register: _result_create
+    register: _result_client_create
 
   - assert:
       that:
-        - _result_create is not failed
-        - _result_create.response.id is string
+        - _result_client_create is not failed
+        - _result_client_create.response.id is string
 
   - name: "Patch Client"
     thalesgroup.ciphertrust.cte_client:
       op_type: patch
-      id: "{{ _result_create['response']['id'] }}"
+      id: "{{ _result_client_create['response']['id'] }}"
       registration_allowed: true
       description: "Updated via Ansible"
       enabled_capabilities: LDT
@@ -58,23 +147,15 @@
         - _result_patch is not failed
         - _result_patch.response.message is match("Resource updated successfully")
 
-  - name: "Get CTE Policy ID from Name"
-    thalesgroup.ciphertrust.cm_resource_get_id_from_name:
-      localNode: "{{ this_node_connection_string }}"
-      query_param: "name"
-      query_param_value: Ansible-CTE-Policy
-      resource_type: "cte-client"
-    register: ctePolicy
-  
   - name: "Add Guard Points to the CTE Client"
     thalesgroup.ciphertrust.cte_client:
       op_type: add_guard_point
-      id: "{{ _result_create['response']['id'] }}"
+      id: "{{ _result_client_create['response']['id'] }}"
       guard_paths:
         - "/opt/path1/"
       guard_point_params:
         guard_point_type: directory_auto
-        policy_id: "{{ ctePolicy['response']['id'] }}"
+        policy_id: "{{ _result_policy_create['response']['id'] }}"
         automount_enabled: true
       localNode: "{{ this_node_connection_string }}"
     register: _result_add_gp
@@ -83,11 +164,11 @@
       that:
         - _result_add_gp is not failed
         - _result_add_gp.response.message is match("Resource created successfully")
-  
+
   - name: "Patch Guard Point in CTE Client"
     thalesgroup.ciphertrust.cte_client:
       op_type: patch_guard_point
-      id: "{{ _result_create['response']['id'] }}"
+      id: "{{ _result_client_create['response']['id'] }}"
       gp_id: "{{ _result_add_gp['response']['id'] }}"
       guard_enabled: true
     register: _result_update_gp
@@ -96,11 +177,11 @@
       that:
         - _result_update_gp is not failed
         - _result_update_gp.response.message is match("Resource updated successfully")
-  
+
   - name: "Enable early access on GuardPoint"
     thalesgroup.ciphertrust.cte_client:
       op_type: gp_enable_early_access
-      id: "{{ _result_create['response']['id'] }}"
+      id: "{{ _result_client_create['response']['id'] }}"
       gp_id: "{{ _result_add_gp['response']['id'] }}"
       early_access: true
     register: _result_update_gp_enable_early_access
@@ -109,12 +190,12 @@
       that:
         - _result_update_gp_enable_early_access is not failed
         - _result_update_gp_enable_early_access.response.message is match("Resource updated successfully")
-  
+
   - name: "UnGuard the guard point"
     thalesgroup.ciphertrust.cte_client:
       op_type: gp_unguard
-      id: "{{ _result_create['response']['id'] }}"
-      guard_point_id_list: 
+      id: "{{ _result_client_create['response']['id'] }}"
+      guard_point_id_list:
         - "{{ _result_add_gp['response']['id'] }}"
     register: _result_unguard
 
@@ -126,7 +207,7 @@
   - name: "Send LDT Suspend Request to CTE Client"
     thalesgroup.ciphertrust.cte_client:
       op_type: ldt_pause
-      id: "{{ _result_create['response']['id'] }}"
+      id: "{{ _result_client_create['response']['id'] }}"
       localNode: "{{ this_node_connection_string }}"
       paused: true
     register: _result_ldt_pause
@@ -134,7 +215,7 @@
   - assert:
       that:
         - _result_ldt_pause is not failed
-  
+
   - name: "Un-enroll CTE Client"
     thalesgroup.ciphertrust.cte_client:
       op_type: unenroll
@@ -150,7 +231,7 @@
   - name: "Delete a CTE Client with ID"
     thalesgroup.ciphertrust.cte_client:
       op_type: delete_id
-      id: "{{ _result_create['response']['id'] }}"
+      id: "{{ _result_client_create['response']['id'] }}"
       del_client: true
       force_del_client: true
       localNode: "{{ this_node_connection_string }}"
@@ -160,3 +241,41 @@
       that:
         - _result_delete is not failed
         - _result_delete.response.message is match("Resource updated successfully")
+
+  - name: "Delete CTE Policy"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_policy_create.response.id }}"
+      resource_type: "cte-policy"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_policy
+
+  - assert:
+      that:
+        - _result_delete_policy is not failed
+
+  - name: Pause for 1 minute
+    ansible.builtin.pause:
+      minutes: 1
+    when: _result_delete is succeeded
+
+  - name: "Delete Resource Set"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ _result_create_rs.response.id }}"
+      resource_type: "resourceset"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_resource_set
+
+  - assert:
+      that:
+        - _result_delete_resource_set is not failed
+
+  - name: "Delete Key"
+    thalesgroup.ciphertrust.cm_resource_delete:
+      key: "{{ key['response']['id'] }}"
+      resource_type: "keys"
+      localNode: "{{ this_node_connection_string }}"
+    register: _result_delete_key
+
+  - assert:
+      that:
+        - _result_delete_key is not failed

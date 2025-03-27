@@ -144,7 +144,7 @@
       - _result_create_rs_2 is not failed
       - _result_create_rs_2.response.id is string
 
-  
+
 - name: "Create yet another CTE ResourceSet for other op_types"
   thalesgroup.ciphertrust.cte_resource_set:
     op_type: create
@@ -290,10 +290,15 @@
     resource_type: "cte-policy"
     localNode: "{{ this_node_connection_string }}"
   register: _result_delete_policy
-  
+
 - assert:
     that:
       - _result_delete_policy is not failed
+
+- name: Pause for 1 minute
+  ansible.builtin.pause:
+    minutes: 1
+  when: _result_delete_policy is succeeded
 
 - name: "Delete Resource Set 1"
   thalesgroup.ciphertrust.cm_resource_delete:
@@ -301,7 +306,7 @@
     resource_type: "resourceset"
     localNode: "{{ this_node_connection_string }}"
   register: _result_delete_resource_set_1
-  
+
 - assert:
     that:
       - _result_delete_resource_set_1 is not failed
@@ -312,7 +317,7 @@
     resource_type: "resourceset"
     localNode: "{{ this_node_connection_string }}"
   register: _result_delete_resource_set_2
-  
+
 - assert:
     that:
       - _result_delete_resource_set_2 is not failed
@@ -323,7 +328,18 @@
     resource_type: "resourceset"
     localNode: "{{ this_node_connection_string }}"
   register: _result_delete_resource_set_3
-  
+
 - assert:
     that:
       - _result_delete_resource_set_3 is not failed
+
+- name: "Delete Key"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    key: "{{ key['response']['id'] }}"
+    resource_type: "keys"
+    localNode: "{{ this_node_connection_string }}"
+  register: _result_delete_key
+
+- assert:
+    that:
+      - _result_delete_key is not failed
