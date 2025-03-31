@@ -247,7 +247,10 @@ options:
         - ID/Name of the credentials if the GuardPoint is applied to a network share
         - Supported for only LDT policies.
       type: str
-    guard_point_id_list
+    guard_point_id:
+      description: Unique identifier for the guardpoint to be updated
+      type: str
+    guard_point_id_list:
       description:
         - Comma-separated IDs of GuardPoints to be dissociated from a ClientGroup. The IDs can be the Name, ID (a UUIDv4), URI, or slug of the ClientGroup.
       type: list

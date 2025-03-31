@@ -59,7 +59,6 @@ options:
     key:
         description:
             - This is a string type of option that can have either the name of the ID of the resource to be deleted
-        required: true
         type: str
     resource_type:
         description:
@@ -88,6 +87,7 @@ options:
           - azure-secret
           - azure-certificate
           - azure-key
+          - cluster
         type: str
 """
 

@@ -64,7 +64,7 @@ def csr(**kwargs):
     node = kwargs["node"]
 
     master_cm = ast.literal_eval(master)
-    #node_cm = ast.literal_eval(node)
+    # node_cm = ast.literal_eval(node)
 
     request = {}
     request["localNodeHost"] = node["server_private_ip"]

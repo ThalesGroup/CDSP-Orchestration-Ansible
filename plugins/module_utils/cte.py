@@ -956,6 +956,7 @@ def clientGroupAddGuardPoint(**kwargs):
     except AnsibleCMException as custom_e:
         raise
 
+
 def clientGroupUpdateGuardPoint(**kwargs):
     request = {}
 
@@ -979,6 +980,7 @@ def clientGroupUpdateGuardPoint(**kwargs):
         raise
     except AnsibleCMException as custom_e:
         raise
+
 
 def clientGroupUnguardGuardPoint(**kwargs):
     request = {}

@@ -8,7 +8,6 @@
 #
 
 from __future__ import absolute_import, division, print_function
-import ast
 
 __metaclass__ = type
 
@@ -140,6 +139,8 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
     CMApiException,
     AnsibleCMException,
 )
+
+import ast
 
 _joining_node = dict(
     server_ip=dict(type="str", required=True),

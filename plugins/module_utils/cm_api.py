@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 import re
 from ansible.module_utils.urls import Request
 # from ansible.module_utils.basic import missing_required_lib
