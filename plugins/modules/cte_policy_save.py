@@ -286,11 +286,6 @@ options:
           description:
             - Actions applicable to the rule
           type: str
-          choices:
-            - read
-            - write
-            - all_ops
-            - key_op
         effect:
           description:
             - Effects applicable to the rule. Separate multiple effects by commas. The valid values are
@@ -298,7 +293,6 @@ options:
             - deny
             - audit
             - applykey
-          choices: ['permit', 'deny', 'audit', 'applykey']
           type: str
         exclude_process_set:
           description:
@@ -427,11 +421,9 @@ options:
       type: str
     action:
       description: Actions applicable to the rule. Examples of actions are read, write, all_ops, and key_op.
-      choices: [read, write, all_ops, key_op]
       type: str
     effect:
       description: Effects applicable to the rule. Separate multiple effects by commas.
-      choices: [permit, deny, audit, applykey]
       type: str
     exclude_process_set:
       description: Process set to exclude. Supported for Standard and LDT policies.
@@ -624,8 +616,8 @@ _metadata = dict(
 )
 
 _security_rules = dict(
-    action=dict(type="str", choices=["read", "write", "all_ops", "key_op"]),
-    effect=dict(type="str", choices=["permit", "deny", "audit", "applykey"]),
+    action=dict(type="str"),
+    effect=dict(type="str"),
     exclude_process_set=dict(type="bool"),
     exclude_resource_set=dict(type="bool"),
     exclude_user_set=dict(type="bool"),
@@ -689,8 +681,8 @@ argument_spec = dict(
     transformation_keys=dict(type="dict", options=_transformation_key),
     ldtRuleId=dict(type="str"),
     # params for op_type add_security_rule
-    action=dict(type="str", choices=["read", "write", "all_ops", "key_op"]),
-    effect=dict(type="str", choices=["permit", "deny", "audit", "applykey"]),
+    action=dict(type="str"),
+    effect=dict(type="str"),
     exclude_process_set=dict(type="bool"),
     exclude_resource_set=dict(type="bool"),
     exclude_user_set=dict(type="bool"),

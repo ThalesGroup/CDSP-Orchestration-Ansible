@@ -64,16 +64,16 @@ def csr(**kwargs):
     node = kwargs["node"]
 
     master_cm = ast.literal_eval(master)
-    node_cm = ast.literal_eval(node)
+    # node_cm = ast.literal_eval(node)
 
     request = {}
-    request["localNodeHost"] = node_cm["server_private_ip"]
+    request["localNodeHost"] = node["server_private_ip"]
     request["publicAddress"] = master_cm["server_ip"]
     payload = json.dumps(request)
 
     try:
         response = POSTData(
-            payload=payload, cm_node=node, cm_api_endpoint="cluster/csr"
+            payload=payload, cm_node=node, cm_api_endpoint="cluster/csr", id="csr"
         )
         return response["csr"]
     except CMApiException as api_e:
@@ -88,7 +88,7 @@ def sign(**kwargs):
     csr = kwargs["csr"]
 
     master_cm = ast.literal_eval(master)
-    node_cm = ast.literal_eval(node)
+    node_cm = node
 
     result = dict()
     request = {}
@@ -107,9 +107,15 @@ def sign(**kwargs):
         raise
 
 
-def join(master, node, cert, caChain, mkek_blob):
+def join(**kwargs):
+    master = kwargs['master']
+    node = kwargs['node']
+    cert = kwargs['cert']
+    caChain = kwargs['caChain']
+    mkek_blob = kwargs['mkek_blob']
+
     master_cm = ast.literal_eval(master)
-    node_cm = ast.literal_eval(node)
+    node_cm = node
 
     result = dict()
     request = {}

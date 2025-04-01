@@ -54,7 +54,7 @@ options:
           type: bool
           required: true
         auth_domain_path:
-          description: user's domain path
+          description: user''s domain path
           type: str
           required: true
     op_type:
@@ -76,7 +76,7 @@ options:
     algorithm:
         description:
           - Cryptographic algorithm this key is used with.
-          - Defaults to 'aes'
+          - Defaults to ''aes''
         type: str
         required: false
         choices: [aes, tdes, rsa, ec, hmac-sha1, hmac-sha256, hmac-sha384, hmac-sha512, seed, aria, opaque]
@@ -112,9 +112,9 @@ options:
     certType:
         description:
           - This specifies the type of certificate object that is being created
-          - Valid values are 'x509-pem' and 'x509-der'
+          - Valid values are ''x509-pem'' and ''x509-der''
           - At present, we only support x.509 certificates
-          - The cerfificate data is passed in via the 'material' field
+          - The cerfificate data is passed in via the ''material'' field
           - The certificate type is infered from the material if it is left blank.
         type: str
         choices: [x509-pem, x509-der]
@@ -135,7 +135,7 @@ options:
     curveid:
         description:
           - Cryptographic curve id for elliptic key.
-          - Key algorithm must be 'EC'
+          - Key algorithm must be ''EC''
         choices:
           - secp224k1
           - secp224r1
@@ -171,13 +171,13 @@ options:
         default: null
     encoding:
         description:
-          - Specifies the encoding used for the 'material' field.
+          - Specifies the encoding used for the ''material'' field.
         type: str
         required: false
         default: null
     format:
         description:
-          - This parameter is used while importing keys ('material' is not empty)
+          - This parameter is used while importing keys (''material'' is not empty)
           - For Asymmetric keys, When this parameter is not specified
           - For Symmetric keys, When importing keys if specified, the value must be given according to the format of the material.
           - Options are raw or opaque
@@ -185,7 +185,7 @@ options:
         required: false
         default: null
     generateKeyId:
-        description: If specified as true, the key's keyId identifier of type long is generated. Defaults to false.
+        description: If specified as true, the key''s keyId identifier of type long is generated. Defaults to false.
         type: bool
         required: false
         default: false
@@ -217,7 +217,7 @@ options:
     id:
         description:
           - This optional parameter specifies the identifier of the key (id)
-          - It is used only when creating keys with specific key material. If set, the key's id is set to this value.
+          - It is used only when creating keys with specific key material. If set, the key''s id is set to this value.
         type: str
         required: false
         default: null
@@ -229,7 +229,7 @@ options:
     keyId:
         description:
           - Additional identifier of the key. The format of this value is of type long
-          - This is optional and applicable for import key only. If set, the value is imported as the key's keyId.
+          - This is optional and applicable for import key only. If set, the value is imported as the key''s keyId.
         type: str
         required: false
         default: null
@@ -265,7 +265,7 @@ options:
         default: null
     material:
         description:
-          - If set, the value will be imported as the key's material
+          - If set, the value will be imported as the key''s material
           - If not set, new key material will be generated on the server
         type: str
         required: false
@@ -276,7 +276,7 @@ options:
         suboptions:
           ownerId:
             description:
-              - Optional owner information for the key, required for non-admin. Value should be the user's user_id
+              - Optional owner information for the key, required for non-admin. Value should be the user''s user_id
             type: str
             required: false
             default: null
@@ -344,7 +344,7 @@ options:
         description:
           - Additional identifier of the key
           - This is optional and applicable for import key only
-          - If set, the value is imported as the key's muid.
+          - If set, the value is imported as the key''s muid.
         type: str
         required: false
         default: null
@@ -619,7 +619,7 @@ options:
         default: null
     wrapKeyName:
         description:
-          - While creating a new key, If 'includeMaterial' is true, then only the key material will be wrapped with key material.
+          - While creating a new key, If ''includeMaterial'' is true, then only the key material will be wrapped with key material.
           - The response "material" property will be the base64 encoded ciphertext
           - While importing a key, the key material will be unwrapped with material of the specified key name
           - The only applicable "wrappingMethod" for the unwrapping is "encrypt"
@@ -700,7 +700,7 @@ options:
         default: null
     wrapPublicKey:
         description:
-          - If the algorithm is 'aes','tdes','hmac-*', 'seed' or 'aria', this value will be used to encrypt the returned key material
+          - If the algorithm is ''aes'',''tdes'',''hmac-*'', ''seed'' or ''aria'', this value will be used to encrypt the returned key material
           - This value is ignored for other algorithms
         type: str
         required: false
@@ -709,8 +709,8 @@ options:
         description:
           - WrapPublicKeyPadding specifies the type of padding scheme that needs to be set when importing the Key using the specified wrapkey
           - Accepted values are "pkcs1", "oaep", "oaep256", "oaep384", "oaep512"
-          - Will default to "pkcs1" when 'wrapPublicKeyPadding' is not set and 'WrapPublicKey' is set.
-          - While creating a new key, wrapPublicKeyPadding parameter should be specified only if 'includeMaterial' is true
+          - Will default to "pkcs1" when ''wrapPublicKeyPadding'' is not set and ''WrapPublicKey'' is set.
+          - While creating a new key, wrapPublicKeyPadding parameter should be specified only if ''includeMaterial'' is true
           - In this case, key will get created and in response wrapped material using specified wrapPublicKeyPadding and other wrap parameters will be returned.
         type: str
         choices: [pkcs1, oaep, oaep256, oaep384, oaep512]
@@ -760,7 +760,7 @@ options:
         required: false
         default: null
     xts:
-        description: If set to true, then key created will be XTS/CBC-CS1 Key. Defaults to false. Key algorithm must be 'AES'.
+        description: If set to true, then key created will be XTS/CBC-CS1 Key. Defaults to false. Key algorithm must be ''AES''.
         type: bool
         required: false
         default: false
@@ -769,14 +769,14 @@ options:
           - To update the group permissions/custom attribute or both in metadata of all versions of the key
           - By default it is set to false
           - Set to true, only when to update the group/custom attribute or both permissions of all versions of the key.
-          - Only applicable for op_type "patch"
+          - Only applicable for op_type ''patch''
         type: bool
         required: false
         default: false
     offset:
         description:
           - An Offset MAY be used to indicate the difference between the Creation Date and the Activation Date of the replacement key.
-          - Only applicable for op_type "create_version"
+          - Only applicable for op_type ''create_version''
         type: int
         required: false
 

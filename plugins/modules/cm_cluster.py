@@ -140,6 +140,8 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
     AnsibleCMException,
 )
 
+import ast
+
 _joining_node = dict(
     server_ip=dict(type="str", required=True),
     server_private_ip=dict(type="str", required=True),
@@ -233,9 +235,11 @@ def main():
                     node=node,
                     csr=strCSR,
                 )
-                cert = output["cert"]
-                caChain = output["cachain"]
-                mkek_blob = output["mkek_blob"]
+                description_str = output['description']
+                description_dict = ast.literal_eval(description_str)
+                cert = description_dict['cert']
+                caChain = description_dict['cachain']
+                mkek_blob = description_dict['mkek_blob']
             except CMApiException as api_e:
                 if api_e.api_error_code:
                     module.fail_json(

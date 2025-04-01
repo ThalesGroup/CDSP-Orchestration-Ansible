@@ -59,7 +59,6 @@ options:
     key:
         description:
             - This is a string type of option that can have either the name of the ID of the resource to be deleted
-        required: true
         type: str
     resource_type:
         description:
@@ -88,6 +87,7 @@ options:
           - azure-secret
           - azure-certificate
           - azure-key
+          - cluster
         type: str
 """
 
@@ -115,6 +115,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules im
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     DELETEByNameOrId,
+    DeleteWithoutData,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -144,10 +145,11 @@ _arr_resource_type_choices = [
     "azure-secret",
     "azure-certificate",
     "azure-key",
+    "cluster",
 ]
 
 argument_spec = dict(
-    key=dict(type="str", required=True),
+    key=dict(type="str"),
     resource_type=dict(type="str", choices=_arr_resource_type_choices, required=True),
 )
 
@@ -223,15 +225,23 @@ def main():
         endpoint = "cckm/azure/certificates"
     elif resource_type == "azure-key":
         endpoint = "cckm/azure/keys"
+    elif resource_type == "cluster":
+        endpoint = "cluster"
     else:
         module.fail_json(msg="resource_type not supported yet")
 
     try:
-        response = DELETEByNameOrId(
-            key=module.params.get("key"),
-            cm_node=module.params.get("localNode"),
-            cm_api_endpoint=endpoint,
-        )
+        if resource_type == "cluster":
+            response = DELETEByNameOrId(
+                key=module.params.get("key"),
+                cm_node=module.params.get("localNode"),
+                cm_api_endpoint=endpoint,
+            )
+        else:
+            response = DeleteWithoutData(
+                cm_node=module.params.get("localNode"),
+                cm_api_endpoint=endpoint,
+            )
         result["response"] = response
     except CMApiException as api_e:
         if api_e.api_error_code:

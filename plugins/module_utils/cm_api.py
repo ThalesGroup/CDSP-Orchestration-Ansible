@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 import re
 from ansible.module_utils.urls import Request
 # from ansible.module_utils.basic import missing_required_lib
@@ -60,7 +59,8 @@ def getJwt(host, username, password, auth_domain_path):
 
 def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
     # Create the session object
-    node = ast.literal_eval(cm_node)
+    # node = ast.literal_eval(cm_node)
+    node = cm_node
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -133,7 +133,8 @@ def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
 # Added to support PUT operation
 def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
-    node = ast.literal_eval(cm_node)
+    # node = ast.literal_eval(cm_node)
+    node = cm_node
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -192,7 +193,8 @@ def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
 
 def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
-    node = ast.literal_eval(cm_node)
+    # node = ast.literal_eval(cm_node)
+    node = cm_node
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -250,7 +252,8 @@ def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
 
 def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
-    node = ast.literal_eval(cm_node)
+    # node = ast.literal_eval(cm_node)
+    node = cm_node
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -309,7 +312,8 @@ def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
 
 def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
-    node = ast.literal_eval(cm_node)
+    # node = ast.literal_eval(cm_node)
+    node = cm_node
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -367,7 +371,8 @@ def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
 
 def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
-    node = ast.literal_eval(cm_node)
+    # node = ast.literal_eval(cm_node)
+    node = cm_node
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -421,7 +426,8 @@ def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
 
 def GETData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
-    node = ast.literal_eval(cm_node)
+    # node = ast.literal_eval(cm_node)
+    node = cm_node
     cmSessionObject = CMAPIObject(
         cm_api_user=node["user"],
         cm_api_pwd=node["password"],
@@ -462,7 +468,8 @@ def GETData(cm_node=None, cm_api_endpoint=None):
 # This method will simply return the GET API data
 def GETAPIData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
-    node = ast.literal_eval(cm_node)
+    # node = ast.literal_eval(cm_node)
+    node = cm_node
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -561,7 +568,8 @@ def GETIdByQueryParam(
     param=None, value=None, cm_node=None, cm_api_endpoint=None, id=None
 ):
     # Create the session object
-    node = ast.literal_eval(cm_node)
+    # node = ast.literal_eval(cm_node)
+    node = cm_node
     cmSessionObject = CMAPIObject(
         cm_api_user=node["user"],
         cm_api_pwd=node["password"],

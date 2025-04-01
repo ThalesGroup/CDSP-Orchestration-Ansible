@@ -1,6 +1,6 @@
 ---
 cm_connection_string:
-  server_ip: 192.168.2.213
+  server_ip: 192.168.2.100
   server_private_ip: 10.10.10.10
   server_port: 5432
   user: admin
@@ -9,3 +9,11 @@ cm_connection_string:
   auth_domain_path:
 local_ca_id: "146b5095-8f9b-47c6-a43c-a6ee4b58b23b"
 nae_interface_port_number: 9005
+cluster_nodes:
+  - server_ip: 192.168.2.101
+    server_private_ip: 10.10.10.10
+    server_port: 5432
+    user: admin
+    password: ChangeIt01!
+    verify: False
+    auth_domain_path:

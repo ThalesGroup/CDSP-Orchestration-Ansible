@@ -53,7 +53,7 @@ options:
           type: bool
           required: true
         auth_domain_path:
-          description: user's domain path
+          description: user''s domain path
           type: str
           required: true
     op_type:
@@ -67,12 +67,12 @@ options:
     allowed_auth_methods:
         description:
           - List of login authentication methods allowed to the user.
-          - Default value - ["password"] i.e. Password Authentication is allowed by default.
+          - Default value - password i.e. Password Authentication is allowed by default.
           - Setting it to empty, i.e [], means no authentication method is allowed to the user.
           - If both enable_cert_auth and allowed_auth_methods are provided in the request, enable_cert_auth is ignored.
         type: list
         elements: str
-        default: ["password"]
+        default: password
     app_metadata:
         description:
             - A schema-less object, which can be used by applications to store information about the resource
@@ -87,7 +87,7 @@ options:
     connection:
         description:
             - This attribute is required to create a user, but is not included in user resource responses.
-            - Can be the name of a connection or "local_account" for a local user, defaults to "local_account".
+            - Can be the name of a connection or ''local_account'' for a local user, defaults to ''local_account''.
         type: str
         default: local_account
     email:
@@ -107,7 +107,7 @@ options:
         required: false
         type: bool
     login_flags:
-        description: Flags for controlling user's login behavior.
+        description: Flags for controlling user''s login behavior.
         required: false
         type: dict
         suboptions:
@@ -125,7 +125,7 @@ options:
     password:
         description:
           - The password used to secure the users account. Allowed passwords are defined by the password policy.
-          - Password is optional when "certificate_subject_dn" is set and "user_certificate" is in allowed_auth_methods.
+          - Password is optional when ''certificate_subject_dn'' is set and ''user_certificate'' is in allowed_auth_methods.
           - In all other cases, password is required
           - It is not included in user resource responses.
         required: false

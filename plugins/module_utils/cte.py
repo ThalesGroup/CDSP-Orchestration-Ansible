@@ -957,6 +957,55 @@ def clientGroupAddGuardPoint(**kwargs):
         raise
 
 
+def clientGroupUpdateGuardPoint(**kwargs):
+    request = {}
+
+    for key, value in kwargs.items():
+        if key not in ["node", "id", "guardpoint_id"] and value is not None:
+            request[key] = value
+
+    payload = json.dumps(request)
+
+    try:
+        response = PATCHData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clientgroups/"
+            + kwargs["id"]
+            + "/guardpoints/"
+            + kwargs["guardpoint_id"],
+        )
+        return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise
+
+
+def clientGroupUnguardGuardPoint(**kwargs):
+    request = {}
+
+    for key, value in kwargs.items():
+        if key not in ["node", "id"] and value is not None:
+            request[key] = value
+
+    payload = json.dumps(request)
+
+    try:
+        response = PATCHData(
+            payload=payload,
+            cm_node=kwargs["node"],
+            cm_api_endpoint="transparent-encryption/clientgroups/"
+            + kwargs["id"]
+            + "/guardpoints/unguard",
+        )
+        return ast.literal_eval(str(response))
+    except CMApiException as api_e:
+        raise
+    except AnsibleCMException as custom_e:
+        raise
+
+
 def clientGroupAuthBinaries(**kwargs):
     request = {}
 

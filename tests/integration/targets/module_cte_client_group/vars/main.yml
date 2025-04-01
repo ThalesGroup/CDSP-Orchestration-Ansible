@@ -1,4 +1,11 @@
 this_node_connection_string: "{{ cm_connection_string }}"
 
-group_name: AnsibleGroup
-new_group_name: NewGroupName
+client_group_name: AnsibleGroup
+new_client_group_name: NewGroupName
+username: "admin"
+keyName: "ansible"
+keyAlgo: "aes"
+keySize: 256
+resource_set: "ansible-rset"
+resource_set_dir_path: "/opt/ansible"
+cte_policy_name: "ansible-cte-policy"
