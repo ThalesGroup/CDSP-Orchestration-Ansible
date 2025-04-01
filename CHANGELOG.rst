@@ -4,6 +4,22 @@ Thalesgroup.Ciphertrust Release Notes
 
 .. contents:: Topics
 
+v1.0.2
+======
+
+Release Summary
+---------------
+
+Fix parsing issues arising from the ast library
+
+Major Changes
+-------------
+
+- cm_cluster - Fix ast parsing issues that fails the cluster join command
+- cm_resource_delete - Add support for deleting cluster
+- cte_client_group - Add support for update guardpoint and unguard guardpoint
+- cte_policy_save - Fixed the parameters effect to allow comma separated values
+
 v1.0.1
 ======
 
