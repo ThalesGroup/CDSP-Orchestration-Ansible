@@ -69,7 +69,7 @@ options:
           - Query Parameter
           - Type of identifier for the key
         required: false
-        choices: [''name'', ''id'', ''uri'', ''alias'']
+        choices: ['name', 'id', 'uri', 'alias']
         type: str
     includeMaterial:
         description:
@@ -81,7 +81,7 @@ options:
         default: false
     op_type:
         description: Operation to be performed
-        choices: [''destroy'', ''archive'', ''recover'', ''revoke'', ''reactivate'', ''export'', ''clone'']
+        choices: ['destroy', 'archive', 'recover', 'revoke', 'reactivate', 'export', 'clone']
         required: true
         type: str
     cm_key_id:
@@ -144,7 +144,7 @@ options:
         description:
           - Specifies the encoding used for the material field.
           - For wrapping scenarios and PKCS12 format, the only valid option is base64.
-          - In case of "Symmetric Keys" when ''format'' parameter has ''base64'' value and ''encoding'' parameter also contains some value.
+          - In case of "Symmetric Keys" when format parameter has base64 value and encoding parameter also contains some value.
           - The encoding parameter takes the priority.
           - Options for Symmetric Keys are hex or base64
           - Only applicable for op_type "export"
@@ -382,12 +382,12 @@ options:
         default: null
     wrapPublicKey:
         description:
-          - If the algorithm is ''aes'',''tdes'',''hmac-*'', ''seed'' or ''aria'', this value will be used to encrypt the returned key material.
+          - If the algorithm is aes, tdes, hmac-*, seed or aria, this value will be used to encrypt the returned key material.
           - This value is ignored for other algorithms
           - Value must be an RSA public key, PEM-encoded public key in either PKCS1 or PKCS8 format, or a PEM-encoded X.509 certificate.
-          - If set, the returned ''material'' value will be a Base64 encoded PKCS#1 v1.5 encrypted key.
+          - If set, the returned material value will be a Base64 encoded PKCS#1 v1.5 encrypted key.
           - View "wrapPublicKey" in export parameters for more information
-          - Only applicable if ''includeMaterial'' is true.
+          - Only applicable if includeMaterial is true.
           - Only applicable for op_type "export"
         type: str
         required: false
@@ -396,8 +396,8 @@ options:
         description:
           - WrapPublicKeyPadding specifies the type of padding scheme that needs to be set when importing the Key using the specified wrapkey
           - Accepted values are "pkcs1", "oaep", "oaep256", "oaep384", "oaep512"
-          - and will default to "pkcs1" when ''wrapPublicKeyPadding'' is not set and ''WrapPublicKey'' is set.
-          - While creating a new key, wrapPublicKeyPadding parameter should be specified only if ''includeMaterial'' is true
+          - and will default to "pkcs1" when wrapPublicKeyPadding is not set and WrapPublicKey is set.
+          - While creating a new key, wrapPublicKeyPadding parameter should be specified only if includeMaterial is true
           - In this case, key will get created and in response wrapped material using specified wrapPublicKeyPadding and other wrap parameters will be returned.
           - Only applicable for op_type "export"
         type: str
