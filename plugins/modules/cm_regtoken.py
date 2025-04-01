@@ -70,7 +70,7 @@ options:
          - By default local Certificate Authority will be used to issue certificates.
         type: str
     cert_duration:
-        description: Duration in days for which the CipherTrust Manager client's certificate is valid, default (730).
+        description: Duration in days for which the CipherTrust Manager client''s certificate is valid, default (730).
         type: int
         default: 730
     label:
@@ -86,7 +86,7 @@ options:
     lifetime:
         description:
           - Duration in minutes/hours/days for which this token can be used for registering CipherTrust Manager clients.
-          - No limit by default. For 'x' amount of time, it should formatted as xm for x minutes, xh for hours and xd for days.
+          - No limit by default. For "x" amount of time, it should formatted as xm for x minutes, xh for hours and xd for days.
         type: str
     max_clients:
         description: Maximum number of clients that can be registered using this registration token. No limit by default.
@@ -95,7 +95,7 @@ options:
         description:
           - Prefix for the client name.
           - For a client registered using this registration token, name_prefix.
-          - If specified, client name will be constructed as 'name_prefix{nth client registered using this registation token}'
+          - If specified, client name will be constructed as "name_prefix{nth client registered using this registation token}"
           - If name_prefix is not specified, CipherTrust Manager server will generate a random name for the client
         type: str
 """
