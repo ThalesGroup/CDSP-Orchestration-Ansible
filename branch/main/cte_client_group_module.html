@@ -4,11 +4,11 @@
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.15.0" name="antsibull-docs" />
+<meta content="2.16.3" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>thalesgroup.ciphertrust.cte_client_group module – Manage CTE client groups &mdash; thalesgroup.ciphertrust Collection  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5707b69d" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=41de9001" />
       <link rel="stylesheet" type="text/css" href="_static/css/ansible.css?v=c5b67dd2" />
       <link rel="stylesheet" type="text/css" href="_static/antsibull-minimal.css" />
       <link rel="stylesheet" type="text/css" href="_static/css/rtd-ethical-ads.css?v=289b023e" />
@@ -148,7 +148,7 @@
 <h1>thalesgroup.ciphertrust.cte_client_group module – Manage CTE client groups<a class="headerlink" href="#thalesgroup-ciphertrust-cte-client-group-module-manage-cte-client-groups" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/thalesgroup/ciphertrust/">thalesgroup.ciphertrust collection</a> (version 1.0.1).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/thalesgroup/ciphertrust/">thalesgroup.ciphertrust collection</a> (version 1.0.2).</p>
 <p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
 To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">thalesgroup.ciphertrust</span></code>.</p>
@@ -246,6 +246,13 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-dps_id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-dps-id"><strong>dps_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-dps_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ID/name of the Designated Primary Set.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-enable_domain_sharing"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-enable-domain-sharing"><strong>enable_domain_sharing</strong></p>
 <a class="ansibleOptionLink" href="#parameter-enable_domain_sharing" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -257,7 +264,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-enabled_capabilities"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-enabled-capabilities"><strong>enabled_capabilities</strong></p>
 <a class="ansibleOptionLink" href="#parameter-enabled_capabilities" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -265,11 +272,37 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>Currently only RESIGN for re-signing client settings can be enabled</p>
 </div></td>
 </tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-guard_enabled"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-enabled"><strong>guard_enabled</strong></p>
+<a class="ansibleOptionLink" href="#parameter-guard_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Whether the GuardPoint is enabled.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-guard_paths"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-paths"><strong>guard_paths</strong></p>
 <a class="ansibleOptionLink" href="#parameter-guard_paths" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>List of GuardPaths to be created</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-guard_point_id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-point-id"><strong>guard_point_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-guard_point_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Unique identifier for the guardpoint to be updated</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-guard_point_id_list"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-point-id-list"><strong>guard_point_id_list</strong></p>
+<a class="ansibleOptionLink" href="#parameter-guard_point_id_list" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Comma-separated IDs of GuardPoints to be dissociated from a ClientGroup. The IDs can be the Name, ID (a UUIDv4), URI, or slug of the ClientGroup.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -351,6 +384,13 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-guard_point_params/dps_id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-point-params-dps-id"><strong>dps_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-guard_point_params/dps_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>ID/name of the Designated Primary Set.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-guard_point_params/early_access"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-point-params-early-access"><strong>early_access</strong></p>
 <a class="ansibleOptionLink" href="#parameter-guard_point_params/early_access" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -365,7 +405,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-guard_point_params/guard_point_type"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-point-params-guard-point-type"><strong>guard_point_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-guard_point_params/guard_point_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -381,7 +421,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-guard_point_params/intelligent_protection"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-point-params-intelligent-protection"><strong>intelligent_protection</strong></p>
 <a class="ansibleOptionLink" href="#parameter-guard_point_params/intelligent_protection" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -395,7 +435,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-guard_point_params/is_idt_capable_device"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-point-params-is-idt-capable-device"><strong>is_idt_capable_device</strong></p>
 <a class="ansibleOptionLink" href="#parameter-guard_point_params/is_idt_capable_device" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -408,7 +448,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-guard_point_params/mfa_enabled"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-point-params-mfa-enabled"><strong>mfa_enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-guard_point_params/mfa_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -420,7 +460,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-guard_point_params/network_share_credentials_id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-point-params-network-share-credentials-id"><strong>network_share_credentials_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-guard_point_params/network_share_credentials_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -428,7 +468,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>Supported for only LDT policies.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-guard_point_params/policy_id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-point-params-policy-id"><strong>policy_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-guard_point_params/policy_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -436,7 +476,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>This parameter is not valid for Ransomware GuardPoints as they will not be associated with any CTE policy</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-guard_point_params/preserve_sparse_regions"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-guard-point-params-preserve-sparse-regions"><strong>preserve_sparse_regions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-guard_point_params/preserve_sparse_regions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -452,14 +492,14 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-id"><strong>id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Identifier of the Client Group to be acted upon</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-inherit_attributes"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-inherit-attributes"><strong>inherit_attributes</strong></p>
 <a class="ansibleOptionLink" href="#parameter-inherit_attributes" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -471,7 +511,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-localNode"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-localnode"><strong>localNode</strong></p>
 <a class="ansibleOptionLink" href="#parameter-localNode" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
@@ -479,53 +519,65 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>holds IP/FQDN of the server, username, password, and port</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-localNode/auth_domain_path"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-localnode-auth-domain-path"><strong>auth_domain_path</strong></p>
 <a class="ansibleOptionLink" href="#parameter-localNode/auth_domain_path" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>user’s domain path</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-localNode/password"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-localnode-password"><strong>password</strong></p>
 <a class="ansibleOptionLink" href="#parameter-localNode/password" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>admin password of CM</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-localNode/server_ip"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-localnode-server-ip"><strong>server_ip</strong></p>
 <a class="ansibleOptionLink" href="#parameter-localNode/server_ip" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>CM Server IP or FQDN</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-localNode/server_port"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-localnode-server-port"><strong>server_port</strong></p>
 <a class="ansibleOptionLink" href="#parameter-localNode/server_port" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Port on which CM server is listening</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-localNode/server_private_ip"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-localnode-server-private-ip"><strong>server_private_ip</strong></p>
 <a class="ansibleOptionLink" href="#parameter-localNode/server_private_ip" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>internal or private IP of the CM Server, if different from the server_ip</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-localNode/user"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-localnode-user"><strong>user</strong></p>
 <a class="ansibleOptionLink" href="#parameter-localNode/user" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>admin username of CM</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-localNode/verify"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-localnode-verify"><strong>verify</strong></p>
 <a class="ansibleOptionLink" href="#parameter-localNode/verify" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>if SSL verification is required</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-mfa_enabled"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-mfa-enabled"><strong>mfa_enabled</strong></p>
+<a class="ansibleOptionLink" href="#parameter-mfa_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Whether MFA is enabled</p>
 <p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
@@ -541,6 +593,14 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-network_share_credentials_id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-network-share-credentials-id"><strong>network_share_credentials_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-network_share_credentials_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ID/Name of the credentials if the GuardPoint is applied to a network share</p>
+<p>Supported for only LDT policies.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-op_type"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-op-type"><strong>op_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-op_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
@@ -551,13 +611,15 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;patch&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;add_client&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;add_guard_point&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;update_guardpoint&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;unguard_guardpoints&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;auth-binaries&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;remove_client&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ldt_pause&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-password"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-password"><strong>password</strong></p>
 <a class="ansibleOptionLink" href="#parameter-password" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -565,7 +627,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>The password MUST be minimum 8 characters and MUST contain one alphabet, one number, and one special characters</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-password_creation_method"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-password-creation-method"><strong>password_creation_method</strong></p>
 <a class="ansibleOptionLink" href="#parameter-password_creation_method" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -577,7 +639,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-paused"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-paused"><strong>paused</strong></p>
 <a class="ansibleOptionLink" href="#parameter-paused" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -589,14 +651,14 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile_id"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-profile-id"><strong>profile_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>ID of the client group profile that is used to schedule custom configuration for logger, logging, and Quality of Service (QoS)</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-re_sign"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-re-sign"><strong>re_sign</strong></p>
 <a class="ansibleOptionLink" href="#parameter-re_sign" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -608,14 +670,14 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-shared_domain_list"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-shared-domain-list"><strong>shared_domain_list</strong></p>
 <a class="ansibleOptionLink" href="#parameter-shared_domain_list" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>List of domains with which ClientGroup needs to be shared</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-system_locked"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-cte-client-group-module-parameter-system-locked"><strong>system_locked</strong></p>
 <a class="ansibleOptionLink" href="#parameter-system_locked" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>

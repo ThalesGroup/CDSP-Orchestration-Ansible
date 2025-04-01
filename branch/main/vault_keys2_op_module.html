@@ -4,11 +4,11 @@
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.15.0" name="antsibull-docs" />
+<meta content="2.16.3" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>thalesgroup.ciphertrust.vault_keys2_op module – Perform operations on keys &mdash; thalesgroup.ciphertrust Collection  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5707b69d" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=41de9001" />
       <link rel="stylesheet" type="text/css" href="_static/css/ansible.css?v=c5b67dd2" />
       <link rel="stylesheet" type="text/css" href="_static/antsibull-minimal.css" />
       <link rel="stylesheet" type="text/css" href="_static/css/rtd-ethical-ads.css?v=289b023e" />
@@ -148,7 +148,7 @@
 <h1>thalesgroup.ciphertrust.vault_keys2_op module – Perform operations on keys<a class="headerlink" href="#thalesgroup-ciphertrust-vault-keys2-op-module-perform-operations-on-keys" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/thalesgroup/ciphertrust/">thalesgroup.ciphertrust collection</a> (version 1.0.1).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/thalesgroup/ciphertrust/">thalesgroup.ciphertrust collection</a> (version 1.0.2).</p>
 <p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
 To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">thalesgroup.ciphertrust</span></code>.</p>
@@ -203,7 +203,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </div></td>
 <td><div class="ansible-option-cell"><p>Date/time when the object was first believed to be compromised, if known.</p>
 <p>Only valid if the revocation reason is CACompromise or KeyCompromise, otherwise ignored.</p>
-<p>Defaults to key’s creation time.</p>
+<p>Defaults to key’’s creation time.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -212,7 +212,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </div></td>
 <td><div class="ansible-option-cell"><p>Specifies the encoding used for the material field.</p>
 <p>For wrapping scenarios and PKCS12 format, the only valid option is base64.</p>
-<p>In case of “Symmetric Keys” when ‘format’ parameter has ‘base64’ value and ‘encoding’ parameter also contains some value.</p>
+<p>In case of “Symmetric Keys” when format parameter has base64 value and encoding parameter also contains some value.</p>
 <p>The encoding parameter takes the priority.</p>
 <p>Options for Symmetric Keys are hex or base64</p>
 <p>Only applicable for op_type “export”</p>
@@ -291,7 +291,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <div class="ansibleOptionAnchor" id="parameter-localNode/auth_domain_path"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-op-module-parameter-localnode-auth-domain-path"><strong>auth_domain_path</strong></p>
 <a class="ansibleOptionLink" href="#parameter-localNode/auth_domain_path" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>user’s domain path</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>user’’s domain path</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -770,12 +770,12 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <div class="ansibleOptionAnchor" id="parameter-wrapPublicKey"></div><p class="ansible-option-title" id="ansible-collections-thalesgroup-ciphertrust-vault-keys2-op-module-parameter-wrappublickey"><strong>wrapPublicKey</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wrapPublicKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>If the algorithm is ‘aes’,’tdes’,’hmac-*’, ‘seed’ or ‘aria’, this value will be used to encrypt the returned key material.</p>
+<td><div class="ansible-option-cell"><p>If the algorithm is aes, tdes, hmac-*, seed or aria, this value will be used to encrypt the returned key material.</p>
 <p>This value is ignored for other algorithms</p>
 <p>Value must be an RSA public key, PEM-encoded public key in either PKCS1 or PKCS8 format, or a PEM-encoded X.509 certificate.</p>
-<p>If set, the returned ‘material’ value will be a Base64 encoded PKCS#1 v1.5 encrypted key.</p>
+<p>If set, the returned material value will be a Base64 encoded PKCS#1 v1.5 encrypted key.</p>
 <p>View “wrapPublicKey” in export parameters for more information</p>
-<p>Only applicable if ‘includeMaterial’ is true.</p>
+<p>Only applicable if includeMaterial is true.</p>
 <p>Only applicable for op_type “export”</p>
 </div></td>
 </tr>
@@ -785,8 +785,8 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </div></td>
 <td><div class="ansible-option-cell"><p>WrapPublicKeyPadding specifies the type of padding scheme that needs to be set when importing the Key using the specified wrapkey</p>
 <p>Accepted values are “pkcs1”, “oaep”, “oaep256”, “oaep384”, “oaep512”</p>
-<p>and will default to “pkcs1” when ‘wrapPublicKeyPadding’ is not set and ‘WrapPublicKey’ is set.</p>
-<p>While creating a new key, wrapPublicKeyPadding parameter should be specified only if ‘includeMaterial’ is true</p>
+<p>and will default to “pkcs1” when wrapPublicKeyPadding is not set and WrapPublicKey is set.</p>
+<p>While creating a new key, wrapPublicKeyPadding parameter should be specified only if includeMaterial is true</p>
 <p>In this case, key will get created and in response wrapped material using specified wrapPublicKeyPadding and other wrap parameters will be returned.</p>
 <p>Only applicable for op_type “export”</p>
 <p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
