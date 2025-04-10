@@ -35,11 +35,10 @@ def is_json(myjson):
 
 
 def new(**kwargs):
-    result = dict()
     request = {}
 
-    node = kwargs["node"]
-    cm = ast.literal_eval(node)
+    cm = kwargs["node"]
+    #cm = ast.literal_eval(node)
 
     request["localNodeHost"] = cm["server_private_ip"]
     request["localNodePort"] = cm["server_port"]
@@ -47,7 +46,7 @@ def new(**kwargs):
     payload = json.dumps(request)
 
     try:
-        response = POSTData(
+        POSTData(
             payload=payload,
             cm_node=kwargs["node"],
             cm_api_endpoint="cluster/new",
@@ -60,10 +59,10 @@ def new(**kwargs):
 
 
 def csr(**kwargs):
-    master = kwargs["master"]
+    master_cm = kwargs["master"]
     node = kwargs["node"]
 
-    master_cm = ast.literal_eval(master)
+    #master_cm = ast.literal_eval(master)
     # node_cm = ast.literal_eval(node)
 
     request = {}
@@ -83,14 +82,13 @@ def csr(**kwargs):
 
 
 def sign(**kwargs):
-    master = kwargs["master"]
+    master_cm = kwargs["master"]
     node = kwargs["node"]
     csr = kwargs["csr"]
 
-    master_cm = ast.literal_eval(master)
+    #master_cm = ast.literal_eval(master)
     node_cm = node
 
-    result = dict()
     request = {}
     request["csr"] = csr
     request["shared_hsm_partition"] = False
@@ -99,7 +97,7 @@ def sign(**kwargs):
     payload = json.dumps(request)
 
     try:
-        response = POSTData(payload=payload, cm_node=master, cm_api_endpoint="nodes")
+        response = POSTData(payload=payload, cm_node=master_cm, cm_api_endpoint="nodes")
         return response
     except CMApiException as api_e:
         raise
@@ -108,16 +106,15 @@ def sign(**kwargs):
 
 
 def join(**kwargs):
-    master = kwargs['master']
+    master_cm = kwargs['master']
     node = kwargs['node']
     cert = kwargs['cert']
     caChain = kwargs['caChain']
     mkek_blob = kwargs['mkek_blob']
 
-    master_cm = ast.literal_eval(master)
+    #master_cm = ast.literal_eval(master)
     node_cm = node
 
-    result = dict()
     request = {}
 
     request["cert"] = cert

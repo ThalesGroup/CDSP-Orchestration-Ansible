@@ -9,6 +9,7 @@ this_node_connection_string:
   server_port: 5432
   user: "{{ this_node_username }}"
   password: "{{ this_node_password }}"
+  auth_domain_path: "{{ this_node_tenant_id }}"
   verify: False
 
 group_name: <GROUP_NAME>
