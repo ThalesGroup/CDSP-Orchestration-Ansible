@@ -18,6 +18,10 @@ The 'ThalesCipherTrustModule' module provides similar, but more restricted,
 interfaces to the normal Ansible module.
 """
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from ansible.module_utils.basic import AnsibleModule
 # from ansible.module_utils.basic import env_fallback
 # from ansible.module_utils.basic import missing_required_lib

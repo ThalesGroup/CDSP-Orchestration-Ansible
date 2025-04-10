@@ -13,8 +13,9 @@ module as shown below.
   from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import CMApiException
 """
 
-# from ansible.module_utils._text import to_native
+from __future__ import absolute_import, division, print_function
 
+__metaclass__ = type
 
 class CMApiException(Exception):
     def __str__(self):
