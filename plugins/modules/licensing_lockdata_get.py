@@ -78,36 +78,47 @@ RETURN = """
 
 """
 
-from ansible.module_utils.basic import AnsibleModule
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
     getLockdata,
 )
 
 
-def main():
-    localNode = dict(
-        server_ip=dict(type="str", required=True),
-        server_private_ip=dict(type="str", required=True),
-        server_port=dict(type="int", required=True),
-        user=dict(type="str", required=True),
-        password=dict(type="str", required=True),
-        verify=dict(type="bool", required=True),
-        auth_domain_path=dict(type="str", required=True),
-    )
-    module = AnsibleModule(
-        argument_spec=dict(
-            localNode=dict(type="dict", options=localNode, required=True),
-        ),
-    )
+argument_spec = dict()
 
-    localNode = module.params.get("localNode")
+
+def validate_parameters(user_module):
+    return True
+
+
+def setup_module_object():
+    module = ThalesCipherTrustModule(
+        argument_spec=argument_spec,
+        required_if=[],
+        mutually_exclusive=[],
+        supports_check_mode=True,
+    )
+    return module
+
+
+def main():
+    global module
+
+    module = setup_module_object()
+    validate_parameters(
+        user_module=module,
+    )
 
     result = dict(
         changed=False,
     )
 
     response = dict()
-    response = getLockdata(node=localNode)
+    response = getLockdata(
+        node=module.params.get("localNode"),
+        )
 
     result["response"] = response
 

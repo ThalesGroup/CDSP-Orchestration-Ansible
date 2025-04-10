@@ -17,6 +17,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+
 class CMApiException(Exception):
     def __str__(self):
         if self.api_error_code and self.message:
