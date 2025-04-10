@@ -59,6 +59,7 @@ options:
           description: user's domain path
           type: str
           required: false
+          default: ''
     action_type:
         description: Operation to be performed on the trial license
         choices: [activate, deactivate]

@@ -59,6 +59,7 @@ options:
           description: user's domain path
           type: str
           required: false
+          default: ''
 """
 
 EXAMPLES = """

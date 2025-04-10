@@ -59,6 +59,7 @@ options:
           description: user's domain path
           type: str
           required: false
+          default: ''
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_process, patch_process, delete_process]

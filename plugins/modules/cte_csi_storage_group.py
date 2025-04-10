@@ -60,6 +60,7 @@ options:
           description: user's domain path
           type: str
           required: false
+          default: ''
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_client, remove_client, add_guard_point, patch_guard_point, remove_guard_point]

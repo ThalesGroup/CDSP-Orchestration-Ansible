@@ -61,6 +61,7 @@ options:
           description: user's domain path
           type: str
           required: false
+          default: ''
     op_type:
       description: Operation to be performed
       choices: [restart]

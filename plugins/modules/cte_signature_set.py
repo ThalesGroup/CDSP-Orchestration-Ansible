@@ -59,6 +59,7 @@ options:
           description: user's domain path
           type: str
           required: false
+          default: ''
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_signature, get_signature, delete_signature, sign_app, query_sign_app, cancel_sign_app]

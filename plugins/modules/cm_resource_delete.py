@@ -59,6 +59,7 @@ options:
           description: user's domain path
           type: str
           required: false
+          default: ''
     key:
         description:
             - This is a string type of option that can have either the name of the ID of the resource to be deleted

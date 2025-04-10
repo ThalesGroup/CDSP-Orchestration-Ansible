@@ -59,6 +59,7 @@ options:
           description: user's domain path
           type: str
           required: false
+          default: ''
     op_type:
       description: Operation to be performed
       choices: ['create', 'patch', 'add_client', 'add_guard_point', 'update_guardpoint', 'unguard_guardpoints', 'auth-binaries', 'remove_client', 'ldt_pause']

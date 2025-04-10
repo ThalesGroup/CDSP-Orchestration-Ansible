@@ -59,6 +59,7 @@ options:
           description: user's domain path
           type: str
           required: false
+          default: ''
     query_param:
         description:
             - This is a string type of option that holds the query parameter type to be used to filter the list resources API response
