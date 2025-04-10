@@ -118,7 +118,7 @@ def main():
     response = dict()
     response = getLockdata(
         node=module.params.get("localNode"),
-        )
+    )
 
     result["response"] = response
 
