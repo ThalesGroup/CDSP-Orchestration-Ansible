@@ -11,7 +11,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
+# import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -38,7 +38,7 @@ def new(**kwargs):
     request = {}
 
     cm = kwargs["node"]
-    #cm = ast.literal_eval(node)
+    # cm = ast.literal_eval(node)
 
     request["localNodeHost"] = cm["server_private_ip"]
     request["localNodePort"] = cm["server_port"]
@@ -62,7 +62,7 @@ def csr(**kwargs):
     master_cm = kwargs["master"]
     node = kwargs["node"]
 
-    #master_cm = ast.literal_eval(master)
+    # master_cm = ast.literal_eval(master)
     # node_cm = ast.literal_eval(node)
 
     request = {}
@@ -86,7 +86,7 @@ def sign(**kwargs):
     node = kwargs["node"]
     csr = kwargs["csr"]
 
-    #master_cm = ast.literal_eval(master)
+    # master_cm = ast.literal_eval(master)
     node_cm = node
 
     request = {}
@@ -112,7 +112,7 @@ def join(**kwargs):
     caChain = kwargs['caChain']
     mkek_blob = kwargs['mkek_blob']
 
-    #master_cm = ast.literal_eval(master)
+    # master_cm = ast.literal_eval(master)
     node_cm = node
 
     request = {}

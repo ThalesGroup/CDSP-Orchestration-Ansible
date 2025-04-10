@@ -23,8 +23,8 @@ author:
 options:
     localNode:
       description:
-        - This holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - Holds IP/FQDN of the server, username, password, and port
+        - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
+        - holds IP/FQDN of the server, username, password, and port
       required: true
       type: dict
       suboptions:
@@ -35,11 +35,13 @@ options:
         server_private_ip:
           description: internal or private IP of the CM Server, if different from the server_ip
           type: str
-          required: true
+          required: false
+          default: 10.10.10.10
         server_port:
           description: Port on which CM server is listening
           type: int
-          required: true
+          required: false
+          default: 5432
         user:
           description: admin username of CM
           type: str
@@ -51,11 +53,12 @@ options:
         verify:
           description: if SSL verification is required
           type: bool
-          required: true
+          required: false
+          default: false
         auth_domain_path:
           description: user's domain path
           type: str
-          required: true
+          required: false
     op_type:
         description: Operation to be performed
         choices: [create, patch]
