@@ -4,6 +4,20 @@ Thalesgroup.Ciphertrust Release Notes
 
 .. contents:: Topics
 
+v1.0.3
+======
+
+Release Summary
+---------------
+
+Fix Thales CipherTrust Manager node parsing issues arising from the ast library
+
+Major Changes
+-------------
+
+- module_utils/cluster.py - Fix ast parsing issues impacting cluster management
+- module_utils/modules.py - Make arguments server_private_ip, server_port, verify, and auth_domain_path optional with default values
+
 v1.0.2
 ======
 

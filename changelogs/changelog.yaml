@@ -317,6 +317,8 @@ releases:
     changes:
       major_changes:
       - module_utils/cluster.py - Fix ast parsing issues impacting cluster management
-      - module_utils/modules.py - Make arguments server_private_ip, server_port, verify, and auth_domain_path optional with default values
-      release_summary: Fix Thales CipherTrust Manager node parsing issues arising from the ast library
+      - module_utils/modules.py - Make arguments server_private_ip, server_port, verify,
+        and auth_domain_path optional with default values
+      release_summary: Fix Thales CipherTrust Manager node parsing issues arising
+        from the ast library
     release_date: '2025-04-10'
