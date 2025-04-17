@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -50,7 +49,7 @@ def create(**kwargs):
             cm_api_endpoint="usermgmt/groups",
             id="name",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -73,7 +72,7 @@ def patch(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="usermgmt/groups/" + kwargs["old_name"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -88,7 +87,7 @@ def addUserToGroup(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -105,7 +104,7 @@ def addClientToGroup(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

@@ -7,7 +7,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -34,7 +33,7 @@ def restartCMServices(**kwargs):
             cm_api_endpoint="system/services/restart",
         )
 
-        return ast.literal_eval(str(__resp))
+        return __resp
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

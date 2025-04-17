@@ -7,7 +7,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -45,7 +44,7 @@ def createCTEPolicy(**kwargs):
             cm_api_endpoint="transparent-encryption/policies",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -67,7 +66,7 @@ def updateCTEPolicy(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/policies/" + kwargs["policy_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -96,7 +95,7 @@ def ctePolicyAddRule(**kwargs):
             + kwargs["rule_name"],
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -126,7 +125,7 @@ def ctePolicyPatchRule(**kwargs):
             + "/"
             + kwargs["rule_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -176,7 +175,7 @@ def createProcessSet(**kwargs):
             cm_api_endpoint="transparent-encryption/processsets",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -198,7 +197,7 @@ def updateProcessSet(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/processsets/" + kwargs["id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -222,7 +221,7 @@ def addProcessToSet(**kwargs):
             + kwargs["id"]
             + "/addprocesses",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -247,7 +246,7 @@ def updateProcessInSetByIndex(**kwargs):
             + "/updateprocess/"
             + kwargs["processIndex"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -295,7 +294,7 @@ def createResourceSet(**kwargs):
             cm_api_endpoint="transparent-encryption/resourcesets",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -317,7 +316,7 @@ def updateResourceSet(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/resourcesets/" + kwargs["id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -341,7 +340,7 @@ def addResourceToSet(**kwargs):
             + kwargs["id"]
             + "/addresources",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -366,7 +365,7 @@ def updateResourceInSetByIndex(**kwargs):
             + "/updateresource/"
             + kwargs["resourceIndex"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -414,7 +413,7 @@ def createSignatureSet(**kwargs):
             cm_api_endpoint="transparent-encryption/signaturesets",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -436,7 +435,7 @@ def updateSignatureSet(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/signaturesets/" + kwargs["id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -460,7 +459,7 @@ def addSignatureToSet(**kwargs):
             + kwargs["id"]
             + "/addsignatures",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -478,7 +477,7 @@ def getSignatureFromSetByFilter(**kwargs):
             + kwargs["id"]
             + "/signatures",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -523,7 +522,7 @@ def sendSignAppRequest(**kwargs):
             + "/signapp",
             id="status",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -548,7 +547,7 @@ def querySignAppRequest(**kwargs):
             + "/querysignapp",
             id="status",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -573,7 +572,7 @@ def cancelSignAppRequest(**kwargs):
             + "/cancelsignapp",
             id="status",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -601,7 +600,7 @@ def createUserSet(**kwargs):
             cm_api_endpoint="transparent-encryption/usersets",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -623,7 +622,7 @@ def updateUserSet(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/usersets/" + kwargs["id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -647,7 +646,7 @@ def addUserToSet(**kwargs):
             + kwargs["id"]
             + "/addusers",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -672,7 +671,7 @@ def updateUserInSetByIndex(**kwargs):
             + "/updateuser/"
             + kwargs["userIndex"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -720,7 +719,7 @@ def createCSIStorageGroup(**kwargs):
             cm_api_endpoint="transparent-encryption/csigroups",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -742,7 +741,7 @@ def updateCSIStorageGroup(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/csigroups/" + kwargs["id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -767,7 +766,7 @@ def csiGroupAddClient(**kwargs):
             + "/clients",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -812,7 +811,7 @@ def csiGroupAddGuardPoint(**kwargs):
             + "/guardpoints",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -835,7 +834,7 @@ def csiGroupUpdateGuardPoint(**kwargs):
             cm_api_endpoint="transparent-encryption/csigroups/guardpoints/"
             + kwargs["gp_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -878,7 +877,7 @@ def createClientGroup(**kwargs):
             cm_api_endpoint="transparent-encryption/clientgroups",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -900,7 +899,7 @@ def updateClientGroup(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/clientgroups/" + kwargs["id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -925,7 +924,7 @@ def clientGroupAddClients(**kwargs):
             + "/clients",
             id="association_response",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -950,7 +949,7 @@ def clientGroupAddGuardPoint(**kwargs):
             + "/guardpoints",
             id="guardpoints",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -975,7 +974,7 @@ def clientGroupUpdateGuardPoint(**kwargs):
             + "/guardpoints/"
             + kwargs["guardpoint_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -999,7 +998,7 @@ def clientGroupUnguardGuardPoint(**kwargs):
             + kwargs["id"]
             + "/guardpoints/unguard",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1023,7 +1022,7 @@ def clientGroupAuthBinaries(**kwargs):
             + kwargs["id"]
             + "/auth-binaries",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1067,7 +1066,7 @@ def clientGroupLDTPause(**kwargs):
             + kwargs["id"]
             + "/ldtpause",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1096,7 +1095,7 @@ def createClient(**kwargs):
             cm_api_endpoint="transparent-encryption/clients",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1118,7 +1117,7 @@ def patchClient(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/clients/" + kwargs["id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1146,7 +1145,7 @@ def clientAddGuardPoint(**kwargs):
             + "/guardpoints",
             id="guardpoints",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1172,7 +1171,7 @@ def unEnrollClient(**kwargs):
             cm_api_endpoint="transparent-encryption/unenroll",
             id="name",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1197,7 +1196,7 @@ def deleteClients(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="transparent-encryption/clients/delete",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1224,7 +1223,7 @@ def deleteClientById(**kwargs):
             + kwargs["id"]
             + "/delete",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1251,7 +1250,7 @@ def updateClientAuthBinaries(**kwargs):
             + kwargs["id"]
             + "/auth-binaries",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1279,7 +1278,7 @@ def sendLDTPauseCmd(**kwargs):
             + "/ldtpause",
             id="status",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1307,7 +1306,7 @@ def patchGuardPointCTEClient(**kwargs):
             + "/guardpoints/"
             + kwargs["gp_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1334,7 +1333,7 @@ def unGuardPoints(**kwargs):
             + kwargs["id"]
             + "/guardpoints/unguard",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -1363,7 +1362,7 @@ def updateGPEarlyAccess(**kwargs):
             + kwargs["gp_id"]
             + "/early-access",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

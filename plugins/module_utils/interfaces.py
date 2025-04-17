@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -51,7 +50,7 @@ def create(**kwargs):
             cm_api_endpoint="configs/interfaces",
             id="name",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -74,7 +73,7 @@ def patch(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="configs/interfaces/" + kwargs["interface_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -99,7 +98,7 @@ def addCertificateToInterface(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -114,7 +113,7 @@ def getCertificateFromInterface(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -129,7 +128,7 @@ def enableInterface(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -144,7 +143,7 @@ def disableInterface(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -161,7 +160,7 @@ def restoreDefaultTlsCiphers(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -186,7 +185,7 @@ def createCsr(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -201,7 +200,7 @@ def autogenServerCert(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -226,7 +225,7 @@ def useCertificate(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

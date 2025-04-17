@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -42,7 +41,7 @@ def performAZVaultOperation(**kwargs):
                 + "/"
                 + kwargs["vault_op"],
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -62,7 +61,7 @@ def performAZVaultOperation(**kwargs):
                 + kwargs["vault_op"],
                 id="id",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -76,7 +75,7 @@ def performAZVaultOperation(**kwargs):
                 + "/"
                 + kwargs["vault_op"],
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -108,7 +107,7 @@ def performAZCertificateOperation(**kwargs):
                 + kwargs["certificate_op_type"],
                 id="id",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -126,7 +125,7 @@ def performAZCertificateOperation(**kwargs):
                 + "/"
                 + kwargs["certificate_op_type"],
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -151,7 +150,7 @@ def importCertToAZ(**kwargs):
             cm_api_endpoint="cckm/azure/certificates/import",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -184,7 +183,7 @@ def performAZKeyOperation(**kwargs):
                 + kwargs["key_op_type"],
                 id="id",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -198,7 +197,7 @@ def performAZKeyOperation(**kwargs):
                 + "/"
                 + kwargs["key_op_type"],
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -221,7 +220,7 @@ def uploadKeyOnAZ(**kwargs):
             cm_api_endpoint="cckm/azure/upload-key",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -251,7 +250,7 @@ def performAZSecretOperation(**kwargs):
                 + kwargs["secret_op_type"],
                 id="id",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -265,7 +264,7 @@ def performAZSecretOperation(**kwargs):
                 + "/"
                 + kwargs["secret_op_type"],
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:

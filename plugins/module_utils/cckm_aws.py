@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -46,7 +45,7 @@ def performCKSOperation(**kwargs):
                 + "/"
                 + kwargs["cks_op_type"],
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -67,7 +66,7 @@ def performCKSOperation(**kwargs):
                 + kwargs["cks_op_type"],
                 id="id",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -92,7 +91,7 @@ def performHYOKKeyOperation(**kwargs):
                 + "/"
                 + kwargs["hyok_op_type"],
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -109,7 +108,7 @@ def performHYOKKeyOperation(**kwargs):
                 + kwargs["hyok_op_type"],
                 id="id",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -145,7 +144,7 @@ def performKeyOperation(**kwargs):
                 + "/"
                 + kwargs["key_op_type"],
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -175,7 +174,7 @@ def performKeyOperation(**kwargs):
                 + kwargs["key_op_type"],
                 id="id",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -198,7 +197,7 @@ def uploadKeyToAWS(**kwargs):
             cm_api_endpoint="cckm/aws/upload-key",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -221,7 +220,7 @@ def verifyKeyAlias(**kwargs):
             cm_api_endpoint="cckm/aws/alias/verify",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -247,7 +246,7 @@ def updateACLs(**kwargs):
             cm_api_endpoint="cckm/aws/kms/" + kwargs["id"] + "/update-acls",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

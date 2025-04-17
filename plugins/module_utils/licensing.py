@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -63,8 +62,6 @@ def getTrialLicenseId(**kwargs):
             cm_api_endpoint="licensing/trials",
         )
 
-        # _json_response = json.loads(ast.literal_eval(str(response)))
-
         resources = response["resources"]
         __id = resources[0]["id"]
         __status = resources[0]["status"]
@@ -96,7 +93,7 @@ def addLicense(**kwargs):
             cm_api_endpoint="vault/keys2",
         )
 
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -113,7 +110,7 @@ def activateTrial(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -130,7 +127,7 @@ def deactivateTrial(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

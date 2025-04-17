@@ -7,7 +7,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -37,7 +36,7 @@ def createLocalCA(**kwargs):
             id="id",
         )
 
-        return ast.literal_eval(str(__resp))
+        return __resp
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -59,7 +58,7 @@ def updateLocalCA(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="ca/local-cas/" + kwargs["id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -82,7 +81,7 @@ def selfSign(**kwargs):
             cm_api_endpoint="ca/local-cas/" + kwargs["id"] + "/self-sign",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -105,7 +104,7 @@ def issueCertificate(**kwargs):
             cm_api_endpoint="ca/local-cas/" + kwargs["id"] + "/certs",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -132,7 +131,7 @@ def revokeCert(**kwargs):
             + "/revoke",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -149,7 +148,7 @@ def resumeCert(**kwargs):
             + kwargs["cert_id"]
             + "/resume",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -172,7 +171,7 @@ def createCSR(**kwargs):
             cm_api_endpoint="vault/csr",
             id="csr",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -195,7 +194,7 @@ def createCSRAndKey(**kwargs):
             cm_api_endpoint="ca/csr",
             id="csr",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

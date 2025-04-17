@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -49,7 +48,7 @@ def createAccessPolicy(**kwargs):
             cm_api_endpoint="data-protection/access-policies",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -73,7 +72,7 @@ def updateAccessPolicy(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="data-protection/access-policies/" + kwargs["policy_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -98,7 +97,7 @@ def accessPolicyAddUserSet(**kwargs):
             + kwargs["policy_id"]
             + "/user-set",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -124,7 +123,7 @@ def accessPolicyUpdateUserSet(**kwargs):
             + "/user-set/"
             + kwargs["policy_user_set_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -169,7 +168,7 @@ def createProtectionPolicy(**kwargs):
             cm_api_endpoint="data-protection/protection-policies",
             id="name",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -194,7 +193,7 @@ def updateProtectionPolicy(**kwargs):
             cm_api_endpoint="data-protection/protection-policies/"
             + kwargs["policy_name"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -221,7 +220,7 @@ def createUserSet(**kwargs):
             cm_api_endpoint="data-protection/user-sets",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -245,7 +244,7 @@ def updateUserSet(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="data-protection/user-sets/" + kwargs["user_set_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -272,7 +271,7 @@ def createCharacterSet(**kwargs):
             cm_api_endpoint="data-protection/character-sets",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -296,7 +295,7 @@ def updateCharacterSet(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="data-protection/character-sets/" + kwargs["char_set_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -323,7 +322,7 @@ def createMaskingFormat(**kwargs):
             cm_api_endpoint="data-protection/masking-formats",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -348,7 +347,7 @@ def updateMaskingFormat(**kwargs):
             cm_api_endpoint="data-protection/masking-formats/"
             + kwargs["masking_format_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -375,7 +374,7 @@ def createClientProfile(**kwargs):
             cm_api_endpoint="data-protection/client-profiles",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -399,7 +398,7 @@ def updateClientProfile(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="data-protection/client-profiles/" + kwargs["profile_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -426,7 +425,7 @@ def createDPGPolicy(**kwargs):
             cm_api_endpoint="data-protection/dpg-policies",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -450,7 +449,7 @@ def updateDPGPolicy(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="data-protection/dpg-policies/" + kwargs["policy_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -476,7 +475,7 @@ def dpgPolicyAddAPIUrl(**kwargs):
             + "/api-urls",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -502,7 +501,7 @@ def dpgPolicyUpdateAPIUrl(**kwargs):
             + "/api-urls/"
             + kwargs["api_url_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

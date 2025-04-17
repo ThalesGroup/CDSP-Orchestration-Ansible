@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -87,7 +86,7 @@ def addCCKMCloudAsset(**kwargs):
             cm_api_endpoint=endpoint,
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -148,7 +147,7 @@ def editCCKMCloudAsset(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=endpoint,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -199,7 +198,7 @@ def createSyncJob(**kwargs):
             cm_api_endpoint=endpoint,
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -256,7 +255,7 @@ def cancelSyncJob(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=endpoint,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

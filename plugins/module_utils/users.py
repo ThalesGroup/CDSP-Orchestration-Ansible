@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -48,7 +47,7 @@ def create(**kwargs):
             id="user_id",
         )
 
-        return ast.literal_eval(str(__resp))
+        return __resp
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -70,7 +69,7 @@ def patch(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="usermgmt/users/" + kwargs["cm_user_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -92,7 +91,7 @@ def changepw(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="auth/changepw",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -114,7 +113,7 @@ def patch_self(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="auth/self/user",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

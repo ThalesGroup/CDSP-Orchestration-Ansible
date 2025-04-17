@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -40,7 +39,7 @@ def performGCPEKMOperation(**kwargs):
             + "/"
             + kwargs["ekm_op_type"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -65,7 +64,7 @@ def performGCPKeyRingOperation(**kwargs):
                 + kwargs["id"]
                 + "/update-acls",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -78,7 +77,7 @@ def performGCPKeyRingOperation(**kwargs):
                 + kwargs["id"]
                 + "/remove-key-ring",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -102,7 +101,7 @@ def performKeyOperation(**kwargs):
                 cm_api_endpoint="cckm/google/keys/" + kwargs["id"] + "/versions",
                 id="id",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -117,7 +116,7 @@ def performKeyOperation(**kwargs):
                 + "/enable-auto-rotation",
                 id="id",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -131,7 +130,7 @@ def performKeyOperation(**kwargs):
                 + "/"
                 + kwargs["key_op_type"],
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -158,7 +157,7 @@ def performKeyVersionOperation(**kwargs):
             + "/"
             + kwargs["key_version_op_type"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -181,7 +180,7 @@ def uploadKeyGCP(**kwargs):
             cm_api_endpoint="cckm/google/upload-key",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -204,7 +203,7 @@ def updateAllKeyVersions(**kwargs):
             cm_api_endpoint="cckm/google/update-all-versions-jobs",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -229,7 +228,7 @@ def performGCPWorkspaceEndpointOperation(**kwargs):
                 + kwargs["id"]
                 + "/wrapprivatekey",
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:
@@ -243,7 +242,7 @@ def performGCPWorkspaceEndpointOperation(**kwargs):
                 + "/"
                 + kwargs["endpoint_op_type"],
             )
-            return ast.literal_eval(str(response))
+            return response
         except CMApiException as api_e:
             raise
         except AnsibleCMException as custom_e:

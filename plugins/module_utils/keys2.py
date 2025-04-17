@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -50,7 +49,7 @@ def create(**kwargs):
             id="id",
         )
 
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -73,7 +72,7 @@ def patch(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint="vault/keys2/" + kwargs["cm_key_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -97,7 +96,7 @@ def version_create(**kwargs):
             cm_api_endpoint="vault/keys2/" + kwargs["cm_key_id"] + "/versions",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -131,7 +130,7 @@ def destroy(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -162,7 +161,7 @@ def archive(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -193,7 +192,7 @@ def recover(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=url,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -238,7 +237,7 @@ def revoke(**kwargs):
             id="id",
         )
 
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -283,7 +282,7 @@ def reactivate(**kwargs):
             id="id",
         )
 
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -327,7 +326,7 @@ def export(**kwargs):
             cm_api_endpoint=url,
         )
 
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -376,7 +375,7 @@ def clone(**kwargs):
             cm_api_endpoint=url,
         )
 
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:

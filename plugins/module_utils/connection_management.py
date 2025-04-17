@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import ast
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     POSTData,
@@ -79,7 +78,7 @@ def createConnection(**kwargs):
             cm_api_endpoint=endpoint,
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -148,7 +147,7 @@ def patchConnection(**kwargs):
             cm_node=kwargs["node"],
             cm_api_endpoint=endpoint,
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -173,7 +172,7 @@ def addHadoopNode(**kwargs):
             + "/nodes",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -198,7 +197,7 @@ def updateHadoopNode(**kwargs):
             + "/nodes/"
             + kwargs["node_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -221,7 +220,7 @@ def deleteHadoopNode(**kwargs):
             + "/nodes/"
             + kwargs["node_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -246,7 +245,7 @@ def addLunaPartition(**kwargs):
             + "/partitions",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -269,7 +268,7 @@ def deleteLunaPartition(**kwargs):
             + "/partitions/"
             + kwargs["partition_id"],
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -295,7 +294,7 @@ def addLunaSTCPartition(**kwargs):
             cm_api_endpoint="connectionmgmt/services/luna-network/stc-partition",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -318,7 +317,7 @@ def addHSMServer(**kwargs):
             cm_api_endpoint="connectionmgmt/services/luna-network/servers",
             id="id",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -339,7 +338,7 @@ def enableSTC(**kwargs):
             + kwargs["connection_id"]
             + "/enable-stc",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
@@ -360,7 +359,7 @@ def disableSTC(**kwargs):
             + kwargs["connection_id"]
             + "/disable-stc",
         )
-        return ast.literal_eval(str(response))
+        return response
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
