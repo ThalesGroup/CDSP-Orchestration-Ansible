@@ -1,0 +1,14 @@
+{
+  "id": "resource-12345678-1234-1234-1234-123456789abc",
+  "name": "test-resource",
+  "description": "Test Resource for integration testing",
+  "op_type": "get_id_from_name",
+  "resource_type": "key",
+  "creation_date": "2024-01-15T10:30:00Z",
+  "links": [
+    {
+      "rel": "self",
+      "href": "/v1/resources/resource-12345678-1234-1234-1234-123456789abc"
+    }
+  ]
+}

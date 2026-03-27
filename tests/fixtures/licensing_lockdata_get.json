@@ -1,0 +1,15 @@
+{
+  "lock_data": {
+    "id": "lockdata-12345678-1234-1234-1234-123456789abc",
+    "product": "CipherTrust Manager",
+    "version": "1.0.0",
+    "lock_status": "unlocked",
+    "features": [
+      "key_management",
+      "dpg",
+      "cte"
+    ],
+    "creation_date": "2024-01-15T10:30:00Z"
+  },
+  "op_type": "get"
+}

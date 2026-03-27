@@ -1,0 +1,15 @@
+{
+  "id": "group-12345678-1234-1234-1234-123456789abc",
+  "name": "test-group",
+  "description": "Test group for integration testing",
+  "op_type": "create",
+  "members": [],
+  "creation_date": "2024-01-15T10:30:00Z",
+  "status": "active",
+  "links": [
+    {
+      "rel": "self",
+      "href": "/v1/groups/group-12345678-1234-1234-1234-123456789abc"
+    }
+  ]
+}

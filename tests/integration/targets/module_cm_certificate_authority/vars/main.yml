@@ -1,0 +1,20 @@
+---
+# Variables for cm_certificate_authority integration test
+
+# Connection parameters
+connection_string: "localhost:8200"
+username: "admin"
+password: "Thales123"
+api_key: ""
+domain: ""
+verify_ssl: "false"
+
+# Certificate authority parameters
+op_type: "get"
+
+# Expected response fields
+expected_response_fields:
+  - ca_id
+  - ca_name
+  - ca_status
+  - certificate_chain

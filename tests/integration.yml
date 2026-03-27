@@ -1,0 +1,71 @@
+---
+# Integration test configuration for ThalesGroup CipherTrust Ansible Collection
+# This file defines the integration test suite and can be used with ansible-test
+
+# Test targets to run
+targets:
+  - module_cm_certificate_authority
+  - module_cm_cluster
+  - module_cm_regtoken
+  - module_cm_resource_delete
+  - module_cm_resource_get_id_from_name
+  - module_cm_services
+  - module_cte_client
+  - module_cte_client_group
+  - module_cte_csi_storage_group
+  - module_cte_policy_save
+  - module_cte_process_set
+  - module_cte_resource_set
+  - module_cte_signature_set
+  - module_cte_user_set
+  - module_domain_save
+  - module_dpg_access_policy_save
+  - module_dpg_character_set_save
+  - module_dpg_client_profile_save
+  - module_dpg_masking_format_save
+  - module_dpg_policy_save
+  - module_dpg_protection_policy_save
+  - module_dpg_user_set_save
+  - module_group_add_remove_object
+  - module_group_save
+  - module_interface_actions
+  - module_interface_save
+  - module_license_create
+  - module_license_trial_action
+  - module_license_trial_get
+  - module_licensing_lockdata_get
+  - module_usermgmt_users_save
+  - module_vault_keys2_op
+  - module_vault_keys2_save
+
+# Test environment variables
+environment:
+  CIPHERTRUST_CONNECTION_STRING: "localhost:8200"
+  CIPHERTRUST_USERNAME: "admin"
+  CIPHERTRUST_PASSWORD: "Thales123"
+  CIPHERTRUST_API_KEY: ""
+  CIPHERTRUST_DOMAIN: ""
+  CIPHERTRUST_VERIFY_SSL: "false"
+
+# Test execution settings
+settings:
+  # Maximum time for each test (in seconds)
+  timeout: 300
+  # Number of retries for failed tests
+  retries: 2
+  # Parallel execution
+  parallel: true
+  # Test output format
+  output: "json"
+
+# Test coverage settings
+coverage:
+  enabled: true
+  format: "cobertura"
+  output_dir: "tests/coverage"
+
+# Test reporting
+reporting:
+  enabled: true
+  format: "junit"
+  output_dir: "tests/reports"

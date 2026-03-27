@@ -1,0 +1,114 @@
+---
+- name: Get current interfaces to avoid conflicts
+  thalesgroup.ciphertrust.interface_save:
+    localNode:
+      host: "{{ connection_string }}"
+      port: 8443
+      secure: true
+      skip: true
+    op_type: get
+  register: existing_interfaces
+  ignore_errors: true
+
+- name: Create test interface
+  thalesgroup.ciphertrust.interface_save:
+    localNode:
+      host: "{{ connection_string }}"
+      port: 8443
+      secure: true
+      skip: true
+    op_type: create
+    name: "ansible_test_interface_{{ timestamp }}"
+    description: "Test interface created by Ansible integration test"
+    ip_address: "192.168.1.100"
+    netmask: "255.255.255.0"
+    gateway: "192.168.1.1"
+    mtu: 1500
+    vlan_id: 100
+  register: create_interface_result
+  tags:
+    - interface_create
+
+- name: Verify interface creation
+  assert:
+    that:
+      - create_interface_result is changed
+      - create_interface_result.id is defined
+      - create_interface_result.name == "ansible_test_interface_{{ timestamp }}"
+    fail_msg: "Interface creation failed"
+    success_msg: "Interface created successfully"
+  tags:
+    - interface_create
+
+- name: Patch test interface
+  thalesgroup.ciphertrust.interface_save:
+    localNode:
+      host: "{{ connection_string }}"
+      port: 8443
+      secure: true
+      skip: true
+    op_type: patch
+    id: "{{ create_interface_result.id }}"
+    description: "Updated description for test interface"
+    mtu: 1400
+  register: patch_interface_result
+  tags:
+    - interface_patch
+
+- name: Verify interface patch
+  assert:
+    that:
+      - patch_interface_result is changed
+      - patch_interface_result.description == "Updated description for test interface"
+      - patch_interface_result.mtu == 1400
+    fail_msg: "Interface patch failed"
+    success_msg: "Interface patched successfully"
+  tags:
+    - interface_patch
+
+- name: Get interface by ID
+  thalesgroup.ciphertrust.interface_save:
+    localNode:
+      host: "{{ connection_string }}"
+      port: 8443
+      secure: true
+      skip: true
+    op_type: get
+    id: "{{ create_interface_result.id }}"
+  register: get_interface_result
+  tags:
+    - interface_get
+
+- name: Verify interface retrieval
+  assert:
+    that:
+      - get_interface_result is not changed
+      - get_interface_result.id == create_interface_result.id
+      - get_interface_result.name == "ansible_test_interface_{{ timestamp }}"
+    fail_msg: "Interface retrieval failed"
+    success_msg: "Interface retrieved successfully"
+  tags:
+    - interface_get
+
+- name: Cleanup - Delete test interface
+  thalesgroup.ciphertrust.interface_save:
+    localNode:
+      host: "{{ connection_string }}"
+      port: 8443
+      secure: true
+      skip: true
+    op_type: delete
+    id: "{{ create_interface_result.id }}"
+  register: delete_interface_result
+  tags:
+    - interface_cleanup
+  when: create_interface_result is defined and create_interface_result.id is defined
+  always:
+    - name: Verify interface deletion
+      assert:
+        that:
+          - delete_interface_result is changed
+        fail_msg: "Interface deletion failed"
+        success_msg: "Interface deleted successfully"
+      tags:
+        - interface_cleanup
