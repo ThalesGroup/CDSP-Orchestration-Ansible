@@ -1,0 +1,145 @@
+site_name: ThalesGroup CipherTrust Ansible Collection
+site_description: Documentation for the ThalesGroup CipherTrust Ansible Collection
+site_url: https://thalesgroup.github.io/ciphertrust-ansible-collection/
+
+repo_name: thalesgroup/ciphertrust-ansible-collection
+repo_url: https://github.com/thalesgroup/ciphertrust-ansible-collection
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/lightbulb
+        name: Switch to light mode
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Configuration: getting-started/configuration.md
+    - Quick Start: getting-started/quick-start.md
+  - Modules:
+    - Overview: modules/index.md
+    - Cluster Management:
+      - cm_cluster: modules/cm_cluster.md
+      - cm_services: modules/cm_services.md
+      - cm_resource_delete: modules/cm_resource_delete.md
+      - cm_resource_get_id_from_name: modules/cm_resource_get_id_from_name.md
+    - DPG Management:
+      - dpg_policy_save: modules/dpg_policy_save.md
+      - dpg_protection_policy_save: modules/dpg_protection_policy_save.md
+      - dpg_access_policy_save: modules/dpg_access_policy_save.md
+      - dpg_client_profile_save: modules/dpg_client_profile_save.md
+      - dpg_character_set_save: modules/dpg_character_set_save.md
+      - dpg_masking_format_save: modules/dpg_masking_format_save.md
+      - dpg_user_set_save: modules/dpg_user_set_save.md
+    - CTE Management:
+      - cte_client: modules/cte_client.md
+      - cte_client_group: modules/cte_client_group.md
+      - cte_csi_storage_group: modules/cte_csi_storage_group.md
+      - cte_policy_save: modules/cte_policy_save.md
+      - cte_process_set: modules/cte_process_set.md
+      - cte_resource_set: modules/cte_resource_set.md
+      - cte_signature_set: modules/cte_signature_set.md
+      - cte_user_set: modules/cte_user_set.md
+    - Key Management:
+      - vault_keys2_save: modules/vault_keys2_save.md
+      - vault_keys2_op: modules/vault_keys2_op.md
+    - User and Group Management:
+      - usermgmt_users_save: modules/usermgmt_users_save.md
+      - group_save: modules/group_save.md
+      - group_add_remove_object: modules/group_add_remove_object.md
+    - Interface Management:
+      - interface_save: modules/interface_save.md
+      - interface_actions: modules/interface_actions.md
+    - License Management:
+      - license_create: modules/license_create.md
+      - license_trial_get: modules/license_trial_get.md
+      - license_trial_action: modules/license_trial_action.md
+      - licensing_lockdata_get: modules/licensing_lockdata_get.md
+    - Certificate Authority:
+      - cm_certificate_authority: modules/cm_certificate_authority.md
+    - Registration Tokens:
+      - cm_regtoken: modules/cm_regtoken.md
+    - Domains:
+      - domain_save: modules/domain_save.md
+    - Services:
+      - cm_services: modules/cm_services.md
+  - Roles:
+    - Overview: roles/index.md
+    - crdp: roles/crdp.md
+    - cte4k8s: roles/cte4k8s.md
+    - cte4u: roles/cte4u.md
+    - dpg: roles/dpg.md
+  - Examples:
+    - Overview: examples/index.md
+    - Cluster Management: examples/cluster.md
+    - DPG Setup: examples/dpg.md
+    - CTE Setup: examples/cte.md
+    - Key Management: examples/key-management.md
+    - User and Group Management: examples/users-groups.md
+    - Interface Management: examples/interfaces.md
+    - License Management: examples/licenses.md
+    - Cloud Connectors: examples/cloud-connectors.md
+    - CTE Resource Management: examples/cte-resources.md
+    - DPG Resource Management: examples/dpg-resources.md
+  - Troubleshooting: troubleshooting.md
+  - Contributing: contributing.md
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight:
+      use_pygments: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: thalesgroup
+      repo: ciphertrust-ansible-collection
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+extra:
+  version: 1.0.3
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/thalesgroup
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/ansible/
