@@ -335,6 +335,48 @@ EXAMPLES = """
 """
 
 RETURN = """
+    response:
+        description: Response from the CipherTrust Manager API
+        type: dict
+        returned: always
+    cache_info:
+        description: Information about cache usage
+        type: dict
+        returned: when caching is used
+        contains:
+            hits:
+                description: Number of cache hits
+                type: int
+                returned: when caching is used
+            misses:
+                description: Number of cache misses
+                type: int
+                returned: when caching is used
+            ttl_remaining:
+                description: Time remaining for cached entries in seconds
+                type: int
+                returned: when caching is used
+    performance:
+        description: Performance metrics for the operation
+        type: dict
+        returned: always
+        contains:
+            api_calls:
+                description: Number of API calls made
+                type: int
+                returned: always
+            execution_time_ms:
+                description: Total execution time in milliseconds
+                type: float
+                returned: always
+            cache_hits:
+                description: Number of cache hits
+                type: int
+                returned: always
+            cache_misses:
+                description: Number of cache misses
+                type: int
+                returned: always
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
@@ -345,6 +387,12 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.users impo
     patch,
     changepw,
     patch_self,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cache import (
+    cache_resource_id,
+    get_cached_resource_id,
+    get_performance_metrics,
+    reset_performance_metrics,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -863,6 +911,9 @@ def main():
         user_module=module,
     )
 
+    # Initialize performance metrics
+    reset_performance_metrics()
+    
     result = dict(
         changed=False,
     )
@@ -953,7 +1004,17 @@ def main():
                 ),
             )
             module.fail_json(msg=error_msg)
-    elif module.params.get("op_type") == "patch":
+    
+    # Add performance metrics to result
+    performance = get_performance_metrics()
+    result["performance"] = {
+        "api_calls": performance.api_calls,
+        "execution_time_ms": performance.execution_time_ms,
+        "cache_hits": performance.cache_hits,
+        "cache_misses": performance.cache_misses,
+    }
+    
+    if module.params.get("op_type") == "patch":
         try:
             response = patch(
                 node=module.params.get("localNode"),
@@ -1037,7 +1098,17 @@ def main():
                 ),
             )
             module.fail_json(msg=error_msg)
-    elif module.params.get("op_type") == "changepw":
+    
+    # Add performance metrics to result
+    performance = get_performance_metrics()
+    result["performance"] = {
+        "api_calls": performance.api_calls,
+        "execution_time_ms": performance.execution_time_ms,
+        "cache_hits": performance.cache_hits,
+        "cache_misses": performance.cache_misses,
+    }
+    
+    if module.params.get("op_type") == "changepw":
         try:
             response = changepw(
                 node=module.params.get("localNode"),
@@ -1113,7 +1184,17 @@ def main():
                 ),
             )
             module.fail_json(msg=error_msg)
-    elif module.params.get("op_type") == "patch_self":
+    
+    # Add performance metrics to result
+    performance = get_performance_metrics()
+    result["performance"] = {
+        "api_calls": performance.api_calls,
+        "execution_time_ms": performance.execution_time_ms,
+        "cache_hits": performance.cache_hits,
+        "cache_misses": performance.cache_misses,
+    }
+    
+    if module.params.get("op_type") == "patch_self":
         try:
             response = patch_self(
                 node=module.params.get("localNode"),
@@ -1188,6 +1269,15 @@ def main():
                 ),
             )
             module.fail_json(msg=error_msg)
+    
+    # Add performance metrics to result
+    performance = get_performance_metrics()
+    result["performance"] = {
+        "api_calls": performance.api_calls,
+        "execution_time_ms": performance.execution_time_ms,
+        "cache_hits": performance.cache_hits,
+        "cache_misses": performance.cache_misses,
+    }
 
     module.exit_json(**result)
 

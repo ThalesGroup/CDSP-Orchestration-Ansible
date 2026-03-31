@@ -958,7 +958,36 @@ EXAMPLES = """
 """
 
 RETURN = """
-
+api_calls:
+  description: Number of API calls made to the CipherTrust Manager
+  type: int
+  returned: always
+  sample: 5
+cache_info:
+  description: Cache performance information
+  type: dict
+  returned: always
+  contains:
+    hits:
+      description: Number of cache hits
+      type: int
+      returned: always
+      sample: 2
+    misses:
+      description: Number of cache misses
+      type: int
+      returned: always
+      sample: 3
+    size:
+      description: Current cache size
+      type: int
+      returned: always
+      sample: 10
+execution_time:
+  description: Total execution time in seconds
+  type: float
+  returned: always
+  sample: 2.345
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
@@ -970,6 +999,11 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import
     dpgPolicyAddAPIUrl,
     dpgPolicyUpdateAPIUrl,
     dpgPolicyDeleteAPIUrl,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cache import (
+    get_cache,
+    get_performance_metrics,
+    reset_performance_metrics,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -1257,11 +1291,7 @@ def validate_parameters(dpg_policy_module):
                     raise AnsibleCMFormatException(
                         message=f"{token_param} must be a list. "
                                 f"Expected: list of dictionaries with name, operation, protection_policy. "
-                                f"Example: [{{
-                                    'name': 'creditCard.[*].CCNumber',
-                                    'operation': 'protect',
-                                    'protection_policy': 'CC_ProtectionPolicy'
-                                }}]",
+                                f"Example: [{'{'}name: 'creditCard.[*].CCNumber', operation: 'protect', protection_policy: 'CC_ProtectionPolicy'{'}'}]",
                         documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
                     )
                 
@@ -1327,11 +1357,16 @@ def main():
         dpg_policy_module=module,
     )
 
+    # Initialize performance metrics
+    reset_performance_metrics()
+    
     result = dict(
         changed=False,
     )
 
-    if module.params.get("op_type") == "create":
+    op_type = module.params.get("op_type")
+    
+    if op_type == "create":
         try:
             response = createDPGPolicy(
                 node=module.params.get("localNode"),
@@ -1384,7 +1419,12 @@ def main():
                     f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
             )
 
-    elif module.params.get("op_type") == "patch":
+        # Add performance metrics to result for create operation
+        result["api_calls"] = get_performance_metrics().api_calls
+        result["cache_info"] = get_cache().get_stats()
+        result["execution_time"] = get_performance_metrics().execution_time
+
+    elif op_type == "patch":
         try:
             response = updateDPGPolicy(
                 node=module.params.get("localNode"),
@@ -1437,7 +1477,12 @@ def main():
                     f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
             )
 
-    elif module.params.get("op_type") == "add-api-url":
+        # Add performance metrics to result for patch operation
+        result["api_calls"] = get_performance_metrics().api_calls
+        result["cache_info"] = get_cache().get_stats()
+        result["execution_time"] = get_performance_metrics().execution_time
+
+    elif op_type == "add-api-url":
         try:
             response = dpgPolicyAddAPIUrl(
                 node=module.params.get("localNode"),
@@ -1517,7 +1562,12 @@ def main():
                     f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
             )
 
-    elif module.params.get("op_type") == "update-api-url":
+        # Add performance metrics to result for add-api-url operation
+        result["api_calls"] = get_performance_metrics().api_calls
+        result["cache_info"] = get_cache().get_stats()
+        result["execution_time"] = get_performance_metrics().execution_time
+
+    elif op_type == "update-api-url":
         try:
             response = dpgPolicyUpdateAPIUrl(
                 node=module.params.get("localNode"),
@@ -1597,7 +1647,12 @@ def main():
                     f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
             )
 
-    elif module.params.get("op_type") == "delete-api-url":
+        # Add performance metrics to result for update-api-url operation
+        result["api_calls"] = get_performance_metrics().api_calls
+        result["cache_info"] = get_cache().get_stats()
+        result["execution_time"] = get_performance_metrics().execution_time
+
+    elif op_type == "delete-api-url":
         try:
             response = dpgPolicyDeleteAPIUrl(
                 node=module.params.get("localNode"),
@@ -1648,6 +1703,11 @@ def main():
                 msg=f"Error for op_type 'delete-api-url': {custom_e.message}. "
                     f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
             )
+
+        # Add performance metrics to result for delete-api-url operation
+        result["api_calls"] = get_performance_metrics().api_calls
+        result["cache_info"] = get_cache().get_stats()
+        result["execution_time"] = get_performance_metrics().execution_time
 
     else:
         module.fail_json(msg="invalid op_type")

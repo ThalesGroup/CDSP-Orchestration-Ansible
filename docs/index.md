@@ -43,6 +43,17 @@ See the [Roles](roles/index.md) section for a complete list of available roles.
 - `docs/modules/` - Module documentation
 - `docs/roles/` - Role documentation
 - `docs/examples/` - Example playbooks and usage patterns
+- `docs/performance-best-practices.md` - Performance optimization best practices
+
+## Performance Optimization
+
+The collection includes several performance optimization features:
+
+- **Caching**: Resource IDs are cached to avoid redundant API calls
+- **Batch Operations**: Multiple operations can be batched into a single API call
+- **Performance Metrics**: Detailed metrics are collected for each module execution
+
+See the [Performance Best Practices](performance-best-practices.md) document for more information.
 
 ## Contributing
 

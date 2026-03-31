@@ -123,7 +123,48 @@ EXAMPLES = """
 """
 
 RETURN = """
-
+    response:
+        description: Response from the CipherTrust Manager API
+        type: dict
+        returned: always
+    cache_info:
+        description: Information about cache usage
+        type: dict
+        returned: when caching is used
+        contains:
+            hits:
+                description: Number of cache hits
+                type: int
+                returned: when caching is used
+            misses:
+                description: Number of cache misses
+                type: int
+                returned: when caching is used
+            ttl_remaining:
+                description: Time remaining for cached entries in seconds
+                type: int
+                returned: when caching is used
+    performance:
+        description: Performance metrics for the operation
+        type: dict
+        returned: always
+        contains:
+            api_calls:
+                description: Number of API calls made
+                type: int
+                returned: always
+            execution_time_ms:
+                description: Total execution time in milliseconds
+                type: float
+                returned: always
+            cache_hits:
+                description: Number of cache hits
+                type: int
+                returned: always
+            cache_misses:
+                description: Number of cache misses
+                type: int
+                returned: always
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
@@ -132,6 +173,12 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules im
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.groups import (
     create,
     patch,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cache import (
+    cache_resource_id,
+    get_cached_resource_id,
+    get_performance_metrics,
+    reset_performance_metrics,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -167,6 +214,9 @@ def setup_module_object():
 def main():
     global module
 
+    # Reset performance metrics at the start of each task execution
+    reset_performance_metrics()
+
     module = setup_module_object()
     validate_parameters(
         user_module=module,
@@ -178,14 +228,41 @@ def main():
 
     if module.params.get("op_type") == "create":
         try:
-            response = create(
+            # Check cache first for group ID
+            cached_group_id = get_cached_resource_id(
                 node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                app_metadata=module.params.get("app_metadata"),
-                client_metadata=module.params.get("client_metadata"),
-                user_metadata=module.params.get("user_metadata"),
+                resource_type="group",
+                resource_name=module.params.get("name"),
             )
-            result["response"] = response
+            
+            if cached_group_id:
+                # Cache hit - group already exists
+                result["cached"] = True
+                result["response"] = {
+                    "id": cached_group_id,
+                    "name": module.params.get("name"),
+                    "message": "Group found in cache",
+                }
+            else:
+                # Cache miss - create the group
+                result["cached"] = False
+                response = create(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    app_metadata=module.params.get("app_metadata"),
+                    client_metadata=module.params.get("client_metadata"),
+                    user_metadata=module.params.get("user_metadata"),
+                )
+                result["response"] = response
+                
+                # Cache the group ID for future use
+                if response and "id" in response:
+                    cache_resource_id(
+                        node=module.params.get("localNode"),
+                        resource_type="group",
+                        resource_name=module.params.get("name"),
+                        resource_id=response["id"],
+                    )
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -208,6 +285,24 @@ def main():
                 user_metadata=module.params.get("user_metadata"),
             )
             result["response"] = response
+            
+            # Invalidate cache for old name if it exists
+            if module.params.get("old_name"):
+                cache_resource_id(
+                    node=module.params.get("localNode"),
+                    resource_type="group",
+                    resource_name=module.params.get("old_name"),
+                    invalidate=True,
+                )
+            
+            # Cache the new group ID
+            if response and "id" in response:
+                cache_resource_id(
+                    node=module.params.get("localNode"),
+                    resource_type="group",
+                    resource_name=module.params.get("name"),
+                    resource_id=response["id"],
+                )
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -221,6 +316,15 @@ def main():
 
     else:
         module.fail_json(msg="invalid op_type")
+
+    # Add performance metrics to the result
+    performance = get_performance_metrics()
+    result["performance"] = {
+        "api_calls": performance.api_calls,
+        "execution_time_ms": performance.execution_time_ms,
+        "cache_hits": performance.cache_hits,
+        "cache_misses": performance.cache_misses,
+    }
 
     module.exit_json(**result)
 

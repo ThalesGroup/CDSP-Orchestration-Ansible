@@ -21,6 +21,12 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
     CMApiException,
     AnsibleCMException,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cache import (
+    get_cache,
+    get_performance_metrics,
+    cache_resource_id,
+    get_cached_resource_id,
+)
 
 
 def is_json(myjson):
@@ -419,12 +425,27 @@ def createDPGPolicy(**kwargs):
     payload = json.dumps(request)
 
     try:
+        # Check cache first for policy by name
+        cache = get_cache()
+        if "name" in request:
+            cached_id = get_cached_resource_id("dpg_policy", request["name"])
+            if cached_id:
+                return {"id": cached_id, "name": request["name"], "cached": True}
+        
+        performance_metrics = get_performance_metrics()
+        performance_metrics.increment_api_calls()
+        
         response = POSTData(
             payload=payload,
             cm_node=kwargs["node"],
             cm_api_endpoint="data-protection/dpg-policies",
             id="id",
         )
+        
+        # Cache the policy ID by name for future lookups
+        if "name" in request and "id" in response:
+            cache_resource_id("dpg_policy", request["name"], response["id"])
+        
         return response
     except CMApiException as api_e:
         raise
@@ -444,11 +465,20 @@ def updateDPGPolicy(**kwargs):
     payload = json.dumps(request)
 
     try:
+        performance_metrics = get_performance_metrics()
+        performance_metrics.increment_api_calls()
+        
         response = PATCHData(
             payload=payload,
             cm_node=kwargs["node"],
             cm_api_endpoint="data-protection/dpg-policies/" + kwargs["policy_id"],
         )
+        
+        # Invalidate cache for this policy since it was updated
+        if "policy_id" in kwargs:
+            cache = get_cache()
+            cache.invalidate_by_pattern("dpg_policy", kwargs["policy_id"])
+        
         return response
     except CMApiException as api_e:
         raise
@@ -467,6 +497,9 @@ def dpgPolicyAddAPIUrl(**kwargs):
     payload = json.dumps(request)
 
     try:
+        performance_metrics = get_performance_metrics()
+        performance_metrics.increment_api_calls()
+        
         response = POSTData(
             payload=payload,
             cm_node=kwargs["node"],
@@ -475,6 +508,12 @@ def dpgPolicyAddAPIUrl(**kwargs):
             + "/api-urls",
             id="id",
         )
+        
+        # Invalidate cache for this policy since it was updated
+        if "policy_id" in kwargs:
+            cache = get_cache()
+            cache.invalidate_by_pattern("dpg_policy", kwargs["policy_id"])
+        
         return response
     except CMApiException as api_e:
         raise
@@ -493,6 +532,9 @@ def dpgPolicyUpdateAPIUrl(**kwargs):
     payload = json.dumps(request)
 
     try:
+        performance_metrics = get_performance_metrics()
+        performance_metrics.increment_api_calls()
+        
         response = PATCHData(
             payload=payload,
             cm_node=kwargs["node"],
@@ -501,6 +543,12 @@ def dpgPolicyUpdateAPIUrl(**kwargs):
             + "/api-urls/"
             + kwargs["api_url_id"],
         )
+        
+        # Invalidate cache for this policy since it was updated
+        if "policy_id" in kwargs:
+            cache = get_cache()
+            cache.invalidate_by_pattern("dpg_policy", kwargs["policy_id"])
+        
         return response
     except CMApiException as api_e:
         raise
@@ -514,10 +562,19 @@ def dpgPolicyDeleteAPIUrl(**kwargs):
     )
     endpoint = "data-protection/dpg-policies/" + kwargs["policy_id"] + "/api-urls"
     try:
+        performance_metrics = get_performance_metrics()
+        performance_metrics.increment_api_calls()
+        
         response = DELETEByNameOrId(
             key=kwargs["api_url_id"], cm_node=kwargs["node"], cm_api_endpoint=endpoint
         )
         result["response"] = response
+        
+        # Invalidate cache for this policy since it was updated
+        if "policy_id" in kwargs:
+            cache = get_cache()
+            cache.invalidate_by_pattern("dpg_policy", kwargs["policy_id"])
+        
     except CMApiException as api_e:
         raise
     except AnsibleCMException as custom_e:
