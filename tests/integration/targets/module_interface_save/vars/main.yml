@@ -1,0 +1,22 @@
+---
+# Connection string for CipherTrust Manager
+# This should be set via command line: -e "connection_string=your-cm-hostname"
+connection_string: "localhost"
+
+# Timestamp for unique test resource names
+timestamp: "{{ ansible_date_time.iso8601 | replace(':', '-') | replace('.', '-') }}"
+
+# Test interface parameters
+test_interface:
+  name: "ansible_test_interface"
+  description: "Test interface created by Ansible integration test"
+  ip_address: "192.168.1.100"
+  netmask: "255.255.255.0"
+  gateway: "192.168.1.1"
+  mtu: 1500
+  vlan_id: 100
+
+# Updated interface parameters for patch operation
+patch_interface:
+  description: "Updated description for test interface"
+  mtu: 1400

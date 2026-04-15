@@ -958,7 +958,36 @@ EXAMPLES = """
 """
 
 RETURN = """
-
+api_calls:
+  description: Number of API calls made to the CipherTrust Manager
+  type: int
+  returned: always
+  sample: 5
+cache_info:
+  description: Cache performance information
+  type: dict
+  returned: always
+  contains:
+    hits:
+      description: Number of cache hits
+      type: int
+      returned: always
+      sample: 2
+    misses:
+      description: Number of cache misses
+      type: int
+      returned: always
+      sample: 3
+    size:
+      description: Current cache size
+      type: int
+      returned: always
+      sample: 10
+execution_time:
+  description: Total execution time in seconds
+  type: float
+  returned: always
+  sample: 2.345
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
@@ -971,9 +1000,28 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import
     dpgPolicyUpdateAPIUrl,
     dpgPolicyDeleteAPIUrl,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cache import (
+    get_cache,
+    get_performance_metrics,
+    reset_performance_metrics,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
     AnsibleCMException,
+    AnsibleCMValidationException,
+    AnsibleCMParameterException,
+    AnsibleCMFormatException,
+    AnsibleCMResponseException,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation import (
+    validate_required_parameters,
+    validate_parameter_types,
+    validate_parameter_formats,
+    validate_api_response,
+    validate_choice,
+    validate_list_elements,
+    validate_dict_keys,
+    DOCUMENTATION_LINKS,
 )
 
 _api_token = dict(
@@ -1098,6 +1146,196 @@ argument_spec = dict(
 
 
 def validate_parameters(dpg_policy_module):
+    """
+    Validate parameters for dpg_policy_save module based on op_type.
+    Raises appropriate exceptions with detailed error messages.
+    """
+    op_type = dpg_policy_module.params.get("op_type")
+    
+    # Validate op_type choice
+    valid_op_types = ["create", "patch", "add-api-url", "update-api-url", "delete-api-url"]
+    try:
+        validate_choice("op_type", op_type, valid_op_types)
+    except AnsibleCMValidationException as e:
+        raise AnsibleCMValidationException(
+            message=f"Invalid op_type '{op_type}'. "
+                    f"Expected one of: {', '.join(valid_op_types)}. "
+                    f"Example: op_type: create",
+            documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
+        )
+    
+    # Required parameters for each op_type
+    required_params = {
+        "create": ["name"],
+        "patch": ["policy_id"],
+        "add-api-url": ["policy_id", "api_url", "destination_url"],
+        "update-api-url": ["policy_id", "api_url_id", "destination_url"],
+        "delete-api-url": ["policy_id", "api_url_id"],
+    }
+    
+    # Validate required parameters based on op_type
+    if op_type in required_params:
+        try:
+            validate_required_parameters(
+                module=dpg_policy_module,
+                required_params=required_params[op_type],
+                module_name="dpg_policy_save",
+                op_type=op_type
+            )
+        except AnsibleCMParameterException as e:
+            raise AnsibleCMParameterException(
+                message=f"Missing required parameters for op_type '{op_type}': {e.message}. "
+                        f"Required for op_type '{op_type}': {', '.join(required_params[op_type])}. "
+                        f"Example: policy_id: 'policy-123'",
+                documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
+            )
+    
+    # Validate parameter types
+    try:
+        if op_type == "create":
+            if dpg_policy_module.params.get("name"):
+                validate_parameter_types(
+                    module=dpg_policy_module,
+                    param_types={"name": str, "description": str},
+                    module_name="dpg_policy_save",
+                    op_type=op_type
+                )
+        elif op_type == "patch":
+            if dpg_policy_module.params.get("policy_id"):
+                validate_parameter_types(
+                    module=dpg_policy_module,
+                    param_types={"policy_id": str, "description": str},
+                    module_name="dpg_policy_save",
+                    op_type=op_type
+                )
+        elif op_type in ["add-api-url", "update-api-url", "delete-api-url"]:
+            if dpg_policy_module.params.get("policy_id"):
+                validate_parameter_types(
+                    module=dpg_policy_module,
+                    param_types={"policy_id": str, "api_url": str, "destination_url": str, "api_url_id": str},
+                    module_name="dpg_policy_save",
+                    op_type=op_type
+                )
+    except AnsibleCMFormatException as e:
+        raise AnsibleCMFormatException(
+            message=f"Invalid parameter type: {e.message}. "
+                    f"Expected string for parameter. "
+                    f"Example: policy_id: 'policy-123' (string)",
+            documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
+        )
+    
+    # Validate proxy_config if provided
+    try:
+        if dpg_policy_module.params.get("proxy_config"):
+            proxy_config = dpg_policy_module.params.get("proxy_config")
+            if not isinstance(proxy_config, list):
+                raise AnsibleCMFormatException(
+                    message=f"proxy_config must be a list. "
+                            f"Expected: list of dictionaries. "
+                            f"Example: proxy_config: [{{api_url: '/api/v2/...', destination_url: 'http://...'}}]",
+                    documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
+                )
+            
+            # Validate each proxy_config item
+            for idx, config in enumerate(proxy_config):
+                if not isinstance(config, dict):
+                    raise AnsibleCMFormatException(
+                        message=f"proxy_config[{idx}] must be a dictionary. "
+                                f"Expected: dictionary with api_url and destination_url. "
+                                f"Example: {{api_url: '/api/v2/...', destination_url: 'http://localhost:8080'}}",
+                        documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
+                    )
+                
+                # Validate api_url format
+                if "api_url" in config:
+                    validate_parameter_formats(
+                        module=dpg_policy_module,
+                        param_formats={"api_url": r"^/api/.*"},
+                        module_name="dpg_policy_save",
+                        op_type=op_type
+                    )
+                
+                # Validate destination_url format (basic URL validation)
+                if "destination_url" in config:
+                    destination_url = config["destination_url"]
+                    if not (destination_url.startswith("http://") or destination_url.startswith("https://")):
+                        raise AnsibleCMFormatException(
+                            message=f"proxy_config[{idx}].destination_url must be a valid URL starting with http:// or https://. "
+                                    f"Got: '{destination_url}'. "
+                                    f"Example: destination_url: 'http://localhost:8080' or 'https://api.example.com'",
+                            documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
+                        )
+    except AnsibleCMFormatException as e:
+        raise AnsibleCMFormatException(
+            message=f"Invalid proxy_config: {e.message}. "
+                    f"Expected: list of dictionaries with api_url and destination_url. "
+                    f"Example: proxy_config: [{{api_url: '/api/v2/sample/resource/id', destination_url: 'http://localhost:8080'}}]",
+            documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
+        )
+    
+    # Validate API tokens if provided
+    try:
+        token_params = [
+            "json_request_delete_tokens", "json_request_get_tokens", "json_request_patch_tokens",
+            "json_request_post_tokens", "json_request_put_tokens",
+            "json_response_delete_tokens", "json_response_get_tokens", "json_response_patch_tokens",
+            "json_response_post_tokens", "json_response_put_tokens",
+            "url_request_delete_tokens", "url_request_get_tokens", "url_request_patch_tokens",
+            "url_request_post_tokens", "url_request_put_tokens"
+        ]
+        
+        for token_param in token_params:
+            if dpg_policy_module.params.get(token_param):
+                tokens = dpg_policy_module.params.get(token_param)
+                if not isinstance(tokens, list):
+                    raise AnsibleCMFormatException(
+                        message=f"{token_param} must be a list. "
+                                f"Expected: list of dictionaries with name, operation, protection_policy. "
+                                f"Example: [{'{'}name: 'creditCard.[*].CCNumber', operation: 'protect', protection_policy: 'CC_ProtectionPolicy'{'}'}]",
+                        documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
+                    )
+                
+                # Validate each token
+                for idx, token in enumerate(tokens):
+                    if not isinstance(token, dict):
+                        raise AnsibleCMFormatException(
+                            message=f"{token_param}[{idx}] must be a dictionary. "
+                                    f"Expected: dictionary with name, operation, protection_policy. "
+                                    f"Example: {{'name': 'creditCard.[*].CCNumber', 'operation': 'protect', 'protection_policy': 'CC_ProtectionPolicy'}}",
+                            documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
+                        )
+                    
+                    # Validate required keys in token
+                    required_token_keys = ["name", "operation", "protection_policy"]
+                    try:
+                        validate_dict_keys(
+                            data=token,
+                            required_keys=required_token_keys,
+                            optional_keys=["access_policy", "external_version_header"],
+                            param_name=f"{token_param}[{idx}]",
+                            module_name="dpg_policy_save",
+                            op_type=op_type
+                        )
+                    except AnsibleCMParameterException as e:
+                        raise AnsibleCMParameterException(
+                            message=f"Invalid token in {token_param}: {e.message}. "
+                                    f"Required keys: {', '.join(required_token_keys)}. "
+                                    f"Example: {{'name': 'creditCard.[*].CCNumber', 'operation': 'protect', 'protection_policy': 'CC_ProtectionPolicy'}}",
+                            documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
+                        )
+                    
+                    # Validate operation value
+                    if "operation" in token:
+                        validate_choice(
+                            param_name=f"{token_param}[{idx}].operation",
+                            param_value=token["operation"],
+                            valid_choices=["protect", "reveal", "mask", "truncate"],
+                            module_name="dpg_policy_save",
+                            op_type=op_type
+                        )
+    except (AnsibleCMFormatException, AnsibleCMParameterException) as e:
+        raise
+    
     return True
 
 
@@ -1119,11 +1357,16 @@ def main():
         dpg_policy_module=module,
     )
 
+    # Initialize performance metrics
+    reset_performance_metrics()
+    
     result = dict(
         changed=False,
     )
 
-    if module.params.get("op_type") == "create":
+    op_type = module.params.get("op_type")
+    
+    if op_type == "create":
         try:
             response = createDPGPolicy(
                 node=module.params.get("localNode"),
@@ -1132,18 +1375,56 @@ def main():
                 proxy_config=module.params.get("proxy_config"),
             )
             result["response"] = response
+        except AnsibleCMValidationException as e:
+            module.fail_json(
+                msg=f"Validation failed for op_type 'create': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMParameterException as e:
+            module.fail_json(
+                msg=f"Parameter error for op_type 'create': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMFormatException as e:
+            module.fail_json(
+                msg=f"Format error for op_type 'create': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMResponseException as e:
+            module.fail_json(
+                msg=f"Response validation error for op_type 'create': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
         except CMApiException as api_e:
+            error_msg = f"API error for op_type 'create': {api_e.message}"
             if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
+                error_msg += f" (status code: {api_e.api_error_code})"
+            if api_e.parameter:
+                error_msg += f". Parameter: {api_e.parameter}"
+            if api_e.expected_format:
+                error_msg += f". Expected: {api_e.expected_format}"
+            if api_e.example:
+                error_msg += f". Example: {api_e.example}"
+            module.fail_json(
+                msg=error_msg,
+                api_error_code=api_e.api_error_code,
+                parameter=api_e.parameter,
+                expected_format=api_e.expected_format,
+                example=api_e.example,
+                documentation_link=api_e.documentation_link
+            )
         except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
+            module.fail_json(
+                msg=f"Error for op_type 'create': {custom_e.message}. "
+                    f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
+            )
 
-    elif module.params.get("op_type") == "patch":
+        # Add performance metrics to result for create operation
+        result["api_calls"] = get_performance_metrics().api_calls
+        result["cache_info"] = get_cache().get_stats()
+        result["execution_time"] = get_performance_metrics().execution_time
+
+    elif op_type == "patch":
         try:
             response = updateDPGPolicy(
                 node=module.params.get("localNode"),
@@ -1152,18 +1433,56 @@ def main():
                 proxy_config=module.params.get("proxy_config"),
             )
             result["response"] = response
+        except AnsibleCMValidationException as e:
+            module.fail_json(
+                msg=f"Validation failed for op_type 'patch': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMParameterException as e:
+            module.fail_json(
+                msg=f"Parameter error for op_type 'patch': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMFormatException as e:
+            module.fail_json(
+                msg=f"Format error for op_type 'patch': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMResponseException as e:
+            module.fail_json(
+                msg=f"Response validation error for op_type 'patch': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
         except CMApiException as api_e:
+            error_msg = f"API error for op_type 'patch': {api_e.message}"
             if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
+                error_msg += f" (status code: {api_e.api_error_code})"
+            if api_e.parameter:
+                error_msg += f". Parameter: {api_e.parameter}"
+            if api_e.expected_format:
+                error_msg += f". Expected: {api_e.expected_format}"
+            if api_e.example:
+                error_msg += f". Example: {api_e.example}"
+            module.fail_json(
+                msg=error_msg,
+                api_error_code=api_e.api_error_code,
+                parameter=api_e.parameter,
+                expected_format=api_e.expected_format,
+                example=api_e.example,
+                documentation_link=api_e.documentation_link
+            )
         except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
+            module.fail_json(
+                msg=f"Error for op_type 'patch': {custom_e.message}. "
+                    f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
+            )
 
-    elif module.params.get("op_type") == "add-api-url":
+        # Add performance metrics to result for patch operation
+        result["api_calls"] = get_performance_metrics().api_calls
+        result["cache_info"] = get_cache().get_stats()
+        result["execution_time"] = get_performance_metrics().execution_time
+
+    elif op_type == "add-api-url":
         try:
             response = dpgPolicyAddAPIUrl(
                 node=module.params.get("localNode"),
@@ -1199,18 +1518,56 @@ def main():
                 url_request_put_tokens=module.params.get("url_request_put_tokens"),
             )
             result["response"] = response
+        except AnsibleCMValidationException as e:
+            module.fail_json(
+                msg=f"Validation failed for op_type 'add-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMParameterException as e:
+            module.fail_json(
+                msg=f"Parameter error for op_type 'add-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMFormatException as e:
+            module.fail_json(
+                msg=f"Format error for op_type 'add-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMResponseException as e:
+            module.fail_json(
+                msg=f"Response validation error for op_type 'add-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
         except CMApiException as api_e:
+            error_msg = f"API error for op_type 'add-api-url': {api_e.message}"
             if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
+                error_msg += f" (status code: {api_e.api_error_code})"
+            if api_e.parameter:
+                error_msg += f". Parameter: {api_e.parameter}"
+            if api_e.expected_format:
+                error_msg += f". Expected: {api_e.expected_format}"
+            if api_e.example:
+                error_msg += f". Example: {api_e.example}"
+            module.fail_json(
+                msg=error_msg,
+                api_error_code=api_e.api_error_code,
+                parameter=api_e.parameter,
+                expected_format=api_e.expected_format,
+                example=api_e.example,
+                documentation_link=api_e.documentation_link
+            )
         except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
+            module.fail_json(
+                msg=f"Error for op_type 'add-api-url': {custom_e.message}. "
+                    f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
+            )
 
-    elif module.params.get("op_type") == "update-api-url":
+        # Add performance metrics to result for add-api-url operation
+        result["api_calls"] = get_performance_metrics().api_calls
+        result["cache_info"] = get_cache().get_stats()
+        result["execution_time"] = get_performance_metrics().execution_time
+
+    elif op_type == "update-api-url":
         try:
             response = dpgPolicyUpdateAPIUrl(
                 node=module.params.get("localNode"),
@@ -1246,18 +1603,56 @@ def main():
                 url_request_put_tokens=module.params.get("url_request_put_tokens"),
             )
             result["response"] = response
+        except AnsibleCMValidationException as e:
+            module.fail_json(
+                msg=f"Validation failed for op_type 'update-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMParameterException as e:
+            module.fail_json(
+                msg=f"Parameter error for op_type 'update-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMFormatException as e:
+            module.fail_json(
+                msg=f"Format error for op_type 'update-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMResponseException as e:
+            module.fail_json(
+                msg=f"Response validation error for op_type 'update-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
         except CMApiException as api_e:
+            error_msg = f"API error for op_type 'update-api-url': {api_e.message}"
             if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
+                error_msg += f" (status code: {api_e.api_error_code})"
+            if api_e.parameter:
+                error_msg += f". Parameter: {api_e.parameter}"
+            if api_e.expected_format:
+                error_msg += f". Expected: {api_e.expected_format}"
+            if api_e.example:
+                error_msg += f". Example: {api_e.example}"
+            module.fail_json(
+                msg=error_msg,
+                api_error_code=api_e.api_error_code,
+                parameter=api_e.parameter,
+                expected_format=api_e.expected_format,
+                example=api_e.example,
+                documentation_link=api_e.documentation_link
+            )
         except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
+            module.fail_json(
+                msg=f"Error for op_type 'update-api-url': {custom_e.message}. "
+                    f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
+            )
 
-    elif module.params.get("op_type") == "delete-api-url":
+        # Add performance metrics to result for update-api-url operation
+        result["api_calls"] = get_performance_metrics().api_calls
+        result["cache_info"] = get_cache().get_stats()
+        result["execution_time"] = get_performance_metrics().execution_time
+
+    elif op_type == "delete-api-url":
         try:
             response = dpgPolicyDeleteAPIUrl(
                 node=module.params.get("localNode"),
@@ -1265,16 +1660,54 @@ def main():
                 api_url_id=module.params.get("api_url_id"),
             )
             result["response"] = response
+        except AnsibleCMValidationException as e:
+            module.fail_json(
+                msg=f"Validation failed for op_type 'delete-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMParameterException as e:
+            module.fail_json(
+                msg=f"Parameter error for op_type 'delete-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMFormatException as e:
+            module.fail_json(
+                msg=f"Format error for op_type 'delete-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
+        except AnsibleCMResponseException as e:
+            module.fail_json(
+                msg=f"Response validation error for op_type 'delete-api-url': {e.message}. "
+                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
+            )
         except CMApiException as api_e:
+            error_msg = f"API error for op_type 'delete-api-url': {api_e.message}"
             if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
+                error_msg += f" (status code: {api_e.api_error_code})"
+            if api_e.parameter:
+                error_msg += f". Parameter: {api_e.parameter}"
+            if api_e.expected_format:
+                error_msg += f". Expected: {api_e.expected_format}"
+            if api_e.example:
+                error_msg += f". Example: {api_e.example}"
+            module.fail_json(
+                msg=error_msg,
+                api_error_code=api_e.api_error_code,
+                parameter=api_e.parameter,
+                expected_format=api_e.expected_format,
+                example=api_e.example,
+                documentation_link=api_e.documentation_link
+            )
         except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
+            module.fail_json(
+                msg=f"Error for op_type 'delete-api-url': {custom_e.message}. "
+                    f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
+            )
+
+        # Add performance metrics to result for delete-api-url operation
+        result["api_calls"] = get_performance_metrics().api_calls
+        result["cache_info"] = get_cache().get_stats()
+        result["execution_time"] = get_performance_metrics().execution_time
 
     else:
         module.fail_json(msg="invalid op_type")

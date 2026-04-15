@@ -1,0 +1,165 @@
+---
+# Integration test workflow for ThalesGroup CipherTrust Ansible Collection
+name: Integration Tests
+
+on:
+  # Run on push to main branch
+  push:
+    branches: ["main"]
+  # Run on pull request
+  pull_request:
+    branches: ["main"]
+  # Run on schedule (weekly)
+  schedule:
+    - cron: "0 0 * * 0"  # Weekly on Sunday at midnight
+  # Allow manual trigger
+  workflow_dispatch:
+
+# Set permissions
+permissions:
+  contents: read
+
+# Environment variables for tests
+env:
+  CIPHERTRUST_CONNECTION_STRING: "${{ vars.CIPHERTRUST_CONNECTION_STRING || 'localhost:8200' }}"
+  CIPHERTRUST_USERNAME: "${{ vars.CIPHERTRUST_USERNAME || 'admin' }}"
+  CIPHERTRUST_PASSWORD: "${{ secrets.CIPHERTRUST_PASSWORD || 'Thales123' }}"
+  CIPHERTRUST_API_KEY: "${{ vars.CIPHERTRUST_API_KEY || '' }}"
+  CIPHERTRUST_DOMAIN: "${{ vars.CIPHERTRUST_DOMAIN || '' }}"
+  CIPHERTRUST_VERIFY_SSL: "${{ vars.CIPHERTRUST_VERIFY_SSL || 'false' }}"
+
+jobs:
+  # Integration test job
+  integration-tests:
+    name: Run Integration Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install Ansible
+        run: |
+          pip install ansible ansible-test
+
+      - name: Install collection dependencies
+        run: |
+          ansible-galaxy collection install -r tests/requirements.yml
+
+      - name: Run integration tests
+        run: |
+          cd tests
+          ansible-test integration --color yes --timeout 300 --retry 2
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            tests/reports/
+            tests/coverage/
+          retention-days: 7
+
+      - name: Upload coverage to Codecov
+        if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+        uses: codecov/codecov-action@v4
+        with:
+          files: tests/coverage/cobertura.xml
+          flags: integration-tests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  # Test matrix for different scenarios
+  integration-tests-matrix:
+    name: Run Integration Tests (Matrix)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-target:
+          - module_vault_keys2_save
+          - module_dpg_policy_save
+          - module_cte_client
+          - module_group_save
+          - module_interface_save
+          - module_group_add_remove_object
+          - module_license_trial_get
+          - module_licensing_lockdata_get
+          - module_cm_certificate_authority
+          - module_cm_regtoken
+          - module_cm_resource_delete
+          - module_cm_resource_get_id_from_name
+          - module_cm_services
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install Ansible
+        run: |
+          pip install ansible ansible-test
+
+      - name: Install collection dependencies
+        run: |
+          ansible-galaxy collection install -r tests/requirements.yml
+
+      - name: Run specific integration test
+        run: |
+          cd tests
+          ansible-test integration ${{ matrix.test-target }} --color yes --timeout 300
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.test-target }}
+          path: |
+            tests/reports/
+            tests/coverage/
+          retention-days: 7
+
+  # Validation job
+  validate-tests:
+    name: Validate Test Configuration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install Ansible
+        run: |
+          pip install ansible ansible-test
+
+      - name: Validate test configuration
+        run: |
+          echo "Validating test configuration..."
+          if [ -f tests/integration.yml ]; then
+            echo "integration.yml exists"
+          else
+            echo "Warning: integration.yml not found"
+          fi
+
+      - name: Check test coverage
+        run: |
+          echo "Checking test coverage..."
+          TEST_COUNT=$(ls -1 tests/integration/targets/ | wc -l)
+          MODULE_COUNT=$(ls -1 plugins/modules/ | wc -l)
+          echo "Test targets: $TEST_COUNT"
+          echo "Total modules: $MODULE_COUNT"
+          echo "Coverage: $((TEST_COUNT * 100 / MODULE_COUNT))%"

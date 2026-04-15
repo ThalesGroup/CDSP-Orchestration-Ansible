@@ -331,6 +331,20 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.interfaces
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
     AnsibleCMException,
+    AnsibleCMValidationException,
+    AnsibleCMParameterException,
+    AnsibleCMFormatException,
+    AnsibleCMResponseException,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation import (
+    validate_required_parameters,
+    validate_parameter_types,
+    validate_parameter_formats,
+    validate_api_response,
+    validate_choice,
+    validate_list_elements,
+    validate_dict_keys,
+    DOCUMENTATION_LINKS,
 )
 
 _nae_mask_system_groups = dict(
@@ -421,6 +435,242 @@ argument_spec = dict(
 
 
 def validate_parameters(user_module):
+    """
+    Comprehensive validation for interface_save module
+    """
+    op_type = user_module.params.get("op_type")
+    port = user_module.params.get("port")
+    interface_id = user_module.params.get("interface_id")
+    cert_user_field = user_module.params.get("cert_user_field")
+    interface_type = user_module.params.get("interface_type")
+    kmip_enable_hard_delete = user_module.params.get("kmip_enable_hard_delete")
+    maximum_tls_version = user_module.params.get("maximum_tls_version")
+    minimum_tls_version = user_module.params.get("minimum_tls_version")
+    mode = user_module.params.get("mode")
+    name = user_module.params.get("name")
+    network_interface = user_module.params.get("network_interface")
+    registration_token = user_module.params.get("registration_token")
+    auto_gen_ca_id = user_module.params.get("auto_gen_ca_id")
+    auto_registration = user_module.params.get("auto_registration")
+    allow_unregistered = user_module.params.get("allow_unregistered")
+    custom_uid_size = user_module.params.get("custom_uid_size")
+    custom_uid_v2 = user_module.params.get("custom_uid_v2")
+    default_connection = user_module.params.get("default_connection")
+    meta = user_module.params.get("meta")
+    trusted_cas = user_module.params.get("trusted_cas")
+    local_auto_gen_attributes = user_module.params.get("local_auto_gen_attributes")
+    tls_ciphers = user_module.params.get("tls_ciphers")
+
+    # Required parameters based on op_type
+    if op_type == "create":
+        required_params = ["port", "interface_type"]
+        validate_required_parameters(
+            params=user_module.params,
+            required_params=required_params,
+            module_name="interface_save",
+        )
+
+    if op_type == "patch":
+        if not interface_id:
+            raise AnsibleCMParameterException(
+                parameter="interface_id",
+                expected_format="string identifier of the interface to be patched",
+                example="interface_id: \"507a05f7-6883-41f6-961a-0e41847d887d\"",
+                documentation_link=DOCUMENTATION_LINKS.get(
+                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                ),
+            )
+
+    # Validate port is positive
+    if port is not None:
+        if not isinstance(port, int):
+            raise AnsibleCMFormatException(
+                parameter="port",
+                expected_format="positive integer",
+                example="port: 9005",
+                documentation_link=DOCUMENTATION_LINKS.get(
+                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                ),
+            )
+        if port <= 0:
+            raise AnsibleCMParameterException(
+                parameter="port",
+                expected_format="positive integer (greater than 0)",
+                example="port: 9005",
+                documentation_link=DOCUMENTATION_LINKS.get(
+                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                ),
+            )
+
+    # Validate cert_user_field choices
+    if cert_user_field is not None:
+        validate_choice(
+            value=cert_user_field,
+            parameter_name="cert_user_field",
+            choices=["CN", "SN", "E", "E_ND", "UID", "OU"],
+            documentation_link=DOCUMENTATION_LINKS.get(
+                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+            ),
+        )
+
+    # Validate interface_type choices
+    if interface_type is not None:
+        validate_choice(
+            value=interface_type,
+            parameter_name="interface_type",
+            choices=["web", "kmip", "nae", "snmp"],
+            documentation_link=DOCUMENTATION_LINKS.get(
+                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+            ),
+        )
+
+    # Validate kmip_enable_hard_delete choices
+    if kmip_enable_hard_delete is not None:
+        validate_choice(
+            value=kmip_enable_hard_delete,
+            parameter_name="kmip_enable_hard_delete",
+            choices=[0, 1],
+            documentation_link=DOCUMENTATION_LINKS.get(
+                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+            ),
+        )
+
+    # Validate maximum_tls_version choices
+    if maximum_tls_version is not None:
+        validate_choice(
+            value=maximum_tls_version,
+            parameter_name="maximum_tls_version",
+            choices=["tls_1_0", "tls_1_1", "tls_1_2", "tls_1_3"],
+            documentation_link=DOCUMENTATION_LINKS.get(
+                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+            ),
+        )
+
+    # Validate minimum_tls_version choices
+    if minimum_tls_version is not None:
+        validate_choice(
+            value=minimum_tls_version,
+            parameter_name="minimum_tls_version",
+            choices=["tls_1_0", "tls_1_1", "tls_1_2", "tls_1_3"],
+            documentation_link=DOCUMENTATION_LINKS.get(
+                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+            ),
+        )
+
+    # Validate mode choices
+    if mode is not None:
+        validate_choice(
+            value=mode,
+            parameter_name="mode",
+            choices=[
+                "no-tls-pw-opt",
+                "no-tls-pw-req",
+                "unauth-tls-pw-opt",
+                "unauth-tls-pw-req",
+                "tls-cert-opt-pw-opt",
+                "tls-pw-opt",
+                "tls-pw-req",
+                "tls-cert-pw-opt",
+                "tls-cert-and-pw",
+            ],
+            documentation_link=DOCUMENTATION_LINKS.get(
+                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+            ),
+        )
+
+    # Validate network_interface format
+    if network_interface is not None:
+        if not isinstance(network_interface, str):
+            raise AnsibleCMFormatException(
+                parameter="network_interface",
+                expected_format="string, use 'all' for all interfaces",
+                example="network_interface: \"all\"",
+                documentation_link=DOCUMENTATION_LINKS.get(
+                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                ),
+            )
+
+    # Validate registration_token format
+    if registration_token is not None:
+        if not isinstance(registration_token, str):
+            raise AnsibleCMFormatException(
+                parameter="registration_token",
+                expected_format="string",
+                example="registration_token: \"abc123token\"",
+                documentation_link=DOCUMENTATION_LINKS.get(
+                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                ),
+            )
+
+    # Validate trusted_cas structure
+    if trusted_cas is not None:
+        if not isinstance(trusted_cas, dict):
+            raise AnsibleCMFormatException(
+                parameter="trusted_cas",
+                expected_format="dictionary with 'external' and/or 'local' keys containing lists of CA IDs",
+                example="trusted_cas:\n  external:\n    - \"external-ca-id-1\"\n  local:\n    - \"local-ca-id-1\"",
+                documentation_link=DOCUMENTATION_LINKS.get(
+                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                ),
+            )
+        else:
+            # Validate external CA IDs are strings
+            if "external" in trusted_cas:
+                validate_list_elements(
+                    value=trusted_cas["external"],
+                    parameter_name="trusted_cas.external",
+                    element_type=str,
+                    documentation_link=DOCUMENTATION_LINKS.get(
+                        "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                    ),
+                )
+            # Validate local CA IDs are strings
+            if "local" in trusted_cas:
+                validate_list_elements(
+                    value=trusted_cas["local"],
+                    parameter_name="trusted_cas.local",
+                    element_type=str,
+                    documentation_link=DOCUMENTATION_LINKS.get(
+                        "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                    ),
+                )
+
+    # Validate local_auto_gen_attributes structure
+    if local_auto_gen_attributes is not None:
+        if not isinstance(local_auto_gen_attributes, dict):
+            raise AnsibleCMFormatException(
+                parameter="local_auto_gen_attributes",
+                expected_format="dictionary with 'cn' (required) and optional 'dns_names', 'email_addresses', 'ip_addresses', 'names', 'uid'",
+                example="local_auto_gen_attributes:\n  cn: \"example.com\"\n  dns_names:\n    - \"example.com\"\n  names:\n    - O: \"Thales Group\"\n      OU: \"RnD\"",
+                documentation_link=DOCUMENTATION_LINKS.get(
+                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                ),
+            )
+
+    # Validate tls_ciphers structure
+    if tls_ciphers is not None:
+        if not isinstance(tls_ciphers, dict):
+            raise AnsibleCMFormatException(
+                parameter="tls_ciphers",
+                expected_format="dictionary with 'cipher_suite' (required) and 'enabled' (required)",
+                example="tls_ciphers:\n  cipher_suite: \"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\"\n  enabled: true",
+                documentation_link=DOCUMENTATION_LINKS.get(
+                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                ),
+            )
+
+    # Validate meta structure
+    if meta is not None:
+        if not isinstance(meta, dict):
+            raise AnsibleCMFormatException(
+                parameter="meta",
+                expected_format="dictionary with optional 'nae' key containing mask_system_groups flag",
+                example="meta:\n  nae:\n    mask_system_groups: true",
+                documentation_link=DOCUMENTATION_LINKS.get(
+                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                ),
+            )
+
     return True
 
 
@@ -477,9 +727,71 @@ def main():
                     + str(api_e.api_error_code)
                     + " message: "
                     + api_e.message
+                    + ". Documentation: "
+                    + DOCUMENTATION_LINKS.get(
+                        "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                    )
                 )
+        except AnsibleCMValidationException as validation_e:
+            module.fail_json(
+                msg="Validation Error: "
+                + validation_e.message
+                + ". Parameter: "
+                + validation_e.parameter
+                + ". Expected: "
+                + validation_e.expected_format
+                + ". Example: "
+                + validation_e.example
+                + ". Documentation: "
+                + validation_e.documentation_link
+            )
+        except AnsibleCMParameterException as param_e:
+            module.fail_json(
+                msg="Parameter Error: "
+                + param_e.message
+                + ". Parameter: "
+                + param_e.parameter
+                + ". Expected: "
+                + param_e.expected_format
+                + ". Example: "
+                + param_e.example
+                + ". Documentation: "
+                + param_e.documentation_link
+            )
+        except AnsibleCMFormatException as format_e:
+            module.fail_json(
+                msg="Format Error: "
+                + format_e.message
+                + ". Parameter: "
+                + format_e.parameter
+                + ". Expected: "
+                + format_e.expected_format
+                + ". Example: "
+                + format_e.example
+                + ". Documentation: "
+                + format_e.documentation_link
+            )
+        except AnsibleCMResponseException as response_e:
+            module.fail_json(
+                msg="Response Error: "
+                + response_e.message
+                + ". Parameter: "
+                + response_e.parameter
+                + ". Expected: "
+                + response_e.expected_format
+                + ". Example: "
+                + response_e.example
+                + ". Documentation: "
+                + response_e.documentation_link
+            )
         except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
+            module.fail_json(
+                msg=custom_e.message
+                + ". Documentation: "
+                + DOCUMENTATION_LINKS.get(
+                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                )
+            )
 
     elif module.params.get("op_type") == "patch":
         try:
@@ -514,9 +826,71 @@ def main():
                     + str(api_e.api_error_code)
                     + " message: "
                     + api_e.message
+                    + ". Documentation: "
+                    + DOCUMENTATION_LINKS.get(
+                        "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                    )
                 )
+        except AnsibleCMValidationException as validation_e:
+            module.fail_json(
+                msg="Validation Error: "
+                + validation_e.message
+                + ". Parameter: "
+                + validation_e.parameter
+                + ". Expected: "
+                + validation_e.expected_format
+                + ". Example: "
+                + validation_e.example
+                + ". Documentation: "
+                + validation_e.documentation_link
+            )
+        except AnsibleCMParameterException as param_e:
+            module.fail_json(
+                msg="Parameter Error: "
+                + param_e.message
+                + ". Parameter: "
+                + param_e.parameter
+                + ". Expected: "
+                + param_e.expected_format
+                + ". Example: "
+                + param_e.example
+                + ". Documentation: "
+                + param_e.documentation_link
+            )
+        except AnsibleCMFormatException as format_e:
+            module.fail_json(
+                msg="Format Error: "
+                + format_e.message
+                + ". Parameter: "
+                + format_e.parameter
+                + ". Expected: "
+                + format_e.expected_format
+                + ". Example: "
+                + format_e.example
+                + ". Documentation: "
+                + format_e.documentation_link
+            )
+        except AnsibleCMResponseException as response_e:
+            module.fail_json(
+                msg="Response Error: "
+                + response_e.message
+                + ". Parameter: "
+                + response_e.parameter
+                + ". Expected: "
+                + response_e.expected_format
+                + ". Example: "
+                + response_e.example
+                + ". Documentation: "
+                + response_e.documentation_link
+            )
         except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
+            module.fail_json(
+                msg=custom_e.message
+                + ". Documentation: "
+                + DOCUMENTATION_LINKS.get(
+                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
+                )
+            )
 
     else:
         module.fail_json(msg="invalid op_type")

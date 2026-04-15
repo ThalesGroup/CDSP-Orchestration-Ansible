@@ -1,0 +1,22 @@
+{
+  "services": [
+    {
+      "id": "service-12345678-1234-1234-1234-123456789abc",
+      "name": "key_management",
+      "description": "Key Management Service",
+      "status": "running",
+      "version": "1.0.0",
+      "creation_date": "2024-01-15T10:30:00Z"
+    },
+    {
+      "id": "service-12345678-1234-1234-1234-123456789def",
+      "name": "dpg",
+      "description": "Data Protection Gateway Service",
+      "status": "running",
+      "version": "1.0.0",
+      "creation_date": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "op_type": "get",
+  "total_count": 2
+}

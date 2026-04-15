@@ -1,0 +1,38 @@
+---
+# Integration test for cm_resource_get_id_from_name module
+# Tests getting resource ID from name
+
+- name: Set connection parameters
+  ansible.builtin.set_fact:
+    connection_string: "{{ lookup('env', 'CIPHERTRUST_CONNECTION_STRING') | default('localhost:8200', true) }}"
+    username: "{{ lookup('env', 'CIPHERTRUST_USERNAME') | default('admin', true) }}"
+    password: "{{ lookup('env', 'CIPHERTRUST_PASSWORD') | default('Thales123', true) }}"
+    api_key: "{{ lookup('env', 'CIPHERTRUST_API_KEY') | default('', true) }}"
+    domain: "{{ lookup('env', 'CIPHERTRUST_DOMAIN') | default('', true) }}"
+    verify_ssl: "{{ lookup('env', 'CIPHERTRUST_VERIFY_SSL') | default('false', true) }}"
+
+- name: Get resource ID from name
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    connection_string: "{{ connection_string }}"
+    username: "{{ username }}"
+    password: "{{ password }}"
+    api_key: "{{ api_key }}"
+    domain: "{{ domain }}"
+    verify_ssl: "{{ verify_ssl }}"
+    resource_type: "keys"
+    resource_name: "test_key"
+  register: resource_id_result
+
+- name: Verify resource ID retrieval
+  ansible.builtin.assert:
+    that:
+      - resource_id_result is succeeded
+      - resource_id_result is not failed
+      - resource_id_result.response is defined
+      - resource_id_result.response.id is defined
+    fail_msg: "Failed to get resource ID from name"
+    success_msg: "Successfully retrieved resource ID from name"
+
+- name: Display resource ID
+  ansible.builtin.debug:
+    var: resource_id_result.response

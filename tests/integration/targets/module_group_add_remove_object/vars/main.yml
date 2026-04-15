@@ -1,0 +1,16 @@
+---
+# Connection string for CipherTrust Manager
+# This should be set via command line: -e "this_node_connection_string={...}"
+this_node_connection_string: "{{ integration_config.localNode }}"
+
+# Test group parameters
+group1_name: "ansible_test_group_{{ timestamp }}"
+group1_description: "Test group created by Ansible integration test"
+
+# Test user parameters
+user1_name: "ansible_test_user"
+user1_email: "ansible.test.{{ timestamp }}@example.com"
+user1_password: "TempPass123!"
+
+# Timestamp for unique test resource names
+timestamp: "{{ ansible_date_time.iso8601 | replace(':', '-') | replace('.', '-') }}"

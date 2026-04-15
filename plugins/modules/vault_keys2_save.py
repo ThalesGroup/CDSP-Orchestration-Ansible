@@ -830,6 +830,19 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 impo
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
     AnsibleCMException,
+    AnsibleCMValidationException,
+    AnsibleCMParameterException,
+    AnsibleCMFormatException,
+    AnsibleCMResponseException,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation import (
+    validate_required_parameters,
+    validate_parameter_types,
+    validate_parameter_formats,
+    validate_api_response,
+    validate_choice,
+    validate_list_elements,
+    validate_dict_keys,
 )
 
 _alias = dict(
@@ -1084,6 +1097,249 @@ argument_spec = dict(
 
 
 def validate_parameters(user_module):
+    """
+    Comprehensive validation for vault_keys2_save module parameters.
+    Validates required parameters, parameter types, formats, and business logic rules.
+    """
+    params = user_module.params
+    op_type = params.get("op_type")
+    
+    # Define validation rules based on op_type
+    validation_rules = {
+        "create": {
+            "required": ["name", "algorithm"],
+            "conditional_required": {
+                "algorithm": {
+                    "ec": ["curveid"],
+                    "rsa": [],
+                }
+            },
+            "conditional_not_allowed": {
+                "cm_key_id": ["create"],  # cm_key_id not allowed for create
+            }
+        },
+        "patch": {
+            "required": ["cm_key_id"],
+            "conditional_not_allowed": {
+                "algorithm": ["patch"],  # algorithm not allowed for patch
+                "curveid": ["patch"],
+            }
+        },
+        "create_version": {
+            "required": ["cm_key_id"],
+            "conditional_not_allowed": {
+                "algorithm": ["create_version"],
+                "curveid": ["create_version"],
+            }
+        }
+    }
+    
+    # Get validation rules for current op_type
+    rules = validation_rules.get(op_type, {})
+    
+    # Validate required parameters
+    if rules.get("required"):
+        missing_params = [p for p in rules["required"] if not params.get(p)]
+        if missing_params:
+            raise AnsibleCMValidationException(
+                parameter="required_parameters",
+                expected_format="list of required parameters: {}".format(rules["required"]),
+                example="op_type: {}, {}".format(op_type, ", ".join(rules["required"])),
+                documentation_link="https://docs.ansible.com/collections/thalesgroup/ciphertrust",
+                message="Missing required parameters for op_type '{}': {}. Required: {}".format(
+                    op_type,
+                    ", ".join(missing_params),
+                    ", ".join(rules["required"])
+                )
+            )
+    
+    # Validate conditional required parameters
+    if rules.get("conditional_required"):
+        for param, conditions in rules["conditional_required"].items():
+            if params.get(param):
+                for condition_param, condition_values in conditions.items():
+                    if op_type in condition_values:
+                        # Check if condition_param is required when param is set
+                        if not params.get(condition_param):
+                            raise AnsibleCMValidationException(
+                                parameter=condition_param,
+                                expected_format="string (valid {} value)".format(condition_param),
+                                example="{}: 'secp256r1'".format(condition_param),
+                                documentation_link="https://docs.ansible.com/collections/thalesgroup/ciphertrust",
+                                message="Parameter '{}' is required when '{}' is set to '{}' for op_type '{}'. Example: {}".format(
+                                    condition_param,
+                                    param,
+                                    params.get(param),
+                                    op_type,
+                                    "{}: 'secp256r1'".format(condition_param) if condition_param == "curveid" else "{}: <value>".format(condition_param)
+                                )
+                            )
+    
+    # Validate conditional not allowed parameters
+    if rules.get("conditional_not_allowed"):
+        for param, forbidden_ops in rules["conditional_not_allowed"].items():
+            if params.get(param) and op_type in forbidden_ops:
+                raise AnsibleCMParameterException(
+                    parameter=param,
+                    expected_format="parameter not allowed for op_type '{}'".format(op_type),
+                    example="Do not set '{}' when op_type='{}'".format(param, op_type),
+                    documentation_link="https://docs.thalesgroup.com/ciphertrust/key-management/vault-keys2-save",
+                    message="Parameter '{}' is not allowed for op_type '{}'. Please remove this parameter.".format(
+                        param,
+                        op_type
+                    )
+                )
+    
+    # Validate parameter types
+    type_validations = [
+        {"param": "size", "expected_type": "int", "optional": True},
+        {"param": "usageMask", "expected_type": "int", "optional": True},
+        {"param": "idSize", "expected_type": "int", "optional": True},
+        {"param": "offset", "expected_type": "int", "optional": True},
+        {"param": "iteration", "expected_type": "int", "optional": True},
+        {"param": "dklen", "expected_type": "int", "optional": True},
+        {"param": "okmLen", "expected_type": "int", "optional": True},
+        {"param": "aesKeySize", "expected_type": "int", "optional": True},
+        {"param": "index", "expected_type": "int", "optional": True},
+    ]
+    
+    for validation in type_validations:
+        param = validation["param"]
+        if params.get(param) is not None:
+            try:
+                if validation["expected_type"] == "int":
+                    int(params.get(param))
+            except (ValueError, TypeError):
+                raise AnsibleCMFormatException(
+                    parameter=param,
+                    expected_format="integer",
+                    example="{}: 256".format(param),
+                    documentation_link="https://docs.thalesgroup.com/ciphertrust/key-management/vault-keys2-save",
+                    message="Parameter '{}' must be an integer. Got: '{}'".format(
+                        param,
+                        params.get(param)
+                    )
+                )
+    
+    # Validate choice parameters
+    choice_validations = [
+        {"param": "op_type", "choices": ["create", "patch", "create_version"]},
+        {"param": "algorithm", "choices": ["aes", "tdes", "rsa", "ec", "hmac-sha1", "hmac-sha256", "hmac-sha384", "hmac-sha512", "seed", "aria", "opaque"]},
+        {"param": "curveid", "choices": ["secp224k1", "secp224r1", "secp256k1", "secp384r1", "secp521r1", "prime256v1", "brainpoolP224r1", "brainpoolP224t1", "brainpoolP256r1", "brainpoolP256t1", "brainpoolP384r1", "brainpoolP384t1", "brainpoolP512r1", "brainpoolP512t1"]},
+        {"param": "objectType", "choices": ["Symmetric Key", "Public Key", "Private Key", "Secret Data", "Opaque Object", "Certificate"]},
+        {"param": "certType", "choices": ["x509-pem", "x509-der"]},
+        {"param": "format", "choices": ["pkcs1", "pkcs8", "raw", "x962", "spki"]},
+        {"param": "wrappingMethod", "choices": ["encrypt", "mac/sign", "pbe"]},
+        {"param": "wrappingEncryptionAlgo", "choices": ["AES/AESKEYWRAP", "AES/AESKEYWRAPPADDING", "RSA/RSAAESKEYWRAPPADDING"]},
+        {"param": "wrappingHashAlgo", "choices": ["sha1", "sha224", "sha256", "sha384", "sha512", "sha512/224", "sha512/256", "sha3-224", "sha3-256", "sha3-384", "sha3-512"], "optional": True},
+        {"param": "padding", "choices": ["oaep", "oaep256", "oaep384", "oaep512"], "optional": True},
+        {"param": "hashAlgorithm", "choices": ["hmac-sha1", "hmac-sha224", "hmac-sha256", "hmac-sha384", "hmac-sha512", "hmac-sha512/224", "hmac-sha512/256", "sha1", "sha224", "sha256", "sha384", "sha512", "sha512/224", "sha512/256", "sha3-224", "sha3-256", "sha3-384", "sha3-512"], "optional": True},
+        {"param": "passwordIdentifierType", "choices": ["name", "id", "slug"], "optional": True},
+        {"param": "macSignKeyIdentifierType", "choices": ["name", "id", "alias"], "optional": True},
+        {"param": "wrapKeyIDType", "choices": ["name", "id", "alias"], "optional": True},
+        {"param": "signingAlgo", "choices": ["RSA", "RSA-PSS"], "optional": True},
+        {"param": "revocationReason", "choices": ["Unspecified", "KeyCompromise", "CACompromise", "AffiliationChanged", "Superseded", "CessationOfOperation", "PrivilegeWithdrawn"], "optional": True},
+        {"param": "state", "choices": ["Pre-Active", "Active", "Deactivated", "Compromised", "Destroyed"], "optional": True},
+    ]
+    
+    for validation in choice_validations:
+        param = validation["param"]
+        if params.get(param) is not None:
+            validate_choice(
+                module=user_module,
+                parameter=param,
+                value=params.get(param),
+                choices=validation["choices"],
+                optional=validation.get("optional", False),
+                param_type="str"
+            )
+    
+    # Validate string length constraints
+    string_length_validations = [
+        {"param": "name", "min": 1, "max": 255, "message": "Key name should not contain special characters such as angular brackets (<,>) and backslash (\\)"},
+        {"param": "password", "min": 8, "max": 128, "optional": True},
+        {"param": "salt", "min": 16, "max": 512, "optional": True, "hex_only": True},
+        {"param": "info", "min": 0, "max": 128, "optional": True, "hex_only": True},
+        {"param": "material", "min": 0, "max": 65536, "optional": True},
+        {"param": "macSignBytes", "min": 0, "max": 1024, "optional": True},
+        {"param": "secretDataLink", "min": 1, "max": 255, "optional": True},
+        {"param": "cm_key_id", "min": 1, "max": 255, "optional": True},
+    ]
+    
+    for validation in string_length_validations:
+        param = validation["param"]
+        if params.get(param) is not None:
+            value = params.get(param)
+            if validation.get("hex_only"):
+                # Validate hex format
+                try:
+                    int(value, 16)
+                except ValueError:
+                    raise AnsibleCMFormatException(
+                        parameter=param,
+                        expected_format="hexadecimal string",
+                        example="{}: 'a1b2c3d4e5f6'".format(param),
+                        documentation_link="https://docs.thalesgroup.com/ciphertrust/key-management/vault-keys2-save",
+                        message="Parameter '{}' must be a hexadecimal string. Got: '{}'".format(
+                            param,
+                            value
+                        )
+                    )
+            
+            # Validate length
+            if len(value) < validation["min"] or len(value) > validation["max"]:
+                raise AnsibleCMParameterException(
+                    parameter=param,
+                    expected_format="string with length between {} and {} characters".format(validation["min"], validation["max"]),
+                    example="{}: '<string between {}-{} chars>'".format(param, validation["min"], validation["max"]),
+                    documentation_link="https://docs.thalesgroup.com/ciphertrust/key-management/vault-keys2-save",
+                    message="Parameter '{}' length must be between {} and {} characters. Got: {} characters".format(
+                        param,
+                        validation["min"],
+                        validation["max"],
+                        len(value)
+                    )
+                )
+    
+    # Validate dict keys for nested parameters
+    dict_validations = [
+        {"param": "meta", "allowed_keys": ["ownerId", "permissions", "cte", "versionedKey"], "optional": True},
+        {"param": "publicKeyParameters", "allowed_keys": ["activationDate", "aliases", "archiveDate", "deactivationDate", "meta", "name", "state", "undeletable", "unexportable", "usageMask"], "optional": True},
+        {"param": "wrapHKDF", "allowed_keys": ["hashAlgorithm", "ikmKeyName", "info", "salt"], "optional": True},
+        {"param": "wrapPBE", "allowed_keys": ["hashAlgorithm", "dklen", "iteration", "password", "passwordIdentifier", "passwordIdentifierType", "purpose", "salt"], "optional": True},
+        {"param": "wrapRSAAES", "allowed_keys": ["aesKeySize", "padding"], "optional": True},
+        {"param": "hkdfCreateParameters", "allowed_keys": ["hashAlgorithm", "ikmKeyName", "info", "salt"], "optional": True},
+    ]
+    
+    for validation in dict_validations:
+        param = validation["param"]
+        if params.get(param) is not None:
+            validate_dict_keys(
+                module=user_module,
+                parameter=param,
+                value=params.get(param),
+                allowed_keys=validation["allowed_keys"],
+                optional=validation.get("optional", False)
+            )
+    
+    # Validate list elements for list parameters
+    list_validations = [
+        {"param": "aliases", "optional": True},
+        {"param": "labels", "optional": True},
+        {"param": "usageMask", "optional": True},  # usageMask is int but can be thought of as bit flags
+    ]
+    
+    for validation in list_validations:
+        param = validation["param"]
+        if params.get(param) is not None:
+            validate_list_elements(
+                module=user_module,
+                parameter=param,
+                value=params.get(param),
+                element_type="dict" if param == "aliases" else "str",
+                optional=validation.get("optional", False)
+            )
+    
     return True
 
 
@@ -1174,13 +1430,67 @@ def main():
             )
             result["response"] = response
         except CMApiException as api_e:
+            error_msg = "API Error"
             if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
+                error_msg += f" (code: {api_e.api_error_code})"
+            if api_e.parameter:
+                error_msg += f". Parameter: {api_e.parameter}"
+            if api_e.expected_format:
+                error_msg += f". Expected: {api_e.expected_format}"
+            if api_e.example:
+                error_msg += f". Example: {api_e.example}"
+            error_msg += f". Message: {api_e.message}"
+            if api_e.documentation_link:
+                error_msg += f". Documentation: {api_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMValidationException as val_e:
+            error_msg = "Validation Error"
+            if val_e.parameter:
+                error_msg += f". Parameter: {val_e.parameter}"
+            if val_e.expected_format:
+                error_msg += f". Expected: {val_e.expected_format}"
+            if val_e.example:
+                error_msg += f". Example: {val_e.example}"
+            error_msg += f". Message: {val_e.message}"
+            if val_e.documentation_link:
+                error_msg += f". Documentation: {val_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMParameterException as param_e:
+            error_msg = "Parameter Error"
+            if param_e.parameter:
+                error_msg += f". Parameter: {param_e.parameter}"
+            if param_e.expected_format:
+                error_msg += f". Expected: {param_e.expected_format}"
+            if param_e.example:
+                error_msg += f". Example: {param_e.example}"
+            error_msg += f". Message: {param_e.message}"
+            if param_e.documentation_link:
+                error_msg += f". Documentation: {param_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMFormatException as format_e:
+            error_msg = "Format Error"
+            if format_e.parameter:
+                error_msg += f". Parameter: {format_e.parameter}"
+            if format_e.expected_format:
+                error_msg += f". Expected: {format_e.expected_format}"
+            if format_e.example:
+                error_msg += f". Example: {format_e.example}"
+            error_msg += f". Message: {format_e.message}"
+            if format_e.documentation_link:
+                error_msg += f". Documentation: {format_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMResponseException as resp_e:
+            error_msg = "Response Validation Error"
+            if resp_e.parameter:
+                error_msg += f". Parameter: {resp_e.parameter}"
+            if resp_e.expected_format:
+                error_msg += f". Expected: {resp_e.expected_format}"
+            if resp_e.example:
+                error_msg += f". Example: {resp_e.example}"
+            error_msg += f". Message: {resp_e.message}"
+            if resp_e.documentation_link:
+                error_msg += f". Documentation: {resp_e.documentation_link}"
+            module.fail_json(msg=error_msg)
         except AnsibleCMException as custom_e:
             module.fail_json(msg=custom_e.message)
 
@@ -1210,13 +1520,67 @@ def main():
             )
             result["response"] = response
         except CMApiException as api_e:
+            error_msg = "API Error"
             if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
+                error_msg += f" (code: {api_e.api_error_code})"
+            if api_e.parameter:
+                error_msg += f". Parameter: {api_e.parameter}"
+            if api_e.expected_format:
+                error_msg += f". Expected: {api_e.expected_format}"
+            if api_e.example:
+                error_msg += f". Example: {api_e.example}"
+            error_msg += f". Message: {api_e.message}"
+            if api_e.documentation_link:
+                error_msg += f". Documentation: {api_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMValidationException as val_e:
+            error_msg = "Validation Error"
+            if val_e.parameter:
+                error_msg += f". Parameter: {val_e.parameter}"
+            if val_e.expected_format:
+                error_msg += f". Expected: {val_e.expected_format}"
+            if val_e.example:
+                error_msg += f". Example: {val_e.example}"
+            error_msg += f". Message: {val_e.message}"
+            if val_e.documentation_link:
+                error_msg += f". Documentation: {val_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMParameterException as param_e:
+            error_msg = "Parameter Error"
+            if param_e.parameter:
+                error_msg += f". Parameter: {param_e.parameter}"
+            if param_e.expected_format:
+                error_msg += f". Expected: {param_e.expected_format}"
+            if param_e.example:
+                error_msg += f". Example: {param_e.example}"
+            error_msg += f". Message: {param_e.message}"
+            if param_e.documentation_link:
+                error_msg += f". Documentation: {param_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMFormatException as format_e:
+            error_msg = "Format Error"
+            if format_e.parameter:
+                error_msg += f". Parameter: {format_e.parameter}"
+            if format_e.expected_format:
+                error_msg += f". Expected: {format_e.expected_format}"
+            if format_e.example:
+                error_msg += f". Example: {format_e.example}"
+            error_msg += f". Message: {format_e.message}"
+            if format_e.documentation_link:
+                error_msg += f". Documentation: {format_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMResponseException as resp_e:
+            error_msg = "Response Validation Error"
+            if resp_e.parameter:
+                error_msg += f". Parameter: {resp_e.parameter}"
+            if resp_e.expected_format:
+                error_msg += f". Expected: {resp_e.expected_format}"
+            if resp_e.example:
+                error_msg += f". Example: {resp_e.example}"
+            error_msg += f". Message: {resp_e.message}"
+            if resp_e.documentation_link:
+                error_msg += f". Documentation: {resp_e.documentation_link}"
+            module.fail_json(msg=error_msg)
         except AnsibleCMException as custom_e:
             module.fail_json(msg=custom_e.message)
 
@@ -1245,13 +1609,67 @@ def main():
             )
             result["response"] = response
         except CMApiException as api_e:
+            error_msg = "API Error"
             if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
+                error_msg += f" (code: {api_e.api_error_code})"
+            if api_e.parameter:
+                error_msg += f". Parameter: {api_e.parameter}"
+            if api_e.expected_format:
+                error_msg += f". Expected: {api_e.expected_format}"
+            if api_e.example:
+                error_msg += f". Example: {api_e.example}"
+            error_msg += f". Message: {api_e.message}"
+            if api_e.documentation_link:
+                error_msg += f". Documentation: {api_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMValidationException as val_e:
+            error_msg = "Validation Error"
+            if val_e.parameter:
+                error_msg += f". Parameter: {val_e.parameter}"
+            if val_e.expected_format:
+                error_msg += f". Expected: {val_e.expected_format}"
+            if val_e.example:
+                error_msg += f". Example: {val_e.example}"
+            error_msg += f". Message: {val_e.message}"
+            if val_e.documentation_link:
+                error_msg += f". Documentation: {val_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMParameterException as param_e:
+            error_msg = "Parameter Error"
+            if param_e.parameter:
+                error_msg += f". Parameter: {param_e.parameter}"
+            if param_e.expected_format:
+                error_msg += f". Expected: {param_e.expected_format}"
+            if param_e.example:
+                error_msg += f". Example: {param_e.example}"
+            error_msg += f". Message: {param_e.message}"
+            if param_e.documentation_link:
+                error_msg += f". Documentation: {param_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMFormatException as format_e:
+            error_msg = "Format Error"
+            if format_e.parameter:
+                error_msg += f". Parameter: {format_e.parameter}"
+            if format_e.expected_format:
+                error_msg += f". Expected: {format_e.expected_format}"
+            if format_e.example:
+                error_msg += f". Example: {format_e.example}"
+            error_msg += f". Message: {format_e.message}"
+            if format_e.documentation_link:
+                error_msg += f". Documentation: {format_e.documentation_link}"
+            module.fail_json(msg=error_msg)
+        except AnsibleCMResponseException as resp_e:
+            error_msg = "Response Validation Error"
+            if resp_e.parameter:
+                error_msg += f". Parameter: {resp_e.parameter}"
+            if resp_e.expected_format:
+                error_msg += f". Expected: {resp_e.expected_format}"
+            if resp_e.example:
+                error_msg += f". Example: {resp_e.example}"
+            error_msg += f". Message: {resp_e.message}"
+            if resp_e.documentation_link:
+                error_msg += f". Documentation: {resp_e.documentation_link}"
+            module.fail_json(msg=error_msg)
         except AnsibleCMException as custom_e:
             module.fail_json(msg=custom_e.message)
 
