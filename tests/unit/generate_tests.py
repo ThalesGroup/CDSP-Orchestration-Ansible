@@ -60,7 +60,7 @@ import pytest
 from unittest.mock import patch
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from conftest import MockExitJsonException, MockFailJsonException, TEST_NODE
+from test_helpers import MockExitJsonException, MockFailJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.{module_name} import main
 
 class Test{class_name}:
@@ -107,7 +107,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from conftest import MockExitJsonException, MockFailJsonException, TEST_NODE
+from test_helpers import MockExitJsonException, MockFailJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.{module_name} import main
 
 class Test{class_name}:

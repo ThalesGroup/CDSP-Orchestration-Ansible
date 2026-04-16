@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from conftest import MockExitJsonException, TEST_NODE
+from test_helpers import MockExitJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_certificate_authority import main
 
 class TestCmCertificateAuthority:

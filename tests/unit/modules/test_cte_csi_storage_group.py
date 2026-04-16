@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from conftest import MockExitJsonException, TEST_NODE
+from test_helpers import MockExitJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.cte_csi_storage_group import main
 
 class TestCteCsiStorageGroup:

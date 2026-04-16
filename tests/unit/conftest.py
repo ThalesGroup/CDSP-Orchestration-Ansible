@@ -16,15 +16,23 @@ from contextlib import ExitStack
 from unittest.mock import MagicMock, patch
 
 import types
+from test_helpers import (
+    TEST_NODE,
+    MockFailJsonException,
+    MockExitJsonException,
+)
 
 # ---------------------------------------------------------------------------
-# Windows compatibility: Ansible's module_utils.basic imports 'grp', 'pwd', 
-# 'fcntl', 'syslog', 'termios' which are Unix-only. We inject stubs before 
-# any Ansible imports happen.
+# Windows compatibility: some Ansible imports rely on Unix-only modules.
+# Stub only modules that truly do not exist so we do not shadow real Linux
+# stdlib modules (for example `pwd`, required by pytest-xdist/ansible-test).
 # ---------------------------------------------------------------------------
 for _mod_name in ("grp", "pwd", "fcntl", "syslog", "termios"):
-    if _mod_name not in sys.modules:
-        sys.modules[_mod_name] = types.ModuleType(_mod_name)
+    try:
+        __import__(_mod_name)
+    except ImportError:
+        if _mod_name not in sys.modules:
+            sys.modules[_mod_name] = types.ModuleType(_mod_name)
 
 
 # ---------------------------------------------------------------------------
@@ -35,47 +43,32 @@ for _mod_name in ("grp", "pwd", "fcntl", "syslog", "termios"):
 import os
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-sys.path.insert(0, repo_root)
+if repo_root not in sys.path:
+    sys.path.insert(0, repo_root)
 
-import plugins
-import plugins.module_utils
-import plugins.modules
+# ansible-test already provides native collection import resolution.
+# Only install the local namespace mapper when that import path is unavailable.
+try:
+    import ansible_collections.thalesgroup.ciphertrust.plugins  # noqa: F401
+except Exception:
+    import plugins
+    import plugins.module_utils
+    import plugins.modules
 
-ansible_collections = types.ModuleType("ansible_collections")
-thalesgroup = types.ModuleType("thalesgroup")
-ciphertrust = types.ModuleType("ciphertrust")
+    ansible_collections = types.ModuleType("ansible_collections")
+    thalesgroup = types.ModuleType("thalesgroup")
+    ciphertrust = types.ModuleType("ciphertrust")
 
-ansible_collections.thalesgroup = thalesgroup
-thalesgroup.ciphertrust = ciphertrust
-ciphertrust.plugins = plugins
+    ansible_collections.thalesgroup = thalesgroup
+    thalesgroup.ciphertrust = ciphertrust
+    ciphertrust.plugins = plugins
 
-sys.modules["ansible_collections"] = ansible_collections
-sys.modules["ansible_collections.thalesgroup"] = thalesgroup
-sys.modules["ansible_collections.thalesgroup.ciphertrust"] = ciphertrust
-sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins"] = plugins
-sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins.module_utils"] = plugins.module_utils
-sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins.modules"] = plugins.modules
-
-
-
-
-
-# ---------------------------------------------------------------------------
-# Standard test node configuration — mirrors the ``localNode`` dict that
-# every module receives from Ansible.
-# ---------------------------------------------------------------------------
-
-TEST_NODE = {
-    "server_ip": "test.example.com",
-    "server_private_ip": "10.10.10.10",
-    "server_port": 5432,
-    "user": "admin",
-    "password": "test123",
-    "verify": False,
-    "auth_domain_path": "",
-}
-
-
+    sys.modules["ansible_collections"] = ansible_collections
+    sys.modules["ansible_collections.thalesgroup"] = thalesgroup
+    sys.modules["ansible_collections.thalesgroup.ciphertrust"] = ciphertrust
+    sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins"] = plugins
+    sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins.module_utils"] = plugins.module_utils
+    sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins.modules"] = plugins.modules
 @pytest.fixture
 def localNode():
     """Explicit localNode fixture for tests that need a reusable CM node dict."""
@@ -86,28 +79,6 @@ def localNode():
 def local_node(localNode):
     """PEP8 alias for localNode fixture."""
     return localNode
-
-
-# ---------------------------------------------------------------------------
-# Exception helpers — lightweight exceptions that ``mock_module.fail_json``
-# and ``mock_module.exit_json`` raise so test code can catch and inspect them.
-# ---------------------------------------------------------------------------
-
-class MockBaseException(Exception):
-    pass
-
-
-class MockFailJsonException(MockBaseException):
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
-        super().__init__(str(kwargs))
-
-
-class MockExitJsonException(MockBaseException):
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
-        super().__init__(str(kwargs))
-
 
 # ---------------------------------------------------------------------------
 # Module-level fixtures

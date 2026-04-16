@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from conftest import MockExitJsonException, TEST_NODE
+from test_helpers import MockExitJsonException, TEST_NODE
 
 
 CHECK_MODE_CREATE_MODULES = [
