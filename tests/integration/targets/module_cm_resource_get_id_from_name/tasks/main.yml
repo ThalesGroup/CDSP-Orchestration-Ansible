@@ -36,3 +36,16 @@
 - name: Display resource ID
   ansible.builtin.debug:
     var: resource_id_result.response
+
+# Negative test - required params validation
+- name: Negative test - missing required parameters should fail
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name: {}
+  register: _negative_required_params_result
+  ignore_errors: true
+
+- name: Assert negative test failed as expected
+  ansible.builtin.assert:
+    that:
+      - _negative_required_params_result is failed
+    fail_msg: "Expected module to fail when required parameters are missing"
+    success_msg: "Negative path validated for missing required parameters"

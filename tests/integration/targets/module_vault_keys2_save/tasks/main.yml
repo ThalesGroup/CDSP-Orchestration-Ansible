@@ -92,3 +92,16 @@
   - assert:
       that:
         - _result_delete is not failed
+
+# Negative test - required params validation
+- name: Negative test - missing required parameters should fail
+  thalesgroup.ciphertrust.vault_keys2_save: {}
+  register: _negative_required_params_result
+  ignore_errors: true
+
+- name: Assert negative test failed as expected
+  ansible.builtin.assert:
+    that:
+      - _negative_required_params_result is failed
+    fail_msg: "Expected module to fail when required parameters are missing"
+    success_msg: "Negative path validated for missing required parameters"

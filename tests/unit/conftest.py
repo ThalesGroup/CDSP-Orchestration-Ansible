@@ -11,6 +11,8 @@ Also patches Windows-incompatible modules (grp, pwd) that Ansible core imports.
 import json
 import sys
 import pytest
+import importlib
+from contextlib import ExitStack
 from unittest.mock import MagicMock, patch
 
 import types
@@ -72,6 +74,18 @@ TEST_NODE = {
     "verify": False,
     "auth_domain_path": "",
 }
+
+
+@pytest.fixture
+def localNode():
+    """Explicit localNode fixture for tests that need a reusable CM node dict."""
+    return TEST_NODE.copy()
+
+
+@pytest.fixture
+def local_node(localNode):
+    """PEP8 alias for localNode fixture."""
+    return localNode
 
 
 # ---------------------------------------------------------------------------
@@ -201,3 +215,73 @@ def patch_client():
 
     for p in _patchers:
         p.stop()
+
+
+@pytest.fixture
+def run_module_main():
+    """Run a module main() with a mocked ThalesCipherTrustModule.
+
+    Returns a helper with signature:
+      run_module_main(module_path, params=None, check_mode=False,
+                      patch_map=None, patch_validate=True)
+
+    - module_path: full python module path
+      (e.g., ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services)
+    - params: dict merged over default {"localNode": TEST_NODE}
+    - check_mode: bool for module.check_mode
+    - patch_map: optional mapping of attribute name -> return value
+      patch targets are resolved relative to module_path
+    - patch_validate: if True, patch validate_parameters() to no-op when present
+    """
+
+    def _run(
+        module_path,
+        params=None,
+        check_mode=False,
+        patch_map=None,
+        patch_validate=True,
+    ):
+        mod = importlib.import_module(module_path)
+
+        module = MagicMock()
+        module.check_mode = check_mode
+        module._diff = False
+        module._name = module_path.rsplit(".", 1)[-1]
+        module.params = {"localNode": TEST_NODE.copy()}
+        if params:
+            module.params.update(params)
+
+        def fail_json(**kwargs):
+            raise MockFailJsonException(**kwargs)
+
+        def exit_json(**kwargs):
+            raise MockExitJsonException(**kwargs)
+
+        module.fail_json = fail_json
+        module.exit_json = exit_json
+
+        patch_map = patch_map or {}
+
+        with ExitStack() as stack:
+            stack.enter_context(
+                patch(f"{module_path}.ThalesCipherTrustModule", return_value=module)
+            )
+
+            if patch_validate and hasattr(mod, "validate_parameters"):
+                stack.enter_context(
+                    patch(f"{module_path}.validate_parameters", return_value=None)
+                )
+
+            for attr_name, return_value in patch_map.items():
+                stack.enter_context(patch(f"{module_path}.{attr_name}", return_value=return_value))
+
+            try:
+                mod.main()
+            except MockExitJsonException as exc:
+                return "exit_json", exc.kwargs, module
+            except MockFailJsonException as exc:
+                return "fail_json", exc.kwargs, module
+
+        raise AssertionError(f"{module_path}.main() did not call exit_json/fail_json")
+
+    return _run
