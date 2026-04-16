@@ -1,10 +1,7 @@
-import sys
-import os
 import pytest
 from unittest.mock import patch
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from conftest import MockExitJsonException, MockFailJsonException, TEST_NODE
+from conftest import MockExitJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.cte_signature_set import main
 
 class TestCteSignatureSet:

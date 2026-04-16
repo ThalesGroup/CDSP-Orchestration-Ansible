@@ -1,27 +1,58 @@
-import sys
-import os
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from conftest import MockExitJsonException, MockFailJsonException, TEST_NODE
+from conftest import MockExitJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services import main
 
-class TestCmServices:
-    @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.ThalesCipherTrustModule")
-    def test_execution(self, mock_thales_module, mock_module):
-        mock_thales_module.return_value = mock_module
-        mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "op_type": "delete",
-            "name": "Test1",
-            "id": "123",
 
-        }
-        # By just hitting main(), we expect it to try API call and fail gracefully or exit json
-        try:
-            main()
-        except (MockExitJsonException, MockFailJsonException):
-            pass
-        except Exception as e:
-            pass
+class TestCmServices:
+    def test_execution(self, mock_module):
+        with patch(
+            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.ThalesCipherTrustModule",
+            return_value=mock_module,
+        ), patch(
+            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.validate_parameters",
+            return_value=None,
+        ), patch(
+            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.restartCMServices",
+            return_value={"status": "ok"},
+        ) as mock_helper:
+            mock_module.check_mode = False
+            mock_module.params = {
+            "localNode": TEST_NODE.copy(),
+            "op_type": "restart",
+            "services": ['nae'],
+            "delay": 1,
+            }
+
+            with pytest.raises(MockExitJsonException) as excinfo:
+                main()
+
+        assert excinfo.value.kwargs["changed"] is True
+        assert excinfo.value.kwargs["response"] == {"status": "ok"}
+        mock_helper.assert_called_once()
+
+    def test_check_mode(self, mock_module):
+        with patch(
+            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.ThalesCipherTrustModule",
+            return_value=mock_module,
+        ), patch(
+            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.validate_parameters",
+            return_value=None,
+        ), patch(
+            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.restartCMServices",
+            return_value={"status": "ok"},
+        ) as mock_helper:
+            mock_module.check_mode = True
+            mock_module.params = {
+            "localNode": TEST_NODE.copy(),
+            "op_type": "restart",
+            "services": ['nae'],
+            "delay": 1,
+            }
+
+            with pytest.raises(MockExitJsonException) as excinfo:
+                main()
+
+        assert excinfo.value.kwargs["changed"] is True
+        mock_helper.assert_not_called()
