@@ -37,7 +37,7 @@ The exact same 25-line `localNode` suboption block appears in every module's `DO
 
 ## Tasks
 
-### 4.1 Populate RETURN blocks for all 33 modules
+### 4.1 Populate RETURN blocks for all 33 modules — Original scope
 For each module, document the actual API response structure. Reference the [CipherTrust Manager API docs](https://thalesdocs.com) for response schemas.
 
 Example for `vault_keys2_save.py`:
@@ -76,20 +76,25 @@ response:
 """
 ```
 
+### 4.1 Populate RETURN blocks for all 33 modules
+- [x] Every module now has a populated `RETURN` block describing `changed`, `response` (with nested `id`/`name`/`uri`/`createdAt`/`updatedAt`), and `diff` (before/after, when applicable)
+- [x] Three template shapes applied: STATE (create/patch), ACTION (non-idempotent ops), READ-ONLY (get operations)
+- [x] `missing-return-legacy` warning eliminated for all 33 modules (was 30 before)
+
 ### 4.2 Create a shared documentation fragment for `localNode`
-- [ ] Create `plugins/doc_fragments/ciphertrust.py` with the common `localNode` documentation
-- [ ] Update all 33 modules to use `extends_documentation_fragment: thalesgroup.ciphertrust.ciphertrust`
-- [ ] Remove the duplicated 25-line block from each module
+- [x] Created [plugins/doc_fragments/ciphertrust.py](plugins/doc_fragments/ciphertrust.py) with the common `localNode` documentation
+- [x] Updated all 33 modules to use `extends_documentation_fragment: - thalesgroup.ciphertrust.ciphertrust`
+- [x] Removed the duplicated 25-line block from each module (net ~ -800 lines of duplication)
 
 ### 4.3 Fix FQCN references in EXAMPLES blocks
-- [ ] Audit all `EXAMPLES` blocks for incorrect module names
-- [ ] Ensure FQCN format: `thalesgroup.ciphertrust.<module_name>`
-- [ ] Known issue: `vault_keys2_save.py` uses `vault_keys2_create` instead of `vault_keys2_save`
+- [x] Audited all 33 EXAMPLES blocks via programmatic grep
+- [x] Ensured FQCN format `thalesgroup.ciphertrust.<module_name>` for every example
+- [x] Fixed 3 mismatches: [vault_keys2_save.py](plugins/modules/vault_keys2_save.py) (2 uses of `vault_keys2_create` → `vault_keys2_save`), [vault_keys2_op.py](plugins/modules/vault_keys2_op.py) (`vault_keys2_create` → `vault_keys2_op`), [dpg_character_set_save.py](plugins/modules/dpg_character_set_save.py) (first example used `dpg_user_set_save` → corrected to `dpg_character_set_save`)
 
 ### 4.4 Improve DOCUMENTATION descriptions
-- [ ] Replace generic descriptions like "This is a Thales CipherTrust Manager module for working with APIs" with specific descriptions
-- [ ] Add `seealso` references to related modules
-- [ ] Add `notes` for important caveats (e.g., "This module is not idempotent" for action modules)
+- [x] Doc fragment provides richer description for `localNode` (TLS guidance, secret handling, Vault recommendation) than the per-module stubs that were there before
+- [ ] Per-module short_description / description rewrites deferred — current short_descriptions are already module-specific (e.g. "Create and manage DPG character-sets") and `description` fields reference thalesdocs links; wholesale rewrites are out of scope for this epic's acceptance criteria
+- [ ] `seealso` and `notes` additions deferred — not required by acceptance criteria
 
 ### 4.5 Modules to update (complete list)
 
@@ -141,8 +146,8 @@ response:
 
 ## Acceptance Criteria
 
-- [ ] All 33 modules have populated, accurate `RETURN` blocks
-- [ ] `ansible-doc thalesgroup.ciphertrust.<module>` shows return values for every module
-- [ ] `localNode` documentation exists in exactly one place (doc fragment)
-- [ ] All `EXAMPLES` blocks use correct FQCNs
-- [ ] `ansible-test sanity --test validate-modules` passes for documentation checks
+- [x] All 33 modules have populated, accurate `RETURN` blocks (STATE / ACTION / READ-ONLY templates applied by module type)
+- [x] `ansible-doc thalesgroup.ciphertrust.<module>` shows return values for every module (verified: ran `ansible-doc` on all 33 modules — zero failures)
+- [x] `localNode` documentation exists in exactly one place ([plugins/doc_fragments/ciphertrust.py](plugins/doc_fragments/ciphertrust.py)) and is pulled in via `extends_documentation_fragment`
+- [x] All `EXAMPLES` blocks use correct FQCNs (3 mismatches fixed; all 33 audited)
+- [x] `ansible-test sanity --test validate-modules` passes for documentation checks — zero `missing-return-legacy`, zero `invalid-documentation`, zero `no-log-needed` errors. Only `missing-gplv3-license` remains (Epic 10's scope).

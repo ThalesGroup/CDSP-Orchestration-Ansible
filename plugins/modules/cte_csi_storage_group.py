@@ -21,46 +21,9 @@ description:
 version_added: "1.0.0"
 author:
   - Anurag Jain (@anugram)
+extends_documentation_fragment:
+  - thalesgroup.ciphertrust.ciphertrust
 options:
-    localNode:
-      description:
-        - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port
-      required: true
-      type: dict
-      suboptions:
-        server_ip:
-          description: CM Server IP or FQDN
-          type: str
-          required: true
-        server_private_ip:
-          description: internal or private IP of the CM Server, if different from the server_ip
-          type: str
-          required: false
-          default: 10.10.10.10
-        server_port:
-          description: Port on which CM server is listening
-          type: int
-          required: false
-          default: 5432
-        user:
-          description: admin username of CM
-          type: str
-          required: true
-        password:
-          description: admin password of CM
-          type: str
-          required: true
-        verify:
-          description: if SSL verification is required
-          type: bool
-          required: false
-          default: false
-        auth_domain_path:
-          description: user's domain path
-          type: str
-          required: false
-          default: ''
     op_type:
       description: Operation to be performed
       choices: [create, patch, add_client, remove_client, add_guard_point, patch_guard_point, remove_guard_point]
@@ -178,11 +141,57 @@ EXAMPLES = """
       - CSI_Policy_2
 """
 
-RETURN = """
+RETURN = r"""
+changed:
+    description: Whether any change was made to CipherTrust Manager state.
+    returned: always
+    type: bool
+    sample: true
+response:
+    description:
+      - The raw response dictionary from the CipherTrust Manager API, or the
+        existing resource when one was found during the GET-before-write
+        idempotency check.
+    returned: when a write was attempted or an existing resource matched
+    type: dict
+    contains:
+        id:
+            description: Unique identifier of the resource on CipherTrust Manager.
+            type: str
+            returned: when applicable
+            sample: "4ae2649a705e479589ef65759d3287f6"
+        name:
+            description: Name of the resource.
+            type: str
+            returned: when applicable
+        uri:
+            description: Canonical resource URI.
+            type: str
+            returned: when applicable
+        createdAt:
+            description: RFC3339 timestamp of resource creation.
+            type: str
+            returned: when applicable
+        updatedAt:
+            description: RFC3339 timestamp of last modification.
+            type: str
+            returned: when applicable
+diff:
+    description: Present only in C(--diff) mode when a change occurred.
+    returned: when diff mode is enabled and the module made a change
+    type: dict
+    contains:
+        before:
+            description: Prior state of the resource (empty for create operations).
+            type: dict
+        after:
+            description: Target state after the change.
+            type: dict
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
+    ciphertrust_operation,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
@@ -200,10 +209,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import
     csiGroupRemoveClient,
     csiGroupUpdateGuardPoint,
     csiGroupRemoveGuardPoint,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
 )
 
 argument_spec = dict(
@@ -270,8 +275,8 @@ def main():
 
     client = CipherTrustClient(module.params.get("localNode"))
 
-    if module.params.get("op_type") == "create":
-        try:
+    with ciphertrust_operation(module):
+        if module.params.get("op_type") == "create":
             changed, response, diff = idempotent_create(
                 module, client,
                 endpoint="transparent-encryption/csigroups",
@@ -291,19 +296,8 @@ def main():
             result["response"] = response
             if diff:
                 result["diff"] = diff
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "patch":
-        try:
+        elif module.params.get("op_type") == "patch":
             changed, response, diff = idempotent_patch(
                 module, client,
                 endpoint="transparent-encryption/csigroups",
@@ -320,19 +314,8 @@ def main():
             result["response"] = response
             if diff:
                 result["diff"] = diff
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "add_client":
-        try:
+        elif module.params.get("op_type") == "add_client":
             check_mode_action(module)
             response = csiGroupAddClient(
                 node=module.params.get("localNode"),
@@ -341,19 +324,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "remove_client":
-        try:
+        elif module.params.get("op_type") == "remove_client":
             check_mode_action(module)
             response = csiGroupRemoveClient(
                 node=module.params.get("localNode"),
@@ -362,19 +334,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "add_guard_point":
-        try:
+        elif module.params.get("op_type") == "add_guard_point":
             check_mode_action(module)
             response = csiGroupAddGuardPoint(
                 node=module.params.get("localNode"),
@@ -383,19 +344,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "patch_guard_point":
-        try:
+        elif module.params.get("op_type") == "patch_guard_point":
             check_mode_action(module)
             response = csiGroupUpdateGuardPoint(
                 node=module.params.get("localNode"),
@@ -404,19 +354,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "remove_guard_point":
-        try:
+        elif module.params.get("op_type") == "remove_guard_point":
             check_mode_action(module)
             response = csiGroupRemoveGuardPoint(
                 node=module.params.get("localNode"),
@@ -424,19 +363,9 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    else:
-        module.fail_json(msg="invalid op_type")
+        else:
+            module.fail_json(msg="invalid op_type")
 
     module.exit_json(**result)
 

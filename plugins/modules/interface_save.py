@@ -21,46 +21,9 @@ description:
 version_added: "1.0.0"
 author:
   - Anurag Jain (@anugram)
+extends_documentation_fragment:
+  - thalesgroup.ciphertrust.ciphertrust
 options:
-    localNode:
-      description:
-        - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port
-      required: true
-      type: dict
-      suboptions:
-        server_ip:
-          description: CM Server IP or FQDN
-          type: str
-          required: true
-        server_private_ip:
-          description: internal or private IP of the CM Server, if different from the server_ip
-          type: str
-          required: false
-          default: 10.10.10.10
-        server_port:
-          description: Port on which CM server is listening
-          type: int
-          required: false
-          default: 5432
-        user:
-          description: admin username of CM
-          type: str
-          required: true
-        password:
-          description: admin password of CM
-          type: str
-          required: true
-        verify:
-          description: if SSL verification is required
-          type: bool
-          required: false
-          default: false
-        auth_domain_path:
-          description: user's domain path
-          type: str
-          required: false
-          default: ''
     op_type:
         description: Operation to be performed
         choices: [create, patch]
@@ -317,12 +280,49 @@ EXAMPLES = """
     network_interface: all
 """
 
-RETURN = """
-
+RETURN = r"""
+changed:
+    description: Whether any change was made to CipherTrust Manager state.
+    returned: always
+    type: bool
+    sample: true
+response:
+    description:
+      - The raw response dictionary from the CipherTrust Manager API, or the
+        existing resource when one was found during the GET-before-write
+        idempotency check.
+    returned: when a write was attempted or an existing resource matched
+    type: dict
+    contains:
+        id:
+            description: Unique identifier of the resource on CipherTrust Manager.
+            type: str
+            returned: when applicable
+        name:
+            description: Name of the resource.
+            type: str
+            returned: when applicable
+        uri:
+            description: Canonical resource URI.
+            type: str
+            returned: when applicable
+        createdAt:
+            description: RFC3339 timestamp of resource creation.
+            type: str
+            returned: when applicable
+        updatedAt:
+            description: RFC3339 timestamp of last modification.
+            type: str
+            returned: when applicable
+diff:
+    description: Present only in C(--diff) mode when a change occurred.
+    returned: when diff mode is enabled and the module made a change
+    type: dict
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
+    ciphertrust_operation,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
@@ -336,12 +336,8 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent
     idempotent_patch,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-    AnsibleCMValidationException,
     AnsibleCMParameterException,
     AnsibleCMFormatException,
-    AnsibleCMResponseException,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation import (
     validate_required_parameters,
@@ -705,8 +701,8 @@ def main():
 
     client = CipherTrustClient(module.params.get("localNode"))
 
-    if module.params.get("op_type") == "create":
-        try:
+    with ciphertrust_operation(module):
+        if module.params.get("op_type") == "create":
             changed, response, diff = idempotent_create(
                 module, client,
                 endpoint="configs/interfaces",
@@ -715,105 +711,32 @@ def main():
                 create_fn=create,
                 create_kwargs=dict(
                     node=module.params.get("localNode"),
-                port=module.params.get("port"),
-                auto_gen_ca_id=module.params.get("auto_gen_ca_id"),
-                auto_registration=module.params.get("auto_registration"),
-                allow_unregistered=module.params.get("allow_unregistered"),
-                cert_user_field=module.params.get("cert_user_field"),
-                custom_uid_size=module.params.get("custom_uid_size"),
-                custom_uid_v2=module.params.get("custom_uid_v2"),
-                default_connection=module.params.get("default_connection"),
-                interface_type=module.params.get("interface_type"),
-                kmip_enable_hard_delete=module.params.get("kmip_enable_hard_delete"),
-                maximum_tls_version=module.params.get("maximum_tls_version"),
-                meta=module.params.get("meta"),
-                minimum_tls_version=module.params.get("minimum_tls_version"),
-                mode=module.params.get("mode"),
-                name=module.params.get("name"),
-                network_interface=module.params.get("network_interface"),
-                registration_token=module.params.get("registration_token"),
-                trusted_cas=module.params.get("trusted_cas"),
+                    port=module.params.get("port"),
+                    auto_gen_ca_id=module.params.get("auto_gen_ca_id"),
+                    auto_registration=module.params.get("auto_registration"),
+                    allow_unregistered=module.params.get("allow_unregistered"),
+                    cert_user_field=module.params.get("cert_user_field"),
+                    custom_uid_size=module.params.get("custom_uid_size"),
+                    custom_uid_v2=module.params.get("custom_uid_v2"),
+                    default_connection=module.params.get("default_connection"),
+                    interface_type=module.params.get("interface_type"),
+                    kmip_enable_hard_delete=module.params.get("kmip_enable_hard_delete"),
+                    maximum_tls_version=module.params.get("maximum_tls_version"),
+                    meta=module.params.get("meta"),
+                    minimum_tls_version=module.params.get("minimum_tls_version"),
+                    mode=module.params.get("mode"),
+                    name=module.params.get("name"),
+                    network_interface=module.params.get("network_interface"),
+                    registration_token=module.params.get("registration_token"),
+                    trusted_cas=module.params.get("trusted_cas"),
                 ),
             )
             result["changed"] = changed
             result["response"] = response
             if diff:
                 result["diff"] = diff
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                    + ". Documentation: "
-                    + DOCUMENTATION_LINKS.get(
-                        "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-                    )
-                )
-        except AnsibleCMValidationException as validation_e:
-            module.fail_json(
-                msg="Validation Error: "
-                + validation_e.message
-                + ". Parameter: "
-                + validation_e.parameter
-                + ". Expected: "
-                + validation_e.expected_format
-                + ". Example: "
-                + validation_e.example
-                + ". Documentation: "
-                + validation_e.documentation_link
-            )
-        except AnsibleCMParameterException as param_e:
-            module.fail_json(
-                msg="Parameter Error: "
-                + param_e.message
-                + ". Parameter: "
-                + param_e.parameter
-                + ". Expected: "
-                + param_e.expected_format
-                + ". Example: "
-                + param_e.example
-                + ". Documentation: "
-                + param_e.documentation_link
-            )
-        except AnsibleCMFormatException as format_e:
-            module.fail_json(
-                msg="Format Error: "
-                + format_e.message
-                + ". Parameter: "
-                + format_e.parameter
-                + ". Expected: "
-                + format_e.expected_format
-                + ". Example: "
-                + format_e.example
-                + ". Documentation: "
-                + format_e.documentation_link
-            )
-        except AnsibleCMResponseException as response_e:
-            module.fail_json(
-                msg="Response Error: "
-                + response_e.message
-                + ". Parameter: "
-                + response_e.parameter
-                + ". Expected: "
-                + response_e.expected_format
-                + ". Example: "
-                + response_e.example
-                + ". Documentation: "
-                + response_e.documentation_link
-            )
-        except AnsibleCMException as custom_e:
-            module.fail_json(
-                msg=custom_e.message
-                + ". Documentation: "
-                + DOCUMENTATION_LINKS.get(
-                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-                )
-            )
 
-    elif module.params.get("op_type") == "patch":
-        try:
+        elif module.params.get("op_type") == "patch":
             changed, response, diff = idempotent_patch(
                 module, client,
                 endpoint="configs/interfaces",
@@ -823,105 +746,33 @@ def main():
                     node=module.params.get("localNode"),
                     interface_id=module.params.get("interface_id"),
                     port=module.params.get("port"),
-                auto_gen_ca_id=module.params.get("auto_gen_ca_id"),
-                auto_registration=module.params.get("auto_registration"),
-                allow_unregistered=module.params.get("allow_unregistered"),
-                cert_user_field=module.params.get("cert_user_field"),
-                custom_uid_size=module.params.get("custom_uid_size"),
-                custom_uid_v2=module.params.get("custom_uid_v2"),
-                default_connection=module.params.get("default_connection"),
-                kmip_enable_hard_delete=module.params.get("kmip_enable_hard_delete"),
-                maximum_tls_version=module.params.get("maximum_tls_version"),
-                meta=module.params.get("meta"),
-                minimum_tls_version=module.params.get("minimum_tls_version"),
-                mode=module.params.get("mode"),
-                registration_token=module.params.get("registration_token"),
-                trusted_cas=module.params.get("trusted_cas"),
-                local_auto_gen_attributes=module.params.get(
-                    "local_auto_gen_attributes"
-                ),
-                tls_ciphers=module.params.get("tls_ciphers"),
+                    auto_gen_ca_id=module.params.get("auto_gen_ca_id"),
+                    auto_registration=module.params.get("auto_registration"),
+                    allow_unregistered=module.params.get("allow_unregistered"),
+                    cert_user_field=module.params.get("cert_user_field"),
+                    custom_uid_size=module.params.get("custom_uid_size"),
+                    custom_uid_v2=module.params.get("custom_uid_v2"),
+                    default_connection=module.params.get("default_connection"),
+                    kmip_enable_hard_delete=module.params.get("kmip_enable_hard_delete"),
+                    maximum_tls_version=module.params.get("maximum_tls_version"),
+                    meta=module.params.get("meta"),
+                    minimum_tls_version=module.params.get("minimum_tls_version"),
+                    mode=module.params.get("mode"),
+                    registration_token=module.params.get("registration_token"),
+                    trusted_cas=module.params.get("trusted_cas"),
+                    local_auto_gen_attributes=module.params.get(
+                        "local_auto_gen_attributes"
+                    ),
+                    tls_ciphers=module.params.get("tls_ciphers"),
                 ),
             )
             result["changed"] = changed
             result["response"] = response
             if diff:
                 result["diff"] = diff
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                    + ". Documentation: "
-                    + DOCUMENTATION_LINKS.get(
-                        "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-                    )
-                )
-        except AnsibleCMValidationException as validation_e:
-            module.fail_json(
-                msg="Validation Error: "
-                + validation_e.message
-                + ". Parameter: "
-                + validation_e.parameter
-                + ". Expected: "
-                + validation_e.expected_format
-                + ". Example: "
-                + validation_e.example
-                + ". Documentation: "
-                + validation_e.documentation_link
-            )
-        except AnsibleCMParameterException as param_e:
-            module.fail_json(
-                msg="Parameter Error: "
-                + param_e.message
-                + ". Parameter: "
-                + param_e.parameter
-                + ". Expected: "
-                + param_e.expected_format
-                + ". Example: "
-                + param_e.example
-                + ". Documentation: "
-                + param_e.documentation_link
-            )
-        except AnsibleCMFormatException as format_e:
-            module.fail_json(
-                msg="Format Error: "
-                + format_e.message
-                + ". Parameter: "
-                + format_e.parameter
-                + ". Expected: "
-                + format_e.expected_format
-                + ". Example: "
-                + format_e.example
-                + ". Documentation: "
-                + format_e.documentation_link
-            )
-        except AnsibleCMResponseException as response_e:
-            module.fail_json(
-                msg="Response Error: "
-                + response_e.message
-                + ". Parameter: "
-                + response_e.parameter
-                + ". Expected: "
-                + response_e.expected_format
-                + ". Example: "
-                + response_e.example
-                + ". Documentation: "
-                + response_e.documentation_link
-            )
-        except AnsibleCMException as custom_e:
-            module.fail_json(
-                msg=custom_e.message
-                + ". Documentation: "
-                + DOCUMENTATION_LINKS.get(
-                    "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-                )
-            )
 
-    else:
-        module.fail_json(msg="invalid op_type")
+        else:
+            module.fail_json(msg="invalid op_type")
 
     module.exit_json(**result)
 

@@ -21,46 +21,9 @@ description:
 version_added: "1.0.0"
 author:
   - Anurag Jain (@anugram)
+extends_documentation_fragment:
+  - thalesgroup.ciphertrust.ciphertrust
 options:
-    localNode:
-      description:
-        - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port
-      required: true
-      type: dict
-      suboptions:
-        server_ip:
-          description: CM Server IP or FQDN
-          type: str
-          required: true
-        server_private_ip:
-          description: internal or private IP of the CM Server, if different from the server_ip
-          type: str
-          required: false
-          default: 10.10.10.10
-        server_port:
-          description: Port on which CM server is listening
-          type: int
-          required: false
-          default: 5432
-        user:
-          description: admin username of CM
-          type: str
-          required: true
-        password:
-          description: admin password of CM
-          type: str
-          required: true
-        verify:
-          description: if SSL verification is required
-          type: bool
-          required: false
-          default: false
-        auth_domain_path:
-          description: user's domain path
-          type: str
-          required: false
-          default: ''
     op_type:
       description: Operation to be performed
       choices: ['create', 'patch', 'add-api-url', 'update-api-url', 'delete-api-url']
@@ -957,41 +920,59 @@ EXAMPLES = """
         auth_domain_path:
 """
 
-RETURN = """
-api_calls:
-  description: Number of API calls made to the CipherTrust Manager
-  type: int
-  returned: always
-  sample: 5
-cache_info:
-  description: Cache performance information
-  type: dict
-  returned: always
-  contains:
-    hits:
-      description: Number of cache hits
-      type: int
-      returned: always
-      sample: 2
-    misses:
-      description: Number of cache misses
-      type: int
-      returned: always
-      sample: 3
-    size:
-      description: Current cache size
-      type: int
-      returned: always
-      sample: 10
-execution_time:
-  description: Total execution time in seconds
-  type: float
-  returned: always
-  sample: 2.345
+RETURN = r"""
+changed:
+    description: Whether any change was made to CipherTrust Manager state.
+    returned: always
+    type: bool
+    sample: true
+response:
+    description:
+      - The raw response dictionary from the CipherTrust Manager API, or the
+        existing resource when one was found during the GET-before-write
+        idempotency check.
+    returned: when a write was attempted or an existing resource matched
+    type: dict
+    contains:
+        id:
+            description: Unique identifier of the resource on CipherTrust Manager.
+            type: str
+            returned: when applicable
+            sample: "4ae2649a705e479589ef65759d3287f6"
+        name:
+            description: Name of the resource.
+            type: str
+            returned: when applicable
+            sample: "myResource"
+        uri:
+            description: Canonical resource URI.
+            type: str
+            returned: when applicable
+            sample: "kylo:kylo:data-protection:dpg-policies:4ae2649a705e"
+        createdAt:
+            description: RFC3339 timestamp of resource creation.
+            type: str
+            returned: when applicable
+        updatedAt:
+            description: RFC3339 timestamp of last modification.
+            type: str
+            returned: when applicable
+diff:
+    description: Present only in C(--diff) mode when a change occurred.
+    returned: when diff mode is enabled and the module made a change
+    type: dict
+    contains:
+        before:
+            description: Prior state of the resource (empty for create operations).
+            type: dict
+        after:
+            description: Target state after the change (or empty-body create target in check mode).
+            type: dict
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
+    ciphertrust_operation,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
@@ -1009,12 +990,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent
     check_mode_action,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
     AnsibleCMValidationException,
     AnsibleCMParameterException,
     AnsibleCMFormatException,
-    AnsibleCMResponseException,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation import (
     validate_required_parameters,
@@ -1368,8 +1346,8 @@ def main():
 
     op_type = module.params.get("op_type")
 
-    if op_type == "create":
-        try:
+    with ciphertrust_operation(module):
+        if op_type == "create":
             changed, response, diff = idempotent_create(
                 module, client,
                 endpoint="data-protection/dpg-policies",
@@ -1387,52 +1365,8 @@ def main():
             result["response"] = response
             if diff:
                 result["diff"] = diff
-        except AnsibleCMValidationException as e:
-            module.fail_json(
-                msg=f"Validation failed for op_type 'create': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMParameterException as e:
-            module.fail_json(
-                msg=f"Parameter error for op_type 'create': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMFormatException as e:
-            module.fail_json(
-                msg=f"Format error for op_type 'create': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMResponseException as e:
-            module.fail_json(
-                msg=f"Response validation error for op_type 'create': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except CMApiException as api_e:
-            error_msg = f"API error for op_type 'create': {api_e.message}"
-            if api_e.api_error_code:
-                error_msg += f" (status code: {api_e.api_error_code})"
-            if api_e.parameter:
-                error_msg += f". Parameter: {api_e.parameter}"
-            if api_e.expected_format:
-                error_msg += f". Expected: {api_e.expected_format}"
-            if api_e.example:
-                error_msg += f". Example: {api_e.example}"
-            module.fail_json(
-                msg=error_msg,
-                api_error_code=api_e.api_error_code,
-                parameter=api_e.parameter,
-                expected_format=api_e.expected_format,
-                example=api_e.example,
-                documentation_link=api_e.documentation_link
-            )
-        except AnsibleCMException as custom_e:
-            module.fail_json(
-                msg=f"Error for op_type 'create': {custom_e.message}. "
-                    f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
-            )
 
-    elif op_type == "patch":
-        try:
+        elif op_type == "patch":
             changed, response, diff = idempotent_patch(
                 module, client,
                 endpoint="data-protection/dpg-policies",
@@ -1449,52 +1383,8 @@ def main():
             result["response"] = response
             if diff:
                 result["diff"] = diff
-        except AnsibleCMValidationException as e:
-            module.fail_json(
-                msg=f"Validation failed for op_type 'patch': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMParameterException as e:
-            module.fail_json(
-                msg=f"Parameter error for op_type 'patch': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMFormatException as e:
-            module.fail_json(
-                msg=f"Format error for op_type 'patch': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMResponseException as e:
-            module.fail_json(
-                msg=f"Response validation error for op_type 'patch': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except CMApiException as api_e:
-            error_msg = f"API error for op_type 'patch': {api_e.message}"
-            if api_e.api_error_code:
-                error_msg += f" (status code: {api_e.api_error_code})"
-            if api_e.parameter:
-                error_msg += f". Parameter: {api_e.parameter}"
-            if api_e.expected_format:
-                error_msg += f". Expected: {api_e.expected_format}"
-            if api_e.example:
-                error_msg += f". Example: {api_e.example}"
-            module.fail_json(
-                msg=error_msg,
-                api_error_code=api_e.api_error_code,
-                parameter=api_e.parameter,
-                expected_format=api_e.expected_format,
-                example=api_e.example,
-                documentation_link=api_e.documentation_link
-            )
-        except AnsibleCMException as custom_e:
-            module.fail_json(
-                msg=f"Error for op_type 'patch': {custom_e.message}. "
-                    f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
-            )
 
-    elif op_type == "add-api-url":
-        try:
+        elif op_type == "add-api-url":
             check_mode_action(module)
             response = dpgPolicyAddAPIUrl(
                 node=module.params.get("localNode"),
@@ -1531,52 +1421,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except AnsibleCMValidationException as e:
-            module.fail_json(
-                msg=f"Validation failed for op_type 'add-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMParameterException as e:
-            module.fail_json(
-                msg=f"Parameter error for op_type 'add-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMFormatException as e:
-            module.fail_json(
-                msg=f"Format error for op_type 'add-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMResponseException as e:
-            module.fail_json(
-                msg=f"Response validation error for op_type 'add-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except CMApiException as api_e:
-            error_msg = f"API error for op_type 'add-api-url': {api_e.message}"
-            if api_e.api_error_code:
-                error_msg += f" (status code: {api_e.api_error_code})"
-            if api_e.parameter:
-                error_msg += f". Parameter: {api_e.parameter}"
-            if api_e.expected_format:
-                error_msg += f". Expected: {api_e.expected_format}"
-            if api_e.example:
-                error_msg += f". Example: {api_e.example}"
-            module.fail_json(
-                msg=error_msg,
-                api_error_code=api_e.api_error_code,
-                parameter=api_e.parameter,
-                expected_format=api_e.expected_format,
-                example=api_e.example,
-                documentation_link=api_e.documentation_link
-            )
-        except AnsibleCMException as custom_e:
-            module.fail_json(
-                msg=f"Error for op_type 'add-api-url': {custom_e.message}. "
-                    f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
-            )
 
-    elif op_type == "update-api-url":
-        try:
+        elif op_type == "update-api-url":
             check_mode_action(module)
             response = dpgPolicyUpdateAPIUrl(
                 node=module.params.get("localNode"),
@@ -1613,52 +1459,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except AnsibleCMValidationException as e:
-            module.fail_json(
-                msg=f"Validation failed for op_type 'update-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMParameterException as e:
-            module.fail_json(
-                msg=f"Parameter error for op_type 'update-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMFormatException as e:
-            module.fail_json(
-                msg=f"Format error for op_type 'update-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMResponseException as e:
-            module.fail_json(
-                msg=f"Response validation error for op_type 'update-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except CMApiException as api_e:
-            error_msg = f"API error for op_type 'update-api-url': {api_e.message}"
-            if api_e.api_error_code:
-                error_msg += f" (status code: {api_e.api_error_code})"
-            if api_e.parameter:
-                error_msg += f". Parameter: {api_e.parameter}"
-            if api_e.expected_format:
-                error_msg += f". Expected: {api_e.expected_format}"
-            if api_e.example:
-                error_msg += f". Example: {api_e.example}"
-            module.fail_json(
-                msg=error_msg,
-                api_error_code=api_e.api_error_code,
-                parameter=api_e.parameter,
-                expected_format=api_e.expected_format,
-                example=api_e.example,
-                documentation_link=api_e.documentation_link
-            )
-        except AnsibleCMException as custom_e:
-            module.fail_json(
-                msg=f"Error for op_type 'update-api-url': {custom_e.message}. "
-                    f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
-            )
 
-    elif op_type == "delete-api-url":
-        try:
+        elif op_type == "delete-api-url":
             check_mode_action(module)
             response = dpgPolicyDeleteAPIUrl(
                 node=module.params.get("localNode"),
@@ -1667,52 +1469,9 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except AnsibleCMValidationException as e:
-            module.fail_json(
-                msg=f"Validation failed for op_type 'delete-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMParameterException as e:
-            module.fail_json(
-                msg=f"Parameter error for op_type 'delete-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMFormatException as e:
-            module.fail_json(
-                msg=f"Format error for op_type 'delete-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except AnsibleCMResponseException as e:
-            module.fail_json(
-                msg=f"Response validation error for op_type 'delete-api-url': {e.message}. "
-                    f"Documentation: {e.documentation_link if e.documentation_link else 'https://thalesdocs.com/ctp/con/dpg/latest/admin/'}"
-            )
-        except CMApiException as api_e:
-            error_msg = f"API error for op_type 'delete-api-url': {api_e.message}"
-            if api_e.api_error_code:
-                error_msg += f" (status code: {api_e.api_error_code})"
-            if api_e.parameter:
-                error_msg += f". Parameter: {api_e.parameter}"
-            if api_e.expected_format:
-                error_msg += f". Expected: {api_e.expected_format}"
-            if api_e.example:
-                error_msg += f". Example: {api_e.example}"
-            module.fail_json(
-                msg=error_msg,
-                api_error_code=api_e.api_error_code,
-                parameter=api_e.parameter,
-                expected_format=api_e.expected_format,
-                example=api_e.example,
-                documentation_link=api_e.documentation_link
-            )
-        except AnsibleCMException as custom_e:
-            module.fail_json(
-                msg=f"Error for op_type 'delete-api-url': {custom_e.message}. "
-                    f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
-            )
 
-    else:
-        module.fail_json(msg="invalid op_type")
+        else:
+            module.fail_json(msg="invalid op_type")
 
     module.exit_json(**result)
 

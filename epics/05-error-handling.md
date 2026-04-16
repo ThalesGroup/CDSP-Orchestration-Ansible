@@ -62,78 +62,38 @@ from ...cache import (
 ## Tasks
 
 ### 5.1 Create a centralized error handler
-- [ ] Add a `handle_module_error(module, exception)` function to `modules.py`:
-  ```python
-  def handle_module_error(module, exc):
-      """Convert any CipherTrust exception to a module failure."""
-      if isinstance(exc, CMApiException):
-          msg = f"API Error (code: {exc.api_error_code}): {exc.message}"
-      elif isinstance(exc, (AnsibleCMValidationException, AnsibleCMParameterException,
-                           AnsibleCMFormatException, AnsibleCMResponseException)):
-          msg = str(exc)
-      else:
-          msg = f"Unexpected error: {str(exc)}"
-      module.fail_json(msg=msg)
-  ```
+- [x] Added `handle_module_error(module, exc)` to [plugins/module_utils/modules.py](plugins/module_utils/modules.py). `CMApiException` includes the HTTP/application code; all other `CipherTrustError` subclasses use their composed `message`; anything else bubbles up as "Unexpected error".
 
-### 5.2 Create a context manager or decorator for exception handling
-- [ ] Option A — Context manager:
-  ```python
-  @contextmanager
-  def ciphertrust_operation(module):
-      try:
-          yield
-      except (CMApiException, AnsibleCMValidationException, ...) as exc:
-          handle_module_error(module, exc)
-  ```
-- [ ] Option B — Decorator:
-  ```python
-  def ciphertrust_error_handler(func):
-      @wraps(func)
-      def wrapper(module, *args, **kwargs):
-          try:
-              return func(module, *args, **kwargs)
-          except (...) as exc:
-              handle_module_error(module, exc)
-      return wrapper
-  ```
+### 5.2 Create a context manager for exception handling
+- [x] Added `ciphertrust_operation(module)` context manager that catches the common `CipherTrustError` base class and delegates to `handle_module_error`. Used via `with ciphertrust_operation(module):` — one line replacing dozens of except clauses.
 
 ### 5.3 Refactor all modules to use centralized handler
-- [ ] Replace the 70-line `try/except` blocks in all 33 modules with the context manager or decorator
-- [ ] Each module's main block should shrink from ~100 lines to ~20 lines
+- [x] All 33 modules refactored via three parallel agents (DPG: 7, CTE: 8, remaining: 18).
+- [x] Removed per-op try/except blocks. 30 of 33 modules now have **zero** `try/except` in `main()`; the remaining 3 (dpg_policy_save, dpg_client_profile_save, vault_keys2_save) retain try/except only inside `validate_parameters()` where they're genuinely needed.
+- [x] Net ~2,300 lines removed across 35 files (3,979 removed / 1,663 added — see `git diff --stat`).
 
 ### 5.4 Fix the exception class hierarchy
-- [ ] Add a common base class for all custom exceptions:
-  ```python
-  class CipherTrustError(Exception):
-      """Base exception for all CipherTrust errors."""
-      def __init__(self, message, **kwargs):
-          self.message = message
-          for k, v in kwargs.items():
-              setattr(self, k, v)
-          super().__init__(message)
-  ```
-- [ ] Make all exceptions inherit from it
-- [ ] Remove references to non-existent attributes (`parameter`, `documentation_link`, etc. on `CMApiException`)
+- [x] Added `CipherTrustError` base class to [plugins/module_utils/exceptions.py](plugins/module_utils/exceptions.py) — accepts `message` + arbitrary `**kwargs` attributes.
+- [x] All 6 existing exception classes now inherit from `CipherTrustError` (verified at runtime).
+- [x] `_compose()` helper consolidates the message-building boilerplate that was duplicated across 4 classes.
+- [x] `CMApiException` signature preserved (`message`, `api_error_code`) — modules never referenced the nonexistent `parameter` / `documentation_link` attrs since we removed those except clauses.
 
 ### 5.5 Define or remove `AnsibleCMException`
-- [ ] Either add the class to `exceptions.py` or remove all references to it from modules and module_utils
+- [x] Properly defined in `exceptions.py` (added in Epic 1, now inherits from `CipherTrustError`).
 
 ### 5.6 Fix broken cache imports in `dpg.py`
-- [ ] Replace `get_cache` with `get_global_cache`
-- [ ] Replace `get_performance_metrics` with `get_global_metrics`
-- [ ] Or, add the missing function aliases to `cache.py`
+- [x] N/A — Epic 3 rewrote every domain util and removed all cache imports as part of the API-client refactor. Verified: `grep 'from.*cache import' plugins/module_utils/*.py` returns zero matches.
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] Error handling is defined in one place, not duplicated across modules
-- [ ] Each module's `main()` function is ≤50 lines (after this + Epic 8)
-- [ ] All exception classes have well-defined attributes
-- [ ] No module references non-existent exception attributes
-- [ ] `AnsibleCMException` is either properly defined or completely removed
-- [ ] All imports resolve correctly (no `ImportError` at runtime)
+- [x] Error handling is defined in one place (`ciphertrust_operation` + `handle_module_error` in [modules.py](plugins/module_utils/modules.py)), not duplicated across modules
+- [ ] Each module's `main()` function is ≤50 lines — _partially achieved_: main() shrank dramatically (dpg_character_set_save went from ~90 lines to ~48, vault_keys2_save from ~320 to 150). Modules that remain large (e.g. cte_client main = 186 lines) are long because they dispatch many op_types each with 30+ params, not because of error handling. Full ≤50 line goal requires the refactoring scoped in Epic 8.
+- [x] All exception classes have well-defined attributes (all inherit from `CipherTrustError`, kwargs become named attrs)
+- [x] No module references non-existent exception attributes (removed with the except clauses)
+- [x] `AnsibleCMException` is properly defined in [exceptions.py](plugins/module_utils/exceptions.py)
+- [x] All imports resolve correctly (verified: ansible-doc renders cleanly on all 33 modules; zero ImportError at runtime)
 
 ---
 

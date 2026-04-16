@@ -23,11 +23,14 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
+from contextlib import contextmanager
+
 from ansible.module_utils.basic import AnsibleModule
-# from ansible.module_utils.basic import env_fallback
-# from ansible.module_utils.basic import missing_required_lib
-# from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-# from ansible.module_utils._text import to_native
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CipherTrustError,
+    CMApiException,
+)
 
 
 class ThalesCipherTrustModule:
@@ -119,3 +122,48 @@ def ciphertrust_argument_spec():
     """
     spec = _ciphertrust_common_argument_spec()
     return spec
+
+
+# ---------------------------------------------------------------------------
+# Centralized error handling
+# ---------------------------------------------------------------------------
+
+def handle_module_error(module, exc):
+    """Translate any collection-specific exception into a ``module.fail_json``.
+
+    * ``CMApiException`` → includes the HTTP/application error code.
+    * Any other ``CipherTrustError`` subclass → uses its composed ``message``.
+    * Anything else → bubbles up as "Unexpected error: <repr>".
+    """
+    if isinstance(exc, CMApiException):
+        code = getattr(exc, "api_error_code", None)
+        if code:
+            msg = "API Error (code: {0}): {1}".format(code, exc.message or "")
+        else:
+            msg = "API Error: {0}".format(exc.message or "")
+    elif isinstance(exc, CipherTrustError):
+        msg = exc.message or str(exc)
+    else:
+        msg = "Unexpected error: {0}".format(exc)
+    module.fail_json(msg=msg)
+
+
+@contextmanager
+def ciphertrust_operation(module):
+    """Context manager that catches every CipherTrust exception.
+
+    Replaces the 70-line repeated ``try/except`` block that was present in
+    every module.  Usage::
+
+        with ciphertrust_operation(module):
+            changed, response, diff = idempotent_create(...)
+            result["changed"] = changed
+            result["response"] = response
+
+    Any raised :class:`CipherTrustError` (or subclass) triggers a clean
+    ``module.fail_json`` via :func:`handle_module_error`.
+    """
+    try:
+        yield
+    except CipherTrustError as exc:
+        handle_module_error(module, exc)

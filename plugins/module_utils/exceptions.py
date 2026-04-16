@@ -6,17 +6,13 @@
 # Licensed under the MIT License
 #
 
-"""This module adds custom exceptions for Thales CipherTrust modules.
+"""Custom exception hierarchy for Thales CipherTrust Ansible modules.
 
-In order to use this module, include it as part of a custom
-module as shown below.
-  from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-      CMApiException,
-      AnsibleCMValidationException,
-      AnsibleCMParameterException,
-      AnsibleCMFormatException,
-      AnsibleCMResponseException,
-  )
+All exceptions inherit from :class:`CipherTrustError` so modules can catch
+them uniformly with a single ``except CipherTrustError:``.  The
+module-level context manager ``ciphertrust_operation`` in
+``modules.py`` uses this to convert any collection-specific error into a
+clean ``module.fail_json`` call.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -24,162 +20,141 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-class AnsibleCMException(Exception):
-    """General-purpose exception for CipherTrust Ansible modules."""
+_DOCS_LINK = (
+    "https://docs.ansible.com/ansible/latest/collections/thalesgroup/ciphertrust/"
+)
+
+
+class CipherTrustError(Exception):
+    """Common base class for every exception raised by this collection.
+
+    Carries a ``message`` attribute plus any number of structured
+    keyword attributes (e.g. ``parameter``, ``api_error_code``) that
+    subclasses set for richer error reporting.
+    """
+
+    def __init__(self, message="", **kwargs):
+        self.message = message or ""
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+        super().__init__(self.message)
 
     def __str__(self):
         return self.message if self.message else super().__str__()
 
+
+class AnsibleCMException(CipherTrustError):
+    """General-purpose CipherTrust Ansible error.
+
+    Used when a module_util needs to signal a module failure that isn't
+    an API error and isn't a parameter-validation error.
+    """
+
     def __init__(self, message=""):
-        super().__init__(message)
-        self.message = message
+        super().__init__(message=message)
 
 
-class CMApiException(Exception):
-    """Exception for CM API errors"""
+class CMApiException(CipherTrustError):
+    """Raised when the CipherTrust Manager REST API returns an error.
+
+    ``api_error_code`` is the HTTP status code (or application-level
+    code from ``codeDesc``) reported by CM.
+    """
+
+    def __init__(self, message="", api_error_code=None):
+        super().__init__(message=message, api_error_code=api_error_code)
 
     def __str__(self):
         if self.api_error_code and self.message:
             return "{0}: {1}".format(self.api_error_code, self.message)
-
         return super().__str__()
 
-    def __init__(self, message, api_error_code):
-        if not message and not api_error_code:
-            super().__init__()
-        elif not message:
-            super().__init__(api_error_code)
-        else:
-            super().__init__(message)
 
-        self.message = message
-        self.api_error_code = api_error_code
-        # super().__init__(self.api_error_code + ": " + self.message)
+def _compose(message, **fields):
+    """Internal helper: build ``message | Key: val | ... | Documentation: …``."""
+    parts = [message]
+    for key, val in fields.items():
+        if val:
+            parts.append("{0}: {1}".format(key, val))
+    parts.append("Documentation: " + _DOCS_LINK)
+    return " | ".join(parts)
 
 
-class AnsibleCMValidationException(Exception):
-    """Exception for validation errors - parameter validation issues"""
+class AnsibleCMValidationException(CipherTrustError):
+    """Parameter validation failure (required/missing/invalid combination)."""
 
-    def __str__(self):
-        return self.message
-
-    def __init__(self, message, parameter=None, expected_format=None, example=None):
-        self.message = message
-        self.parameter = parameter
-        self.expected_format = expected_format
-        self.example = example
-
-        # Build enhanced error message
-        error_parts = [message]
-        if parameter:
-            error_parts.append(f"Parameter: '{parameter}'")
-        if expected_format:
-            error_parts.append(f"Expected: {expected_format}")
-        if example:
-            error_parts.append(f"Example: {example}")
-
-        error_parts.append("Documentation: https://docs.ansible.com/ansible/latest/collections/thalesgroup/ciphertrust/")
-
-        self.message = " | ".join(error_parts)
-
-        # Store individual components for programmatic access
-        self.parameter = parameter
-        self.expected_format = expected_format
-        self.example = example
+    def __init__(self, message, parameter=None, expected_format=None, example=None,
+                 documentation_link=None):
+        composed = _compose(
+            message, Parameter=parameter, Expected=expected_format, Example=example,
+        )
+        super().__init__(
+            message=composed,
+            parameter=parameter,
+            expected_format=expected_format,
+            example=example,
+            documentation_link=documentation_link or _DOCS_LINK,
+        )
 
 
-class AnsibleCMParameterException(Exception):
-    """Exception for parameter-related errors - missing required params, invalid values"""
+class AnsibleCMParameterException(CipherTrustError):
+    """Parameter usage error (wrong value, not allowed for op_type, etc.)."""
 
-    def __str__(self):
-        return self.message
-
-    def __init__(self, message, parameter=None, valid_values=None, example=None):
-        self.message = message
-        self.parameter = parameter
-        self.valid_values = valid_values
-        self.example = example
-
-        # Build enhanced error message
-        error_parts = [message]
-        if parameter:
-            error_parts.append(f"Parameter: '{parameter}'")
-        if valid_values:
-            error_parts.append(f"Valid values: {valid_values}")
-        if example:
-            error_parts.append(f"Example: {example}")
-
-        error_parts.append("Documentation: https://docs.ansible.com/ansible/latest/collections/thalesgroup/ciphertrust/")
-
-        self.message = " | ".join(error_parts)
-
-        # Store individual components for programmatic access
-        self.parameter = parameter
-        self.valid_values = valid_values
-        self.example = example
+    def __init__(self, message, parameter=None, valid_values=None, example=None,
+                 expected_format=None, documentation_link=None):
+        composed = _compose(
+            message, Parameter=parameter,
+            **{"Valid values": valid_values, "Expected": expected_format,
+               "Example": example},
+        )
+        super().__init__(
+            message=composed,
+            parameter=parameter,
+            valid_values=valid_values,
+            expected_format=expected_format,
+            example=example,
+            documentation_link=documentation_link or _DOCS_LINK,
+        )
 
 
-class AnsibleCMFormatException(Exception):
-    """Exception for format validation errors - regex pattern mismatches, invalid formats"""
+class AnsibleCMFormatException(CipherTrustError):
+    """Format/regex mismatch in a parameter value."""
 
-    def __str__(self):
-        return self.message
-
-    def __init__(self, message, parameter=None, expected_format=None, example=None, regex_pattern=None):
-        self.message = message
-        self.parameter = parameter
-        self.expected_format = expected_format
-        self.example = example
-        self.regex_pattern = regex_pattern
-
-        # Build enhanced error message
-        error_parts = [message]
-        if parameter:
-            error_parts.append(f"Parameter: '{parameter}'")
-        if expected_format:
-            error_parts.append(f"Expected format: {expected_format}")
-        if regex_pattern:
-            error_parts.append(f"Pattern: {regex_pattern}")
-        if example:
-            error_parts.append(f"Example: {example}")
-
-        error_parts.append("Documentation: https://docs.ansible.com/ansible/latest/collections/thalesgroup/ciphertrust/")
-
-        self.message = " | ".join(error_parts)
-
-        # Store individual components for programmatic access
-        self.parameter = parameter
-        self.expected_format = expected_format
-        self.example = example
-        self.regex_pattern = regex_pattern
+    def __init__(self, message, parameter=None, expected_format=None, example=None,
+                 regex_pattern=None, documentation_link=None):
+        composed = _compose(
+            message, Parameter=parameter,
+            **{"Expected format": expected_format, "Pattern": regex_pattern,
+               "Example": example},
+        )
+        super().__init__(
+            message=composed,
+            parameter=parameter,
+            expected_format=expected_format,
+            example=example,
+            regex_pattern=regex_pattern,
+            documentation_link=documentation_link or _DOCS_LINK,
+        )
 
 
-class AnsibleCMResponseException(Exception):
-    """Exception for API response validation errors"""
+class AnsibleCMResponseException(CipherTrustError):
+    """Unexpected or malformed API response body."""
 
-    def __str__(self):
-        return self.message
-
-    def __init__(self, message, response=None, expected_fields=None, actual_fields=None):
-        self.message = message
-        self.response = response
-        self.expected_fields = expected_fields
-        self.actual_fields = actual_fields
-
-        # Build enhanced error message
-        error_parts = [message]
-        if expected_fields:
-            error_parts.append(f"Expected fields: {expected_fields}")
-        if actual_fields:
-            error_parts.append(f"Actual fields: {actual_fields}")
-        if response:
-            error_parts.append(f"Response: {response}")
-
-        error_parts.append("Documentation: https://docs.ansible.com/ansible/latest/collections/thalesgroup/ciphertrust/")
-
-        self.message = " | ".join(error_parts)
-
-        # Store individual components for programmatic access
-        self.response = response
-        self.expected_fields = expected_fields
-        self.actual_fields = actual_fields
+    def __init__(self, message, response=None, expected_fields=None,
+                 actual_fields=None, parameter=None, expected_format=None,
+                 example=None, documentation_link=None):
+        composed = _compose(
+            message,
+            **{"Expected fields": expected_fields, "Actual fields": actual_fields,
+               "Response": response},
+        )
+        super().__init__(
+            message=composed,
+            response=response,
+            expected_fields=expected_fields,
+            actual_fields=actual_fields,
+            parameter=parameter,
+            expected_format=expected_format,
+            example=example,
+            documentation_link=documentation_link or _DOCS_LINK,
+        )

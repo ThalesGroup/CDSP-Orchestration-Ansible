@@ -21,46 +21,9 @@ description:
 version_added: "1.0.0"
 author:
   - Anurag Jain (@anugram)
+extends_documentation_fragment:
+  - thalesgroup.ciphertrust.ciphertrust
 options:
-    localNode:
-      description:
-        - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port
-      required: true
-      type: dict
-      suboptions:
-        server_ip:
-          description: CM Server IP or FQDN
-          type: str
-          required: true
-        server_private_ip:
-          description: internal or private IP of the CM Server, if different from the server_ip
-          type: str
-          required: false
-          default: 10.10.10.10
-        server_port:
-          description: Port on which CM server is listening
-          type: int
-          required: false
-          default: 5432
-        user:
-          description: admin username of CM
-          type: str
-          required: true
-        password:
-          description: admin password of CM
-          type: str
-          required: true
-        verify:
-          description: if SSL verification is required
-          type: bool
-          required: false
-          default: false
-        auth_domain_path:
-          description: user's domain path
-          type: str
-          required: false
-          default: ''
     op_type:
         description: Operation to be performed
         choices: [create, patch, create_version]
@@ -788,7 +751,7 @@ options:
 
 EXAMPLES = """
 - name: "Create Key"
-  thalesgroup.ciphertrust.vault_keys2_create:
+  thalesgroup.ciphertrust.vault_keys2_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"
@@ -803,7 +766,7 @@ EXAMPLES = """
     usageMask: 3145740
 
 - name: "Patch Key"
-  thalesgroup.ciphertrust.vault_keys2_create:
+  thalesgroup.ciphertrust.vault_keys2_save:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"
@@ -816,11 +779,49 @@ EXAMPLES = """
     unexportable: false
 """
 
-RETURN = """
+RETURN = r"""
+changed:
+    description: Whether any change was made to CipherTrust Manager state.
+    returned: always
+    type: bool
+    sample: true
+response:
+    description:
+      - The raw response dictionary from the CipherTrust Manager API, or the
+        existing resource when one was found during the GET-before-write
+        idempotency check.
+    returned: when a write was attempted or an existing resource matched
+    type: dict
+    contains:
+        id:
+            description: Unique identifier of the resource on CipherTrust Manager.
+            type: str
+            returned: when applicable
+        name:
+            description: Name of the resource.
+            type: str
+            returned: when applicable
+        uri:
+            description: Canonical resource URI.
+            type: str
+            returned: when applicable
+        createdAt:
+            description: RFC3339 timestamp of resource creation.
+            type: str
+            returned: when applicable
+        updatedAt:
+            description: RFC3339 timestamp of last modification.
+            type: str
+            returned: when applicable
+diff:
+    description: Present only in C(--diff) mode when a change occurred.
+    returned: when diff mode is enabled and the module made a change
+    type: dict
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
+    ciphertrust_operation,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
@@ -836,12 +837,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent
     check_mode_action,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
     AnsibleCMValidationException,
     AnsibleCMParameterException,
     AnsibleCMFormatException,
-    AnsibleCMResponseException,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation import (
     validate_required_parameters,
@@ -1378,8 +1376,8 @@ def main():
 
     client = CipherTrustClient(module.params.get("localNode"))
 
-    if module.params.get("op_type") == "create":
-        try:
+    with ciphertrust_operation(module):
+        if module.params.get("op_type") == "create":
             changed, response, diff = idempotent_create(
                 module, client,
                 endpoint="vault/keys2",
@@ -1449,73 +1447,8 @@ def main():
             result["response"] = response
             if diff:
                 result["diff"] = diff
-        except CMApiException as api_e:
-            error_msg = "API Error"
-            if api_e.api_error_code:
-                error_msg += f" (code: {api_e.api_error_code})"
-            if api_e.parameter:
-                error_msg += f". Parameter: {api_e.parameter}"
-            if api_e.expected_format:
-                error_msg += f". Expected: {api_e.expected_format}"
-            if api_e.example:
-                error_msg += f". Example: {api_e.example}"
-            error_msg += f". Message: {api_e.message}"
-            if api_e.documentation_link:
-                error_msg += f". Documentation: {api_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMValidationException as val_e:
-            error_msg = "Validation Error"
-            if val_e.parameter:
-                error_msg += f". Parameter: {val_e.parameter}"
-            if val_e.expected_format:
-                error_msg += f". Expected: {val_e.expected_format}"
-            if val_e.example:
-                error_msg += f". Example: {val_e.example}"
-            error_msg += f". Message: {val_e.message}"
-            if val_e.documentation_link:
-                error_msg += f". Documentation: {val_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMParameterException as param_e:
-            error_msg = "Parameter Error"
-            if param_e.parameter:
-                error_msg += f". Parameter: {param_e.parameter}"
-            if param_e.expected_format:
-                error_msg += f". Expected: {param_e.expected_format}"
-            if param_e.example:
-                error_msg += f". Example: {param_e.example}"
-            error_msg += f". Message: {param_e.message}"
-            if param_e.documentation_link:
-                error_msg += f". Documentation: {param_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMFormatException as format_e:
-            error_msg = "Format Error"
-            if format_e.parameter:
-                error_msg += f". Parameter: {format_e.parameter}"
-            if format_e.expected_format:
-                error_msg += f". Expected: {format_e.expected_format}"
-            if format_e.example:
-                error_msg += f". Example: {format_e.example}"
-            error_msg += f". Message: {format_e.message}"
-            if format_e.documentation_link:
-                error_msg += f". Documentation: {format_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMResponseException as resp_e:
-            error_msg = "Response Validation Error"
-            if resp_e.parameter:
-                error_msg += f". Parameter: {resp_e.parameter}"
-            if resp_e.expected_format:
-                error_msg += f". Expected: {resp_e.expected_format}"
-            if resp_e.example:
-                error_msg += f". Example: {resp_e.example}"
-            error_msg += f". Message: {resp_e.message}"
-            if resp_e.documentation_link:
-                error_msg += f". Documentation: {resp_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "patch":
-        try:
+        elif module.params.get("op_type") == "patch":
             changed, response, diff = idempotent_patch(
                 module, client,
                 endpoint="vault/keys2",
@@ -1548,73 +1481,8 @@ def main():
             result["response"] = response
             if diff:
                 result["diff"] = diff
-        except CMApiException as api_e:
-            error_msg = "API Error"
-            if api_e.api_error_code:
-                error_msg += f" (code: {api_e.api_error_code})"
-            if api_e.parameter:
-                error_msg += f". Parameter: {api_e.parameter}"
-            if api_e.expected_format:
-                error_msg += f". Expected: {api_e.expected_format}"
-            if api_e.example:
-                error_msg += f". Example: {api_e.example}"
-            error_msg += f". Message: {api_e.message}"
-            if api_e.documentation_link:
-                error_msg += f". Documentation: {api_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMValidationException as val_e:
-            error_msg = "Validation Error"
-            if val_e.parameter:
-                error_msg += f". Parameter: {val_e.parameter}"
-            if val_e.expected_format:
-                error_msg += f". Expected: {val_e.expected_format}"
-            if val_e.example:
-                error_msg += f". Example: {val_e.example}"
-            error_msg += f". Message: {val_e.message}"
-            if val_e.documentation_link:
-                error_msg += f". Documentation: {val_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMParameterException as param_e:
-            error_msg = "Parameter Error"
-            if param_e.parameter:
-                error_msg += f". Parameter: {param_e.parameter}"
-            if param_e.expected_format:
-                error_msg += f". Expected: {param_e.expected_format}"
-            if param_e.example:
-                error_msg += f". Example: {param_e.example}"
-            error_msg += f". Message: {param_e.message}"
-            if param_e.documentation_link:
-                error_msg += f". Documentation: {param_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMFormatException as format_e:
-            error_msg = "Format Error"
-            if format_e.parameter:
-                error_msg += f". Parameter: {format_e.parameter}"
-            if format_e.expected_format:
-                error_msg += f". Expected: {format_e.expected_format}"
-            if format_e.example:
-                error_msg += f". Example: {format_e.example}"
-            error_msg += f". Message: {format_e.message}"
-            if format_e.documentation_link:
-                error_msg += f". Documentation: {format_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMResponseException as resp_e:
-            error_msg = "Response Validation Error"
-            if resp_e.parameter:
-                error_msg += f". Parameter: {resp_e.parameter}"
-            if resp_e.expected_format:
-                error_msg += f". Expected: {resp_e.expected_format}"
-            if resp_e.example:
-                error_msg += f". Example: {resp_e.example}"
-            error_msg += f". Message: {resp_e.message}"
-            if resp_e.documentation_link:
-                error_msg += f". Documentation: {resp_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    else:
-        try:
+        else:
             check_mode_action(module)
             response = version_create(
                 node=module.params.get("localNode"),
@@ -1639,70 +1507,6 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            error_msg = "API Error"
-            if api_e.api_error_code:
-                error_msg += f" (code: {api_e.api_error_code})"
-            if api_e.parameter:
-                error_msg += f". Parameter: {api_e.parameter}"
-            if api_e.expected_format:
-                error_msg += f". Expected: {api_e.expected_format}"
-            if api_e.example:
-                error_msg += f". Example: {api_e.example}"
-            error_msg += f". Message: {api_e.message}"
-            if api_e.documentation_link:
-                error_msg += f". Documentation: {api_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMValidationException as val_e:
-            error_msg = "Validation Error"
-            if val_e.parameter:
-                error_msg += f". Parameter: {val_e.parameter}"
-            if val_e.expected_format:
-                error_msg += f". Expected: {val_e.expected_format}"
-            if val_e.example:
-                error_msg += f". Example: {val_e.example}"
-            error_msg += f". Message: {val_e.message}"
-            if val_e.documentation_link:
-                error_msg += f". Documentation: {val_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMParameterException as param_e:
-            error_msg = "Parameter Error"
-            if param_e.parameter:
-                error_msg += f". Parameter: {param_e.parameter}"
-            if param_e.expected_format:
-                error_msg += f". Expected: {param_e.expected_format}"
-            if param_e.example:
-                error_msg += f". Example: {param_e.example}"
-            error_msg += f". Message: {param_e.message}"
-            if param_e.documentation_link:
-                error_msg += f". Documentation: {param_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMFormatException as format_e:
-            error_msg = "Format Error"
-            if format_e.parameter:
-                error_msg += f". Parameter: {format_e.parameter}"
-            if format_e.expected_format:
-                error_msg += f". Expected: {format_e.expected_format}"
-            if format_e.example:
-                error_msg += f". Example: {format_e.example}"
-            error_msg += f". Message: {format_e.message}"
-            if format_e.documentation_link:
-                error_msg += f". Documentation: {format_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMResponseException as resp_e:
-            error_msg = "Response Validation Error"
-            if resp_e.parameter:
-                error_msg += f". Parameter: {resp_e.parameter}"
-            if resp_e.expected_format:
-                error_msg += f". Expected: {resp_e.expected_format}"
-            if resp_e.example:
-                error_msg += f". Example: {resp_e.example}"
-            error_msg += f". Message: {resp_e.message}"
-            if resp_e.documentation_link:
-                error_msg += f". Documentation: {resp_e.documentation_link}"
-            module.fail_json(msg=error_msg)
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
     module.exit_json(**result)
 

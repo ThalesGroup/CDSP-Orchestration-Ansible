@@ -20,46 +20,9 @@ description:
 version_added: "1.0.0"
 author:
   - Anurag Jain (@anugram)
+extends_documentation_fragment:
+  - thalesgroup.ciphertrust.ciphertrust
 options:
-  localNode:
-      description:
-        - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port
-      required: true
-      type: dict
-      suboptions:
-        server_ip:
-          description: CM Server IP or FQDN
-          type: str
-          required: true
-        server_private_ip:
-          description: internal or private IP of the CM Server, if different from the server_ip
-          type: str
-          required: false
-          default: 10.10.10.10
-        server_port:
-          description: Port on which CM server is listening
-          type: int
-          required: false
-          default: 5432
-        user:
-          description: admin username of CM
-          type: str
-          required: true
-        password:
-          description: admin password of CM
-          type: str
-          required: true
-        verify:
-          description: if SSL verification is required
-          type: bool
-          required: false
-          default: false
-        auth_domain_path:
-          description: user's domain path
-          type: str
-          required: false
-          default: ''
   op_type:
       description: Operation to be performed
       choices: ['put_certificate', 'get_certificate', 'enable', 'disable', 'restore-default-tls-ciphers', 'csr', 'auto-gen-server-cert', 'use-certificate']
@@ -240,12 +203,21 @@ EXAMPLES = """
     copy_from: "Name_Source_Interface"
 """
 
-RETURN = """
-
+RETURN = r"""
+changed:
+    description: Always C(true) when the action is performed; C(false) in check mode.
+    returned: always
+    type: bool
+    sample: true
+response:
+    description: Raw response payload from the CipherTrust Manager API.
+    returned: on success
+    type: dict
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
+    ciphertrust_operation,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.interfaces import (
     addCertificateToInterface,
@@ -259,10 +231,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.interfaces
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
     check_mode_action,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
 )
 
 _name = dict(
@@ -333,8 +301,8 @@ def main():
         changed=False,
     )
 
-    if module.params.get("op_type") == "put_certificate":
-        try:
+    with ciphertrust_operation(module):
+        if module.params.get("op_type") == "put_certificate":
             check_mode_action(module)
             response = addCertificateToInterface(
                 node=module.params.get("localNode"),
@@ -346,37 +314,15 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "get_certificate":
-        try:
+        elif module.params.get("op_type") == "get_certificate":
             response = getCertificateFromInterface(
                 node=module.params.get("localNode"),
                 interface_id=module.params.get("interface_id"),
             )
             result["response"] = response
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "enable":
-        try:
+        elif module.params.get("op_type") == "enable":
             check_mode_action(module)
             response = enableInterface(
                 node=module.params.get("localNode"),
@@ -384,19 +330,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "disable":
-        try:
+        elif module.params.get("op_type") == "disable":
             check_mode_action(module)
             response = disableInterface(
                 node=module.params.get("localNode"),
@@ -404,19 +339,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "restore-default-tls-ciphers":
-        try:
+        elif module.params.get("op_type") == "restore-default-tls-ciphers":
             check_mode_action(module)
             response = restoreDefaultTlsCiphers(
                 node=module.params.get("localNode"),
@@ -424,19 +348,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "csr":
-        try:
+        elif module.params.get("op_type") == "csr":
             check_mode_action(module)
             response = createCsr(
                 node=module.params.get("localNode"),
@@ -449,19 +362,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "auto-gen-server-cert":
-        try:
+        elif module.params.get("op_type") == "auto-gen-server-cert":
             check_mode_action(module)
             response = autogenServerCert(
                 node=module.params.get("localNode"),
@@ -469,19 +371,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "use-certificate":
-        try:
+        elif module.params.get("op_type") == "use-certificate":
             check_mode_action(module)
             response = useCertificate(
                 node=module.params.get("localNode"),
@@ -490,19 +381,9 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    else:
-        module.fail_json(msg="invalid op_type")
+        else:
+            module.fail_json(msg="invalid op_type")
 
     module.exit_json(**result)
 

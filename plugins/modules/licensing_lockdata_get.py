@@ -20,46 +20,8 @@ description:
 version_added: "1.0.0"
 author:
   - Anurag Jain (@anugram)
-options:
-    localNode:
-      description:
-        - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port
-      required: true
-      type: dict
-      suboptions:
-        server_ip:
-          description: CM Server IP or FQDN
-          type: str
-          required: true
-        server_private_ip:
-          description: internal or private IP of the CM Server, if different from the server_ip
-          type: str
-          required: false
-          default: 10.10.10.10
-        server_port:
-          description: Port on which CM server is listening
-          type: int
-          required: false
-          default: 5432
-        user:
-          description: admin username of CM
-          type: str
-          required: true
-        password:
-          description: admin password of CM
-          type: str
-          required: true
-        verify:
-          description: if SSL verification is required
-          type: bool
-          required: false
-          default: false
-        auth_domain_path:
-          description: user's domain path
-          type: str
-          required: false
-          default: ''
+extends_documentation_fragment:
+  - thalesgroup.ciphertrust.ciphertrust
 """
 
 EXAMPLES = """
@@ -74,12 +36,16 @@ EXAMPLES = """
         verify: false
 """
 
-RETURN = """
-
+RETURN = r"""
+response:
+    description: Data retrieved from the CipherTrust Manager API.
+    returned: on success
+    type: dict
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
+    ciphertrust_operation,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
     getLockdata,
@@ -115,12 +81,11 @@ def main():
         changed=False,
     )
 
-    response = dict()
-    response = getLockdata(
-        node=module.params.get("localNode"),
-    )
-
-    result["response"] = response
+    with ciphertrust_operation(module):
+        response = getLockdata(
+            node=module.params.get("localNode"),
+        )
+        result["response"] = response
 
     module.exit_json(**result)
 

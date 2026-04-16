@@ -20,46 +20,9 @@ description:
 version_added: "1.0.0"
 author:
   - Anurag Jain (@anugram)
+extends_documentation_fragment:
+  - thalesgroup.ciphertrust.ciphertrust
 options:
-    localNode:
-      description:
-        - this holds the connection parameters required to communicate with an instance of CipherTrust Manager (CM)
-        - holds IP/FQDN of the server, username, password, and port
-      required: true
-      type: dict
-      suboptions:
-        server_ip:
-          description: CM Server IP or FQDN
-          type: str
-          required: true
-        server_private_ip:
-          description: internal or private IP of the CM Server, if different from the server_ip
-          type: str
-          required: false
-          default: 10.10.10.10
-        server_port:
-          description: Port on which CM server is listening
-          type: int
-          required: false
-          default: 5432
-        user:
-          description: admin username of CM
-          type: str
-          required: true
-        password:
-          description: admin password of CM
-          type: str
-          required: true
-        verify:
-          description: if SSL verification is required
-          type: bool
-          required: false
-          default: false
-        auth_domain_path:
-          description: user's domain path
-          type: str
-          required: false
-          default: ''
     key_version:
         description:
           - Query Parameter
@@ -480,7 +443,7 @@ options:
 
 EXAMPLES = """
 - name: "Create Key"
-  thalesgroup.ciphertrust.vault_keys2_create:
+  thalesgroup.ciphertrust.vault_keys2_op:
     localNode:
         server_ip: "IP/FQDN of CipherTrust Manager"
         server_private_ip: "Private IP in case that is different from above"
@@ -495,11 +458,21 @@ EXAMPLES = """
     usageMask: 3145740
 """
 
-RETURN = """
+RETURN = r"""
+changed:
+    description: Always C(true) when the action is performed; C(false) in check mode.
+    returned: always
+    type: bool
+    sample: true
+response:
+    description: Raw response payload from the CipherTrust Manager API.
+    returned: on success
+    type: dict
 """
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
+    ciphertrust_operation,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 import (
     destroy,
@@ -512,10 +485,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 impo
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
     check_mode_action,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
 )
 
 _wrap_HKDF = dict(
@@ -710,8 +679,8 @@ def main():
         changed=False,
     )
 
-    if module.params.get("op_type") == "destroy":
-        try:
+    with ciphertrust_operation(module):
+        if module.params.get("op_type") == "destroy":
             check_mode_action(module)
             response = destroy(
                 node=module.params.get("localNode"),
@@ -721,19 +690,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "archive":
-        try:
+        elif module.params.get("op_type") == "archive":
             check_mode_action(module)
             response = archive(
                 node=module.params.get("localNode"),
@@ -743,19 +701,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "recover":
-        try:
+        elif module.params.get("op_type") == "recover":
             check_mode_action(module)
             response = recover(
                 node=module.params.get("localNode"),
@@ -765,19 +712,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "revoke":
-        try:
+        elif module.params.get("op_type") == "revoke":
             check_mode_action(module)
             response = revoke(
                 node=module.params.get("localNode"),
@@ -790,19 +726,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "reactivate":
-        try:
+        elif module.params.get("op_type") == "reactivate":
             check_mode_action(module)
             response = reactivate(
                 node=module.params.get("localNode"),
@@ -814,19 +739,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "export":
-        try:
+        elif module.params.get("op_type") == "export":
             check_mode_action(module)
             response = export(
                 node=module.params.get("localNode"),
@@ -859,19 +773,8 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    elif module.params.get("op_type") == "clone":
-        try:
+        elif module.params.get("op_type") == "clone":
             check_mode_action(module)
             response = clone(
                 node=module.params.get("localNode"),
@@ -885,19 +788,9 @@ def main():
             )
             result["response"] = response
             result["changed"] = True
-        except CMApiException as api_e:
-            if api_e.api_error_code:
-                module.fail_json(
-                    msg="status code: "
-                    + str(api_e.api_error_code)
-                    + " message: "
-                    + api_e.message
-                )
-        except AnsibleCMException as custom_e:
-            module.fail_json(msg=custom_e.message)
 
-    else:
-        module.fail_json(msg="invalid op_type")
+        else:
+            module.fail_json(msg="invalid op_type")
 
     module.exit_json(**result)
 
