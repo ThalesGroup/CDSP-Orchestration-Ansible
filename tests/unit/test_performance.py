@@ -10,15 +10,10 @@
 """Performance benchmark tests for caching and performance metrics."""
 
 import pytest
-import sys
-import os
 import time
 import json
 
-# Add the plugins directory to the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "plugins", "module_utils"))
-
-from cache import (
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cache import (
     CacheManager,
     PerformanceMetrics,
     BatchOperation,

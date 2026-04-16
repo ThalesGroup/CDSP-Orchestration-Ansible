@@ -1,5 +1,7 @@
 # ThalesGroup CipherTrust Collection
 
+![Coverage](https://img.shields.io/badge/coverage-unknown-lightgrey)
+
 The ThalesGroup CipherTrust collection includes a variety of Ansible modules to help automate the configuration of Thales CipherTrust Manager as well as the configuration of various CipherTrust Data Security Platform (CDSP) connectors such as CipherTrust Transparent Encryption (CTE) and Data Protection Gateway (DPG). This collection is maintained by the ThalesGroup Developer Advocacy team.
 
 ## Description

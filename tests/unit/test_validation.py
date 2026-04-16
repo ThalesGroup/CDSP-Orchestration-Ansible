@@ -10,13 +10,8 @@
 """Unit tests for validation functions."""
 
 import pytest
-import sys
-import os
 
-# Add the plugins directory to the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "plugins", "module_utils"))
-
-from validation import (
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation import (
     validate_required_parameters,
     validate_parameter_types,
     validate_parameter_formats,
