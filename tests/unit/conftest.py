@@ -25,6 +25,37 @@ for _mod_name in ("grp", "pwd", "fcntl", "syslog", "termios"):
         sys.modules[_mod_name] = types.ModuleType(_mod_name)
 
 
+# ---------------------------------------------------------------------------
+# Dynamic Python Namespace Mapper for Ansible Collections
+# This allows pytest to resolve `from ansible_collections.thalesgroup...` natively
+# without needing complex nested symlinks in the root!
+# ---------------------------------------------------------------------------
+import os
+repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+sys.path.insert(0, repo_root)
+
+import plugins
+import plugins.module_utils
+import plugins.modules
+
+ansible_collections = types.ModuleType("ansible_collections")
+thalesgroup = types.ModuleType("thalesgroup")
+ciphertrust = types.ModuleType("ciphertrust")
+
+ansible_collections.thalesgroup = thalesgroup
+thalesgroup.ciphertrust = ciphertrust
+ciphertrust.plugins = plugins
+
+sys.modules["ansible_collections"] = ansible_collections
+sys.modules["ansible_collections.thalesgroup"] = thalesgroup
+sys.modules["ansible_collections.thalesgroup.ciphertrust"] = ciphertrust
+sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins"] = plugins
+sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins.module_utils"] = plugins.module_utils
+sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins.modules"] = plugins.modules
+
+
+
 
 
 # ---------------------------------------------------------------------------

@@ -83,7 +83,7 @@ def _compose(message, **fields):
 class AnsibleCMValidationException(CipherTrustError):
     """Parameter validation failure (required/missing/invalid combination)."""
 
-    def __init__(self, message, parameter=None, expected_format=None, example=None,
+    def __init__(self, message="", parameter=None, expected_format=None, example=None,
                  documentation_link=None):
         composed = _compose(
             message, Parameter=parameter, Expected=expected_format, Example=example,
@@ -100,7 +100,7 @@ class AnsibleCMValidationException(CipherTrustError):
 class AnsibleCMParameterException(CipherTrustError):
     """Parameter usage error (wrong value, not allowed for op_type, etc.)."""
 
-    def __init__(self, message, parameter=None, valid_values=None, example=None,
+    def __init__(self, message="", parameter=None, valid_values=None, example=None,
                  expected_format=None, documentation_link=None):
         composed = _compose(
             message, Parameter=parameter,
@@ -120,7 +120,7 @@ class AnsibleCMParameterException(CipherTrustError):
 class AnsibleCMFormatException(CipherTrustError):
     """Format/regex mismatch in a parameter value."""
 
-    def __init__(self, message, parameter=None, expected_format=None, example=None,
+    def __init__(self, message="", parameter=None, expected_format=None, example=None,
                  regex_pattern=None, documentation_link=None):
         composed = _compose(
             message, Parameter=parameter,

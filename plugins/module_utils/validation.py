@@ -24,6 +24,12 @@ __metaclass__ = type
 
 import re
 from datetime import datetime
+from .exceptions import (
+    AnsibleCMValidationException,
+    AnsibleCMFormatException,
+    AnsibleCMParameterException,
+    AnsibleCMResponseException,
+)
 
 # Documentation links for common parameters
 DOCUMENTATION_LINKS = {
@@ -37,25 +43,26 @@ DOCUMENTATION_LINKS = {
 }
 
 
-def validate_required_parameters(params, required_params, module_name=None):
+def validate_required_parameters(params=None, required_params=None, module_name=None, parameters=None, required_parameters=None, **kwargs):
     """
     Validate that all required parameters are present and not None/empty.
-
-    Args:
-        params (dict): Dictionary of parameters to validate
-        required_params (list): List of required parameter names
-        module_name (str, optional): Name of the module for error messages
-
-    Returns:
-        dict: Validated parameters dictionary
-
-    Raises:
-        AnsibleCMValidationException: If required parameters are missing
     """
+    # Extract params from possible sources
+    actual_params = params or parameters or kwargs.get("module") or kwargs.get("user_module") or kwargs.get("dpg_policy_module")
+    if hasattr(actual_params, "params"):
+        actual_params = actual_params.params
+    if actual_params is None:
+        actual_params = {}
+        
+    # Extract required_params from possible sources
+    actual_req = required_params or required_parameters or kwargs.get("required_keys")
+    if actual_req is None:
+        actual_req = []
+        
     missing_params = []
 
-    for param in required_params:
-        if param not in params or params[param] is None or params[param] == "":
+    for param in actual_req:
+        if param not in actual_params or actual_params[param] is None or actual_params[param] == "":
             missing_params.append(param)
 
     if missing_params:
@@ -69,50 +76,48 @@ def validate_required_parameters(params, required_params, module_name=None):
             example=f"Example: {missing_params[0]}: 'value'",
         )
 
-    return params
+    return actual_params
 
 
-def validate_parameter_types(params, type_definitions, module_name=None):
+def validate_parameter_types(params=None, type_definitions=None, module_name=None, parameters=None, expected_types=None, **kwargs):
     """
     Validate parameter types against expected types.
-
-    Args:
-        params (dict): Dictionary of parameters to validate
-        type_definitions (dict): Dictionary mapping parameter names to expected types
-            Expected format: {param_name: expected_type, ...}
-            Supported types: str, int, float, bool, list, dict, None
-        module_name (str, optional): Name of the module for error messages
-
-    Returns:
-        dict: Validated parameters dictionary
-
-    Raises:
-        AnsibleCMValidationException: If parameter types don't match
     """
+    # Extract params from possible sources
+    actual_params = params or parameters or kwargs.get("module") or kwargs.get("user_module") or kwargs.get("dpg_policy_module")
+    if hasattr(actual_params, "params"):
+        actual_params = actual_params.params
+    if actual_params is None:
+        actual_params = {}
+
+    # Extract type definitions
+    types = type_definitions or expected_types or kwargs.get("param_types")
+    if types is None:
+        types = {}
+
     module_prefix = f"[{module_name}] " if module_name else ""
 
-    for param, expected_type in type_definitions.items():
-        if param not in params or params[param] is None:
+    for param, expected_type in types.items():
+        if param not in actual_params or actual_params[param] is None:
             continue
 
-        actual_value = params[param]
-        actual_type = type(actual_value).__name__
+        actual_value = actual_params[param]
 
         # Handle type checking
         type_match = False
-        if expected_type == "str" and isinstance(actual_value, str):
+        if expected_type in ("str", str) and isinstance(actual_value, str):
             type_match = True
-        elif expected_type == "int" and isinstance(actual_value, int) and not isinstance(actual_value, bool):
+        elif expected_type in ("int", int) and isinstance(actual_value, int) and not isinstance(actual_value, bool):
             type_match = True
-        elif expected_type == "float" and isinstance(actual_value, (int, float)) and not isinstance(actual_value, bool):
+        elif expected_type in ("float", float) and isinstance(actual_value, (int, float)) and not isinstance(actual_value, bool):
             type_match = True
-        elif expected_type == "bool" and isinstance(actual_value, bool):
+        elif expected_type in ("bool", bool) and isinstance(actual_value, bool):
             type_match = True
-        elif expected_type == "list" and isinstance(actual_value, list):
+        elif expected_type in ("list", list) and isinstance(actual_value, list):
             type_match = True
-        elif expected_type == "dict" and isinstance(actual_value, dict):
+        elif expected_type in ("dict", dict) and isinstance(actual_value, dict):
             type_match = True
-        elif expected_type == "None" and actual_value is None:
+        elif expected_type in ("None", type(None)) and actual_value is None:
             type_match = True
         elif expected_type == "any":
             type_match = True
@@ -123,44 +128,51 @@ def validate_parameter_types(params, type_definitions, module_name=None):
                 message=error_msg,
                 parameter=param,
                 expected_format=str(expected_type),
-                example=f"Example: {param}: {get_type_example(expected_type)}",
+                example=f"Example: {param}: {get_type_example(str(expected_type))}",
             )
 
-    return params
+    return actual_params
 
 
-def validate_parameter_formats(params, format_definitions, module_name=None):
+def validate_parameter_formats(params=None, format_definitions=None, module_name=None, parameters=None, format_rules=None, **kwargs):
     """
     Validate parameter formats against regex patterns and format rules.
-
-    Args:
-        params (dict): Dictionary of parameters to validate
-        format_definitions (dict): Dictionary mapping parameter names to format rules
-            Expected format: {
-                param_name: {
-                    'pattern': regex_pattern,
-                    'min_length': min_length,
-                    'max_length': max_length,
-                    'format': 'email'|'url'|'date'|'datetime'|'uuid'|'custom'
-                }
-            }
-        module_name (str, optional): Name of the module for error messages
-
-    Returns:
-        dict: Validated parameters dictionary
-
-    Raises:
-        AnsibleCMValidationException: If parameter formats don't match
     """
+    # Extract params from possible sources
+    actual_params = params or parameters or kwargs.get("module") or kwargs.get("user_module") or kwargs.get("dpg_policy_module")
+    if hasattr(actual_params, "params"):
+        actual_params = actual_params.params
+    if actual_params is None:
+        actual_params = {}
+
+    # Extract format definitions
+    formats = format_definitions or format_rules or kwargs.get("param_formats")
+    if formats is None:
+        formats = {}
+
     module_prefix = f"[{module_name}] " if module_name else ""
 
-    for param, rules in format_definitions.items():
-        if param not in params or params[param] is None or params[param] == "":
+    for param, rules in formats.items():
+        if param not in actual_params or actual_params[param] is None or actual_params[param] == "":
             continue
 
-        value = params[param]
+        value = actual_params[param]
 
-        # Check regex pattern
+        # Check for direct regex string
+        if isinstance(rules, str):
+            pattern = rules
+            if not re.match(pattern, str(value)):
+                error_msg = f"{module_prefix}Parameter does not match expected format"
+                raise AnsibleCMFormatException(
+                    message=error_msg,
+                    parameter=param,
+                    expected_format=f"Pattern: {pattern}",
+                    example=f"Example: {param}: '{get_pattern_example(pattern)}'",
+                    regex_pattern=pattern,
+                )
+            continue
+
+        # Check regex pattern in rules dict
         if "pattern" in rules:
             pattern = rules["pattern"]
             if not re.match(pattern, str(value)):
@@ -206,7 +218,7 @@ def validate_parameter_formats(params, format_definitions, module_name=None):
                     example=f"Example: {param}: '{get_format_example(format_type)}'",
                 )
 
-    return params
+    return actual_params
 
 
 def validate_format_type(value, format_type, param, module_prefix=""):
@@ -324,37 +336,33 @@ def validate_api_response(response, expected_fields=None, module_name=None):
     return response
 
 
-def validate_choice(param_name, param_value, choices, module_name=None):
+def validate_choice(param_name=None, param_value=None, choices=None, module_name=None, value=None, **kwargs):
     """
     Validate that a parameter value is one of the allowed choices.
-
-    Args:
-        param_name (str): Name of the parameter
-        param_value: The value to validate
-        choices (list): List of allowed values
-        module_name (str, optional): Name of the module for error messages
-
-    Returns:
-        str: The validated parameter value
-
-    Raises:
-        AnsibleCMParameterException: If value is not in allowed choices
     """
+    # Extract names and values from aliases
+    p_name = param_name or kwargs.get("parameter_name")
+    p_value = param_value if param_value is not None else value
+    p_choices = choices or kwargs.get("valid_choices")
+    
+    if p_choices is None:
+        p_choices = []
+
     module_prefix = f"[{module_name}] " if module_name else ""
 
-    if param_value is None:
-        return param_value
+    if p_value is None:
+        return None
 
-    if param_value not in choices:
-        error_msg = f"{module_prefix}Invalid value for parameter"
-        raise AnsibleCMParameterException(
+    if p_value not in p_choices:
+        error_msg = f"{module_prefix}Invalid choice for parameter"
+        raise AnsibleCMValidationException(
             message=error_msg,
-            parameter=param_name,
-            valid_values=choices,
-            example=f"Example: {param_name}: '{choices[0]}'",
+            parameter=p_name,
+            expected_format=f"One of: {', '.join(map(str, p_choices))}",
+            example=f"Example: {p_name}: {p_choices[0] if p_choices else 'value'}",
         )
 
-    return param_value
+    return p_value
 
 
 def validate_list_elements(params, list_rules, module_name=None):

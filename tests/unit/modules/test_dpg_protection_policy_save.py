@@ -1,18 +1,45 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
+import sys
+import os
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
-# The module is imported for mocking
-from ansible_collections.thalesgroup.ciphertrust.plugins.modules import dpg_protection_policy_save
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from conftest import MockExitJsonException, MockFailJsonException, TEST_NODE
+from ansible_collections.thalesgroup.ciphertrust.plugins.modules.dpg_protection_policy_save import main
 
-def test_check_mode(mock_module):
-    mock_module.check_mode = True
-    # TODO
+class TestDpgProtectionPolicySave:
+    @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.dpg_protection_policy_save.ThalesCipherTrustModule")
+    @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.dpg_protection_policy_save.idempotent_create")
+    def test_create(self, mock_create, mock_thales_module, mock_module):
+        mock_thales_module.return_value = mock_module
+        mock_module.params = {
+            "localNode": TEST_NODE.copy(),
+            "op_type": "create",
+            "name": "Test1",
+            "id": "123",
+            "meta": None,
+            "profile_id": "prof1", "policy_id": "pol1", "format_id": "form1",
 
-def test_create(mock_module):
-    pass
+        }
+        mock_create.return_value = (True, {"id": "123"}, "123")
+        with pytest.raises(MockExitJsonException) as excinfo:
+            main()
+        assert excinfo.value.kwargs["changed"] is True
 
-def test_patch_idempotent(mock_module):
-    pass
+    @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.dpg_protection_policy_save.ThalesCipherTrustModule")
+    @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.dpg_protection_policy_save.idempotent_patch")
+    def test_patch(self, mock_patch, mock_thales_module, mock_module):
+        mock_thales_module.return_value = mock_module
+        mock_module.params = {
+            "localNode": TEST_NODE.copy(),
+            "op_type": "patch",
+            "name": "Test1",
+            "id": "123",
+            "meta": None,
+            "profile_id": "prof1", "policy_id": "pol1", "format_id": "form1",
+            "id": "id-123",
+        }
+        mock_patch.return_value = (False, {"id": "123"}, "123")
+        with pytest.raises(MockExitJsonException) as excinfo:
+            main()
+        assert excinfo.value.kwargs["changed"] is False
