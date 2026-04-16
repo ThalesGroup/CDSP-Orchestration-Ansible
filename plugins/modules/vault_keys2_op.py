@@ -582,8 +582,8 @@ _wrap_PBE = dict(
         required=False,
     ),
     iteration=dict(type="int", required=False),
-    password=dict(type="str", required=False),
-    passwordIdentifier=dict(type="str", required=False),
+    password=dict(type="str", required=False, no_log=True),
+    passwordIdentifier=dict(type="str", required=False, no_log=True),
     passwordIdentifierType=dict(
         type="str", choices=["name", "id", "slug"], required=False
     ),
@@ -646,7 +646,7 @@ argument_spec = dict(
         type="str", choices=["name", "id", "alias"], required=False
     ),
     padded=dict(type="bool", required=False, default=False),
-    password=dict(type="str", required=False),
+    password=dict(type="str", required=False, no_log=True),
     pemWrap=dict(type="bool", required=False, default=False),
     secretDataEncoding=dict(type="str", required=False),
     secretDataLink=dict(type="str", required=False),

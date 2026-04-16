@@ -137,6 +137,44 @@ The above task creates a new key on CipherTrust Manager with details like AES al
 ```
 The above task creates a new protection policy on CipherTrust Manager with details like what masking format to use and what algorithm to use to protect the data. Check [ThalesDocs](https://thalesdocs.com/ctp/cm/latest/admin/adp_ag/adp-prtcn-policy/index.html#managing-protection-policy) to know more about protection policies on CipherTrust Manager
 
+## Security
+
+This collection works with highly sensitive material — CipherTrust Manager admin credentials, user passwords, PKCS#12 passphrases, private key material, and KMIP registration tokens. Please review the following guidance before using it in any non-sandbox environment.
+
+### Credential handling
+
+All fields that carry a secret (the `localNode.password` connection credential, module-level `password`, `new_password`, `passwordIdentifier`, `privateKeyBytes`, and `registration_token` parameters) are marked `no_log: true`. Ansible will redact them from task output, including when running with `-vvvv`, and from the JSON event stream emitted to callbacks. JWT bearer tokens minted against CipherTrust Manager are kept inside per-request session objects and are never returned from a module, placed in a result, or included in error messages.
+
+### Storing credentials with Ansible Vault
+
+Do not commit plaintext passwords to playbooks or inventory. Use [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html) to encrypt credential variables, or source them from a secrets backend (HashiCorp Vault, AWS Secrets Manager, etc.) at play time. A typical pattern:
+
+```yaml
+- name: "Create new user"
+  thalesgroup.ciphertrust.usermgmt_users_save:
+    localNode:
+      server_ip: "{{ cm_server_ip }}"
+      user: "{{ cm_admin_user }}"
+      password: "{{ cm_admin_password }}"   # pulled from a vault-encrypted var file
+      verify: true
+      auth_domain_path: ""
+    op_type: "create"
+    username: "john.doe"
+    password: "{{ new_user_password }}"     # also vault-encrypted
+    email: "john.doe@example.com"
+    name: "John Doe"
+```
+
+### TLS certificate validation
+
+The `localNode.verify` flag controls TLS certificate verification for every call this collection makes to CipherTrust Manager — the initial `/api/v1/auth/tokens` login as well as every subsequent API call. It currently defaults to `false` for backwards compatibility with lab environments that run CM with a self-signed certificate.
+
+**In production, always set `verify: true`.** Running with `verify: false` leaves the session vulnerable to man-in-the-middle interception of the admin credential exchange and every key/policy operation that follows it. If your CipherTrust Manager serves a certificate signed by an internal CA, make that CA trusted on the Ansible controller host rather than disabling verification.
+
+### Reporting security issues
+
+See [SECURITY.md](SECURITY.md) for the coordinated disclosure process.
+
 ## Testing
 
 This collection is tested for the following -

@@ -938,8 +938,8 @@ _wrap_PBE = dict(
         required=False,
     ),
     iteration=dict(type="int", required=False),
-    password=dict(type="str", required=False),
-    passwordIdentifier=dict(type="str", required=False),
+    password=dict(type="str", required=False, no_log=True),
+    passwordIdentifier=dict(type="str", required=False, no_log=True),
     passwordIdentifierType=dict(
         type="str", choices=["name", "id", "slug"], required=False
     ),
@@ -1038,7 +1038,7 @@ argument_spec = dict(
         required=False,
     ),
     padded=dict(type="bool", default=False, required=False),
-    password=dict(type="str", required=False),
+    password=dict(type="str", required=False, no_log=True),
     processStartDate=dict(type="str", required=False),
     protectStopDate=dict(type="str", required=False),
     publicKeyParameters=dict(type="dict", options=_public_key_param, required=False),

@@ -524,8 +524,8 @@ argument_spec = dict(
     keyVersion=dict(type="int"),
     # create CSR with Key
     encryptionAlgo=dict(type="str", choices=["AES256", "AES192", "AES128", "TDES"]),
-    password=dict(type="str"),
-    privateKeyBytes=dict(type="str"),
+    password=dict(type="str", no_log=True),
+    privateKeyBytes=dict(type="str", no_log=True),
 )
 
 

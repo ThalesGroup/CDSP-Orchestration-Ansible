@@ -425,7 +425,7 @@ argument_spec = dict(
     ),
     name=dict(type="str", required=False),
     network_interface=dict(type="str", required=False),
-    registration_token=dict(type="str", required=False),
+    registration_token=dict(type="str", required=False, no_log=True),
     trusted_cas=dict(type="dict", options=_trusted_cas, required=False),
     local_auto_gen_attributes=dict(
         type="dict", options=_local_auto_gen_attribute, required=False

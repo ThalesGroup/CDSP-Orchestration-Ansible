@@ -151,7 +151,7 @@ _joining_node = dict(
     server_private_ip=dict(type="str", required=True),
     server_port=dict(type="int", required=True),
     user=dict(type="str", required=True),
-    password=dict(type="str", required=True),
+    password=dict(type="str", required=True, no_log=True),
     verify=dict(type="bool", required=True),
 )
 argument_spec = dict(

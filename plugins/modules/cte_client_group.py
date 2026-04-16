@@ -388,7 +388,7 @@ argument_spec = dict(
     name=dict(type="str"),
     description=dict(type="str"),
     communication_enabled=dict(type="bool"),
-    password=dict(type="str"),
+    password=dict(type="str", no_log=True),
     password_creation_method=dict(type="str", choices=["GENERATE", "MANUAL"]),
     profile_id=dict(type="str"),
     client_locked=dict(type="bool", default=False),

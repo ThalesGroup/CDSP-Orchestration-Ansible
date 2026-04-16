@@ -434,13 +434,13 @@ argument_spec = dict(
     is_domain_user=dict(type="bool", required=False),
     login_flags=dict(type="dict", options=_login_flags, required=False),
     name=dict(type="str", required=False),
-    password=dict(type="str", required=False),
+    password=dict(type="str", required=False, no_log=True),
     password_change_required=dict(type="bool", required=False),
     user_id=dict(type="str", required=False),
     user_metadata=dict(type="dict", options=_metadata, required=False),
     username=dict(type="str"),  # Not needed in self update, else needed
     failed_logins_count=dict(type="int"),  # Needed only for patch operation
-    new_password=dict(type="str"),  # Needed only for change pwd operation
+    new_password=dict(type="str", no_log=True),  # Needed only for change pwd operation
     auth_domain=dict(type="str"),  # Needed only for change pwd operation
 )
 

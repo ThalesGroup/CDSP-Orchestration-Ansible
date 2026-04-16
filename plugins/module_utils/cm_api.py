@@ -20,15 +20,34 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 )
 
 
+# Sensitive-data handling invariants enforced in this module:
+#   * JWT bearer tokens are generated per request, kept inside a local
+#     session dict, and used only to populate the Authorization header.
+#     They MUST NOT be returned from any function, placed in a module
+#     result, or included in exception messages.
+#   * The session dict built by CMAPIObject() is treated as opaque. Only
+#     ``url`` and ``headers`` keys are consumed; never stringify the
+#     full session for debug/error output.
+#   * The ``verify`` flag from ``localNode.verify`` controls TLS
+#     certificate validation on every outbound call (auth + API).
+
+
+def _resolve_verify(node):
+    """Return the user-supplied TLS verification flag, defaulting to False."""
+    if not node:
+        return False
+    return bool(node.get("verify", False))
+
+
 def is_json(myjson):
     try:
         json.loads(myjson)
-    except ValueError as e:
+    except ValueError:
         return False
     return True
 
 
-def getJwt(host, username, password, auth_domain_path):
+def getJwt(host, username, password, auth_domain_path, verify=False):
     headers = {
         "Content-Type": "application/json",
         "Connection": "keep-alive",
@@ -49,7 +68,7 @@ def getJwt(host, username, password, auth_domain_path):
             "password": password,
         }
 
-    r = Request(headers=headers, timeout=120, validate_certs=False)
+    r = Request(headers=headers, timeout=120, validate_certs=verify)
     _res = r.open(method="POST", url=auth_url, data=json.dumps(auth_payload))
     response = json.loads(_res.read())
     return response["jwt"]
@@ -58,6 +77,7 @@ def getJwt(host, username, password, auth_domain_path):
 def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
     # Create the session object
     node = cm_node
+    verify = _resolve_verify(node)
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -66,12 +86,12 @@ def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
         cm_url=node["server_ip"],
         auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
-        verify=False,
+        verify=verify,
     )
     # execute the post API call to create the resource on CM
     try:
         r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
         )
         _res = r.open(
             method="POST",
@@ -131,6 +151,7 @@ def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
 def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = cm_node
+    verify = _resolve_verify(node)
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -139,12 +160,12 @@ def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
         cm_url=node["server_ip"],
         auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
-        verify=False,
+        verify=verify,
     )
     # execute the put API call to update resource on CM
     try:
         r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
         )
         _res = r.open(
             method="PUT",
@@ -190,6 +211,7 @@ def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
 def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = cm_node
+    verify = _resolve_verify(node)
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -198,12 +220,12 @@ def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
         cm_url=node["server_ip"],
         auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
-        verify=False,
+        verify=verify,
     )
     # execute the post API call to create the resource on CM
     try:
         r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
         )
         _res = r.open(
             method="POST",
@@ -248,6 +270,7 @@ def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
 def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = cm_node
+    verify = _resolve_verify(node)
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -256,12 +279,12 @@ def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
         cm_url=node["server_ip"],
         auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
-        verify=False,
+        verify=verify,
     )
     # execute the patch API call to update the resource on CM
     try:
         r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
         )
         _res = r.open(
             method="PATCH",
@@ -307,6 +330,7 @@ def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
 def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = cm_node
+    verify = _resolve_verify(node)
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -315,12 +339,12 @@ def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
         cm_url=node["server_ip"],
         auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
-        verify=False,
+        verify=verify,
     )
     # execute the delete API call to delete the resource on CM
     try:
         r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
         )
         _res = r.open(
             method="DELETE",
@@ -365,6 +389,7 @@ def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
 def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = cm_node
+    verify = _resolve_verify(node)
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -373,12 +398,12 @@ def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
         cm_url=node["server_ip"],
         auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
-        verify=False,
+        verify=verify,
     )
     # execute the delete API call to delete the resource on CM
     try:
         r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
         )
         _res = r.open(
             method="DELETE",
@@ -419,18 +444,19 @@ def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
 def GETData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = cm_node
+    verify = _resolve_verify(node)
     cmSessionObject = CMAPIObject(
         cm_api_user=node["user"],
         cm_api_pwd=node["password"],
         cm_url=node["server_ip"],
         auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
-        verify=False,
+        verify=verify,
     )
 
     try:
         r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
         )
         _res = r.open(
             method="GET",
@@ -460,6 +486,7 @@ def GETData(cm_node=None, cm_api_endpoint=None):
 def GETAPIData(cm_node=None, cm_api_endpoint=None):
     # Create the session object
     node = cm_node
+    verify = _resolve_verify(node)
     pattern_2xx = re.compile(r"20[0-9]")
     pattern_4xx = re.compile(r"40[0-9]")
     cmSessionObject = CMAPIObject(
@@ -468,12 +495,12 @@ def GETAPIData(cm_node=None, cm_api_endpoint=None):
         cm_url=node["server_ip"],
         auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
-        verify=False,
+        verify=verify,
     )
 
     try:
         r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
         )
         _res = r.open(
             method="GET",
@@ -521,19 +548,20 @@ def GETAPIData(cm_node=None, cm_api_endpoint=None):
 
 def GETIdByName(name=None, cm_node=None, cm_api_endpoint=None):
     # Create the session object
+    verify = _resolve_verify(cm_node)
     cmSessionObject = CMAPIObject(
         cm_api_user=cm_node["user"],
         cm_api_pwd=cm_node["password"],
         cm_url=cm_node["server_ip"],
         auth_domain_path=cm_node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
-        verify=False,
+        verify=verify,
     )
     # execute the delete API call to delete the resource on CM
     ret = dict()
     try:
         r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
         )
         _res = r.open(
             method="GET",
@@ -559,13 +587,14 @@ def GETIdByQueryParam(
 ):
     # Create the session object
     node = cm_node
+    verify = _resolve_verify(node)
     cmSessionObject = CMAPIObject(
         cm_api_user=node["user"],
         cm_api_pwd=node["password"],
         cm_url=node["server_ip"],
         auth_domain_path=node["auth_domain_path"],
         cm_api_endpoint=cm_api_endpoint,
-        verify=False,
+        verify=verify,
     )
 
     url = ""
@@ -576,7 +605,7 @@ def GETIdByQueryParam(
 
     try:
         r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=False
+            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
         )
         _res = r.open(method="GET", url=url)
 
@@ -601,15 +630,7 @@ def GETIdByQueryParam(
 
         return __ret
     except HTTPError as err:
-        raise err  # AnsibleCMException(message="Exception: cm_api >> " + err)
-    # except requests.exceptions.HTTPError as errh:
-    #    raise AnsibleCMException(message="HTTPError: cm_api >> " + errh)
-    # except requests.exceptions.ConnectionError as errc:
-    #    raise AnsibleCMException(message="ConnectionError: cm_api >> " + errc)
-    # except requests.exceptions.Timeout as errt:
-    #    raise AnsibleCMException(message="TimeoutError: cm_api >> " + errt)
-    # except requests.exceptions.RequestException as err:
-    #    raise AnsibleCMException(message="ErrorPath: cm_api >> " + err)
+        raise err
 
 
 def CMAPIObject(
@@ -620,7 +641,15 @@ def CMAPIObject(
     auth_domain_path=None,
     verify=None,
 ):
-    """Create a Ciphertrust Manager (CM) client"""
+    """Create a Ciphertrust Manager (CM) client session.
+
+    The returned dict contains a bearer token in its ``headers``
+    entry. Callers MUST treat the dict as opaque — never stringify
+    it, never place it in module results, and never emit it to
+    debug/error output.
+    """
+    if verify is None:
+        verify = False
     session = dict()
     session["url"] = "https://" + cm_url + "/api/v1/" + cm_api_endpoint
     token = getJwt(
@@ -628,6 +657,7 @@ def CMAPIObject(
         username=cm_api_user,
         password=cm_api_pwd,
         auth_domain_path=auth_domain_path,
+        verify=verify,
     )
     session["headers"] = {
         "Content-Type": "application/json; charset=utf-8",

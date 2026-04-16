@@ -289,7 +289,7 @@ argument_spec = dict(
     certificate=dict(type="str"),
     format=dict(type="str", choices=["PEM", "PKCS12"]),
     generate=dict(type="bool", required=False),
-    password=dict(type="str", required=False),
+    password=dict(type="str", required=False, no_log=True),
     cn=dict(type="str"),
     dns_names=dict(type="list", elements="str", required=False),
     email_addresses=dict(type="list", elements="str", required=False),

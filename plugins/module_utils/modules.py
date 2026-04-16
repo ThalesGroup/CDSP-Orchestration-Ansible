@@ -100,7 +100,7 @@ def _ciphertrust_common_argument_spec():
         server_private_ip=dict(type="str", required=False, default='10.10.10.10'),
         server_port=dict(type="int", required=False, default=5432),
         user=dict(type="str", required=True),
-        password=dict(type="str", required=True),
+        password=dict(type="str", required=True, no_log=True),
         verify=dict(type="bool", required=False, default=False),
         auth_domain_path=dict(type="str", required=False, default=''),
     )

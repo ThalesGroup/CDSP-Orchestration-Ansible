@@ -43,30 +43,36 @@ Every API call in `cm_api.py` hardcodes `validate_certs=False`, ignoring the use
 ## Tasks
 
 ### 1.1 Add `no_log` to password fields in `ThalesCipherTrustModule`
-- [ ] In `plugins/module_utils/modules.py`, add `no_log=True` to the `password` field in `_ciphertrust_common_argument_spec()`
-- [ ] Verify that password values no longer appear in `-vvvv` output
+- [x] In `plugins/module_utils/modules.py`, add `no_log=True` to the `password` field in `_ciphertrust_common_argument_spec()`
+- [ ] Verify that password values no longer appear in `-vvvv` output _(requires a live CipherTrust Manager; not executed in this environment)_
 
 ### 1.2 Add `no_log` to module-level password parameters
-- [ ] `vault_keys2_save.py` has a top-level `password` parameter (for PKCS#12). Add `no_log=True`
-- [ ] `usermgmt_users_save.py` — user creation password. Add `no_log=True`
-- [ ] Audit all 33 modules for any other sensitive parameters (secrets, tokens, certificates)
+- [x] `vault_keys2_save.py` has a top-level `password` parameter (for PKCS#12). Add `no_log=True` (also applied to `wrapPBE.password` and `wrapPBE.passwordIdentifier`)
+- [x] `usermgmt_users_save.py` — user creation password. Add `no_log=True` (also applied to `new_password`)
+- [x] Audit all 33 modules for any other sensitive parameters (secrets, tokens, certificates). Additional `no_log=True` applied to:
+  - `vault_keys2_op.py`: `password`, `wrapPBE.password`, `wrapPBE.passwordIdentifier`
+  - `cm_certificate_authority.py`: `password`, `privateKeyBytes`
+  - `cm_cluster.py`: joining-node `password`
+  - `cte_client.py`, `cte_client_group.py`: `password`
+  - `interface_actions.py`: PEM key `password`
+  - `interface_save.py`: KMIP `registration_token`
 
 ### 1.3 Respect the `verify` parameter for TLS validation
-- [ ] In `CMAPIObject()` (cm_api.py, line 615), use `node["verify"]` instead of hardcoded `False`
-- [ ] Pass `verify` through all API functions (`POSTData`, `PATCHData`, `GETData`, etc.)
-- [ ] Add `verify` as a parameter to the `getJwt()` function
+- [x] In `CMAPIObject()` (cm_api.py), use `node["verify"]` instead of hardcoded `False` (via new `_resolve_verify()` helper)
+- [x] Pass `verify` through all API functions (`POSTData`, `PUTData`, `POSTWithoutData`, `PATCHData`, `DELETEByNameOrId`, `DeleteWithoutData`, `GETData`, `GETAPIData`, `GETIdByName`, `GETIdByQueryParam`)
+- [x] Add `verify` as a parameter to the `getJwt()` function
 
 ### 1.4 Protect JWT tokens from accidental logging
-- [ ] Store the token in the session object without exposing it in string representations
-- [ ] Ensure the `Authorization` header is excluded from any debug/error output
+- [x] Store the token in the session object without exposing it in string representations _(documented invariant on `CMAPIObject`: session dicts are opaque, token is only consumed via the `Authorization` header)_
+- [x] Ensure the `Authorization` header is excluded from any debug/error output _(no module path returns the session dict or its headers; reinforced by module-level comment in `cm_api.py`)_
 
 ### 1.5 Clear sanity ignore files for `no-log-needed`
-- [ ] Remove all 33 `validate-modules:no-log-needed` lines from each of the 5 ignore files
-- [ ] Run `ansible-test sanity --test validate-modules` to confirm zero new failures
-- [ ] Keep `missing-gplv3-license` ignores for now (addressed in Epic 10)
+- [x] Remove all 33 `validate-modules:no-log-needed` lines from each of the 5 ignore files (`ignore-2.15.txt` through `ignore-2.19.txt`, each now 33 lines)
+- [ ] Run `ansible-test sanity --test validate-modules` to confirm zero new failures _(ansible-test not installed in this environment; must be run in CI / a dev env with `ansible-core`)_
+- [x] Keep `missing-gplv3-license` ignores for now (addressed in Epic 10)
 
 ### 1.6 Add sensitive data handling documentation
-- [ ] Add a "Security" section to the collection `README.md` explaining:
+- [x] Add a "Security" section to the collection `README.md` explaining:
   - How credentials are handled
   - Recommendation to use Ansible Vault for password storage
   - Recommendation to enable TLS verification in production
@@ -75,11 +81,11 @@ Every API call in `cm_api.py` hardcodes `validate_certs=False`, ignoring the use
 
 ## Acceptance Criteria
 
-- [ ] `no_log: true` is set on every password/secret parameter across all modules
-- [ ] `ansible-test sanity --test validate-modules` passes without any `no-log-needed` ignores
-- [ ] Running a playbook with `-vvvv` does NOT show any passwords or JWT tokens in output
-- [ ] The `verify` parameter from `localNode` is respected for TLS certificate validation
-- [ ] All 5 sanity ignore files have the 33 `no-log-needed` lines removed
+- [x] `no_log: true` is set on every password/secret parameter across all modules
+- [ ] `ansible-test sanity --test validate-modules` passes without any `no-log-needed` ignores _(pending CI run)_
+- [ ] Running a playbook with `-vvvv` does NOT show any passwords or JWT tokens in output _(pending live validation against CipherTrust Manager)_
+- [x] The `verify` parameter from `localNode` is respected for TLS certificate validation
+- [x] All 5 sanity ignore files have the 33 `no-log-needed` lines removed
 
 ---
 

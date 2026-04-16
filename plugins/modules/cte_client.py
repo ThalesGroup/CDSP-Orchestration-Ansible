@@ -460,7 +460,7 @@ argument_spec = dict(
     client_locked=dict(type="bool"),
     communication_enabled=dict(type="bool"),
     description=dict(type="str"),
-    password=dict(type="str"),
+    password=dict(type="str", no_log=True),
     password_creation_method=dict(type="str", choices=["GENERATE", "MANUAL"], default='GENERATE'),
     profile_identifier=dict(type="str"),
     registration_allowed=dict(type="bool"),
