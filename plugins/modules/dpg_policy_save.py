@@ -1039,49 +1039,49 @@ _proxy_config = dict(
     api_url=dict(type="str"),
     destination_url=dict(type="str"),
     json_request_delete_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_request_get_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_request_patch_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_request_post_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_request_put_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_response_delete_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_response_get_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_response_patch_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_response_post_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_response_put_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     url_request_delete_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     url_request_get_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     url_request_patch_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     url_request_post_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     url_request_put_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
 )
 
@@ -1099,49 +1099,49 @@ argument_spec = dict(
     api_url=dict(type="str"),
     destination_url=dict(type="str"),
     json_request_delete_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_request_get_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_request_patch_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_request_post_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_request_put_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_response_delete_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_response_get_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_response_patch_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_response_post_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     json_response_put_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     url_request_delete_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     url_request_get_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     url_request_patch_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     url_request_post_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     url_request_put_tokens=dict(
-        type="list", elements="dict", options=_api_token, required=False
+        type="list", elements="dict", options=_api_token, required=False, no_log=False
     ),
     # op_type=update-api-url or delete-api-url
     api_url_id=dict(type="str"),

@@ -179,24 +179,6 @@ requirements:
     - CipherTrust Manager API >= 1.0.0
     - Python >= 3.6
     - Ansible >= 2.9
-
-validation:
-    - username: Must be a valid email format (e.g., user@example.com) for create operation
-    - password: Must meet the password policy requirements (minimum 8 characters, mix of upper/lower case, numbers, special characters) for create and changepw operations
-    - new_password: Must meet the password policy requirements for changepw operation
-    - cm_user_id: Must be a valid UUID format (e.g., local|UUID) for patch operation
-    - email: Must be a valid email format (e.g., user@example.com) for patch and patch_self operations
-    - name: Must be a non-empty string for patch and patch_self operations
-    - allowed_auth_methods: Must be a list of valid authentication methods (password, certificate, sso) for create and patch operations
-    - login_flags.prevent_ui_login: Must be a boolean value for create and patch operations
-    - user_metadata: Must be a valid JSON object for create and patch operations
-    - app_metadata: Must be a valid JSON object for create operation
-
-documentation_links:
-    create_operation: https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html
-    patch_operation: https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html
-    changepw_operation: https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html
-    patch_self_operation: https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html
 """
 
 EXAMPLES = """

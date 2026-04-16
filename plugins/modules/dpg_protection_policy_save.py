@@ -201,7 +201,7 @@ argument_spec = dict(
     op_type=dict(type="str", choices=["create", "patch"], required=True),
     policy_name=dict(type="str"),
     algorithm=dict(type="str"),
-    key=dict(type="str"),
+    key=dict(type="str", no_log=False),
     name=dict(type="str"),
     allow_single_char_input=dict(type="bool"),
     character_set_id=dict(type="str"),

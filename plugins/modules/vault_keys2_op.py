@@ -563,7 +563,7 @@ _wrap_JWE = dict(
         default="RSA_OAEP_SHA1",
         required=False,
     ),
-    keyIdentifier=dict(type="str", required=False),
+    keyIdentifier=dict(type="str", required=False, no_log=False),
 )
 _wrap_PBE = dict(
     dklen=dict(type="int", required=False),
@@ -605,7 +605,7 @@ _wrap_RSAAES = dict(
 _schema_less = dict()
 
 argument_spec = dict(
-    key_version=dict(type="int", required=False),
+    key_version=dict(type="int", required=False, no_log=False),
     id_type=dict(type="str", choices=["name", "id", "uri", "alias"], required=False),
     includeMaterial=dict(type="bool", default=False, required=False),
     op_type=dict(
@@ -642,24 +642,24 @@ argument_spec = dict(
     combineXts=dict(type="bool", required=False, default=False),
     encoding=dict(type="str", required=False),
     keyFormat=dict(
-        type="str", choices=["pkcs1", "pkcs8", "pkcs12", "jwe"], required=False
+        type="str", choices=["pkcs1", "pkcs8", "pkcs12", "jwe"], required=False, no_log=False
     ),
-    macSignKeyIdentifier=dict(type="str", required=False),
+    macSignKeyIdentifier=dict(type="str", required=False, no_log=False),
     macSignKeyIdentifierType=dict(
         type="str", choices=["name", "id", "alias"], required=False
     ),
     padded=dict(type="bool", required=False, default=False),
     password=dict(type="str", required=False, no_log=True),
     pemWrap=dict(type="bool", required=False, default=False),
-    secretDataEncoding=dict(type="str", required=False),
-    secretDataLink=dict(type="str", required=False),
+    secretDataEncoding=dict(type="str", required=False, no_log=False),
+    secretDataLink=dict(type="str", required=False, no_log=False),
     signingAlgo=dict(type="str", choices=["RSA", "RSA-PSS"], required=False),
     wrapHKDF=dict(type="dict", options=_wrap_HKDF, required=False),
     wrapJWE=dict(type="dict", options=_wrap_JWE, required=False),
     wrapKeyIDType=dict(type="str", choices=["name", "id", "alias"], required=False),
-    wrapKeyName=dict(type="str", required=False),
+    wrapKeyName=dict(type="str", required=False, no_log=False),
     wrapPBE=dict(type="dict", options=_wrap_PBE, required=False),
-    wrapPublicKey=dict(type="str", required=False),
+    wrapPublicKey=dict(type="str", required=False, no_log=False),
     wrapPublicKeyPadding=dict(
         type="str",
         choices=["pkcs1", "oaep", "oaep256", "oaep384", "oaep512"],
@@ -675,7 +675,7 @@ argument_spec = dict(
     wrappingMethod=dict(
         type="str", choices=["encrypt", "mac/sign", "pbe"], required=False
     ),
-    newKeyName=dict(type="str", required=False),
+    newKeyName=dict(type="str", required=False, no_log=False),
     meta=dict(type="dict", options=_schema_less, required=False),
     idSize=dict(type="int", required=False),
 )

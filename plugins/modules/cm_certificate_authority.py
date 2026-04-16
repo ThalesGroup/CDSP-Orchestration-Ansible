@@ -442,10 +442,10 @@ _csr_params = dict(
     cn=dict(type="str"),
     dnsNames=dict(type="list", elements="str"),
     emailAddresses=dict(type="list", elements="str"),
-    extendedKeyUsage=dict(type="list", elements="str"),
+    extendedKeyUsage=dict(type="list", elements="str", no_log=False),
     ipAddresses=dict(type="list", elements="str"),
     isCA=dict(type="bool"),
-    keyUsage=dict(type="list", elements="str"),
+    keyUsage=dict(type="list", elements="str", no_log=False),
     maxPathLen=dict(type="int"),
     names=dict(type="list", elements="dict", options=_name),
     signatureAlgorithm=dict(
@@ -469,7 +469,7 @@ _keyGenParams = dict(
     curveid=dict(
         type="str", choices=["secp224r1", "secp384r1", "secp521r1", "prime256v1"]
     ),
-    keyName=dict(type="str"),
+    keyName=dict(type="str", no_log=False),
     size=dict(type="str"),
 )
 
@@ -526,10 +526,10 @@ argument_spec = dict(
     ),
     # Create CSR
     csrParams=dict(type="dict", options=_csr_params),
-    keyGenParams=dict(type="dict", options=_keyGenParams),
-    keyID=dict(type="str"),
-    keyIDType=dict(type="str"),
-    keyVersion=dict(type="int"),
+    keyGenParams=dict(type="dict", options=_keyGenParams, no_log=False),
+    keyID=dict(type="str", no_log=False),
+    keyIDType=dict(type="str", no_log=False),
+    keyVersion=dict(type="int", no_log=False),
     # create CSR with Key
     encryptionAlgo=dict(type="str", choices=["AES256", "AES192", "AES128", "TDES"]),
     password=dict(type="str", no_log=True),

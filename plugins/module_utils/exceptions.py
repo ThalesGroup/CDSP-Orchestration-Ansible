@@ -24,6 +24,17 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
+class AnsibleCMException(Exception):
+    """General-purpose exception for CipherTrust Ansible modules."""
+
+    def __str__(self):
+        return self.message if self.message else super().__str__()
+
+    def __init__(self, message=""):
+        super().__init__(message)
+        self.message = message
+
+
 class CMApiException(Exception):
     """Exception for CM API errors"""
 

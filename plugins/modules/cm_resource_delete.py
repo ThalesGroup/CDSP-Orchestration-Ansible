@@ -156,7 +156,7 @@ _arr_resource_type_choices = [
 ]
 
 argument_spec = dict(
-    key=dict(type="str"),
+    key=dict(type="str", no_log=False),
     resource_type=dict(type="str", choices=_arr_resource_type_choices, required=True),
 )
 

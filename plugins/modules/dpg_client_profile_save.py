@@ -323,11 +323,11 @@ _jwt_details = dict(
 )
 _auth_method_used = dict(
     scheme_name=dict(type="str", choices=["Basic", "Bearer"], default="Basic"),
-    token_field=dict(type="str"),
+    token_field=dict(type="str", no_log=False),
 )
 _configuration = dict(
     symmetric_key_cache_enabled=dict(type="bool", default=True),
-    symmetric_key_cache_expiry=dict(type="int", default=43200),
+    symmetric_key_cache_expiry=dict(type="int", default=43200, no_log=False),
     size_of_connection_pool=dict(type="int", default=300),
     load_balancing_algorithm=dict(
         type="str", choices=["round-robin", "random"], default="round-robin"
@@ -386,7 +386,7 @@ argument_spec = dict(
     policy_id=dict(type="str"),
     enable_client_autorenewal=dict(type="str"),
     groups=dict(type="list", elements="str"),
-    jwt_verification_key=dict(type="str"),
+    jwt_verification_key=dict(type="str", no_log=False),
 )
 
 

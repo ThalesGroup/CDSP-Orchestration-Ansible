@@ -864,15 +864,15 @@ _cte = dict(
     cte_versioned=dict(type="bool"),
 )
 _permission = dict(
-    UseKey=dict(type="list", elements="str"),
-    ReadKey=dict(type="list", elements="str"),
-    ExportKey=dict(type="list", elements="str"),
-    MACWithKey=dict(type="list", elements="str"),
-    SignWithKey=dict(type="list", elements="str"),
-    DecryptWithKey=dict(type="list", elements="str"),
-    EncryptWithKey=dict(type="list", elements="str"),
-    MACVerifyWithKey=dict(type="list", elements="str"),
-    SignVerifyWithKey=dict(type="list", elements="str"),
+    UseKey=dict(type="list", elements="str", no_log=False),
+    ReadKey=dict(type="list", elements="str", no_log=False),
+    ExportKey=dict(type="list", elements="str", no_log=False),
+    MACWithKey=dict(type="list", elements="str", no_log=False),
+    SignWithKey=dict(type="list", elements="str", no_log=False),
+    DecryptWithKey=dict(type="list", elements="str", no_log=False),
+    EncryptWithKey=dict(type="list", elements="str", no_log=False),
+    MACVerifyWithKey=dict(type="list", elements="str", no_log=False),
+    SignVerifyWithKey=dict(type="list", elements="str", no_log=False),
 )
 _meta = dict(
     ownerId=dict(type="str", required=False),
@@ -894,7 +894,7 @@ _hkdfParam = dict(
         default="hmac-sha256",
         required=False,
     ),
-    ikmKeyName=dict(type="str", required=False),
+    ikmKeyName=dict(type="str", required=False, no_log=False),
     info=dict(type="str", required=False),
     salt=dict(type="str", required=False),
 )
@@ -1022,12 +1022,12 @@ argument_spec = dict(
     hkdfCreateParameters=dict(type="dict", options=_hkdfParam, required=False),
     id=dict(type="str", required=False),
     idSize=dict(type="int", required=False),
-    keyId=dict(type="str", required=False),
+    keyId=dict(type="str", required=False, no_log=False),
     labels=dict(type="dict", options=_schema_less, required=False),
     macSignBytes=dict(type="str", required=False),
-    macSignKeyIdentifier=dict(type="str", required=False),
+    macSignKeyIdentifier=dict(type="str", required=False, no_log=False),
     macSignKeyIdentifierType=dict(
-        type="str", choices=["name", "id", "alias"], required=False
+        type="str", choices=["name", "id", "alias"], required=False, no_log=False
     ),
     material=dict(type="str", required=False),
     meta=dict(type="dict", options=_meta, required=False),
@@ -1049,7 +1049,7 @@ argument_spec = dict(
     password=dict(type="str", required=False, no_log=True),
     processStartDate=dict(type="str", required=False),
     protectStopDate=dict(type="str", required=False),
-    publicKeyParameters=dict(type="dict", options=_public_key_param, required=False),
+    publicKeyParameters=dict(type="dict", options=_public_key_param, required=False, no_log=False),
     revocationMessage=dict(type="str", required=False),
     revocationReason=dict(
         type="str",
@@ -1065,8 +1065,8 @@ argument_spec = dict(
         required=False,
     ),
     rotationFrequencyDays=dict(type="str", required=False),
-    secretDataEncoding=dict(type="str", required=False),
-    secretDataLink=dict(type="str", required=False),
+    secretDataEncoding=dict(type="str", required=False, no_log=False),
+    secretDataLink=dict(type="str", required=False, no_log=False),
     signingAlgo=dict(type="str", choices=["RSA-PSS", "RSA"], required=False),
     size=dict(type="int", required=False),
     state=dict(type="str", required=False),
@@ -1075,10 +1075,10 @@ argument_spec = dict(
     usageMask=dict(type="int", required=False),
     uuid=dict(type="str", required=False),
     wrapHKDF=dict(type="dict", options=_wrap_HKDF, required=False),
-    wrapKeyIDType=dict(type="str", choices=["name", "id", "alias"], required=False),
-    wrapKeyName=dict(type="str", required=False),
+    wrapKeyIDType=dict(type="str", choices=["name", "id", "alias"], required=False, no_log=False),
+    wrapKeyName=dict(type="str", required=False, no_log=False),
     wrapPBE=dict(type="dict", options=_wrap_PBE, required=False),
-    wrapPublicKey=dict(type="str", required=False),
+    wrapPublicKey=dict(type="str", required=False, no_log=False),
     wrapPublicKeyPadding=dict(
         type="str",
         choices=["pkcs1", "oaep", "oaep256", "oaep384", "oaep512"],

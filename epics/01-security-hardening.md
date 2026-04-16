@@ -67,8 +67,8 @@ Every API call in `cm_api.py` hardcodes `validate_certs=False`, ignoring the use
 - [x] Ensure the `Authorization` header is excluded from any debug/error output _(no module path returns the session dict or its headers; reinforced by module-level comment in `cm_api.py`)_
 
 ### 1.5 Clear sanity ignore files for `no-log-needed`
-- [x] Remove all 33 `validate-modules:no-log-needed` lines from each of the 5 ignore files (`ignore-2.15.txt` through `ignore-2.19.txt`, each now 33 lines)
-- [ ] Run `ansible-test sanity --test validate-modules` to confirm zero new failures _(ansible-test not installed in this environment; must be run in CI / a dev env with `ansible-core`)_
+- [x] Remove all 33 `validate-modules:no-log-needed` lines from each of the 5 ignore files (then re-added 8 suppressions for false-positive params like `keyUsage`, `*_tokens` — all further resolved by explicit `no_log=False` in argument_spec)
+- [x] Run `ansible-test sanity --test validate-modules` to confirm zero new failures — **zero `no-log-needed` errors** across all 33 modules (verified with ansible-core 2.17.14 on Python 3.12). Only `missing-gplv3-license` remains, per Epic 10.
 - [x] Keep `missing-gplv3-license` ignores for now (addressed in Epic 10)
 
 ### 1.6 Add sensitive data handling documentation
@@ -82,7 +82,7 @@ Every API call in `cm_api.py` hardcodes `validate_certs=False`, ignoring the use
 ## Acceptance Criteria
 
 - [x] `no_log: true` is set on every password/secret parameter across all modules
-- [ ] `ansible-test sanity --test validate-modules` passes without any `no-log-needed` ignores _(pending CI run)_
+- [x] `ansible-test sanity --test validate-modules` passes without any `no-log-needed` ignores _(verified with ansible-core 2.17.14 — zero `no-log-needed` errors; only `missing-gplv3-license` remains, deferred to Epic 10)_
 - [ ] Running a playbook with `-vvvv` does NOT show any passwords or JWT tokens in output _(pending live validation against CipherTrust Manager)_
 - [x] The `verify` parameter from `localNode` is respected for TLS certificate validation
 - [x] All 5 sanity ignore files have the 33 `no-log-needed` lines removed

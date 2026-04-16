@@ -580,12 +580,12 @@ _data_transform_rules = dict(
 )
 
 _idt_key_rules = dict(
-    current_key=dict(type="str"),
+    current_key=dict(type="str", no_log=False),
     current_key_type=dict(
         type="str",
         choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
     ),
-    transformation_key=dict(type="str"),
+    transformation_key=dict(type="str", no_log=False),
     transformation_key_type=dict(
         type="str",
         choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
@@ -617,10 +617,10 @@ _transformation_key = dict(
 )
 
 _ldt_key_rules = dict(
-    current_key=dict(type="dict", options=_current_key),
+    current_key=dict(type="dict", options=_current_key, no_log=False),
     is_exclusion_rule=dict(type="bool"),
     resource_set_id=dict(type="str"),
-    transformation_key=dict(type="dict", options=_transformation_key),
+    transformation_key=dict(type="dict", options=_transformation_key, no_log=False),
 )
 
 _metadata = dict(
@@ -670,9 +670,9 @@ argument_spec = dict(
         type="list", elements="dict", options=_data_transform_rules
     ),
     description=dict(type="str"),
-    idt_key_rules=dict(type="list", elements="dict", options=_idt_key_rules),
-    key_rules=dict(type="list", elements="dict", options=_key_rules),
-    ldt_key_rules=dict(type="list", elements="dict", options=_ldt_key_rules),
+    idt_key_rules=dict(type="list", elements="dict", options=_idt_key_rules, no_log=False),
+    key_rules=dict(type="list", elements="dict", options=_key_rules, no_log=False),
+    ldt_key_rules=dict(type="list", elements="dict", options=_ldt_key_rules, no_log=False),
     metadata=dict(type="dict", options=_metadata),
     never_deny=dict(type="bool"),
     security_rules=dict(type="list", elements="dict", options=_security_rules),
@@ -686,11 +686,11 @@ argument_spec = dict(
     ),
     resource_set_id=dict(type="str"),
     dataTxRuleId=dict(type="str"),
-    keyRuleId=dict(type="str"),
+    keyRuleId=dict(type="str", no_log=False),
     # params for op_type add_ldt_rule
-    current_keys=dict(type="dict", options=_current_key),
+    current_keys=dict(type="dict", options=_current_key, no_log=False),
     is_exclusion_rule=dict(type="bool"),
-    transformation_keys=dict(type="dict", options=_transformation_key),
+    transformation_keys=dict(type="dict", options=_transformation_key, no_log=False),
     ldtRuleId=dict(type="str"),
     # params for op_type add_security_rule
     action=dict(type="str"),
@@ -704,12 +704,12 @@ argument_spec = dict(
     securityRuleId=dict(type="str"),
     # params for op_type patch_idt_rule
     idtRuleId=dict(type="str"),
-    current_key=dict(type="str"),
+    current_key=dict(type="str", no_log=False),
     current_key_type=dict(
         type="str",
         choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
     ),
-    transformation_key=dict(type="str"),
+    transformation_key=dict(type="str", no_log=False),
     transformation_key_type=dict(
         type="str",
         choices=["name", "id", "slug", "alias", "uri", "uuid", "muid", "key_id"],
