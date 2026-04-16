@@ -390,6 +390,14 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
     createClient,
     patchClient,
@@ -536,23 +544,35 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createClient(
-                node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                description=module.params.get("description"),
-                client_locked=module.params.get("client_locked"),
-                client_type=module.params.get("client_type"),
-                communication_enabled=module.params.get("communication_enabled"),
-                password=module.params.get("password"),
-                password_creation_method=module.params.get("password_creation_method"),
-                profile_identifier=module.params.get("profile_identifier"),
-                registration_allowed=module.params.get("registration_allowed"),
-                system_locked=module.params.get("system_locked"),
-                # user_space_client=module.params.get('user_space_client'),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="transparent-encryption/clients",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createClient,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    description=module.params.get("description"),
+                    client_locked=module.params.get("client_locked"),
+                    client_type=module.params.get("client_type"),
+                    communication_enabled=module.params.get("communication_enabled"),
+                    password=module.params.get("password"),
+                    password_creation_method=module.params.get("password_creation_method"),
+                    profile_identifier=module.params.get("profile_identifier"),
+                    registration_allowed=module.params.get("registration_allowed"),
+                    system_locked=module.params.get("system_locked"),
+                    # user_space_client=module.params.get('user_space_client'),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -566,28 +586,37 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = patchClient(
-                node=module.params.get("localNode"),
-                id=module.params.get("id"),
-                client_locked=module.params.get("client_locked"),
-                client_mfa_enabled=module.params.get("client_mfa_enabled"),
-                communication_enabled=module.params.get("communication_enabled"),
-                del_client=module.params.get("del_client"),
-                description=module.params.get("description"),
-                disable_capability=module.params.get("disable_capability"),
-                dynamic_parameters=module.params.get("dynamic_parameters"),
-                enable_domain_sharing=module.params.get("enable_domain_sharing"),
-                enabled_capabilities=module.params.get("enabled_capabilities"),
-                max_num_cache_log=module.params.get("max_num_cache_log"),
-                max_space_cache_log=module.params.get("max_space_cache_log"),
-                password=module.params.get("password"),
-                password_creation_method=module.params.get("password_creation_method"),
-                profile_id=module.params.get("profile_id"),
-                registration_allowed=module.params.get("registration_allowed"),
-                shared_domain_list=module.params.get("shared_domain_list"),
-                system_locked=module.params.get("system_locked"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="transparent-encryption/clients",
+                resource_id=module.params.get("id"),
+                patch_fn=patchClient,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    id=module.params.get("id"),
+                    client_locked=module.params.get("client_locked"),
+                    client_mfa_enabled=module.params.get("client_mfa_enabled"),
+                    communication_enabled=module.params.get("communication_enabled"),
+                    del_client=module.params.get("del_client"),
+                    description=module.params.get("description"),
+                    disable_capability=module.params.get("disable_capability"),
+                    dynamic_parameters=module.params.get("dynamic_parameters"),
+                    enable_domain_sharing=module.params.get("enable_domain_sharing"),
+                    enabled_capabilities=module.params.get("enabled_capabilities"),
+                    max_num_cache_log=module.params.get("max_num_cache_log"),
+                    max_space_cache_log=module.params.get("max_space_cache_log"),
+                    password=module.params.get("password"),
+                    password_creation_method=module.params.get("password_creation_method"),
+                    profile_id=module.params.get("profile_id"),
+                    registration_allowed=module.params.get("registration_allowed"),
+                    shared_domain_list=module.params.get("shared_domain_list"),
+                    system_locked=module.params.get("system_locked"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -601,6 +630,7 @@ def main():
 
     elif module.params.get("op_type") == "add_guard_point":
         try:
+            check_mode_action(module)
             response = clientAddGuardPoint(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
@@ -608,6 +638,7 @@ def main():
                 guard_point_params=module.params.get("guard_point_params"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -621,11 +652,13 @@ def main():
 
     elif module.params.get("op_type") == "unenroll":
         try:
+            check_mode_action(module)
             response = unEnrollClient(
                 node=module.params.get("localNode"),
                 name=module.params.get("name"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -639,11 +672,13 @@ def main():
 
     elif module.params.get("op_type") == "delete":
         try:
+            check_mode_action(module)
             response = deleteClients(
                 node=module.params.get("localNode"),
                 client_id_list=module.params.get("client_id_list"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -657,6 +692,7 @@ def main():
 
     elif module.params.get("op_type") == "delete_id":
         try:
+            check_mode_action(module)
             response = deleteClientById(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
@@ -664,6 +700,7 @@ def main():
                 force_del_client=module.params.get("force_del_client"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -677,6 +714,7 @@ def main():
 
     elif module.params.get("op_type") == "auth_binaries":
         try:
+            check_mode_action(module)
             response = updateClientAuthBinaries(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
@@ -687,6 +725,7 @@ def main():
                 re_sign=module.params.get("re_sign"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -700,12 +739,14 @@ def main():
 
     elif module.params.get("op_type") == "ldt_pause":
         try:
+            check_mode_action(module)
             response = sendLDTPauseCmd(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 paused=module.params.get("paused"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -719,6 +760,7 @@ def main():
 
     elif module.params.get("op_type") == "patch_guard_point":
         try:
+            check_mode_action(module)
             response = patchGuardPointCTEClient(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
@@ -734,6 +776,7 @@ def main():
                 ),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -747,12 +790,14 @@ def main():
 
     elif module.params.get("op_type") == "gp_unguard":
         try:
+            check_mode_action(module)
             response = unGuardPoints(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 guard_point_id_list=module.params.get("guard_point_id_list"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -766,6 +811,7 @@ def main():
 
     elif module.params.get("op_type") == "gp_enable_early_access":
         try:
+            check_mode_action(module)
             response = updateGPEarlyAccess(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
@@ -773,6 +819,7 @@ def main():
                 early_access=module.params.get("early_access"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

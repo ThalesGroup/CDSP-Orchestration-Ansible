@@ -109,6 +109,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing 
     activateTrial,
     deactivateTrial,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
     AnsibleCMException,
@@ -148,11 +151,13 @@ def main():
 
     if module.params.get("action_type") == "activate":
         try:
+            check_mode_action(module)
             response = activateTrial(
                 node=module.params.get("localNode"),
                 trialId=module.params.get("trialId"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -166,11 +171,13 @@ def main():
 
     else:
         try:
+            check_mode_action(module)
             response = deactivateTrial(
                 node=module.params.get("localNode"),
                 trialId=module.params.get("trialId"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

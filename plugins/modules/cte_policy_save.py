@@ -550,6 +550,14 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
     createCTEPolicy,
     ctePolicyAddRule,
@@ -751,22 +759,34 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createCTEPolicy(
-                node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                description=module.params.get("description"),
-                policy_type=module.params.get("policy_type"),
-                data_transform_rules=module.params.get("data_transform_rules"),
-                idt_key_rules=module.params.get("idt_key_rules"),
-                key_rules=module.params.get("key_rules"),
-                ldt_key_rules=module.params.get("ldt_key_rules"),
-                metadata=module.params.get("metadata"),
-                never_deny=module.params.get("never_deny"),
-                security_rules=module.params.get("security_rules"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="transparent-encryption/policies",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createCTEPolicy,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    description=module.params.get("description"),
+                    policy_type=module.params.get("policy_type"),
+                    data_transform_rules=module.params.get("data_transform_rules"),
+                    idt_key_rules=module.params.get("idt_key_rules"),
+                    key_rules=module.params.get("key_rules"),
+                    ldt_key_rules=module.params.get("ldt_key_rules"),
+                    metadata=module.params.get("metadata"),
+                    never_deny=module.params.get("never_deny"),
+                    security_rules=module.params.get("security_rules"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -780,15 +800,24 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateCTEPolicy(
-                node=module.params.get("localNode"),
-                policy_id=module.params.get("policy_id"),
-                description=module.params.get("description"),
-                force_restrict_update=module.params.get("force_restrict_update"),
-                metadata=module.params.get("metadata"),
-                never_deny=module.params.get("never_deny"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="transparent-encryption/policies",
+                resource_id=module.params.get("policy_id"),
+                patch_fn=updateCTEPolicy,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    policy_id=module.params.get("policy_id"),
+                    description=module.params.get("description"),
+                    force_restrict_update=module.params.get("force_restrict_update"),
+                    metadata=module.params.get("metadata"),
+                    never_deny=module.params.get("never_deny"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -802,6 +831,7 @@ def main():
 
     elif module.params.get("op_type") == "add_data_transfer_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyAddRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -811,6 +841,7 @@ def main():
                 resource_set_id=module.params.get("resource_set_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -824,6 +855,7 @@ def main():
 
     elif module.params.get("op_type") == "add_key_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyAddRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -833,6 +865,7 @@ def main():
                 resource_set_id=module.params.get("resource_set_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -846,6 +879,7 @@ def main():
 
     elif module.params.get("op_type") == "add_ldt_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyAddRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -856,6 +890,7 @@ def main():
                 transformation_key=module.params.get("transformation_keys"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -869,6 +904,7 @@ def main():
 
     elif module.params.get("op_type") == "add_security_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyAddRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -884,6 +920,7 @@ def main():
                 user_set_id=module.params.get("user_set_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -897,6 +934,7 @@ def main():
 
     elif module.params.get("op_type") == "patch_data_transfer_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyPatchRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -908,6 +946,7 @@ def main():
                 order_number=module.params.get("order_number"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -921,6 +960,7 @@ def main():
 
     elif module.params.get("op_type") == "patch_key_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyPatchRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -932,6 +972,7 @@ def main():
                 order_number=module.params.get("order_number"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -945,6 +986,7 @@ def main():
 
     elif module.params.get("op_type") == "patch_ldt_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyPatchRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -957,6 +999,7 @@ def main():
                 transformation_key=module.params.get("transformation_keys"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -970,6 +1013,7 @@ def main():
 
     elif module.params.get("op_type") == "patch_security_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyPatchRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -987,6 +1031,7 @@ def main():
                 user_set_id=module.params.get("user_set_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -1000,6 +1045,7 @@ def main():
 
     elif module.params.get("op_type") == "patch_idt_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyPatchRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -1011,6 +1057,7 @@ def main():
                 rule_id=module.params.get("idtRuleId"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -1024,6 +1071,7 @@ def main():
 
     elif module.params.get("op_type") == "remove_data_transfer_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyDeleteRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -1031,6 +1079,7 @@ def main():
                 rule_id=module.params.get("dataTxRuleId"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -1044,6 +1093,7 @@ def main():
 
     elif module.params.get("op_type") == "remove_ldt_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyDeleteRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -1051,6 +1101,7 @@ def main():
                 rule_id=module.params.get("ldtRuleId"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -1064,6 +1115,7 @@ def main():
 
     elif module.params.get("op_type") == "remove_key_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyDeleteRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -1071,6 +1123,7 @@ def main():
                 rule_id=module.params.get("keyRuleId"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -1084,6 +1137,7 @@ def main():
 
     elif module.params.get("op_type") == "remove_security_rule":
         try:
+            check_mode_action(module)
             response = ctePolicyDeleteRule(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -1091,6 +1145,7 @@ def main():
                 rule_id=module.params.get("securityRuleId"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

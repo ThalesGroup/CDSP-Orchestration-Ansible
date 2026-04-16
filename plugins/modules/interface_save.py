@@ -324,9 +324,16 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.interfaces import (
     create,
     patch,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -696,10 +703,18 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = create(
-                node=module.params.get("localNode"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="configs/interfaces",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=create,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
                 port=module.params.get("port"),
                 auto_gen_ca_id=module.params.get("auto_gen_ca_id"),
                 auto_registration=module.params.get("auto_registration"),
@@ -718,8 +733,12 @@ def main():
                 network_interface=module.params.get("network_interface"),
                 registration_token=module.params.get("registration_token"),
                 trusted_cas=module.params.get("trusted_cas"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -795,10 +814,15 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = patch(
-                node=module.params.get("localNode"),
-                interface_id=module.params.get("interface_id"),
-                port=module.params.get("port"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="configs/interfaces",
+                resource_id=module.params.get("interface_id"),
+                patch_fn=patch,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    interface_id=module.params.get("interface_id"),
+                    port=module.params.get("port"),
                 auto_gen_ca_id=module.params.get("auto_gen_ca_id"),
                 auto_registration=module.params.get("auto_registration"),
                 allow_unregistered=module.params.get("allow_unregistered"),
@@ -817,8 +841,12 @@ def main():
                     "local_auto_gen_attributes"
                 ),
                 tls_ciphers=module.params.get("tls_ciphers"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

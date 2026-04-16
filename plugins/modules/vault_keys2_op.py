@@ -510,6 +510,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 impo
     export,
     clone,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
     AnsibleCMException,
@@ -709,6 +712,7 @@ def main():
 
     if module.params.get("op_type") == "destroy":
         try:
+            check_mode_action(module)
             response = destroy(
                 node=module.params.get("localNode"),
                 cm_key_id=module.params.get("cm_key_id"),
@@ -716,6 +720,7 @@ def main():
                 id_type=module.params.get("id_type"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -729,6 +734,7 @@ def main():
 
     elif module.params.get("op_type") == "archive":
         try:
+            check_mode_action(module)
             response = archive(
                 node=module.params.get("localNode"),
                 cm_key_id=module.params.get("cm_key_id"),
@@ -736,6 +742,7 @@ def main():
                 id_type=module.params.get("id_type"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -749,6 +756,7 @@ def main():
 
     elif module.params.get("op_type") == "recover":
         try:
+            check_mode_action(module)
             response = recover(
                 node=module.params.get("localNode"),
                 cm_key_id=module.params.get("cm_key_id"),
@@ -756,6 +764,7 @@ def main():
                 id_type=module.params.get("id_type"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -769,6 +778,7 @@ def main():
 
     elif module.params.get("op_type") == "revoke":
         try:
+            check_mode_action(module)
             response = revoke(
                 node=module.params.get("localNode"),
                 cm_key_id=module.params.get("cm_key_id"),
@@ -779,6 +789,7 @@ def main():
                 messageStr=module.params.get("messageStr"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -792,6 +803,7 @@ def main():
 
     elif module.params.get("op_type") == "reactivate":
         try:
+            check_mode_action(module)
             response = reactivate(
                 node=module.params.get("localNode"),
                 cm_key_id=module.params.get("cm_key_id"),
@@ -801,6 +813,7 @@ def main():
                 messageStr=module.params.get("messageStr"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -814,6 +827,7 @@ def main():
 
     elif module.params.get("op_type") == "export":
         try:
+            check_mode_action(module)
             response = export(
                 node=module.params.get("localNode"),
                 cm_key_id=module.params.get("cm_key_id"),
@@ -844,6 +858,7 @@ def main():
                 wrappingMethod=module.params.get("wrappingMethod"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -857,6 +872,7 @@ def main():
 
     elif module.params.get("op_type") == "clone":
         try:
+            check_mode_action(module)
             response = clone(
                 node=module.params.get("localNode"),
                 cm_key_id=module.params.get("cm_key_id"),
@@ -868,6 +884,7 @@ def main():
                 newKeyName=module.params.get("newKeyName"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

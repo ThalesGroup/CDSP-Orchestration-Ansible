@@ -166,6 +166,14 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
     createUserSet,
     updateUserSet,
@@ -243,15 +251,27 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createUserSet(
-                node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                description=module.params.get("description"),
-                users=module.params.get("users"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="transparent-encryption/usersets",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createUserSet,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    description=module.params.get("description"),
+                    users=module.params.get("users"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -265,13 +285,22 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateUserSet(
-                node=module.params.get("localNode"),
-                id=module.params.get("id"),
-                description=module.params.get("description"),
-                users=module.params.get("users"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="transparent-encryption/usersets",
+                resource_id=module.params.get("id"),
+                patch_fn=updateUserSet,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    id=module.params.get("id"),
+                    description=module.params.get("description"),
+                    users=module.params.get("users"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -285,12 +314,14 @@ def main():
 
     elif module.params.get("op_type") == "add_user":
         try:
+            check_mode_action(module)
             response = addUserToSet(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 users=module.params.get("users"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -304,6 +335,7 @@ def main():
 
     elif module.params.get("op_type") == "patch_user":
         try:
+            check_mode_action(module)
             response = updateUserInSetByIndex(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
@@ -315,6 +347,7 @@ def main():
                 uname=module.params.get("uname"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -328,12 +361,14 @@ def main():
 
     elif module.params.get("op_type") == "delete_user":
         try:
+            check_mode_action(module)
             response = deleteUserInSetByIndex(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 userIndex=str(module.params.get("userIndex")),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

@@ -184,6 +184,14 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
     createCSIStorageGroup,
     updateCSIStorageGroup,
@@ -260,17 +268,29 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createCSIStorageGroup(
-                node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                description=module.params.get("description"),
-                k8s_namespace=module.params.get("k8s_namespace"),
-                k8s_storage_class=module.params.get("k8s_storage_class"),
-                client_profile=module.params.get("client_profile"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="transparent-encryption/csigroups",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createCSIStorageGroup,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    description=module.params.get("description"),
+                    k8s_namespace=module.params.get("k8s_namespace"),
+                    k8s_storage_class=module.params.get("k8s_storage_class"),
+                    client_profile=module.params.get("client_profile"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -284,13 +304,22 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateCSIStorageGroup(
-                node=module.params.get("localNode"),
-                id=module.params.get("id"),
-                description=module.params.get("description"),
-                client_profile=module.params.get("client_profile"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="transparent-encryption/csigroups",
+                resource_id=module.params.get("id"),
+                patch_fn=updateCSIStorageGroup,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    id=module.params.get("id"),
+                    description=module.params.get("description"),
+                    client_profile=module.params.get("client_profile"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -304,12 +333,14 @@ def main():
 
     elif module.params.get("op_type") == "add_client":
         try:
+            check_mode_action(module)
             response = csiGroupAddClient(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 client_list=module.params.get("client_list"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -323,12 +354,14 @@ def main():
 
     elif module.params.get("op_type") == "remove_client":
         try:
+            check_mode_action(module)
             response = csiGroupRemoveClient(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 client_id=module.params.get("client_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -342,12 +375,14 @@ def main():
 
     elif module.params.get("op_type") == "add_guard_point":
         try:
+            check_mode_action(module)
             response = csiGroupAddGuardPoint(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 policy_list=module.params.get("policy_list"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -361,12 +396,14 @@ def main():
 
     elif module.params.get("op_type") == "patch_guard_point":
         try:
+            check_mode_action(module)
             response = csiGroupUpdateGuardPoint(
                 node=module.params.get("localNode"),
                 gp_id=module.params.get("gp_id"),
                 guard_enabled=module.params.get("guard_enabled"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -380,11 +417,13 @@ def main():
 
     elif module.params.get("op_type") == "remove_guard_point":
         try:
+            check_mode_action(module)
             response = csiGroupRemoveGuardPoint(
                 node=module.params.get("localNode"),
                 gp_id=module.params.get("gp_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

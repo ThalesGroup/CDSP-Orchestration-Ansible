@@ -296,6 +296,13 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
     createClientProfile,
     updateClientProfile,
@@ -412,23 +419,35 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createClientProfile(
-                node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                app_connector_type=module.params.get("app_connector_type"),
-                ca_id=module.params.get("ca_id"),
-                cert_duration=module.params.get("cert_duration"),
-                configurations=module.params.get("configurations"),
-                csr_parameters=module.params.get("csr_parameters"),
-                heartbeat_threshold=module.params.get("heartbeat_threshold"),
-                lifetime=module.params.get("lifetime"),
-                max_clients=module.params.get("max_clients"),
-                nae_iface_port=module.params.get("nae_iface_port"),
-                policy_id=module.params.get("policy_id"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="data-protection/client-profiles",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createClientProfile,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    app_connector_type=module.params.get("app_connector_type"),
+                    ca_id=module.params.get("ca_id"),
+                    cert_duration=module.params.get("cert_duration"),
+                    configurations=module.params.get("configurations"),
+                    csr_parameters=module.params.get("csr_parameters"),
+                    heartbeat_threshold=module.params.get("heartbeat_threshold"),
+                    lifetime=module.params.get("lifetime"),
+                    max_clients=module.params.get("max_clients"),
+                    nae_iface_port=module.params.get("nae_iface_port"),
+                    policy_id=module.params.get("policy_id"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -442,21 +461,30 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateClientProfile(
-                node=module.params.get("localNode"),
-                profile_id=module.params.get("profile_id"),
-                name=module.params.get("name"),
-                app_connector_type=module.params.get("app_connector_type"),
-                ca_id=module.params.get("ca_id"),
-                configurations=module.params.get("configurations"),
-                csr_parameters=module.params.get("csr_parameters"),
-                heartbeat_threshold=module.params.get("heartbeat_threshold"),
-                lifetime=module.params.get("lifetime"),
-                max_clients=module.params.get("max_clients"),
-                nae_iface_port=module.params.get("nae_iface_port"),
-                policy_id=module.params.get("policy_id"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="data-protection/client-profiles",
+                resource_id=module.params.get("profile_id"),
+                patch_fn=updateClientProfile,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    profile_id=module.params.get("profile_id"),
+                    name=module.params.get("name"),
+                    app_connector_type=module.params.get("app_connector_type"),
+                    ca_id=module.params.get("ca_id"),
+                    configurations=module.params.get("configurations"),
+                    csr_parameters=module.params.get("csr_parameters"),
+                    heartbeat_threshold=module.params.get("heartbeat_threshold"),
+                    lifetime=module.params.get("lifetime"),
+                    max_clients=module.params.get("max_clients"),
+                    nae_iface_port=module.params.get("nae_iface_port"),
+                    policy_id=module.params.get("policy_id"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

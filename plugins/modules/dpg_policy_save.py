@@ -993,6 +993,9 @@ execution_time:
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
     createDPGPolicy,
     updateDPGPolicy,
@@ -1000,10 +1003,10 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import
     dpgPolicyUpdateAPIUrl,
     dpgPolicyDeleteAPIUrl,
 )
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cache import (
-    get_cache,
-    get_performance_metrics,
-    reset_performance_metrics,
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -1357,24 +1360,33 @@ def main():
         dpg_policy_module=module,
     )
 
-    # Initialize performance metrics
-    reset_performance_metrics()
-    
     result = dict(
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     op_type = module.params.get("op_type")
-    
+
     if op_type == "create":
         try:
-            response = createDPGPolicy(
-                node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                description=module.params.get("description"),
-                proxy_config=module.params.get("proxy_config"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="data-protection/dpg-policies",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createDPGPolicy,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    description=module.params.get("description"),
+                    proxy_config=module.params.get("proxy_config"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except AnsibleCMValidationException as e:
             module.fail_json(
                 msg=f"Validation failed for op_type 'create': {e.message}. "
@@ -1419,20 +1431,24 @@ def main():
                     f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
             )
 
-        # Add performance metrics to result for create operation
-        result["api_calls"] = get_performance_metrics().api_calls
-        result["cache_info"] = get_cache().get_stats()
-        result["execution_time"] = get_performance_metrics().execution_time
-
     elif op_type == "patch":
         try:
-            response = updateDPGPolicy(
-                node=module.params.get("localNode"),
-                policy_id=module.params.get("policy_id"),
-                description=module.params.get("description"),
-                proxy_config=module.params.get("proxy_config"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="data-protection/dpg-policies",
+                resource_id=module.params.get("policy_id"),
+                patch_fn=updateDPGPolicy,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    policy_id=module.params.get("policy_id"),
+                    description=module.params.get("description"),
+                    proxy_config=module.params.get("proxy_config"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except AnsibleCMValidationException as e:
             module.fail_json(
                 msg=f"Validation failed for op_type 'patch': {e.message}. "
@@ -1477,13 +1493,9 @@ def main():
                     f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
             )
 
-        # Add performance metrics to result for patch operation
-        result["api_calls"] = get_performance_metrics().api_calls
-        result["cache_info"] = get_cache().get_stats()
-        result["execution_time"] = get_performance_metrics().execution_time
-
     elif op_type == "add-api-url":
         try:
+            check_mode_action(module)
             response = dpgPolicyAddAPIUrl(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -1518,6 +1530,7 @@ def main():
                 url_request_put_tokens=module.params.get("url_request_put_tokens"),
             )
             result["response"] = response
+            result["changed"] = True
         except AnsibleCMValidationException as e:
             module.fail_json(
                 msg=f"Validation failed for op_type 'add-api-url': {e.message}. "
@@ -1562,13 +1575,9 @@ def main():
                     f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
             )
 
-        # Add performance metrics to result for add-api-url operation
-        result["api_calls"] = get_performance_metrics().api_calls
-        result["cache_info"] = get_cache().get_stats()
-        result["execution_time"] = get_performance_metrics().execution_time
-
     elif op_type == "update-api-url":
         try:
+            check_mode_action(module)
             response = dpgPolicyUpdateAPIUrl(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
@@ -1603,6 +1612,7 @@ def main():
                 url_request_put_tokens=module.params.get("url_request_put_tokens"),
             )
             result["response"] = response
+            result["changed"] = True
         except AnsibleCMValidationException as e:
             module.fail_json(
                 msg=f"Validation failed for op_type 'update-api-url': {e.message}. "
@@ -1647,19 +1657,16 @@ def main():
                     f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
             )
 
-        # Add performance metrics to result for update-api-url operation
-        result["api_calls"] = get_performance_metrics().api_calls
-        result["cache_info"] = get_cache().get_stats()
-        result["execution_time"] = get_performance_metrics().execution_time
-
     elif op_type == "delete-api-url":
         try:
+            check_mode_action(module)
             response = dpgPolicyDeleteAPIUrl(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
                 api_url_id=module.params.get("api_url_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except AnsibleCMValidationException as e:
             module.fail_json(
                 msg=f"Validation failed for op_type 'delete-api-url': {e.message}. "
@@ -1703,11 +1710,6 @@ def main():
                 msg=f"Error for op_type 'delete-api-url': {custom_e.message}. "
                     f"Documentation: {DOCUMENTATION_LINKS.get('dpg_policy_save', 'https://thalesdocs.com/ctp/con/dpg/latest/admin/')}"
             )
-
-        # Add performance metrics to result for delete-api-url operation
-        result["api_calls"] = get_performance_metrics().api_calls
-        result["cache_info"] = get_cache().get_stats()
-        result["execution_time"] = get_performance_metrics().execution_time
 
     else:
         module.fail_json(msg="invalid op_type")

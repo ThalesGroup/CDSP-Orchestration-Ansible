@@ -139,6 +139,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cluster im
     sign,
     join,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
     AnsibleCMException,
@@ -188,10 +191,12 @@ def main():
 
     if module.params.get("op_type") == "new":
         try:
+            check_mode_action(module)
             response = new(
                 node=module.params.get("localNode"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -204,6 +209,7 @@ def main():
             module.fail_json(msg=custom_e.message)
 
     elif module.params.get("op_type") == "join":
+        check_mode_action(module)
         _joining_nodes = module.params.get("nodes")
 
         for node in _joining_nodes:
@@ -268,6 +274,7 @@ def main():
                     mkek_blob=mkek_blob,
                 )
                 result["output"] = output
+                result["changed"] = True
             except CMApiException as api_e:
                 if api_e.api_error_code:
                     module.fail_json(

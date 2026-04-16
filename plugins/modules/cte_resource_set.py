@@ -207,6 +207,14 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
     createResourceSet,
     updateResourceSet,
@@ -298,17 +306,29 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createResourceSet(
-                node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                classification_tags=module.params.get("classification_tags"),
-                description=module.params.get("description"),
-                resources=module.params.get("resources"),
-                type=module.params.get("type"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="transparent-encryption/resourcesets",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createResourceSet,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    classification_tags=module.params.get("classification_tags"),
+                    description=module.params.get("description"),
+                    resources=module.params.get("resources"),
+                    type=module.params.get("type"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -322,14 +342,23 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateResourceSet(
-                node=module.params.get("localNode"),
-                id=module.params.get("id"),
-                classification_tags=module.params.get("classification_tags"),
-                description=module.params.get("description"),
-                resources=module.params.get("resources"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="transparent-encryption/resourcesets",
+                resource_id=module.params.get("id"),
+                patch_fn=updateResourceSet,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    id=module.params.get("id"),
+                    classification_tags=module.params.get("classification_tags"),
+                    description=module.params.get("description"),
+                    resources=module.params.get("resources"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -343,12 +372,14 @@ def main():
 
     elif module.params.get("op_type") == "add_resource":
         try:
+            check_mode_action(module)
             response = addResourceToSet(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 resources=module.params.get("resources"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -362,6 +393,7 @@ def main():
 
     elif module.params.get("op_type") == "patch_resource":
         try:
+            check_mode_action(module)
             response = updateResourceInSetByIndex(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
@@ -372,6 +404,7 @@ def main():
                 include_subfolders=module.params.get("include_subfolders"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -385,12 +418,14 @@ def main():
 
     elif module.params.get("op_type") == "delete_resource":
         try:
+            check_mode_action(module)
             response = deleteResourceInSetByIndex(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 resourceIndex=str(module.params.get("resourceIndex")),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

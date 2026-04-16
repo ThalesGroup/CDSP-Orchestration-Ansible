@@ -180,6 +180,14 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
     createSignatureSet,
     updateSignatureSet,
@@ -262,15 +270,27 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createSignatureSet(
-                node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                description=module.params.get("description"),
-                source_list=module.params.get("source_list"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="transparent-encryption/signaturesets",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createSignatureSet,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    description=module.params.get("description"),
+                    source_list=module.params.get("source_list"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -284,13 +304,22 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateSignatureSet(
-                node=module.params.get("localNode"),
-                id=module.params.get("id"),
-                description=module.params.get("description"),
-                source_list=module.params.get("source_list"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="transparent-encryption/signaturesets",
+                resource_id=module.params.get("id"),
+                patch_fn=updateSignatureSet,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    id=module.params.get("id"),
+                    description=module.params.get("description"),
+                    source_list=module.params.get("source_list"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -304,12 +333,14 @@ def main():
 
     elif module.params.get("op_type") == "add_signature":
         try:
+            check_mode_action(module)
             response = addSignatureToSet(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 signatures=module.params.get("signatures"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -343,12 +374,14 @@ def main():
 
     elif module.params.get("op_type") == "delete_signature":
         try:
+            check_mode_action(module)
             response = deleteSignatureInSetById(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 signature_id=module.params.get("signature_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -362,12 +395,14 @@ def main():
 
     elif module.params.get("op_type") == "sign_app":
         try:
+            check_mode_action(module)
             response = sendSignAppRequest(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 client_id=module.params.get("client_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -400,12 +435,14 @@ def main():
 
     elif module.params.get("op_type") == "cancel_sign_app":
         try:
+            check_mode_action(module)
             response = cancelSignAppRequest(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 client_id=module.params.get("client_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

@@ -145,6 +145,13 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
     createMaskingFormat,
     updateMaskingFormat,
@@ -194,17 +201,29 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createMaskingFormat(
-                node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                ending_characters=module.params.get("ending_characters"),
-                mask_char=module.params.get("mask_char"),
-                show=module.params.get("show"),
-                starting_characters=module.params.get("starting_characters"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="data-protection/masking-formats",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createMaskingFormat,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    ending_characters=module.params.get("ending_characters"),
+                    mask_char=module.params.get("mask_char"),
+                    show=module.params.get("show"),
+                    starting_characters=module.params.get("starting_characters"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -218,16 +237,25 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateMaskingFormat(
-                node=module.params.get("localNode"),
-                masking_format_id=module.params.get("masking_format_id"),
-                name=module.params.get("name"),
-                ending_characters=module.params.get("ending_characters"),
-                mask_char=module.params.get("mask_char"),
-                show=module.params.get("show"),
-                starting_characters=module.params.get("starting_characters"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="data-protection/masking-formats",
+                resource_id=module.params.get("masking_format_id"),
+                patch_fn=updateMaskingFormat,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    masking_format_id=module.params.get("masking_format_id"),
+                    name=module.params.get("name"),
+                    ending_characters=module.params.get("ending_characters"),
+                    mask_char=module.params.get("mask_char"),
+                    show=module.params.get("show"),
+                    starting_characters=module.params.get("starting_characters"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

@@ -822,10 +822,18 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 import (
     create,
     patch,
     version_create,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -1368,67 +1376,79 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = create(
-                node=module.params.get("localNode"),
-                activationDate=module.params.get("activationDate"),
-                algorithm=module.params.get("algorithm"),
-                aliases=module.params.get("aliases"),
-                archiveDate=module.params.get("archiveDate"),
-                certType=module.params.get("certType"),
-                compromiseDate=module.params.get("compromiseDate"),
-                compromiseOccurrenceDate=module.params.get("compromiseOccurrenceDate"),
-                curveid=module.params.get("curveid"),
-                deactivationDate=module.params.get("deactivationDate"),
-                defaultIV=module.params.get("defaultIV"),
-                destroyDate=module.params.get("destroyDate"),
-                encoding=module.params.get("encoding"),
-                format=module.params.get("format"),
-                generateKeyId=module.params.get("generateKeyId"),
-                hkdfCreateParameters=module.params.get("hkdfCreateParameters"),
-                id=module.params.get("id"),
-                idSize=module.params.get("idSize"),
-                keyId=module.params.get("keyId"),
-                labels=module.params.get("labels"),
-                macSignBytes=module.params.get("macSignBytes"),
-                macSignKeyIdentifier=module.params.get("macSignKeyIdentifier"),
-                macSignKeyIdentifierType=module.params.get("macSignKeyIdentifierType"),
-                material=module.params.get("material"),
-                meta=module.params.get("meta"),
-                muid=module.params.get("muid"),
-                name=module.params.get("name"),
-                objectType=module.params.get("objectType"),
-                padded=module.params.get("padded"),
-                password=module.params.get("password"),
-                processStartDate=module.params.get("processStartDate"),
-                protectStopDate=module.params.get("protectStopDate"),
-                publicKeyParameters=module.params.get("publicKeyParameters"),
-                revocationMessage=module.params.get("revocationMessage"),
-                revocationReason=module.params.get("revocationReason"),
-                rotationFrequencyDays=module.params.get("rotationFrequencyDays"),
-                secretDataEncoding=module.params.get("secretDataEncoding"),
-                secretDataLink=module.params.get("secretDataLink"),
-                signingAlgo=module.params.get("signingAlgo"),
-                size=module.params.get("size"),
-                state=module.params.get("state"),
-                undeletable=module.params.get("undeletable"),
-                unexportable=module.params.get("unexportable"),
-                usageMask=module.params.get("usageMask"),
-                uuid=module.params.get("uuid"),
-                wrapHKDF=module.params.get("wrapHKDF"),
-                wrapKeyIDType=module.params.get("wrapKeyIDType"),
-                wrapKeyName=module.params.get("wrapKeyName"),
-                wrapPBE=module.params.get("wrapPBE"),
-                wrapPublicKey=module.params.get("wrapPublicKey"),
-                wrapPublicKeyPadding=module.params.get("wrapPublicKeyPadding"),
-                wrapRSAAES=module.params.get("wrapRSAAES"),
-                wrappingEncryptionAlgo=module.params.get("wrappingEncryptionAlgo"),
-                wrappingHashAlgo=module.params.get("wrappingHashAlgo"),
-                wrappingMethod=module.params.get("wrappingMethod"),
-                xts=module.params.get("xts"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="vault/keys2",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=create,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    activationDate=module.params.get("activationDate"),
+                    algorithm=module.params.get("algorithm"),
+                    aliases=module.params.get("aliases"),
+                    archiveDate=module.params.get("archiveDate"),
+                    certType=module.params.get("certType"),
+                    compromiseDate=module.params.get("compromiseDate"),
+                    compromiseOccurrenceDate=module.params.get("compromiseOccurrenceDate"),
+                    curveid=module.params.get("curveid"),
+                    deactivationDate=module.params.get("deactivationDate"),
+                    defaultIV=module.params.get("defaultIV"),
+                    destroyDate=module.params.get("destroyDate"),
+                    encoding=module.params.get("encoding"),
+                    format=module.params.get("format"),
+                    generateKeyId=module.params.get("generateKeyId"),
+                    hkdfCreateParameters=module.params.get("hkdfCreateParameters"),
+                    id=module.params.get("id"),
+                    idSize=module.params.get("idSize"),
+                    keyId=module.params.get("keyId"),
+                    labels=module.params.get("labels"),
+                    macSignBytes=module.params.get("macSignBytes"),
+                    macSignKeyIdentifier=module.params.get("macSignKeyIdentifier"),
+                    macSignKeyIdentifierType=module.params.get("macSignKeyIdentifierType"),
+                    material=module.params.get("material"),
+                    meta=module.params.get("meta"),
+                    muid=module.params.get("muid"),
+                    name=module.params.get("name"),
+                    objectType=module.params.get("objectType"),
+                    padded=module.params.get("padded"),
+                    password=module.params.get("password"),
+                    processStartDate=module.params.get("processStartDate"),
+                    protectStopDate=module.params.get("protectStopDate"),
+                    publicKeyParameters=module.params.get("publicKeyParameters"),
+                    revocationMessage=module.params.get("revocationMessage"),
+                    revocationReason=module.params.get("revocationReason"),
+                    rotationFrequencyDays=module.params.get("rotationFrequencyDays"),
+                    secretDataEncoding=module.params.get("secretDataEncoding"),
+                    secretDataLink=module.params.get("secretDataLink"),
+                    signingAlgo=module.params.get("signingAlgo"),
+                    size=module.params.get("size"),
+                    state=module.params.get("state"),
+                    undeletable=module.params.get("undeletable"),
+                    unexportable=module.params.get("unexportable"),
+                    usageMask=module.params.get("usageMask"),
+                    uuid=module.params.get("uuid"),
+                    wrapHKDF=module.params.get("wrapHKDF"),
+                    wrapKeyIDType=module.params.get("wrapKeyIDType"),
+                    wrapKeyName=module.params.get("wrapKeyName"),
+                    wrapPBE=module.params.get("wrapPBE"),
+                    wrapPublicKey=module.params.get("wrapPublicKey"),
+                    wrapPublicKeyPadding=module.params.get("wrapPublicKeyPadding"),
+                    wrapRSAAES=module.params.get("wrapRSAAES"),
+                    wrappingEncryptionAlgo=module.params.get("wrappingEncryptionAlgo"),
+                    wrappingHashAlgo=module.params.get("wrappingHashAlgo"),
+                    wrappingMethod=module.params.get("wrappingMethod"),
+                    xts=module.params.get("xts"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             error_msg = "API Error"
             if api_e.api_error_code:
@@ -1496,29 +1516,38 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = patch(
-                node=module.params.get("localNode"),
-                cm_key_id=module.params.get("cm_key_id"),
-                activationDate=module.params.get("activationDate"),
-                aliases=module.params.get("aliases"),
-                allVersions=module.params.get("allVersions"),
-                archiveDate=module.params.get("archiveDate"),
-                compromiseOccurrenceDate=module.params.get("compromiseOccurrenceDate"),
-                deactivationDate=module.params.get("deactivationDate"),
-                keyId=module.params.get("keyId"),
-                labels=module.params.get("labels"),
-                meta=module.params.get("meta"),
-                muid=module.params.get("muid"),
-                processStartDate=module.params.get("processStartDate"),
-                protectStopDate=module.params.get("protectStopDate"),
-                revocationMessage=module.params.get("revocationMessage"),
-                revocationReason=module.params.get("revocationReason"),
-                rotationFrequencyDays=module.params.get("rotationFrequencyDays"),
-                undeletable=module.params.get("undeletable"),
-                unexportable=module.params.get("unexportable"),
-                usageMask=module.params.get("usageMask"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="vault/keys2",
+                resource_id=module.params.get("cm_key_id"),
+                patch_fn=patch,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    cm_key_id=module.params.get("cm_key_id"),
+                    activationDate=module.params.get("activationDate"),
+                    aliases=module.params.get("aliases"),
+                    allVersions=module.params.get("allVersions"),
+                    archiveDate=module.params.get("archiveDate"),
+                    compromiseOccurrenceDate=module.params.get("compromiseOccurrenceDate"),
+                    deactivationDate=module.params.get("deactivationDate"),
+                    keyId=module.params.get("keyId"),
+                    labels=module.params.get("labels"),
+                    meta=module.params.get("meta"),
+                    muid=module.params.get("muid"),
+                    processStartDate=module.params.get("processStartDate"),
+                    protectStopDate=module.params.get("protectStopDate"),
+                    revocationMessage=module.params.get("revocationMessage"),
+                    revocationReason=module.params.get("revocationReason"),
+                    rotationFrequencyDays=module.params.get("rotationFrequencyDays"),
+                    undeletable=module.params.get("undeletable"),
+                    unexportable=module.params.get("unexportable"),
+                    usageMask=module.params.get("usageMask"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             error_msg = "API Error"
             if api_e.api_error_code:
@@ -1586,6 +1615,7 @@ def main():
 
     else:
         try:
+            check_mode_action(module)
             response = version_create(
                 node=module.params.get("localNode"),
                 cm_key_id=module.params.get("cm_key_id"),
@@ -1608,6 +1638,7 @@ def main():
                 wrapPublicKeyPadding=module.params.get("wrapPublicKeyPadding"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             error_msg = "API Error"
             if api_e.api_error_code:

@@ -105,6 +105,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules im
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.services import (
     restartCMServices,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
     AnsibleCMException,
@@ -151,12 +154,14 @@ def main():
 
     if module.params.get("op_type") == "restart":
         try:
+            check_mode_action(module)
             response = restartCMServices(
                 node=module.params.get("localNode"),
                 delay=module.params.get("delay"),
                 services=module.params.get("services"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

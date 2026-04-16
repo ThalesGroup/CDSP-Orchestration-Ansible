@@ -131,9 +131,16 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.regtokens import (
     create,
     patch,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_patch,
+    check_mode_action,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -184,8 +191,11 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
+            check_mode_action(module)
             response = create(
                 node=module.params.get("localNode"),
                 ca_id=module.params.get("ca_id"),
@@ -196,6 +206,7 @@ def main():
                 name_prefix=module.params.get("name_prefix"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -209,13 +220,22 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = patch(
-                node=module.params.get("localNode"),
-                id=module.params.get("id"),
-                lifetime=module.params.get("lifetime"),
-                max_clients=module.params.get("max_clients"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="client-management/regtokens",
+                resource_id=module.params.get("id"),
+                patch_fn=patch,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    id=module.params.get("id"),
+                    lifetime=module.params.get("lifetime"),
+                    max_clients=module.params.get("max_clients"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

@@ -257,6 +257,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.interfaces
     autogenServerCert,
     useCertificate,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
     AnsibleCMException,
@@ -332,6 +335,7 @@ def main():
 
     if module.params.get("op_type") == "put_certificate":
         try:
+            check_mode_action(module)
             response = addCertificateToInterface(
                 node=module.params.get("localNode"),
                 interface_id=module.params.get("interface_id"),
@@ -341,6 +345,7 @@ def main():
                 password=module.params.get("password"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -372,11 +377,13 @@ def main():
 
     elif module.params.get("op_type") == "enable":
         try:
+            check_mode_action(module)
             response = enableInterface(
                 node=module.params.get("localNode"),
                 interface_id=module.params.get("interface_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -390,11 +397,13 @@ def main():
 
     elif module.params.get("op_type") == "disable":
         try:
+            check_mode_action(module)
             response = disableInterface(
                 node=module.params.get("localNode"),
                 interface_id=module.params.get("interface_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -408,11 +417,13 @@ def main():
 
     elif module.params.get("op_type") == "restore-default-tls-ciphers":
         try:
+            check_mode_action(module)
             response = restoreDefaultTlsCiphers(
                 node=module.params.get("localNode"),
                 interface_id=module.params.get("interface_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -426,6 +437,7 @@ def main():
 
     elif module.params.get("op_type") == "csr":
         try:
+            check_mode_action(module)
             response = createCsr(
                 node=module.params.get("localNode"),
                 interface_id=module.params.get("interface_id"),
@@ -436,6 +448,7 @@ def main():
                 names=module.params.get("names"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -449,11 +462,13 @@ def main():
 
     elif module.params.get("op_type") == "auto-gen-server-cert":
         try:
+            check_mode_action(module)
             response = autogenServerCert(
                 node=module.params.get("localNode"),
                 interface_id=module.params.get("interface_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -467,12 +482,14 @@ def main():
 
     elif module.params.get("op_type") == "use-certificate":
         try:
+            check_mode_action(module)
             response = useCertificate(
                 node=module.params.get("localNode"),
                 interface_id=module.params.get("interface_id"),
                 copy_from=module.params.get("copy_from"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

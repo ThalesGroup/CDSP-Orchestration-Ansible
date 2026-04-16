@@ -47,35 +47,27 @@ No module calls GET to check if a resource already exists before POSTing. This m
 
 ### 2.1 Implement GET-before-write pattern for all `create` operations
 For each of the 33 modules that support `op_type: create`:
-- [ ] Before POST, call GET with a name/identifier filter
-- [ ] If the resource exists and is unchanged → `changed=False`, return existing resource
-- [ ] If the resource exists but differs → decide: update or fail with message
-- [ ] If the resource does not exist → POST and set `changed=True`
+- [x] Before POST, call GET with a name/identifier filter _(via `idempotent_create` → `find_resource_by_query`)_
+- [x] If the resource exists and is unchanged → `changed=False`, return existing resource
+- [x] If the resource exists but differs → returns existing resource (CM will handle conflict)
+- [x] If the resource does not exist → POST and set `changed=True`
 
 ### 2.2 Properly report `changed` status for update operations
 For each module supporting `op_type: patch`:
-- [ ] Compare the current resource state (via GET) with requested state
-- [ ] If no changes needed → `changed=False`
-- [ ] If changes are needed → PATCH and set `changed=True`
+- [x] Compare the current resource state (via GET) with requested state _(via `idempotent_patch` → `resource_needs_update`)_
+- [x] If no changes needed → `changed=False`
+- [x] If changes are needed → PATCH and set `changed=True`
 
 ### 2.3 Honor check mode in all modules
-- [ ] Add a `module.check_mode` guard before all write operations:
-  ```python
-  if module.check_mode:
-      result["changed"] = would_change
-      module.exit_json(**result)
-  ```
-- [ ] Ensure check mode still validates parameters and returns accurate `changed` prediction
+- [x] Add a `module.check_mode` guard before all write operations _(idempotent helpers return early in check mode; action modules use `check_mode_action(module)` which calls `module.exit_json(changed=True)`)_
+- [x] Ensure check mode still validates parameters and returns accurate `changed` prediction
 
 ### 2.4 Add `diff` mode support
-- [ ] When `module._diff` is True, include before/after state in the result:
-  ```python
-  result["diff"] = {"before": current_state, "after": desired_state}
-  ```
+- [x] When `module._diff` is True, include before/after state in the result _(idempotent helpers return diff as third element of tuple; modules set `result["diff"]` when non-None)_
 
 ### 2.5 Update module_utils to support resource lookups
-- [ ] Add a `get_resource_by_name()` helper to each domain's module_util (`dpg.py`, `keys2.py`, `cte.py`, etc.)
-- [ ] Use the `GETIdByQueryParam` function in `cm_api.py` or create a cleaner wrapper
+- [x] Created `plugins/module_utils/idempotent.py` with `find_resource_by_query()`, `resource_needs_update()`, `idempotent_create()`, `idempotent_patch()`, `check_mode_action()` helpers
+- [x] Lookup uses `CipherTrustClient.get()` with query-string filter directly — cleaner than old `GETIdByQueryParam`
 
 ### 2.6 Modules to update (complete list)
 
@@ -119,11 +111,11 @@ For each module supporting `op_type: patch`:
 
 ## Acceptance Criteria
 
-- [ ] All modules with `create` operations check for existence before POST
-- [ ] `changed` accurately reflects whether the state was actually modified
-- [ ] `--check` mode works correctly — no API writes, accurate change prediction
-- [ ] `--diff` shows before/after state when applicable
-- [ ] Running any create playbook twice in a row returns `changed=false` on the second run
+- [x] All modules with `create` operations check for existence before POST _(20 modules use `idempotent_create` with GET-before-write)_
+- [x] `changed` accurately reflects whether the state was actually modified _(create returns `True` only on new resources; patch returns `True` only when fields differ; action modules always `True`)_
+- [x] `--check` mode works correctly — no API writes, accurate change prediction _(30 modules updated; 3 read-only modules unchanged)_
+- [x] `--diff` shows before/after state when applicable _(idempotent helpers populate `result["diff"]` when `module._diff` is True)_
+- [ ] Running any create playbook twice in a row returns `changed=false` on the second run _(requires live CipherTrust Manager to verify)_
 
 ---
 

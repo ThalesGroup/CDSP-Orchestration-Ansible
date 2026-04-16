@@ -181,6 +181,13 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
     createProtectionPolicy,
     updateProtectionPolicy,
@@ -237,30 +244,42 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createProtectionPolicy(
-                node=module.params.get("localNode"),
-                access_policy_name=module.params.get("access_policy_name"),
-                masking_format_id=module.params.get("masking_format_id"),
-                algorithm=module.params.get("algorithm"),
-                key=module.params.get("key"),
-                name=module.params.get("name"),
-                allow_single_char_input=module.params.get(
-                    "allow_single_char_input"
-                ),  # Parameter not applicable with CM v2.12
-                character_set_id=module.params.get("character_set_id"),
-                iv=module.params.get("iv"),
-                tweak=module.params.get("tweak"),
-                tweak_algorithm=module.params.get("tweak_algorithm"),
-                disable_versioning=module.params.get(
-                    "disable_versioning"
-                ),  # Parameter added in CM v2.12
-                use_external_versioning=module.params.get(
-                    "use_external_versioning"
-                ),  # Parameter added in CM v2.12
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="data-protection/protection-policies",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createProtectionPolicy,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    access_policy_name=module.params.get("access_policy_name"),
+                    masking_format_id=module.params.get("masking_format_id"),
+                    algorithm=module.params.get("algorithm"),
+                    key=module.params.get("key"),
+                    name=module.params.get("name"),
+                    allow_single_char_input=module.params.get(
+                        "allow_single_char_input"
+                    ),  # Parameter not applicable with CM v2.12
+                    character_set_id=module.params.get("character_set_id"),
+                    iv=module.params.get("iv"),
+                    tweak=module.params.get("tweak"),
+                    tweak_algorithm=module.params.get("tweak_algorithm"),
+                    disable_versioning=module.params.get(
+                        "disable_versioning"
+                    ),  # Parameter added in CM v2.12
+                    use_external_versioning=module.params.get(
+                        "use_external_versioning"
+                    ),  # Parameter added in CM v2.12
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -274,22 +293,31 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateProtectionPolicy(
-                node=module.params.get("localNode"),
-                policy_name=module.params.get("policy_name"),
-                access_policy_name=module.params.get("access_policy_name"),
-                masking_format_id=module.params.get("masking_format_id"),
-                algorithm=module.params.get("algorithm"),
-                key=module.params.get("key"),
-                allow_single_char_input=module.params.get(
-                    "allow_single_char_input"
-                ),  # Parameter not applicable with CM v2.12
-                character_set_id=module.params.get("character_set_id"),
-                iv=module.params.get("iv"),
-                tweak=module.params.get("tweak"),
-                tweak_algorithm=module.params.get("tweak_algorithm"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="data-protection/protection-policies",
+                resource_id=module.params.get("policy_name"),
+                patch_fn=updateProtectionPolicy,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    policy_name=module.params.get("policy_name"),
+                    access_policy_name=module.params.get("access_policy_name"),
+                    masking_format_id=module.params.get("masking_format_id"),
+                    algorithm=module.params.get("algorithm"),
+                    key=module.params.get("key"),
+                    allow_single_char_input=module.params.get(
+                        "allow_single_char_input"
+                    ),  # Parameter not applicable with CM v2.12
+                    character_set_id=module.params.get("character_set_id"),
+                    iv=module.params.get("iv"),
+                    tweak=module.params.get("tweak"),
+                    tweak_algorithm=module.params.get("tweak_algorithm"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

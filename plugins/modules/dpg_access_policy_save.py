@@ -212,6 +212,13 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
     createAccessPolicy,
     updateAccessPolicy,
@@ -304,22 +311,34 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createAccessPolicy(
-                node=module.params.get("localNode"),
-                default_error_replacement_value=module.params.get(
-                    "default_error_replacement_value"
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="data-protection/access-policies",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createAccessPolicy,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    default_error_replacement_value=module.params.get(
+                        "default_error_replacement_value"
+                    ),
+                    default_masking_format_id=module.params.get(
+                        "default_masking_format_id"
+                    ),
+                    default_reveal_type=module.params.get("default_reveal_type"),
+                    description=module.params.get("description"),
+                    name=module.params.get("name"),
+                    user_set_policy=module.params.get("user_set_policy"),
                 ),
-                default_masking_format_id=module.params.get(
-                    "default_masking_format_id"
-                ),
-                default_reveal_type=module.params.get("default_reveal_type"),
-                description=module.params.get("description"),
-                name=module.params.get("name"),
-                user_set_policy=module.params.get("user_set_policy"),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -333,21 +352,30 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateAccessPolicy(
-                node=module.params.get("localNode"),
-                policy_id=module.params.get("policy_id"),
-                default_error_replacement_value=module.params.get(
-                    "default_error_replacement_value"
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="data-protection/access-policies",
+                resource_id=module.params.get("policy_id"),
+                patch_fn=updateAccessPolicy,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    policy_id=module.params.get("policy_id"),
+                    default_error_replacement_value=module.params.get(
+                        "default_error_replacement_value"
+                    ),
+                    default_masking_format_id=module.params.get(
+                        "default_masking_format_id"
+                    ),
+                    default_reveal_type=module.params.get("default_reveal_type"),
+                    description=module.params.get("description"),
+                    name=module.params.get("name"),
+                    user_set_policy=module.params.get("user_set_policy"),
                 ),
-                default_masking_format_id=module.params.get(
-                    "default_masking_format_id"
-                ),
-                default_reveal_type=module.params.get("default_reveal_type"),
-                description=module.params.get("description"),
-                name=module.params.get("name"),
-                user_set_policy=module.params.get("user_set_policy"),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -360,6 +388,8 @@ def main():
             module.fail_json(msg=custom_e.message)
 
     elif module.params.get("op_type") == "add-user-set":
+        if module.check_mode:
+            module.exit_json(changed=True)
         try:
             response = accessPolicyAddUserSet(
                 node=module.params.get("localNode"),
@@ -369,6 +399,7 @@ def main():
                 reveal_type=module.params.get("reveal_type"),
                 user_set_id=module.params.get("user_set_id"),
             )
+            result["changed"] = True
             result["response"] = response
         except CMApiException as api_e:
             if api_e.api_error_code:
@@ -382,6 +413,8 @@ def main():
             module.fail_json(msg=custom_e.message)
 
     elif module.params.get("op_type") == "update-user-set":
+        if module.check_mode:
+            module.exit_json(changed=True)
         try:
             response = accessPolicyUpdateUserSet(
                 node=module.params.get("localNode"),
@@ -391,6 +424,7 @@ def main():
                 masking_format_id=module.params.get("masking_format_id"),
                 reveal_type=module.params.get("reveal_type"),
             )
+            result["changed"] = True
             result["response"] = response
         except CMApiException as api_e:
             if api_e.api_error_code:
@@ -404,12 +438,15 @@ def main():
             module.fail_json(msg=custom_e.message)
 
     elif module.params.get("op_type") == "delete-user-set":
+        if module.check_mode:
+            module.exit_json(changed=True)
         try:
             response = accessPolicyDeleteUserSet(
                 node=module.params.get("localNode"),
                 policy_id=module.params.get("policy_id"),
                 policy_user_set_id=module.params.get("policy_user_set_id"),
             )
+            result["changed"] = True
             result["response"] = response
         except CMApiException as api_e:
             if api_e.api_error_code:

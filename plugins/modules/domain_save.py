@@ -150,9 +150,17 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.domains import (
     create,
     patch,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -206,19 +214,31 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = create(
-                node=module.params.get("localNode"),
-                admins=module.params.get("admins"),
-                name=module.params.get("name"),
-                allow_user_management=module.params.get("allow_user_management"),
-                hsm_connection_id=module.params.get("hsm_connection_id"),
-                hsm_kek_label=module.params.get("hsm_kek_label"),
-                meta=module.params.get("meta"),
-                parent_ca_id=module.params.get("parent_ca_id"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="domains",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=create,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    admins=module.params.get("admins"),
+                    name=module.params.get("name"),
+                    allow_user_management=module.params.get("allow_user_management"),
+                    hsm_connection_id=module.params.get("hsm_connection_id"),
+                    hsm_kek_label=module.params.get("hsm_kek_label"),
+                    meta=module.params.get("meta"),
+                    parent_ca_id=module.params.get("parent_ca_id"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -232,13 +252,22 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = patch(
-                node=module.params.get("localNode"),
-                domain_id=module.params.get("domain_id"),
-                connection_id=module.params.get("connection_id"),
-                domain_kek_label=module.params.get("domain_kek_label"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="domains",
+                resource_id=module.params.get("domain_id"),
+                patch_fn=patch,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    domain_id=module.params.get("domain_id"),
+                    connection_id=module.params.get("connection_id"),
+                    domain_kek_label=module.params.get("domain_kek_label"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

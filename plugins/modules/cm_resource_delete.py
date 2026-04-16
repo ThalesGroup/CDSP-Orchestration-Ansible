@@ -121,6 +121,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
     DELETEByNameOrId,
     DeleteWithoutData,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
     AnsibleCMException,
@@ -235,6 +238,7 @@ def main():
         module.fail_json(msg="resource_type not supported yet")
 
     try:
+        check_mode_action(module)
         if resource_type == "cluster":
             response = DELETEByNameOrId(
                 key=module.params.get("key"),
@@ -247,6 +251,7 @@ def main():
                 cm_api_endpoint=endpoint,
             )
         result["response"] = response
+        result["changed"] = True
     except CMApiException as api_e:
         if api_e.api_error_code:
             module.fail_json(

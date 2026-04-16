@@ -139,9 +139,16 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
     createCharacterSet,
     updateCharacterSet,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -186,15 +193,27 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createCharacterSet(
-                node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                range=module.params.get("range"),
-                encoding=module.params.get("encoding"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="data-protection/character-sets",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createCharacterSet,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    range=module.params.get("range"),
+                    encoding=module.params.get("encoding"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -208,14 +227,23 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateCharacterSet(
-                node=module.params.get("localNode"),
-                char_set_id=module.params.get("char_set_id"),
-                name=module.params.get("name"),
-                range=module.params.get("range"),
-                encoding=module.params.get("encoding"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="data-protection/character-sets",
+                resource_id=module.params.get("char_set_id"),
+                patch_fn=updateCharacterSet,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    char_set_id=module.params.get("char_set_id"),
+                    name=module.params.get("name"),
+                    range=module.params.get("range"),
+                    encoding=module.params.get("encoding"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

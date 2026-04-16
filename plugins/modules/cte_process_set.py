@@ -160,6 +160,14 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cte import (
     createProcessSet,
     updateProcessSet,
@@ -233,15 +241,27 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createProcessSet(
-                node=module.params.get("localNode"),
-                name=module.params.get("name"),
-                description=module.params.get("description"),
-                processes=module.params.get("processes"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="transparent-encryption/processsets",
+                lookup_param="name",
+                lookup_value=module.params.get("name"),
+                create_fn=createProcessSet,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    name=module.params.get("name"),
+                    description=module.params.get("description"),
+                    processes=module.params.get("processes"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -255,13 +275,22 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateProcessSet(
-                node=module.params.get("localNode"),
-                id=module.params.get("id"),
-                description=module.params.get("description"),
-                processes=module.params.get("processes"),
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="transparent-encryption/processsets",
+                resource_id=module.params.get("id"),
+                patch_fn=updateProcessSet,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    id=module.params.get("id"),
+                    description=module.params.get("description"),
+                    processes=module.params.get("processes"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -275,12 +304,14 @@ def main():
 
     elif module.params.get("op_type") == "add_process":
         try:
+            check_mode_action(module)
             response = addProcessToSet(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 processes=module.params.get("processes"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -294,6 +325,7 @@ def main():
 
     elif module.params.get("op_type") == "patch_process":
         try:
+            check_mode_action(module)
             response = updateProcessInSetByIndex(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
@@ -303,6 +335,7 @@ def main():
                 signature=module.params.get("signature"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -316,12 +349,14 @@ def main():
 
     elif module.params.get("op_type") == "delete_process":
         try:
+            check_mode_action(module)
             response = deleteProcessInSetByIndex(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 processIndex=str(module.params.get("processIndex")),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

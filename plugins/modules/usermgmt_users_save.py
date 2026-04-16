@@ -382,17 +382,19 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.users import (
     create,
     patch,
     changepw,
     patch_self,
 )
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cache import (
-    cache_resource_id,
-    get_cached_resource_id,
-    get_performance_metrics,
-    reset_performance_metrics,
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -911,205 +913,82 @@ def main():
         user_module=module,
     )
 
-    # Initialize performance metrics
-    reset_performance_metrics()
-    
     result = dict(
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = create(
-                node=module.params.get("localNode"),
-                allowed_auth_methods=module.params.get("allowed_auth_methods"),
-                app_metadata=module.params.get("app_metadata"),
-                certificate_subject_dn=module.params.get("certificate_subject_dn"),
-                connection=module.params.get("connection"),
-                email=module.params.get("email"),
-                enable_cert_auth=module.params.get("enable_cert_auth"),
-                login_flags=module.params.get("login_flags"),
-                prevent_ui_login_bool=module.params.get("prevent_ui_login"),
-                name=module.params.get("name"),
-                password=module.params.get("password"),
-                password_change_required=module.params.get("password_change_required"),
-                user_id=module.params.get("user_id"),
-                user_metadata=module.params.get("user_metadata"),
-                username=module.params.get("username"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="usermgmt/users",
+                lookup_param="username",
+                lookup_value=module.params.get("username"),
+                create_fn=create,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    allowed_auth_methods=module.params.get("allowed_auth_methods"),
+                    app_metadata=module.params.get("app_metadata"),
+                    certificate_subject_dn=module.params.get("certificate_subject_dn"),
+                    connection=module.params.get("connection"),
+                    email=module.params.get("email"),
+                    enable_cert_auth=module.params.get("enable_cert_auth"),
+                    login_flags=module.params.get("login_flags"),
+                    prevent_ui_login_bool=module.params.get("prevent_ui_login"),
+                    name=module.params.get("name"),
+                    password=module.params.get("password"),
+                    password_change_required=module.params.get("password_change_required"),
+                    user_id=module.params.get("user_id"),
+                    user_metadata=module.params.get("user_metadata"),
+                    username=module.params.get("username"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
-            error_msg = build_error_message(
-                exception=api_e,
-                parameter="create operation",
-                expected_format="successful user creation response",
-                example="response:\n  id: user123\n  username: john.doe@example.com",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMValidationException as validation_e:
-            error_msg = build_error_message(
-                exception=validation_e,
-                parameter="create operation",
-                expected_format="valid user data",
-                example="username: john.doe@example.com\npassword: 'YourPassword123!'",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMParameterException as param_e:
-            error_msg = build_error_message(
-                exception=param_e,
-                parameter="create operation",
-                expected_format="valid user parameters",
-                example="username: john.doe@example.com\npassword: 'YourPassword123!'",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMFormatException as format_e:
-            error_msg = build_error_message(
-                exception=format_e,
-                parameter="create operation",
-                expected_format="valid user data format",
-                example="username: john.doe@example.com\npassword: 'YourPassword123!'",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMResponseException as response_e:
-            error_msg = build_error_message(
-                exception=response_e,
-                parameter="create operation",
-                expected_format="valid user creation response",
-                example="response:\n  id: user123\n  username: john.doe@example.com",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
+            module.fail_json(msg=str(api_e.message) if hasattr(api_e, 'message') else str(api_e))
         except AnsibleCMException as custom_e:
-            error_msg = build_error_message(
-                exception=custom_e,
-                parameter="create operation",
-                expected_format="successful user creation",
-                example="username: john.doe@example.com\npassword: 'YourPassword123!'",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
+            module.fail_json(msg=str(custom_e.message) if hasattr(custom_e, 'message') else str(custom_e))
+
+    elif module.params.get("op_type") == "patch":
+        try:
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="usermgmt/users",
+                resource_id=module.params.get("cm_user_id"),
+                patch_fn=patch,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    cm_user_id=module.params.get("cm_user_id"),
+                    allowed_auth_methods=module.params.get("allowed_auth_methods"),
+                    certificate_subject_dn=module.params.get("certificate_subject_dn"),
+                    email=module.params.get("email"),
+                    enable_cert_auth_bool=module.params.get("enable_cert_auth"),
+                    failed_logins_count=module.params.get("failed_logins_count"),
+                    login_flags=module.params.get("login_flags"),
+                    name=module.params.get("name"),
+                    password=module.params.get("password"),
+                    password_change_required=module.params.get("password_change_required"),
+                    user_metadata=module.params.get("user_metadata"),
+                    username=module.params.get("username"),
                 ),
             )
-            module.fail_json(msg=error_msg)
-    
-    # Add performance metrics to result
-    performance = get_performance_metrics()
-    result["performance"] = {
-        "api_calls": performance.api_calls,
-        "execution_time_ms": performance.execution_time_ms,
-        "cache_hits": performance.cache_hits,
-        "cache_misses": performance.cache_misses,
-    }
-    
-    if module.params.get("op_type") == "patch":
-        try:
-            response = patch(
-                node=module.params.get("localNode"),
-                cm_user_id=module.params.get("cm_user_id"),
-                allowed_auth_methods=module.params.get("allowed_auth_methods"),
-                certificate_subject_dn=module.params.get("certificate_subject_dn"),
-                email=module.params.get("email"),
-                enable_cert_auth_bool=module.params.get("enable_cert_auth"),
-                failed_logins_count=module.params.get("failed_logins_count"),
-                login_flags=module.params.get("login_flags"),
-                name=module.params.get("name"),
-                password=module.params.get("password"),
-                password_change_required=module.params.get("password_change_required"),
-                user_metadata=module.params.get("user_metadata"),
-                username=module.params.get("username"),
-            )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
-            error_msg = build_error_message(
-                exception=api_e,
-                parameter="patch operation",
-                expected_format="successful user update response",
-                example="response:\n  id: user123\n  username: john.doe@example.com",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMValidationException as validation_e:
-            error_msg = build_error_message(
-                exception=validation_e,
-                parameter="patch operation",
-                expected_format="valid user data",
-                example="cm_user_id: user123\nusername: john.doe@example.com",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMParameterException as param_e:
-            error_msg = build_error_message(
-                exception=param_e,
-                parameter="patch operation",
-                expected_format="valid user parameters",
-                example="cm_user_id: user123\nusername: john.doe@example.com",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMFormatException as format_e:
-            error_msg = build_error_message(
-                exception=format_e,
-                parameter="patch operation",
-                expected_format="valid user data format",
-                example="cm_user_id: user123\nusername: john.doe@example.com",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMResponseException as response_e:
-            error_msg = build_error_message(
-                exception=response_e,
-                parameter="patch operation",
-                expected_format="valid user update response",
-                example="response:\n  id: user123\n  username: john.doe@example.com",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
+            module.fail_json(msg=str(api_e.message) if hasattr(api_e, 'message') else str(api_e))
         except AnsibleCMException as custom_e:
-            error_msg = build_error_message(
-                exception=custom_e,
-                parameter="patch operation",
-                expected_format="successful user update",
-                example="cm_user_id: user123\nusername: john.doe@example.com",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-    
-    # Add performance metrics to result
-    performance = get_performance_metrics()
-    result["performance"] = {
-        "api_calls": performance.api_calls,
-        "execution_time_ms": performance.execution_time_ms,
-        "cache_hits": performance.cache_hits,
-        "cache_misses": performance.cache_misses,
-    }
-    
-    if module.params.get("op_type") == "changepw":
+            module.fail_json(msg=str(custom_e.message) if hasattr(custom_e, 'message') else str(custom_e))
+
+    elif module.params.get("op_type") == "changepw":
         try:
+            check_mode_action(module)
             response = changepw(
                 node=module.params.get("localNode"),
                 password=module.params.get("password"),
@@ -1118,84 +997,15 @@ def main():
                 auth_domain=module.params.get("auth_domain"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
-            error_msg = build_error_message(
-                exception=api_e,
-                parameter="changepw operation",
-                expected_format="successful password change response",
-                example="response:\n  message: Password changed successfully",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMValidationException as validation_e:
-            error_msg = build_error_message(
-                exception=validation_e,
-                parameter="changepw operation",
-                expected_format="valid password change parameters",
-                example="username: john.doe@example.com\npassword: 'YourCurrentPassword123!'\nnew_password: 'YourNewPassword456!'",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMParameterException as param_e:
-            error_msg = build_error_message(
-                exception=param_e,
-                parameter="changepw operation",
-                expected_format="valid password change parameters",
-                example="username: john.doe@example.com\npassword: 'YourCurrentPassword123!'\nnew_password: 'YourNewPassword456!'",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMFormatException as format_e:
-            error_msg = build_error_message(
-                exception=format_e,
-                parameter="changepw operation",
-                expected_format="valid password format",
-                example="username: john.doe@example.com\npassword: 'YourCurrentPassword123!'\nnew_password: 'YourNewPassword456!'",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMResponseException as response_e:
-            error_msg = build_error_message(
-                exception=response_e,
-                parameter="changepw operation",
-                expected_format="valid password change response",
-                example="response:\n  message: Password changed successfully",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
+            module.fail_json(msg=str(api_e.message) if hasattr(api_e, 'message') else str(api_e))
         except AnsibleCMException as custom_e:
-            error_msg = build_error_message(
-                exception=custom_e,
-                parameter="changepw operation",
-                expected_format="successful password change",
-                example="username: john.doe@example.com\npassword: 'YourCurrentPassword123!'\nnew_password: 'YourNewPassword456!'",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-    
-    # Add performance metrics to result
-    performance = get_performance_metrics()
-    result["performance"] = {
-        "api_calls": performance.api_calls,
-        "execution_time_ms": performance.execution_time_ms,
-        "cache_hits": performance.cache_hits,
-        "cache_misses": performance.cache_misses,
-    }
-    
-    if module.params.get("op_type") == "patch_self":
+            module.fail_json(msg=str(custom_e.message) if hasattr(custom_e, 'message') else str(custom_e))
+
+    elif module.params.get("op_type") == "patch_self":
         try:
+            check_mode_action(module)
             response = patch_self(
                 node=module.params.get("localNode"),
                 email=module.params.get("email"),
@@ -1203,81 +1013,11 @@ def main():
                 user_metadata=module.params.get("user_metadata"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
-            error_msg = build_error_message(
-                exception=api_e,
-                parameter="patch_self operation",
-                expected_format="successful self-user update response",
-                example="response:\n  message: User updated successfully",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMValidationException as validation_e:
-            error_msg = build_error_message(
-                exception=validation_e,
-                parameter="patch_self operation",
-                expected_format="valid self-user update parameters",
-                example="email: john.doe@example.com\nname: John Doe",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMParameterException as param_e:
-            error_msg = build_error_message(
-                exception=param_e,
-                parameter="patch_self operation",
-                expected_format="valid self-user update parameters",
-                example="email: john.doe@example.com\nname: John Doe",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMFormatException as format_e:
-            error_msg = build_error_message(
-                exception=format_e,
-                parameter="patch_self operation",
-                expected_format="valid user data format",
-                example="email: john.doe@example.com\nname: John Doe",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-        except AnsibleCMResponseException as response_e:
-            error_msg = build_error_message(
-                exception=response_e,
-                parameter="patch_self operation",
-                expected_format="valid self-user update response",
-                example="response:\n  message: User updated successfully",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
+            module.fail_json(msg=str(api_e.message) if hasattr(api_e, 'message') else str(api_e))
         except AnsibleCMException as custom_e:
-            error_msg = build_error_message(
-                exception=custom_e,
-                parameter="patch_self operation",
-                expected_format="successful self-user update",
-                example="email: john.doe@example.com\nname: John Doe",
-                documentation_link=DOCUMENTATION_LINKS.get(
-                    "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
-            )
-            module.fail_json(msg=error_msg)
-    
-    # Add performance metrics to result
-    performance = get_performance_metrics()
-    result["performance"] = {
-        "api_calls": performance.api_calls,
-        "execution_time_ms": performance.execution_time_ms,
-        "cache_hits": performance.cache_hits,
-        "cache_misses": performance.cache_misses,
-    }
+            module.fail_json(msg=str(custom_e.message) if hasattr(custom_e, 'message') else str(custom_e))
 
     module.exit_json(**result)
 

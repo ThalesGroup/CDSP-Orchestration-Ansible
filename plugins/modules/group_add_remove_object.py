@@ -161,6 +161,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.groups imp
     deleteUserFromGroup,
     deleteClientFromGroup,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
     AnsibleCMException,
@@ -203,12 +206,14 @@ def main():
     if module.params.get("op_type") == "add":
         if module.params.get("object_type") == "user":
             try:
+                check_mode_action(module)
                 response = addUserToGroup(
                     node=module.params.get("localNode"),
                     name=module.params.get("name"),
                     object_id=module.params.get("object_id"),
                 )
                 result["response"] = response
+                result["changed"] = True
             except CMApiException as api_e:
                 if api_e.api_error_code:
                     module.fail_json(
@@ -222,12 +227,14 @@ def main():
 
         else:
             try:
+                check_mode_action(module)
                 response = addClientToGroup(
                     node=module.params.get("localNode"),
                     name=module.params.get("name"),
                     object_id=module.params.get("object_id"),
                 )
                 result["response"] = response
+                result["changed"] = True
             except CMApiException as api_e:
                 if api_e.api_error_code:
                     module.fail_json(
@@ -242,12 +249,14 @@ def main():
     else:
         if module.params.get("object_type") == "user":
             try:
+                check_mode_action(module)
                 response = deleteUserFromGroup(
                     node=module.params.get("localNode"),
                     name=module.params.get("name"),
                     object_id=module.params.get("object_id"),
                 )
                 result["response"] = response
+                result["changed"] = True
             except CMApiException as api_e:
                 if api_e.api_error_code:
                     module.fail_json(
@@ -261,12 +270,14 @@ def main():
 
         else:
             try:
+                check_mode_action(module)
                 response = deleteClientFromGroup(
                     node=module.params.get("localNode"),
                     name=module.params.get("name"),
                     object_id=module.params.get("object_id"),
                 )
                 result["response"] = response
+                result["changed"] = True
             except CMApiException as api_e:
                 if api_e.api_error_code:
                     module.fail_json(

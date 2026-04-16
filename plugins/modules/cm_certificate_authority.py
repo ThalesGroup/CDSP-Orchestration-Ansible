@@ -407,6 +407,9 @@ RETURN = """
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.ca import (
     createLocalCA,
     updateLocalCA,
@@ -416,6 +419,11 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.ca import 
     resumeCert,
     createCSR,
     createCSRAndKey,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -563,20 +571,32 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     if module.params.get("op_type") == "create":
         try:
-            response = createLocalCA(
-                node=module.params.get("localNode"),
-                cn=module.params.get("cn"),
-                algorithm=module.params.get("algorithm"),
-                dnsNames=module.params.get("dnsNames"),
-                emailAddresses=module.params.get("emailAddresses"),
-                ipAddresses=module.params.get("ipAddresses"),
-                name=module.params.get("name"),
-                names=module.params.get("names"),
-                size=module.params.get("size"),
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="ca/local-cas",
+                lookup_param="cn",
+                lookup_value=module.params.get("cn"),
+                create_fn=createLocalCA,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    cn=module.params.get("cn"),
+                    algorithm=module.params.get("algorithm"),
+                    dnsNames=module.params.get("dnsNames"),
+                    emailAddresses=module.params.get("emailAddresses"),
+                    ipAddresses=module.params.get("ipAddresses"),
+                    name=module.params.get("name"),
+                    names=module.params.get("names"),
+                    size=module.params.get("size"),
+                ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -590,17 +610,26 @@ def main():
 
     elif module.params.get("op_type") == "patch":
         try:
-            response = updateLocalCA(
-                node=module.params.get("localNode"),
-                id=module.params.get("id"),
-                allow_client_authentication=module.params.get(
-                    "allow_client_authentication"
-                ),
-                allow_user_authentication=module.params.get(
-                    "allow_user_authentication"
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="ca/local-cas",
+                resource_id=module.params.get("id"),
+                patch_fn=updateLocalCA,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    id=module.params.get("id"),
+                    allow_client_authentication=module.params.get(
+                        "allow_client_authentication"
+                    ),
+                    allow_user_authentication=module.params.get(
+                        "allow_user_authentication"
+                    ),
                 ),
             )
+            result["changed"] = changed
             result["response"] = response
+            if diff:
+                result["diff"] = diff
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -614,6 +643,7 @@ def main():
 
     elif module.params.get("op_type") == "self-sign":
         try:
+            check_mode_action(module)
             response = selfSign(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
@@ -622,6 +652,7 @@ def main():
                 notBefore=module.params.get("notBefore"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -635,6 +666,7 @@ def main():
 
     elif module.params.get("op_type") == "issue-cert":
         try:
+            check_mode_action(module)
             response = issueCertificate(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
@@ -646,6 +678,7 @@ def main():
                 notBefore=module.params.get("notBefore"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -659,6 +692,7 @@ def main():
 
     elif module.params.get("op_type") == "revoke-cert":
         try:
+            check_mode_action(module)
             response = revokeCert(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
@@ -666,6 +700,7 @@ def main():
                 reason=module.params.get("reason"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -679,12 +714,14 @@ def main():
 
     elif module.params.get("op_type") == "resume-cert":
         try:
+            check_mode_action(module)
             response = resumeCert(
                 node=module.params.get("localNode"),
                 id=module.params.get("id"),
                 cert_id=module.params.get("cert_id"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -698,6 +735,7 @@ def main():
 
     elif module.params.get("op_type") == "create-csr":
         try:
+            check_mode_action(module)
             response = createCSR(
                 node=module.params.get("localNode"),
                 csrParams=module.params.get("csrParams"),
@@ -707,6 +745,7 @@ def main():
                 keyVersion=module.params.get("keyVersion"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(
@@ -720,6 +759,7 @@ def main():
 
     elif module.params.get("op_type") == "create-csr-key":
         try:
+            check_mode_action(module)
             response = createCSRAndKey(
                 node=module.params.get("localNode"),
                 cn=module.params.get("cn"),
@@ -734,6 +774,7 @@ def main():
                 privateKeyBytes=module.params.get("privateKeyBytes"),
             )
             result["response"] = response
+            result["changed"] = True
         except CMApiException as api_e:
             if api_e.api_error_code:
                 module.fail_json(

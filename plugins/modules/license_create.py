@@ -99,6 +99,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules im
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
     addLicense,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    check_mode_action,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
     AnsibleCMException,
@@ -137,12 +140,14 @@ def main():
     )
 
     try:
+        check_mode_action(module)
         response = addLicense(
             node=module.params.get("localNode"),
             license=module.params.get("license"),
             bind_type=module.params.get("bind_type"),
         )
         result["response"] = response
+        result["changed"] = True
     except CMApiException as api_e:
         if api_e.api_error_code:
             module.fail_json(
