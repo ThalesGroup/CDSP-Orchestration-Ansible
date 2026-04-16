@@ -1,5 +1,11 @@
 # ThalesGroup CipherTrust Collection
 
+[![Lint](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/lint.yml/badge.svg)](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/lint.yml)
+[![Sanity](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/sanity.yml/badge.svg)](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/sanity.yml)
+[![Unit Tests](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/unit-tests.yml)
+[![Build Validation](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/build.yml/badge.svg)](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/build.yml)
+[![Changelog](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/changelog.yml/badge.svg)](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/changelog.yml)
+[![Integration Tests](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/actions/workflows/integration-tests.yml)
 [![Coverage](https://codecov.io/gh/ThalesGroup/CDSP-Orchestration-Ansible/branch/main/graph/badge.svg)](https://codecov.io/gh/ThalesGroup/CDSP-Orchestration-Ansible)
 
 The ThalesGroup CipherTrust collection includes a variety of Ansible modules to help automate the configuration of Thales CipherTrust Manager as well as the configuration of various CipherTrust Data Security Platform (CDSP) connectors such as CipherTrust Transparent Encryption (CTE) and Data Protection Gateway (DPG). This collection is maintained by the ThalesGroup Developer Advocacy team.
@@ -182,10 +188,12 @@ See [SECURITY.md](SECURITY.md) for the coordinated disclosure process.
 This collection is tested for the following -
 | Jobs  | Description  | Python Version  | Ansible Version  | CipherTrust Manager Version  |
 |---|---|---|---|---|
-| changelog  | Checks for the presence of Changelog  | 3.10.12 | 2.16.5 | |
-| Linters  | Runs python and YAML lint  | 3.10.12 | 2.16.5 | |
-| Sanity  | Runs ansible sanity checks  | 3.10.12 | 2.15+ | |
-| Integration  | Executes teh integration test suites  | | | 2.17 |
+| Changelog | Enforces changelog fragments and validates changelog config | 3.12 | N/A | |
+| Lint | Runs ansible-lint checks | 3.12 | 2.18 | |
+| Sanity | Runs curated `ansible-test sanity` checks in matrix | 3.9 - 3.12 | 2.15 - 2.18 | |
+| Unit Tests | Runs `ansible-test units` matrix and coverage gates | 3.9 - 3.12 | 2.15 - 2.18 | |
+| Build Validation | Verifies `ansible-galaxy collection build` output | 3.12 | 2.18 | |
+| Integration | Runs scheduled/manual live CM integration tests | 3.12 | 2.18 | 2.17+ |
 
 ## Contributing
 We welcome community contributions to this collection. If you find problems, please open an issue or create a PR against the this repository.

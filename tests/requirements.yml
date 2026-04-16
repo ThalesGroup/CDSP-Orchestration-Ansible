@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-integration_tests_dependencies:
-- community.general
-- community.internal_test_tools
-unit_tests_dependencies: []
+collections:
+  - name: community.general
+  - name: community.internal_test_tools

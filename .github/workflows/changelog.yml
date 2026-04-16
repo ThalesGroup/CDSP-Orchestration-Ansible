@@ -1,0 +1,54 @@
+name: Changelog
+
+on:
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  changelog:
+    name: changelog-lint
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ansible_collections/thalesgroup/ciphertrust
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: ansible_collections/thalesgroup/ciphertrust
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install changelog tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install antsibull-changelog
+
+      - name: Lint changelog configuration
+        run: antsibull-changelog lint
+
+      - name: Require changelog fragment when plugins change
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          CHANGED="$(git diff --name-only "${BASE_SHA}" "${HEAD_SHA}")"
+          echo "${CHANGED}"
+
+          if echo "${CHANGED}" | grep -qE '^plugins/'; then
+            if ! echo "${CHANGED}" | grep -qE '^changelogs/fragments/.+\.(ya?ml|rst)$'; then
+              echo "Plugin changes detected but no changelog fragment found in changelogs/fragments/"
+              exit 1
+            fi
+          fi

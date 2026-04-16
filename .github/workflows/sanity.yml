@@ -1,4 +1,4 @@
-name: Unit Tests
+name: Sanity
 
 on:
   push:
@@ -11,9 +11,10 @@ permissions:
   contents: read
 
 jobs:
-  unit-tests:
-    name: units (py${{ matrix.python-version }}, ansible-${{ matrix.ansible-version }})
+  sanity:
+    name: sanity (py${{ matrix.python-version }}, ansible-${{ matrix.ansible-version }})
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
@@ -42,21 +43,25 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
+      - name: Install Ansible
         run: |
           python -m pip install --upgrade pip
-          pip install "ansible-core==${{ matrix.ansible-version }}.*" pytest pytest-cov pytest-xdist coverage==7.10.7
+          pip install "ansible-core==${{ matrix.ansible-version }}.*"
 
-      - name: Run ansible-test units with coverage
+      - name: Run ansible-test sanity
         run: |
-          ansible-test units --color yes -v --coverage
-
-      - name: Report ansible-test coverage
-        run: |
-          ansible-test coverage report
-
-      - name: Validate scoped coverage thresholds
-        if: matrix.python-version == '3.12'
-        run: |
-          pytest
-          python tests/unit/check_coverage_thresholds.py coverage.xml
+          ansible-test sanity --color yes -v \
+            --test action-plugin-docs \
+            --test ansible-doc \
+            --test changelog \
+            --test compile \
+            --test line-endings \
+            --test no-assert \
+            --test no-get-exception \
+            --test no-illegal-filenames \
+            --test no-smart-quotes \
+            --test replace-urlopen \
+            --test runtime-metadata \
+            --test symlinks \
+            --test use-argspec-type-path \
+            --test use-compat-six

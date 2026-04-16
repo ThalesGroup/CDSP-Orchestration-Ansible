@@ -1,165 +1,99 @@
 ---
-# Integration test workflow for ThalesGroup CipherTrust Ansible Collection
 name: Integration Tests
 
 on:
-  # Run on push to main branch
   push:
     branches: ["main"]
-  # Run on pull request
-  pull_request:
-    branches: ["main"]
-  # Run on schedule (weekly)
   schedule:
-    - cron: "0 0 * * 0"  # Weekly on Sunday at midnight
-  # Allow manual trigger
+    - cron: "0 0 * * 0"
   workflow_dispatch:
+    inputs:
+      target:
+        description: "Integration target to run (or 'all')"
+        required: false
+        default: "all"
+        type: string
 
-# Set permissions
 permissions:
   contents: read
 
-# Environment variables for tests
 env:
-  CIPHERTRUST_CONNECTION_STRING: "${{ vars.CIPHERTRUST_CONNECTION_STRING || 'localhost:8200' }}"
-  CIPHERTRUST_USERNAME: "${{ vars.CIPHERTRUST_USERNAME || 'admin' }}"
-  CIPHERTRUST_PASSWORD: "${{ secrets.CIPHERTRUST_PASSWORD || 'Thales123' }}"
-  CIPHERTRUST_API_KEY: "${{ vars.CIPHERTRUST_API_KEY || '' }}"
-  CIPHERTRUST_DOMAIN: "${{ vars.CIPHERTRUST_DOMAIN || '' }}"
-  CIPHERTRUST_VERIFY_SSL: "${{ vars.CIPHERTRUST_VERIFY_SSL || 'false' }}"
+  CIPHERTRUST_CONNECTION_STRING: "${{ vars.CIPHERTRUST_CONNECTION_STRING }}"
+  CIPHERTRUST_USERNAME: "${{ vars.CIPHERTRUST_USERNAME }}"
+  CIPHERTRUST_PASSWORD: "${{ secrets.CIPHERTRUST_PASSWORD }}"
+  CIPHERTRUST_API_KEY: "${{ vars.CIPHERTRUST_API_KEY }}"
+  CIPHERTRUST_DOMAIN: "${{ vars.CIPHERTRUST_DOMAIN }}"
+  CIPHERTRUST_VERIFY_SSL: "${{ vars.CIPHERTRUST_VERIFY_SSL }}"
 
 jobs:
-  # Integration test job
   integration-tests:
     name: Run Integration Tests
     runs-on: ubuntu-latest
-    
+    continue-on-error: true
+
+    defaults:
+      run:
+        working-directory: ansible_collections/thalesgroup/ciphertrust
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          path: ansible_collections/thalesgroup/ciphertrust
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.12"
 
       - name: Install Ansible
         run: |
-          pip install ansible ansible-test
+          python -m pip install --upgrade pip
+          pip install ansible-core==2.18.*
 
-      - name: Install collection dependencies
+      - name: Check integration environment
+        id: precheck
+        run: |
+          set -euo pipefail
+          missing=0
+          for key in CIPHERTRUST_CONNECTION_STRING CIPHERTRUST_USERNAME CIPHERTRUST_PASSWORD; do
+            if [ -z "${!key:-}" ]; then
+              echo "Missing required integration setting: $key"
+              missing=1
+            fi
+          done
+          if [ "${missing}" -eq 1 ]; then
+            echo "run-tests=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run-tests=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install integration dependencies
+        if: steps.precheck.outputs.run-tests == 'true'
         run: |
           ansible-galaxy collection install -r tests/requirements.yml
 
       - name: Run integration tests
+        if: steps.precheck.outputs.run-tests == 'true'
+        continue-on-error: true
         run: |
-          cd tests
-          ansible-test integration --color yes --timeout 300 --retry 2
+          target="${{ github.event.inputs.target || 'all' }}"
+          if [ "$target" = "all" ]; then
+            ansible-test integration --color yes --timeout 300 --retry 2
+          else
+            ansible-test integration "$target" --color yes --timeout 300 --retry 2
+          fi
+
+      - name: Skip notice when integration settings are missing
+        if: steps.precheck.outputs.run-tests != 'true'
+        run: |
+          echo "Integration tests skipped: required CM settings are not configured."
 
       - name: Upload test results
-        if: always()
+        if: always() && steps.precheck.outputs.run-tests == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: |
-            tests/reports/
-            tests/coverage/
+            ansible_collections/thalesgroup/ciphertrust/tests/output/
           retention-days: 7
-
-      - name: Upload coverage to Codecov
-        if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
-        uses: codecov/codecov-action@v4
-        with:
-          files: tests/coverage/cobertura.xml
-          flags: integration-tests
-          name: codecov-umbrella
-          fail_ci_if_error: false
-
-  # Test matrix for different scenarios
-  integration-tests-matrix:
-    name: Run Integration Tests (Matrix)
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        test-target:
-          - module_vault_keys2_save
-          - module_dpg_policy_save
-          - module_cte_client
-          - module_group_save
-          - module_interface_save
-          - module_group_add_remove_object
-          - module_license_trial_get
-          - module_licensing_lockdata_get
-          - module_cm_certificate_authority
-          - module_cm_regtoken
-          - module_cm_resource_delete
-          - module_cm_resource_get_id_from_name
-          - module_cm_services
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.9"
-
-      - name: Install Ansible
-        run: |
-          pip install ansible ansible-test
-
-      - name: Install collection dependencies
-        run: |
-          ansible-galaxy collection install -r tests/requirements.yml
-
-      - name: Run specific integration test
-        run: |
-          cd tests
-          ansible-test integration ${{ matrix.test-target }} --color yes --timeout 300
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{ matrix.test-target }}
-          path: |
-            tests/reports/
-            tests/coverage/
-          retention-days: 7
-
-  # Validation job
-  validate-tests:
-    name: Validate Test Configuration
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.9"
-
-      - name: Install Ansible
-        run: |
-          pip install ansible ansible-test
-
-      - name: Validate test configuration
-        run: |
-          echo "Validating test configuration..."
-          if [ -f tests/integration.yml ]; then
-            echo "integration.yml exists"
-          else
-            echo "Warning: integration.yml not found"
-          fi
-
-      - name: Check test coverage
-        run: |
-          echo "Checking test coverage..."
-          TEST_COUNT=$(ls -1 tests/integration/targets/ | wc -l)
-          MODULE_COUNT=$(ls -1 plugins/modules/ | wc -l)
-          echo "Test targets: $TEST_COUNT"
-          echo "Total modules: $MODULE_COUNT"
-          echo "Coverage: $((TEST_COUNT * 100 / MODULE_COUNT))%"

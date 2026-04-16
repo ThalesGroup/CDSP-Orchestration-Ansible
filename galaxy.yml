@@ -21,7 +21,10 @@ authors:
 
 ### OPTIONAL but strongly recommended
 # A short summary description of the collection
-description: ThalesGroup CipherTrust Data Security Platform Ansible collection to configure various CipherTrust connectors as well as apply policy driven data protection at the time of application orchestration using Ansible.
+description: >
+  ThalesGroup CipherTrust Data Security Platform Ansible collection to configure
+  various CipherTrust connectors as well as apply policy driven data protection
+  at the time of application orchestration using Ansible.
 
 # The path to the license file for the collection. This path is relative to the root of the collection. This key is
 # mutually exclusive with 'license'
@@ -65,4 +68,7 @@ issues: https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/issues
 # uses 'fnmatch' to match the files or directories. Some directories and files like 'galaxy.yml', '*.pyc', '*.retry',
 # and '.git' are always filtered
 build_ignore:
+  - .ansible
+  - .venv
+  - dist
   - .gitignore

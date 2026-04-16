@@ -1,0 +1,12 @@
+---
+profile: basic
+exclude_paths:
+  - .ansible/
+  - .git/
+  - .venv/
+  - changelogs/
+  - mkdocs.yml
+  - playbooks/
+  - plugins/
+  - roles/
+  - tests/

@@ -652,7 +652,7 @@ def validate_parameters(user_module):
             format_rules={
                 "cm_user_id": {
                     "type": "string",
-                    "pattern": "^(local|external)\|[a-fA-F0-9-]+$",
+                    "pattern": "^(local|external)\\|[a-fA-F0-9-]+$",
                     "min_length": 1,
                     "max_length": 255,
                 }
