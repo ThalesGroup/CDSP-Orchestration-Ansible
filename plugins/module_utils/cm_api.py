@@ -11,7 +11,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import re
+import time
 from ansible.module_utils.urls import Request
 from ansible.module_utils.six.moves.urllib.error import HTTPError
 
@@ -20,647 +20,215 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 )
 
 
-# Sensitive-data handling invariants enforced in this module:
-#   * JWT bearer tokens are generated per request, kept inside a local
-#     session dict, and used only to populate the Authorization header.
-#     They MUST NOT be returned from any function, placed in a module
-#     result, or included in exception messages.
-#   * The session dict built by CMAPIObject() is treated as opaque. Only
-#     ``url`` and ``headers`` keys are consumed; never stringify the
-#     full session for debug/error output.
-#   * The ``verify`` flag from ``localNode.verify`` controls TLS
-#     certificate validation on every outbound call (auth + API).
-
-
-def _resolve_verify(node):
-    """Return the user-supplied TLS verification flag, defaulting to False."""
-    if not node:
-        return False
-    return bool(node.get("verify", False))
-
-
 def is_json(myjson):
+    """Check whether a string is valid JSON. Single source for the collection."""
     try:
         json.loads(myjson)
-    except ValueError:
+    except (ValueError, TypeError):
         return False
     return True
 
 
-def getJwt(host, username, password, auth_domain_path, verify=False):
-    headers = {
-        "Content-Type": "application/json",
-        "Connection": "keep-alive",
-    }
-    auth_url = "https://" + host + "/api/v1/auth/tokens"
+def build_request_payload(kwargs, remap=None):
+    """Build a JSON request payload from keyword arguments.
 
-    if auth_domain_path is not None:
-        auth_payload = {
-            "grant_type": "password",
-            "username": username,
-            "password": password,
-            "auth_domain_path": auth_domain_path,
+    Filters out ``None`` values.  An optional *remap* dict translates
+    keyword names (e.g. ``{"messageStr": "message"}``).
+    """
+    request = {}
+    for key, value in kwargs.items():
+        if value is not None:
+            out_key = remap.get(key, key) if remap else key
+            request[out_key] = value
+    return json.dumps(request)
+
+
+def _build_query_string(params):
+    """Build a URL query string from a dict, omitting ``None`` values.
+
+    Returns the string including the leading ``?``, or empty string if
+    no params are set.
+    """
+    parts = []
+    for key, value in params.items():
+        if value is not None:
+            parts.append("{0}={1}".format(key, value))
+    if parts:
+        return "?" + "&".join(parts)
+    return ""
+
+
+# ---------------------------------------------------------------------------
+# Module-level JWT cache.  Keyed by (server_ip, user, auth_domain_path).
+# Allows multiple CipherTrustClient instances within the same Ansible task
+# invocation to share a single token, eliminating redundant auth calls.
+# ---------------------------------------------------------------------------
+_jwt_cache = {}
+
+_TOKEN_TTL = 890  # seconds — slightly under the CM 15-minute default
+
+
+class CipherTrustClient(object):
+    """Thin HTTP client for CipherTrust Manager REST API.
+
+    Provides ``get``, ``post``, ``put``, ``patch``, ``delete`` methods
+    that handle authentication, JWT caching, TLS verification, and
+    centralized error handling.
+
+    Sensitive-data invariants:
+      * The JWT bearer token is kept in ``_token`` and used only in the
+        ``Authorization`` header.  It MUST NOT be placed in module
+        results, exception messages, or debug output.
+    """
+
+    def __init__(self, node):
+        self._server_ip = node["server_ip"]
+        self._user = node["user"]
+        self._password = node["password"]
+        self._verify = bool(node.get("verify", False))
+        self._auth_domain_path = node.get("auth_domain_path", "") or ""
+        self._base_url = "https://" + self._server_ip + "/api/v1/"
+        self._token = None
+        self._cache_key = (self._server_ip, self._user, self._auth_domain_path)
+
+    # -- authentication -----------------------------------------------------
+
+    def _ensure_authenticated(self):
+        cached = _jwt_cache.get(self._cache_key)
+        if cached and time.time() < cached[1]:
+            self._token = cached[0]
+            return
+        self._authenticate()
+
+    def _authenticate(self):
+        headers = {
+            "Content-Type": "application/json",
+            "Connection": "keep-alive",
         }
-    else:
-        auth_payload = {
+        auth_url = self._base_url + "auth/tokens"
+
+        payload = {
             "grant_type": "password",
-            "username": username,
-            "password": password,
+            "username": self._user,
+            "password": self._password,
+        }
+        if self._auth_domain_path:
+            payload["auth_domain_path"] = self._auth_domain_path
+
+        r = Request(headers=headers, timeout=120, validate_certs=self._verify)
+        _res = r.open(method="POST", url=auth_url, data=json.dumps(payload))
+        response = json.loads(_res.read())
+        self._token = response["jwt"]
+        _jwt_cache[self._cache_key] = (self._token, time.time() + _TOKEN_TTL)
+
+    def _headers(self):
+        self._ensure_authenticated()
+        return {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer " + self._token,
         }
 
-    r = Request(headers=headers, timeout=120, validate_certs=verify)
-    _res = r.open(method="POST", url=auth_url, data=json.dumps(auth_payload))
-    response = json.loads(_res.read())
-    return response["jwt"]
+    # -- HTTP verbs ---------------------------------------------------------
 
+    def request(self, method, endpoint, data=None):
+        """Execute an API call and return the parsed response body.
 
-def POSTData(payload=None, cm_node=None, cm_api_endpoint=None, id=None):
-    # Create the session object
-    node = cm_node
-    verify = _resolve_verify(node)
-    pattern_2xx = re.compile(r"20[0-9]")
-    pattern_4xx = re.compile(r"40[0-9]")
-    cmSessionObject = CMAPIObject(
-        cm_api_user=node["user"],
-        cm_api_pwd=node["password"],
-        cm_url=node["server_ip"],
-        auth_domain_path=node["auth_domain_path"],
-        cm_api_endpoint=cm_api_endpoint,
-        verify=verify,
-    )
-    # execute the post API call to create the resource on CM
-    try:
-        r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
-        )
-        _res = r.open(
-            method="POST",
-            url=cmSessionObject["url"],
-            data=payload,
-        )
+        Raises ``CMApiException`` on application-level errors (``codeDesc``
+        in the response) and re-raises ``HTTPError`` on transport errors.
+        """
+        url = self._base_url + endpoint
+        try:
+            r = Request(
+                headers=self._headers(), timeout=120, validate_certs=self._verify
+            )
+            _res = r.open(method=method, url=url, data=data)
+            body = _res.read()
+            status_code = _res.getcode()
 
-        response = json.loads(_res.read())
-        status_code = _res.getcode()
-
-        if id is not None and id in response:
-            __ret = {
-                "id": response[id],
-                "data": response,
-                "message": "Resource created successfully",
-            }
-        else:
-            if "codeDesc" in json.dumps(response):
-                raise CMApiException(
-                    message="Error creating resource < " + response["codeDesc"] + " >",
-                    api_error_code=status_code,
-                )
+            if body:
+                try:
+                    response = json.loads(body)
+                except (ValueError, TypeError):
+                    # Non-JSON body (e.g. empty 204 or plain text)
+                    return body
             else:
-                if id is None:
-                    if pattern_2xx.search(str(status_code)):
-                        __ret = {
-                            "message": "Resource created successfully",
-                            "description": str(response),
-                        }
-                    elif pattern_4xx.search(str(status_code)):
-                        raise CMApiException(
-                            message="Error creating resource " + str(response),
-                            api_error_code=status_code,
-                        )
-                    else:
-                        raise CMApiException(
-                            message="Error creating resource " + str(response),
-                            api_error_code=status_code,
-                        )
-                elif id is not None and (pattern_2xx.search(str(status_code))):
-                    __ret = {
-                        "message": "Resource created successfully",
-                        "description": str(response),
-                    }
-                else:
-                    raise CMApiException(
-                        message="Error creating resource " + str(response),
-                        api_error_code=status_code,
-                    )
+                return {}
 
-        return __ret
-    except HTTPError as err:
-        raise err
-
-
-# Added to support PUT operation
-def PUTData(payload=None, cm_node=None, cm_api_endpoint=None):
-    # Create the session object
-    node = cm_node
-    verify = _resolve_verify(node)
-    pattern_2xx = re.compile(r"20[0-9]")
-    pattern_4xx = re.compile(r"40[0-9]")
-    cmSessionObject = CMAPIObject(
-        cm_api_user=node["user"],
-        cm_api_pwd=node["password"],
-        cm_url=node["server_ip"],
-        auth_domain_path=node["auth_domain_path"],
-        cm_api_endpoint=cm_api_endpoint,
-        verify=verify,
-    )
-    # execute the put API call to update resource on CM
-    try:
-        r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
-        )
-        _res = r.open(
-            method="PUT",
-            url=cmSessionObject["url"],
-            data=payload,
-        )
-
-        response = json.loads(_res.read())
-        status_code = _res.getcode()
-
-        if is_json(str(response)):
-            if "codeDesc" in response.json:
+            # CM application-level error check
+            if isinstance(response, dict) and "codeDesc" in response:
                 raise CMApiException(
-                    message="Error updating resource < " + response["codeDesc"] + " >",
-                    api_error_code=status_code,
-                )
-            else:
-                __ret = {
-                    "message": "Resource updated successfully",
-                }
-        else:
-            if pattern_2xx.search(str(status_code)):
-                __ret = {
-                    "message": "Resource updated successfully",
-                    "description": str(response),
-                }
-            elif pattern_4xx.search(str(status_code)):
-                raise CMApiException(
-                    message="Error updating resource " + str(response),
-                    api_error_code=status_code,
-                )
-            else:
-                raise CMApiException(
-                    message="Error updating resource " + str(response),
+                    message="API error: " + response.get("codeDesc", "Unknown"),
                     api_error_code=status_code,
                 )
 
-        return __ret
-    except HTTPError as err:
-        raise err
+            return response
+        except HTTPError as err:
+            raise err
+
+    def get(self, endpoint):
+        return self.request("GET", endpoint)
+
+    def post(self, endpoint, data=None):
+        return self.request("POST", endpoint, data=data)
+
+    def put(self, endpoint, data=None):
+        return self.request("PUT", endpoint, data=data)
+
+    def patch(self, endpoint, data=None):
+        return self.request("PATCH", endpoint, data=data)
+
+    def delete(self, endpoint):
+        return self.request("DELETE", endpoint)
 
 
-def POSTWithoutData(cm_node=None, cm_api_endpoint=None):
-    # Create the session object
-    node = cm_node
-    verify = _resolve_verify(node)
-    pattern_2xx = re.compile(r"20[0-9]")
-    pattern_4xx = re.compile(r"40[0-9]")
-    cmSessionObject = CMAPIObject(
-        cm_api_user=node["user"],
-        cm_api_pwd=node["password"],
-        cm_url=node["server_ip"],
-        auth_domain_path=node["auth_domain_path"],
-        cm_api_endpoint=cm_api_endpoint,
-        verify=verify,
-    )
-    # execute the post API call to create the resource on CM
-    try:
-        r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
-        )
-        _res = r.open(
-            method="POST",
-            url=cmSessionObject["url"],
-        )
+# ---------------------------------------------------------------------------
+# Backward-compatible wrapper functions.
+#
+# These are used by ``cm_resource_delete.py`` and
+# ``cm_resource_get_id_from_name.py`` which import specific function names
+# directly.  All domain-level module_utils (dpg.py, cte.py, …) have been
+# migrated to use ``CipherTrustClient`` directly and no longer call these.
+# ---------------------------------------------------------------------------
 
-        response = json.loads(_res.read())
-        status_code = _res.getcode()
-
-        if is_json(str(response)):
-            if "codeDesc" in response.json:
-                raise CMApiException(
-                    message="Error creating resource < " + response["codeDesc"] + " >",
-                    api_error_code=status_code,
-                )
-            else:
-                __ret = {
-                    "message": "Resource created successfully",
-                }
-        else:
-            if pattern_2xx.search(str(status_code)):
-                __ret = {
-                    "message": "Resource created successfully",
-                    "description": str(response),
-                }
-            elif pattern_4xx.search(str(status_code)):
-                raise CMApiException(
-                    message="Error creating resource " + str(response),
-                    api_error_code=status_code,
-                )
-            else:
-                raise CMApiException(
-                    message="Error creating resource " + str(response),
-                    api_error_code=status_code,
-                )
-
-        return __ret
-    except HTTPError as err:
-        raise err
-
-
-def PATCHData(payload=None, cm_node=None, cm_api_endpoint=None):
-    # Create the session object
-    node = cm_node
-    verify = _resolve_verify(node)
-    pattern_2xx = re.compile(r"20[0-9]")
-    pattern_4xx = re.compile(r"40[0-9]")
-    cmSessionObject = CMAPIObject(
-        cm_api_user=node["user"],
-        cm_api_pwd=node["password"],
-        cm_url=node["server_ip"],
-        auth_domain_path=node["auth_domain_path"],
-        cm_api_endpoint=cm_api_endpoint,
-        verify=verify,
-    )
-    # execute the patch API call to update the resource on CM
-    try:
-        r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
-        )
-        _res = r.open(
-            method="PATCH",
-            url=cmSessionObject["url"],
-            data=payload,
-        )
-
-        response = json.loads(_res.read())
-        status_code = _res.getcode()
-
-        if is_json(str(response)):
-            if "codeDesc" in response.json:
-                raise CMApiException(
-                    message="Error creating resource < " + response["codeDesc"] + " >",
-                    api_error_code=status_code,
-                )
-            else:
-                __ret = {
-                    "message": "Resource updated successfully",
-                }
-        else:
-            if pattern_2xx.search(str(status_code)):
-                __ret = {
-                    "message": "Resource updated successfully",
-                    "status_code": str(response),
-                }
-            elif pattern_4xx.search(str(status_code)):
-                raise CMApiException(
-                    message="Error creating resource " + str(response),
-                    api_error_code=status_code,
-                )
-            else:
-                raise CMApiException(
-                    message="Error creating resource " + str(response),
-                    api_error_code=status_code,
-                )
-
-        return __ret
-    except HTTPError as err:
-        raise err
+def _client_from_node(node):
+    """Convenience: create a CipherTrustClient from a node dict."""
+    return CipherTrustClient(node)
 
 
 def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
-    # Create the session object
-    node = cm_node
-    verify = _resolve_verify(node)
-    pattern_2xx = re.compile(r"20[0-9]")
-    pattern_4xx = re.compile(r"40[0-9]")
-    cmSessionObject = CMAPIObject(
-        cm_api_user=node["user"],
-        cm_api_pwd=node["password"],
-        cm_url=node["server_ip"],
-        auth_domain_path=node["auth_domain_path"],
-        cm_api_endpoint=cm_api_endpoint,
-        verify=verify,
-    )
-    # execute the delete API call to delete the resource on CM
-    try:
-        r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
-        )
-        _res = r.open(
-            method="DELETE",
-            url=cmSessionObject["url"] + "/" + key,
-        )
-
-        response = _res.read()
-        status_code = _res.getcode()
-
-        if is_json(str(response)):
-            if "codeDesc" in response.json:
-                raise CMApiException(
-                    message="Error deleting resource < " + response["codeDesc"] + " >",
-                    api_error_code=status_code,
-                )
-            else:
-                __ret = {
-                    "message": "Resource deleted successfully",
-                }
-        else:
-            if pattern_2xx.search(str(status_code)):
-                __ret = {
-                    "message": "Resource deleted successfully",
-                    "status_code": str(response),
-                }
-            elif pattern_4xx.search(str(status_code)):
-                raise CMApiException(
-                    message="Error deleting resource " + str(response),
-                    api_error_code=status_code,
-                )
-            else:
-                raise CMApiException(
-                    message="Error deleting resource " + str(response),
-                    api_error_code=status_code,
-                )
-
-        return __ret
-    except HTTPError as err:
-        raise err
+    client = _client_from_node(cm_node)
+    return client.delete(cm_api_endpoint + "/" + key)
 
 
 def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
-    # Create the session object
-    node = cm_node
-    verify = _resolve_verify(node)
-    pattern_2xx = re.compile(r"20[0-9]")
-    pattern_4xx = re.compile(r"40[0-9]")
-    cmSessionObject = CMAPIObject(
-        cm_api_user=node["user"],
-        cm_api_pwd=node["password"],
-        cm_url=node["server_ip"],
-        auth_domain_path=node["auth_domain_path"],
-        cm_api_endpoint=cm_api_endpoint,
-        verify=verify,
-    )
-    # execute the delete API call to delete the resource on CM
-    try:
-        r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
-        )
-        _res = r.open(
-            method="DELETE",
-            url=cmSessionObject["url"],
-        )
-
-        response = _res.read()
-        status_code = _res.getcode()
-
-        if is_json(str(response)):
-            if "codeDesc" in response.json():
-                raise CMApiException(
-                    message="Error creating resource < " + response["codeDesc"] + " >",
-                    api_error_code=status_code,
-                )
-            else:
-                return "Resource deleted successfully"
-        else:
-            if pattern_2xx.search(str(status_code)):
-                return "Resource deleted successfully"
-            elif pattern_4xx.search(str(status_code)):
-                raise CMApiException(
-                    message="Error deleting resource " + str(response),
-                    api_error_code=status_code,
-                )
-            else:
-                raise CMApiException(
-                    message="Error deleting resource " + str(response),
-                    api_error_code=status_code,
-                )
-
-    except HTTPError as err:
-        raise err
-    except json.decoder.JSONDecodeError as jsonErr:
-        return jsonErr
-
-
-def GETData(cm_node=None, cm_api_endpoint=None):
-    # Create the session object
-    node = cm_node
-    verify = _resolve_verify(node)
-    cmSessionObject = CMAPIObject(
-        cm_api_user=node["user"],
-        cm_api_pwd=node["password"],
-        cm_url=node["server_ip"],
-        auth_domain_path=node["auth_domain_path"],
-        cm_api_endpoint=cm_api_endpoint,
-        verify=verify,
-    )
-
-    try:
-        r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
-        )
-        _res = r.open(
-            method="GET",
-            url=cmSessionObject["url"],
-        )
-        response = json.loads(_res.read())
-        status_code = _res.getcode()
-
-        if response["resources"] is None:
-            raise CMApiException(
-                message="Error fetching data " + str(response),
-                api_error_code=status_code,
-            )
-
-        if len(response["resources"]) > 0:
-            __ret = {"id": response["resources"][0][id]}
-        else:
-            raise CMApiException(message="No records found", api_error_code=status_code)
-
-        return __ret
-    except HTTPError as err:
-        raise err
-
-
-# GETData just returns ID for a particular filter
-# This method will simply return the GET API data
-def GETAPIData(cm_node=None, cm_api_endpoint=None):
-    # Create the session object
-    node = cm_node
-    verify = _resolve_verify(node)
-    pattern_2xx = re.compile(r"20[0-9]")
-    pattern_4xx = re.compile(r"40[0-9]")
-    cmSessionObject = CMAPIObject(
-        cm_api_user=node["user"],
-        cm_api_pwd=node["password"],
-        cm_url=node["server_ip"],
-        auth_domain_path=node["auth_domain_path"],
-        cm_api_endpoint=cm_api_endpoint,
-        verify=verify,
-    )
-
-    try:
-        r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
-        )
-        _res = r.open(
-            method="GET",
-            url=cmSessionObject["url"],
-        )
-        response = json.loads(_res.read())
-        status_code = _res.getcode()
-
-        if is_json(str(response)):
-            if "codeDesc" in response.json():
-                raise CMApiException(
-                    message="Error in API Call < " + response["codeDesc"] + " >",
-                    api_error_code=status_code,
-                )
-            else:
-                __ret = {
-                    "message": "Resource fetched successfully",
-                    "data": response,
-                }
-        else:
-            if pattern_2xx.search(str(status_code)):
-                __ret = {
-                    "message": "Resource fetched successfully",
-                    "data": response,
-                }
-            elif pattern_4xx.search(str(status_code)):
-                raise CMApiException(
-                    message="Error fetching data " + str(response),
-                    api_error_code=status_code,
-                )
-            else:
-                raise CMApiException(
-                    message="Error fetching data " + str(response),
-                    api_error_code=status_code,
-                )
-        return __ret
-    except HTTPError as err:
-        raise err
-    except json.decoder.JSONDecodeError as jsonErr:
-        return jsonErr
-
-
-# Below method is outdated...need to be cleaned up later
-
-
-def GETIdByName(name=None, cm_node=None, cm_api_endpoint=None):
-    # Create the session object
-    verify = _resolve_verify(cm_node)
-    cmSessionObject = CMAPIObject(
-        cm_api_user=cm_node["user"],
-        cm_api_pwd=cm_node["password"],
-        cm_url=cm_node["server_ip"],
-        auth_domain_path=cm_node["auth_domain_path"],
-        cm_api_endpoint=cm_api_endpoint,
-        verify=verify,
-    )
-    # execute the delete API call to delete the resource on CM
-    ret = dict()
-    try:
-        r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
-        )
-        _res = r.open(
-            method="GET",
-            url=cmSessionObject["url"] + "/?skip=0&limit=1&name=" + name,
-        )
-        response = json.loads(_res.read())
-        status_code = _res.getcode()
-
-        if len(response.json()["resources"]) > 0:
-            ret["id"] = response.json()["resources"][0]["id"]
-            ret["status"] = status_code
-            return ret
-        else:
-            ret["status"] = status_code
-            ret["id"] = ""
-            return ret
-    except HTTPError as err:
-        raise err
+    client = _client_from_node(cm_node)
+    return client.delete(cm_api_endpoint)
 
 
 def GETIdByQueryParam(
     param=None, value=None, cm_node=None, cm_api_endpoint=None, id=None
 ):
-    # Create the session object
-    node = cm_node
-    verify = _resolve_verify(node)
-    cmSessionObject = CMAPIObject(
-        cm_api_user=node["user"],
-        cm_api_pwd=node["password"],
-        cm_url=node["server_ip"],
-        auth_domain_path=node["auth_domain_path"],
-        cm_api_endpoint=cm_api_endpoint,
-        verify=verify,
-    )
-
-    url = ""
-    if param is None:
-        url = cmSessionObject["url"]
+    client = _client_from_node(cm_node)
+    if param is not None:
+        url = cm_api_endpoint + "/?skip=0&limit=1&" + param + "=" + value
     else:
-        url = cmSessionObject["url"] + "/?skip=0&limit=1&" + param + "=" + value
+        url = cm_api_endpoint
 
-    try:
-        r = Request(
-            headers=cmSessionObject["headers"], timeout=120, validate_certs=verify
+    response = client.get(url)
+
+    if not isinstance(response, dict) or response.get("resources") is None:
+        raise CMApiException(
+            message="Error fetching data " + str(response),
+            api_error_code=0,
         )
-        _res = r.open(method="GET", url=url)
 
-        response = json.loads(_res.read())
-        status_code = _res.getcode()
-
-        if response["resources"] is None:
-            raise CMApiException(
-                message="Error fetching data " + str(response),
-                api_error_code=status_code,
-            )
-
-        if len(response["resources"]) > 0:
-            if id is None:
-                return response
-            else:
-                __ret = {"id": response["resources"][0][id]}
+    if len(response["resources"]) > 0:
+        if id is None:
+            return response
         else:
-            raise CMApiException(
-                message="No matching records found", api_error_code=status_code
-            )
-
-        return __ret
-    except HTTPError as err:
-        raise err
-
-
-def CMAPIObject(
-    cm_api_user=None,
-    cm_api_pwd=None,
-    cm_url=None,
-    cm_api_endpoint=None,
-    auth_domain_path=None,
-    verify=None,
-):
-    """Create a Ciphertrust Manager (CM) client session.
-
-    The returned dict contains a bearer token in its ``headers``
-    entry. Callers MUST treat the dict as opaque — never stringify
-    it, never place it in module results, and never emit it to
-    debug/error output.
-    """
-    if verify is None:
-        verify = False
-    session = dict()
-    session["url"] = "https://" + cm_url + "/api/v1/" + cm_api_endpoint
-    token = getJwt(
-        host=cm_url,
-        username=cm_api_user,
-        password=cm_api_pwd,
-        auth_domain_path=auth_domain_path,
-        verify=verify,
-    )
-    session["headers"] = {
-        "Content-Type": "application/json; charset=utf-8",
-        "Authorization": "Bearer " + token,
-    }
-    return session
+            return {"id": response["resources"][0][id]}
+    else:
+        raise CMApiException(
+            message="No matching records found",
+            api_error_code=0,
+        )

@@ -10,373 +10,112 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import json
-
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
-    POSTData,
-    POSTWithoutData,
-    PATCHData,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
+    CipherTrustClient,
+    build_request_payload,
+    _build_query_string,
 )
 
 
-def is_json(myjson):
-    try:
-        json.loads(myjson)
-    except ValueError as e:
-        return False
-    return True
+def _key_op_url(cm_key_id, action, key_version=None, id_type=None, includeMaterial=None):
+    """Build a vault/keys2/<id>/<action>?... URL."""
+    qs_params = {}
+    if key_version is not None:
+        qs_params["version"] = key_version
+    if id_type is not None:
+        qs_params["type"] = id_type
+    if includeMaterial is not None:
+        qs_params["includeMaterial"] = includeMaterial
+    return "vault/keys2/" + cm_key_id + "/" + action + _build_query_string(qs_params)
 
+
+# -- CRUD -------------------------------------------------------------------
 
 def create(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="vault/keys2",
-            id="id",
-        )
-
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "vault/keys2",
+        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+    )
 
 
 def patch(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "cm_key_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="vault/keys2/" + kwargs["cm_key_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "vault/keys2/" + kwargs["cm_key_id"],
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "cm_key_id")}
+        ),
+    )
 
 
 def version_create(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "cm_key_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="vault/keys2/" + kwargs["cm_key_id"] + "/versions",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "vault/keys2/" + kwargs["cm_key_id"] + "/versions",
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "cm_key_id")}
+        ),
+    )
 
 
-# destroy, archive, recover, revoke, reactivate, export, clone
+# -- Key lifecycle operations -----------------------------------------------
+
+_OP_EXCLUDE = frozenset(["node", "cm_key_id", "key_version", "id_type"])
 
 
 def destroy(**kwargs):
-    result = dict()
-    request = {}
-    queryString = "?"
-
-    if kwargs["key_version"] is not None:
-        queryString = queryString + "version=" + kwargs["key_version"]
-
-    if kwargs["id_type"] is not None:
-        if queryString == "?":
-            queryString = queryString + "type=" + kwargs["id_type"]
-        else:
-            queryString = queryString + "&type=" + kwargs["id_type"]
-
-    if queryString == "?":
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/destroy"
-    else:
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/destroy" + queryString
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    url = _key_op_url(kwargs["cm_key_id"], "destroy", kwargs.get("key_version"), kwargs.get("id_type"))
+    return client.post(url)
 
 
 def archive(**kwargs):
-    result = dict()
-    request = {}
-    queryString = "?"
-
-    if kwargs["key_version"] is not None:
-        queryString = queryString + "version=" + kwargs["key_version"]
-
-    if kwargs["id_type"] is not None:
-        if queryString == "?":
-            queryString = queryString + "type=" + kwargs["id_type"]
-        else:
-            queryString = queryString + "&type=" + kwargs["id_type"]
-
-    if queryString == "?":
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/archive"
-    else:
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/archive" + queryString
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    url = _key_op_url(kwargs["cm_key_id"], "archive", kwargs.get("key_version"), kwargs.get("id_type"))
+    return client.post(url)
 
 
 def recover(**kwargs):
-    result = dict()
-    request = {}
-    queryString = "?"
-
-    if kwargs["key_version"] is not None:
-        queryString = queryString + "version=" + kwargs["key_version"]
-
-    if kwargs["id_type"] is not None:
-        if queryString == "?":
-            queryString = queryString + "type=" + kwargs["id_type"]
-        else:
-            queryString = queryString + "&type=" + kwargs["id_type"]
-
-    if queryString == "?":
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/recover"
-    else:
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/recover" + queryString
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    url = _key_op_url(kwargs["cm_key_id"], "recover", kwargs.get("key_version"), kwargs.get("id_type"))
+    return client.post(url)
 
 
 def revoke(**kwargs):
-    result = dict()
-    request = {}
-    queryString = "?"
-
-    for key, value in kwargs.items():
-        if (
-            key not in ["node", "cm_key_id", "key_version", "id_type", "messageStr"]
-            and value is not None
-        ):
-            request[key] = value
-        if (key == 'messageStr'):
-            request["message"] = value
-
-    payload = json.dumps(request)
-
-    if kwargs["key_version"] is not None:
-        queryString = queryString + "version=" + kwargs["key_version"]
-
-    if kwargs["id_type"] is not None:
-        if queryString == "?":
-            queryString = queryString + "type=" + kwargs["id_type"]
-        else:
-            queryString = queryString + "&type=" + kwargs["id_type"]
-
-    if queryString == "?":
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/revoke"
-    else:
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/revoke" + queryString
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-            id="id",
-        )
-
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    url = _key_op_url(kwargs["cm_key_id"], "revoke", kwargs.get("key_version"), kwargs.get("id_type"))
+    exclude = _OP_EXCLUDE | {"messageStr"}
+    payload = build_request_payload(
+        {k: v for k, v in kwargs.items() if k not in exclude},
+        remap={"messageStr": "message"},
+    )
+    # Re-add messageStr → message mapping for data that was excluded above
+    # but needs the remap.  Simpler: include it and let remap handle it.
+    payload_dict = {k: v for k, v in kwargs.items() if k not in _OP_EXCLUDE}
+    return client.post(url, data=build_request_payload(payload_dict, remap={"messageStr": "message"}))
 
 
 def reactivate(**kwargs):
-    result = dict()
-    request = {}
-    queryString = "?"
-
-    for key, value in kwargs.items():
-        if (
-            key not in ["node", "cm_key_id", "key_version", "id_type", "messageStr"]
-            and value is not None
-        ):
-            request[key] = value
-        if (key == 'messageStr'):
-            request["message"] = value
-
-    payload = json.dumps(request)
-
-    if kwargs["key_version"] is not None:
-        queryString = queryString + "version=" + kwargs["key_version"]
-
-    if kwargs["id_type"] is not None:
-        if queryString == "?":
-            queryString = queryString + "type=" + kwargs["id_type"]
-        else:
-            queryString = queryString + "&type=" + kwargs["id_type"]
-
-    if queryString == "?":
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/reactivate"
-    else:
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/reactivate" + queryString
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-            id="id",
-        )
-
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    url = _key_op_url(kwargs["cm_key_id"], "reactivate", kwargs.get("key_version"), kwargs.get("id_type"))
+    payload_dict = {k: v for k, v in kwargs.items() if k not in _OP_EXCLUDE}
+    return client.post(url, data=build_request_payload(payload_dict, remap={"messageStr": "message"}))
 
 
 def export(**kwargs):
-    result = dict()
-    request = {}
-    queryString = "?"
-
-    for key, value in kwargs.items():
-        if (
-            key not in ["node", "cm_key_id", "key_version", "id_type"]
-            and value is not None
-        ):
-            request[key] = value
-        if key == "keyFormat":
-            request["format"] = value
-
-    payload = json.dumps(request)
-
-    if kwargs["key_version"] is not None:
-        queryString = queryString + "version=" + kwargs["key_version"]
-
-    if kwargs["id_type"] is not None:
-        if queryString == "?":
-            queryString = queryString + "type=" + kwargs["id_type"]
-        else:
-            queryString = queryString + "&type=" + kwargs["id_type"]
-
-    if queryString == "?":
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/export"
-    else:
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/export" + queryString
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    url = _key_op_url(kwargs["cm_key_id"], "export", kwargs.get("key_version"), kwargs.get("id_type"))
+    payload_dict = {k: v for k, v in kwargs.items() if k not in _OP_EXCLUDE}
+    return client.post(url, data=build_request_payload(payload_dict, remap={"keyFormat": "format"}))
 
 
 def clone(**kwargs):
-    result = dict()
-    request = {}
-    queryString = "?"
-
-    for key, value in kwargs.items():
-        if (
-            key
-            not in ["node", "cm_key_id", "key_version", "id_type", "includeMaterial"]
-            and value is not None
-        ):
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    if kwargs["key_version"] is not None:
-        queryString = queryString + "version=" + kwargs["key_version"]
-
-    if kwargs["id_type"] is not None:
-        if queryString == "?":
-            queryString = queryString + "type=" + kwargs["id_type"]
-        else:
-            queryString = queryString + "&type=" + kwargs["id_type"]
-
-    if kwargs["includeMaterial"] is not None:
-        if queryString == "?":
-            queryString = queryString + "includeMaterial=" + kwargs["includeMaterial"]
-        else:
-            queryString = queryString + "&includeMaterial=" + kwargs["includeMaterial"]
-
-    if queryString == "?":
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/clone"
-    else:
-        url = "vault/keys2/" + kwargs["cm_key_id"] + "/clone" + queryString
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    url = _key_op_url(
+        kwargs["cm_key_id"], "clone",
+        kwargs.get("key_version"), kwargs.get("id_type"), kwargs.get("includeMaterial"),
+    )
+    exclude = _OP_EXCLUDE | {"includeMaterial"}
+    payload_dict = {k: v for k, v in kwargs.items() if k not in exclude}
+    return client.post(url, data=build_request_payload(payload_dict))

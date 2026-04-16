@@ -10,572 +10,199 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import json
-
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
-    POSTData,
-    PATCHData,
-    DELETEByNameOrId,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cache import (
-    get_cache,
-    get_performance_metrics,
-    cache_resource_id,
-    get_cached_resource_id,
+    CipherTrustClient,
+    build_request_payload,
 )
 
 
-def is_json(myjson):
-    try:
-        json.loads(myjson)
-    except ValueError as e:
-        return False
-    return True
+def _exclude(kwargs, *keys):
+    return {k: v for k, v in kwargs.items() if k not in keys}
 
+
+# -- Access Policy ----------------------------------------------------------
 
 def createAccessPolicy(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/access-policies",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "data-protection/access-policies",
+        data=build_request_payload(_exclude(kwargs, "node")),
+    )
 
 
 def updateAccessPolicy(**kwargs):
-    # Using policy_id to update the Access Policy
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "policy_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/access-policies/" + kwargs["policy_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "data-protection/access-policies/" + kwargs["policy_id"],
+        data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
+    )
 
 
 def accessPolicyAddUserSet(**kwargs):
-    # Add UserSet to DPG Access Policy
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "policy_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/access-policies/"
-            + kwargs["policy_id"]
-            + "/user-set",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "data-protection/access-policies/" + kwargs["policy_id"] + "/user-set",
+        data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
+    )
 
 
 def accessPolicyUpdateUserSet(**kwargs):
-    # Update userSet in access policy
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "policy_id", "policy_user_set_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/access-policies/"
-            + kwargs["policy_id"]
-            + "/user-set/"
-            + kwargs["policy_user_set_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "data-protection/access-policies/"
+        + kwargs["policy_id"]
+        + "/user-set/"
+        + kwargs["policy_user_set_id"],
+        data=build_request_payload(
+            _exclude(kwargs, "node", "policy_id", "policy_user_set_id")
+        ),
+    )
 
 
 def accessPolicyDeleteUserSet(**kwargs):
-    result = dict(
-        changed=False,
+    client = CipherTrustClient(kwargs["node"])
+    return client.delete(
+        "data-protection/access-policies/"
+        + kwargs["policy_id"]
+        + "/user-set/"
+        + kwargs["policy_user_set_id"],
     )
-    endpoint = "data-protection/access-policies/" + kwargs["policy_id"] + "/user-set"
-    try:
-        response = DELETEByNameOrId(
-            key=kwargs["policy_user_set_id"],
-            cm_node=kwargs["node"],
-            cm_api_endpoint=endpoint,
-        )
-        result["response"] = response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
 
 
-# Save or Update Protection Policy
-
+# -- Protection Policy ------------------------------------------------------
 
 def createProtectionPolicy(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/protection-policies",
-            id="name",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "data-protection/protection-policies",
+        data=build_request_payload(_exclude(kwargs, "node")),
+    )
 
 
 def updateProtectionPolicy(**kwargs):
-    # Using policy_name to update the Protection Policy
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "policy_name"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/protection-policies/"
-            + kwargs["policy_name"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "data-protection/protection-policies/" + kwargs["policy_name"],
+        data=build_request_payload(_exclude(kwargs, "node", "policy_name")),
+    )
 
 
-# Save or Update UserSet
-
+# -- UserSet ----------------------------------------------------------------
 
 def createUserSet(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/user-sets",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "data-protection/user-sets",
+        data=build_request_payload(_exclude(kwargs, "node")),
+    )
 
 
 def updateUserSet(**kwargs):
-    # Using user_set_id to update the UserSet
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "user_set_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/user-sets/" + kwargs["user_set_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "data-protection/user-sets/" + kwargs["user_set_id"],
+        data=build_request_payload(_exclude(kwargs, "node", "user_set_id")),
+    )
 
 
-# Save or Update CharSet
-
+# -- Character Set ----------------------------------------------------------
 
 def createCharacterSet(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/character-sets",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "data-protection/character-sets",
+        data=build_request_payload(_exclude(kwargs, "node")),
+    )
 
 
 def updateCharacterSet(**kwargs):
-    # Using char_set_id to update the Character Set
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "char_set_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/character-sets/" + kwargs["char_set_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "data-protection/character-sets/" + kwargs["char_set_id"],
+        data=build_request_payload(_exclude(kwargs, "node", "char_set_id")),
+    )
 
 
-# Save or Update Masking Format
-
+# -- Masking Format ---------------------------------------------------------
 
 def createMaskingFormat(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/masking-formats",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "data-protection/masking-formats",
+        data=build_request_payload(_exclude(kwargs, "node")),
+    )
 
 
 def updateMaskingFormat(**kwargs):
-    # Using masking_format_id to update the Masking Format
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "masking_format_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/masking-formats/"
-            + kwargs["masking_format_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "data-protection/masking-formats/" + kwargs["masking_format_id"],
+        data=build_request_payload(_exclude(kwargs, "node", "masking_format_id")),
+    )
 
 
-# Save or Update Client Profile
-
+# -- Client Profile ---------------------------------------------------------
 
 def createClientProfile(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/client-profiles",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "data-protection/client-profiles",
+        data=build_request_payload(_exclude(kwargs, "node")),
+    )
 
 
 def updateClientProfile(**kwargs):
-    # Using profile_id to update the Client Profile
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "profile_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/client-profiles/" + kwargs["profile_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "data-protection/client-profiles/" + kwargs["profile_id"],
+        data=build_request_payload(_exclude(kwargs, "node", "profile_id")),
+    )
 
 
-# Save or Update DPG Policy
-
+# -- DPG Policy -------------------------------------------------------------
 
 def createDPGPolicy(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        # Check cache first for policy by name
-        cache = get_cache()
-        if "name" in request:
-            cached_id = get_cached_resource_id("dpg_policy", request["name"])
-            if cached_id:
-                return {"id": cached_id, "name": request["name"], "cached": True}
-        
-        performance_metrics = get_performance_metrics()
-        performance_metrics.increment_api_calls()
-        
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/dpg-policies",
-            id="id",
-        )
-        
-        # Cache the policy ID by name for future lookups
-        if "name" in request and "id" in response:
-            cache_resource_id("dpg_policy", request["name"], response["id"])
-        
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "data-protection/dpg-policies",
+        data=build_request_payload(_exclude(kwargs, "node")),
+    )
 
 
 def updateDPGPolicy(**kwargs):
-    # Using policy_id to update the DPG Policy
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "policy_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        performance_metrics = get_performance_metrics()
-        performance_metrics.increment_api_calls()
-        
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/dpg-policies/" + kwargs["policy_id"],
-        )
-        
-        # Invalidate cache for this policy since it was updated
-        if "policy_id" in kwargs:
-            cache = get_cache()
-            cache.invalidate_by_pattern("dpg_policy", kwargs["policy_id"])
-        
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "data-protection/dpg-policies/" + kwargs["policy_id"],
+        data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
+    )
 
 
 def dpgPolicyAddAPIUrl(**kwargs):
-    # Add UserSet to DPG Access Policy
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "policy_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        performance_metrics = get_performance_metrics()
-        performance_metrics.increment_api_calls()
-        
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/dpg-policies/"
-            + kwargs["policy_id"]
-            + "/api-urls",
-            id="id",
-        )
-        
-        # Invalidate cache for this policy since it was updated
-        if "policy_id" in kwargs:
-            cache = get_cache()
-            cache.invalidate_by_pattern("dpg_policy", kwargs["policy_id"])
-        
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "data-protection/dpg-policies/" + kwargs["policy_id"] + "/api-urls",
+        data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
+    )
 
 
 def dpgPolicyUpdateAPIUrl(**kwargs):
-    # Update userSet in access policy
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "policy_id", "api_url_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        performance_metrics = get_performance_metrics()
-        performance_metrics.increment_api_calls()
-        
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="data-protection/dpg-policies/"
-            + kwargs["policy_id"]
-            + "/api-urls/"
-            + kwargs["api_url_id"],
-        )
-        
-        # Invalidate cache for this policy since it was updated
-        if "policy_id" in kwargs:
-            cache = get_cache()
-            cache.invalidate_by_pattern("dpg_policy", kwargs["policy_id"])
-        
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "data-protection/dpg-policies/"
+        + kwargs["policy_id"]
+        + "/api-urls/"
+        + kwargs["api_url_id"],
+        data=build_request_payload(
+            _exclude(kwargs, "node", "policy_id", "api_url_id")
+        ),
+    )
 
 
 def dpgPolicyDeleteAPIUrl(**kwargs):
-    result = dict(
-        changed=False,
+    client = CipherTrustClient(kwargs["node"])
+    return client.delete(
+        "data-protection/dpg-policies/"
+        + kwargs["policy_id"]
+        + "/api-urls/"
+        + kwargs["api_url_id"],
     )
-    endpoint = "data-protection/dpg-policies/" + kwargs["policy_id"] + "/api-urls"
-    try:
-        performance_metrics = get_performance_metrics()
-        performance_metrics.increment_api_calls()
-        
-        response = DELETEByNameOrId(
-            key=kwargs["api_url_id"], cm_node=kwargs["node"], cm_api_endpoint=endpoint
-        )
-        result["response"] = response
-        
-        # Invalidate cache for this policy since it was updated
-        if "policy_id" in kwargs:
-            cache = get_cache()
-            cache.invalidate_by_pattern("dpg_policy", kwargs["policy_id"])
-        
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise

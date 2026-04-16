@@ -6,196 +6,78 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import json
-
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
-    POSTData,
-    PATCHData,
-    POSTWithoutData,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
+    CipherTrustClient,
+    build_request_payload,
 )
 
 
 def createLocalCA(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        __resp = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="ca/local-cas",
-            id="id",
-        )
-
-        return __resp
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "ca/local-cas",
+        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+    )
 
 
 def updateLocalCA(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="ca/local-cas/" + kwargs["id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "ca/local-cas/" + kwargs["id"],
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "id")}
+        ),
+    )
 
 
 def selfSign(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="ca/local-cas/" + kwargs["id"] + "/self-sign",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "ca/local-cas/" + kwargs["id"] + "/self-sign",
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "id")}
+        ),
+    )
 
 
 def issueCertificate(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="ca/local-cas/" + kwargs["id"] + "/certs",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "ca/local-cas/" + kwargs["id"] + "/certs",
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "id")}
+        ),
+    )
 
 
 def revokeCert(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "id", "cert_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="ca/local-cas/"
-            + kwargs["id"]
-            + "/certs/"
-            + kwargs["cert_id"]
-            + "/revoke",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "ca/local-cas/" + kwargs["id"] + "/certs/" + kwargs["cert_id"] + "/revoke",
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "id", "cert_id")}
+        ),
+    )
 
 
 def resumeCert(**kwargs):
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint="ca/local-cas/"
-            + kwargs["id"]
-            + "/certs/"
-            + kwargs["cert_id"]
-            + "/resume",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "ca/local-cas/" + kwargs["id"] + "/certs/" + kwargs["cert_id"] + "/resume",
+    )
 
 
 def createCSR(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="vault/csr",
-            id="csr",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "vault/csr",
+        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+    )
 
 
 def createCSRAndKey(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="ca/csr",
-            id="csr",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "ca/csr",
+        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+    )

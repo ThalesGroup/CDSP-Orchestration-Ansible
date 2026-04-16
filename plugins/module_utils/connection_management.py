@@ -10,357 +10,144 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import json
-
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
-    POSTData,
-    PATCHData,
-    DELETEByNameOrId,
-    POSTWithoutData,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
+    CipherTrustClient,
+    build_request_payload,
 )
 
-
-def is_json(myjson):
-    try:
-        json.loads(myjson)
-    except ValueError as e:
-        return False
-    return True
+# Connection type → API path segment lookup.  Replaces the duplicated
+# ``if/elif`` chains that were in ``createConnection`` and ``patchConnection``.
+CONNECTION_ENDPOINTS = {
+    "aws": "connectionmgmt/services/aws/connections",
+    "azure": "connectionmgmt/services/azure/connections",
+    "elasticsearch": "connectionmgmt/services/log-forwarders/elasticsearch/connections",
+    "google": "connectionmgmt/services/gcp/connections",
+    "hadoop": "connectionmgmt/services/hadoop/connections",
+    "ldap": "connectionmgmt/services/ldap/connections",
+    "oidc": "connectionmgmt/services/oidc/connections",
+    "oracle": "connectionmgmt/services/oci/connections",
+    "scp": "connectionmgmt/services/scp/connections",
+    "smb": "connectionmgmt/services/smb/connections",
+    "salesforce": "connectionmgmt/services/salesforce/connections",
+    "syslog": "connectionmgmt/services/log-forwarders/syslog/connections",
+    "luna_nw_hsm": "connectionmgmt/services/luna-network/connections",
+}
 
 
 def createConnection(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "connection_type"] and value is not None:
-            request[key] = value
-
-    if kwargs["connection_type"] == "aws":
-        endpoint = "connectionmgmt/services/aws/connections"
-    elif kwargs["connection_type"] == "azure":
-        endpoint = "connectionmgmt/services/azure/connections"
-    elif kwargs["connection_type"] == "elasticsearch":
-        endpoint = "connectionmgmt/services/log-forwarders/elasticsearch/connections"
-    elif kwargs["connection_type"] == "google":
-        endpoint = "connectionmgmt/services/gcp/connections"
-    elif kwargs["connection_type"] == "hadoop":
-        endpoint = "connectionmgmt/services/hadoop/connections"
-    elif kwargs["connection_type"] == "ldap":
-        endpoint = "connectionmgmt/services/ldap/connections"
-    elif kwargs["connection_type"] == "oidc":
-        endpoint = "connectionmgmt/services/oidc/connections"
-    elif kwargs["connection_type"] == "oracle":
-        endpoint = "connectionmgmt/services/oci/connections"
-    elif kwargs["connection_type"] == "scp":
-        endpoint = "connectionmgmt/services/scp/connections"
-    elif kwargs["connection_type"] == "smb":
-        endpoint = "connectionmgmt/services/smb/connections"
-    elif kwargs["connection_type"] == "salesforce":
-        endpoint = "connectionmgmt/services/salesforce/connections"
-    elif kwargs["connection_type"] == "syslog":
-        endpoint = "connectionmgmt/services/log-forwarders/syslog/connections"
-    elif kwargs["connection_type"] == "luna_nw_hsm":
-        endpoint = "connectionmgmt/services/luna-network/connections"
-    else:
-        endpoint = ""
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint=endpoint,
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    endpoint = CONNECTION_ENDPOINTS.get(kwargs["connection_type"], "")
+    return client.post(
+        endpoint,
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "connection_type")}
+        ),
+    )
 
 
 def patchConnection(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if (
-            key not in ["node", "connection_type", "connection_id"]
-            and value is not None
-        ):
-            request[key] = value
-
-    if kwargs["connection_type"] == "aws":
-        endpoint = "connectionmgmt/services/aws/connections/" + kwargs["connection_id"]
-    elif kwargs["connection_type"] == "azure":
-        endpoint = (
-            "connectionmgmt/services/azure/connections/" + kwargs["connection_id"]
-        )
-    elif kwargs["connection_type"] == "elasticsearch":
-        endpoint = (
-            "connectionmgmt/services/log-forwarders/elasticsearch/connections/"
-            + kwargs["connection_id"]
-        )
-    elif kwargs["connection_type"] == "google":
-        endpoint = "connectionmgmt/services/gcp/connections/" + kwargs["connection_id"]
-    elif kwargs["connection_type"] == "hadoop":
-        endpoint = (
-            "connectionmgmt/services/hadoop/connections" + kwargs["connection_id"]
-        )
-    elif kwargs["connection_type"] == "ldap":
-        endpoint = "connectionmgmt/services/ldap/connections" + kwargs["connection_id"]
-    elif kwargs["connection_type"] == "oidc":
-        endpoint = "connectionmgmt/services/oidc/connections" + kwargs["connection_id"]
-    elif kwargs["connection_type"] == "oracle":
-        endpoint = "connectionmgmt/services/oci/connections" + kwargs["connection_id"]
-    elif kwargs["connection_type"] == "scp":
-        endpoint = "connectionmgmt/services/scp/connections" + kwargs["connection_id"]
-    elif kwargs["connection_type"] == "smb":
-        endpoint = "connectionmgmt/services/smb/connections" + kwargs["connection_id"]
-    elif kwargs["connection_type"] == "salesforce":
-        endpoint = (
-            "connectionmgmt/services/salesforce/connections" + kwargs["connection_id"]
-        )
-    elif kwargs["connection_type"] == "syslog":
-        endpoint = (
-            "connectionmgmt/services/log-forwarders/syslog/connections"
-            + kwargs["connection_id"]
-        )
-    elif kwargs["connection_type"] == "luna_nw_hsm":
-        endpoint = (
-            "connectionmgmt/services/luna-network/connections" + kwargs["connection_id"]
-        )
-    else:
-        endpoint = ""
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint=endpoint,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    endpoint = CONNECTION_ENDPOINTS.get(kwargs["connection_type"], "")
+    return client.patch(
+        endpoint + "/" + kwargs["connection_id"],
+        data=build_request_payload(
+            {
+                k: v
+                for k, v in kwargs.items()
+                if k not in ("node", "connection_type", "connection_id")
+            }
+        ),
+    )
 
 
 def addHadoopNode(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "connection_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="connectionmgmt/services/hadoop/connections/"
-            + kwargs["connection_id"]
-            + "/nodes",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "connectionmgmt/services/hadoop/connections/" + kwargs["connection_id"] + "/nodes",
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "connection_id")}
+        ),
+    )
 
 
 def updateHadoopNode(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "node_id", "connection_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="connectionmgmt/services/hadoop/connections/"
-            + kwargs["connection_id"]
-            + "/nodes/"
-            + kwargs["node_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "connectionmgmt/services/hadoop/connections/"
+        + kwargs["connection_id"]
+        + "/nodes/"
+        + kwargs["node_id"],
+        data=build_request_payload(
+            {
+                k: v
+                for k, v in kwargs.items()
+                if k not in ("node", "node_id", "connection_id")
+            }
+        ),
+    )
 
 
 def deleteHadoopNode(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "node_id", "connection_id"] and value is not None:
-            request[key] = value
-
-    try:
-        response = DELETEByNameOrId(
-            key="id",
-            cm_node=kwargs["node"],
-            cm_api_endpoint="connectionmgmt/services/hadoop/connections/"
-            + kwargs["connection_id"]
-            + "/nodes/"
-            + kwargs["node_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.delete(
+        "connectionmgmt/services/hadoop/connections/"
+        + kwargs["connection_id"]
+        + "/nodes/"
+        + kwargs["node_id"],
+    )
 
 
 def addLunaPartition(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "connection_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="connectionmgmt/services/luna-network/connections/"
-            + kwargs["connection_id"]
-            + "/partitions",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "connectionmgmt/services/luna-network/connections/"
+        + kwargs["connection_id"]
+        + "/partitions",
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "connection_id")}
+        ),
+    )
 
 
 def deleteLunaPartition(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "partition_id", "connection_id"] and value is not None:
-            request[key] = value
-
-    try:
-        response = DELETEByNameOrId(
-            key="id",
-            cm_node=kwargs["node"],
-            cm_api_endpoint="connectionmgmt/services/luna-network/connections/"
-            + kwargs["connection_id"]
-            + "/partitions/"
-            + kwargs["partition_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
-
-
-# enableSTC, disableSTC, addHSMServer, addLunaSTCPartition
+    client = CipherTrustClient(kwargs["node"])
+    return client.delete(
+        "connectionmgmt/services/luna-network/connections/"
+        + kwargs["connection_id"]
+        + "/partitions/"
+        + kwargs["partition_id"],
+    )
 
 
 def addLunaSTCPartition(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="connectionmgmt/services/luna-network/stc-partition",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "connectionmgmt/services/luna-network/stc-partition",
+        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+    )
 
 
 def addHSMServer(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="connectionmgmt/services/luna-network/servers",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "connectionmgmt/services/luna-network/servers",
+        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+    )
 
 
 def enableSTC(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "connection_id"] and value is not None:
-            request[key] = value
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint="connectionmgmt/services/luna-network/servers"
-            + kwargs["connection_id"]
-            + "/enable-stc",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "connectionmgmt/services/luna-network/servers/"
+        + kwargs["connection_id"]
+        + "/enable-stc",
+    )
 
 
 def disableSTC(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "connection_id"] and value is not None:
-            request[key] = value
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint="connectionmgmt/services/luna-network/servers"
-            + kwargs["connection_id"]
-            + "/disable-stc",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "connectionmgmt/services/luna-network/servers/"
+        + kwargs["connection_id"]
+        + "/disable-stc",
+    )

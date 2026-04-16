@@ -10,58 +10,25 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import json
-
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
-    POSTData,
-    PATCHData,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
+    CipherTrustClient,
+    build_request_payload,
 )
 
 
 def create(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="client-management/regtokens",
-            id="token",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "client-management/regtokens",
+        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+    )
 
 
 def patch(**kwargs):
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="client-management/regtokens/" + kwargs["id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "client-management/regtokens/" + kwargs["id"],
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "id")}
+        ),
+    )

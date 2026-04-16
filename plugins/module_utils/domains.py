@@ -10,99 +10,39 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import json
-
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
-    POSTData,
-    PATCHData,
-    POSTWithoutData,
+    CipherTrustClient,
+    build_request_payload,
 )
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-
-def is_json(myjson):
-    try:
-        json.loads(myjson)
-    except ValueError as e:
-        return False
-    return True
 
 
 def create(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="domains",
-            id="id",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "domains",
+        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+    )
 
 
 def patch(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "domain_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="domains/" + kwargs["domain_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        "domains/" + kwargs["domain_id"],
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "domain_id")}
+        ),
+    )
 
 
 def enableSyslogRedirection(**kwargs):
-    url = "domain-syslog-redirection/enable"
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post("domain-syslog-redirection/enable")
 
 
-def disableInterface(**kwargs):
-    url = "domain-syslog-redirection/disable"
+def disableSyslogRedirection(**kwargs):
+    client = CipherTrustClient(kwargs["node"])
+    return client.post("domain-syslog-redirection/disable")
 
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+
+# Backward-compatible alias for the incorrectly-named original function
+disableInterface = disableSyslogRedirection

@@ -10,125 +10,55 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import json
-
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
-    POSTData,
-    GETData,
-    POSTWithoutData,
-    GETIdByQueryParam,
+    CipherTrustClient,
+    build_request_payload,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
-    AnsibleCMException,
 )
-
-
-def is_json(myjson):
-    try:
-        json.loads(myjson)
-    except ValueError as e:
-        return False
-    return True
 
 
 def getLockdata(node):
     result = dict()
-
     try:
-        response = GETData(
-            cm_node=node,
-            cm_api_endpoint="licensing/lockdata",
-        )
-        if response == "4xx":
-            result["error"] = "Failed to fetch data"
-        else:
-            result["data"] = response
-
+        client = CipherTrustClient(node)
+        response = client.get("licensing/lockdata")
+        result["data"] = response
         return result
-    except CMApiException as api_e:
+    except CMApiException:
         result["failed"] = True
-    except AnsibleCMException as custom_e:
-        result["failed"] = True
+        return result
 
 
 def getTrialLicenseId(**kwargs):
-    result = dict()
-    request = {}
+    client = CipherTrustClient(kwargs["node"])
+    response = client.get("licensing/trials")
 
-    try:
-        response = GETIdByQueryParam(
-            cm_node=kwargs["node"],
-            cm_api_endpoint="licensing/trials",
-        )
-
-        resources = response["resources"]
-        __id = resources[0]["id"]
-        __status = resources[0]["status"]
-        result["id"] = __id
-        result["status"] = __status
-
-        return result
-
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    resources = response["resources"]
+    return {
+        "id": resources[0]["id"],
+        "status": resources[0]["status"],
+    }
 
 
 def addLicense(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="vault/keys2",
-        )
-
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "licensing/licenses",
+        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+    )
 
 
 def activateTrial(**kwargs):
-    result = dict()
-
-    url = "licensing/trials/" + kwargs["trialId"] + "/activate"
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "licensing/trials/" + kwargs["trialId"] + "/activate",
+    )
 
 
 def deactivateTrial(**kwargs):
-    result = dict()
-
-    url = "licensing/trials/" + kwargs["trialId"] + "/deactivate"
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "licensing/trials/" + kwargs["trialId"] + "/deactivate",
+    )

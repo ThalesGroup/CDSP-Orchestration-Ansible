@@ -13,120 +13,60 @@ __metaclass__ = type
 import json
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
-    POSTData,
+    CipherTrustClient,
 )
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
-)
-
-
-def is_json(myjson):
-    try:
-        json.loads(myjson)
-    except ValueError as e:
-        return False
-    return True
-
-
-# Utils function to create a new single node cluster
-# Node information is required as an argument to this method
 
 
 def new(**kwargs):
-    request = {}
-
     cm = kwargs["node"]
-
-    request["localNodeHost"] = cm["server_private_ip"]
-    request["localNodePort"] = cm["server_port"]
-    request["publicAddress"] = cm["server_ip"]
-    payload = json.dumps(request)
-
-    try:
-        POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="cluster/new",
-        )
-        return "Cluster creation initiated successfully!"
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(cm)
+    payload = json.dumps({
+        "localNodeHost": cm["server_private_ip"],
+        "localNodePort": cm["server_port"],
+        "publicAddress": cm["server_ip"],
+    })
+    client.post("cluster/new", data=payload)
+    return "Cluster creation initiated successfully!"
 
 
 def csr(**kwargs):
     master_cm = kwargs["master"]
     node = kwargs["node"]
-
-    request = {}
-    request["localNodeHost"] = node["server_private_ip"]
-    request["publicAddress"] = master_cm["server_ip"]
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload, cm_node=node, cm_api_endpoint="cluster/csr", id="csr"
-        )
-        return response["csr"]
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(node)
+    payload = json.dumps({
+        "localNodeHost": node["server_private_ip"],
+        "publicAddress": master_cm["server_ip"],
+    })
+    response = client.post("cluster/csr", data=payload)
+    return response.get("csr", response)
 
 
 def sign(**kwargs):
     master_cm = kwargs["master"]
     node = kwargs["node"]
-    csr = kwargs["csr"]
-    node_cm = node
-
-    request = {}
-    request["csr"] = csr
-    request["shared_hsm_partition"] = False
-    request["newNodeHost"] = node_cm["server_private_ip"]
-    request["publicAddress"] = master_cm["server_ip"]
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(payload=payload, cm_node=master_cm, cm_api_endpoint="nodes")
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(master_cm)
+    payload = json.dumps({
+        "csr": kwargs["csr"],
+        "shared_hsm_partition": False,
+        "newNodeHost": node["server_private_ip"],
+        "publicAddress": master_cm["server_ip"],
+    })
+    return client.post("nodes", data=payload)
 
 
 def join(**kwargs):
-    master_cm = kwargs['master']
-    node = kwargs['node']
-    cert = kwargs['cert']
-    caChain = kwargs['caChain']
-    mkek_blob = kwargs['mkek_blob']
-
-    node_cm = node
-
-    request = {}
-
-    request["cert"] = cert
-    request["cachain"] = caChain
-    request["localNodeHost"] = node_cm["server_private_ip"]
-    request["localNodePort"] = 5432
-    request["localNodePublicAddress"] = node_cm["server_ip"]
-    request["memberNodeHost"] = master_cm["server_private_ip"]
-    request["memberNodePort"] = 5432
-    request["mkek_blob"] = mkek_blob
-    request["blocking"] = False
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload, cm_node=node, cm_api_endpoint="cluster/join"
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    master_cm = kwargs["master"]
+    node = kwargs["node"]
+    client = CipherTrustClient(node)
+    payload = json.dumps({
+        "cert": kwargs["cert"],
+        "cachain": kwargs["caChain"],
+        "localNodeHost": node["server_private_ip"],
+        "localNodePort": 5432,
+        "localNodePublicAddress": node["server_ip"],
+        "memberNodeHost": master_cm["server_private_ip"],
+        "memberNodePort": 5432,
+        "mkek_blob": kwargs["mkek_blob"],
+        "blocking": False,
+    })
+    return client.post("cluster/join", data=payload)

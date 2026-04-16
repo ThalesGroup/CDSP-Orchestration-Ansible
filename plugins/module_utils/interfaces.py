@@ -10,223 +10,88 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import json
-
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
-    POSTData,
-    PATCHData,
-    POSTWithoutData,
-    GETAPIData,
-    PUTData,
-)
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-    AnsibleCMException,
+    CipherTrustClient,
+    build_request_payload,
 )
 
 
-def is_json(myjson):
-    try:
-        json.loads(myjson)
-    except ValueError as e:
-        return False
-    return True
+def _iface_url(interface_id, suffix=""):
+    return "configs/interfaces/" + interface_id + suffix
 
 
 def create(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key != "node" and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="configs/interfaces",
-            id="name",
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        "configs/interfaces",
+        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+    )
 
 
 def patch(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "interface_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = PATCHData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint="configs/interfaces/" + kwargs["interface_id"],
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.patch(
+        _iface_url(kwargs["interface_id"]),
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
+        ),
+    )
 
 
 def addCertificateToInterface(**kwargs):
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "interface_id"] and value is not None:
-            request[key] = value
-
-    url = "configs/interfaces/" + kwargs["interface_id"] + "/certificate"
-
-    payload = json.dumps(request)
-
-    try:
-        response = PUTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.put(
+        _iface_url(kwargs["interface_id"], "/certificate"),
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
+        ),
+    )
 
 
 def getCertificateFromInterface(**kwargs):
-    url = "configs/interfaces/" + kwargs["interface_id"] + "/certificate"
-
-    try:
-        response = GETAPIData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.get(_iface_url(kwargs["interface_id"], "/certificate"))
 
 
 def enableInterface(**kwargs):
-    url = "configs/interfaces/" + kwargs["interface_id"] + "/enable"
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(_iface_url(kwargs["interface_id"], "/enable"))
 
 
 def disableInterface(**kwargs):
-    url = "configs/interfaces/" + kwargs["interface_id"] + "/disable"
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(_iface_url(kwargs["interface_id"], "/disable"))
 
 
 def restoreDefaultTlsCiphers(**kwargs):
-    url = (
-        "configs/interfaces/" + kwargs["interface_id"] + "/restore-default-tls-ciphers"
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        _iface_url(kwargs["interface_id"], "/restore-default-tls-ciphers")
     )
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
 
 
 def createCsr(**kwargs):
-    url = "configs/interfaces/" + kwargs["interface_id"] + "/csr"
-
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "interface_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        _iface_url(kwargs["interface_id"], "/csr"),
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
+        ),
+    )
 
 
 def autogenServerCert(**kwargs):
-    url = "configs/interfaces/" + kwargs["interface_id"] + "/auto-gen-server-cert"
-
-    try:
-        response = POSTWithoutData(
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        _iface_url(kwargs["interface_id"], "/auto-gen-server-cert")
+    )
 
 
 def useCertificate(**kwargs):
-    url = "configs/interfaces/" + kwargs["interface_id"] + "/use-certificate"
-
-    result = dict()
-    request = {}
-
-    for key, value in kwargs.items():
-        if key not in ["node", "interface_id"] and value is not None:
-            request[key] = value
-
-    payload = json.dumps(request)
-
-    try:
-        response = POSTData(
-            payload=payload,
-            cm_node=kwargs["node"],
-            cm_api_endpoint=url,
-        )
-        return response
-    except CMApiException as api_e:
-        raise
-    except AnsibleCMException as custom_e:
-        raise
+    client = CipherTrustClient(kwargs["node"])
+    return client.post(
+        _iface_url(kwargs["interface_id"], "/use-certificate"),
+        data=build_request_payload(
+            {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
+        ),
+    )
