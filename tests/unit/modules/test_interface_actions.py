@@ -11,9 +11,6 @@ class TestInterfaceActions:
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.interface_actions.ThalesCipherTrustModule",
             return_value=mock_module,
         ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.interface_actions.validate_parameters",
-            return_value=None,
-        ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.interface_actions.enableInterface",
             return_value={"status": "ok"},
         ) as mock_helper:
@@ -35,9 +32,6 @@ class TestInterfaceActions:
         with patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.interface_actions.ThalesCipherTrustModule",
             return_value=mock_module,
-        ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.interface_actions.validate_parameters",
-            return_value=None,
         ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.interface_actions.enableInterface",
             return_value={"status": "ok"},

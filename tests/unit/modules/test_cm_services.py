@@ -11,9 +11,6 @@ class TestCmServices:
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.ThalesCipherTrustModule",
             return_value=mock_module,
         ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.validate_parameters",
-            return_value=None,
-        ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.restartCMServices",
             return_value={"status": "ok"},
         ) as mock_helper:
@@ -36,9 +33,6 @@ class TestCmServices:
         with patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.ThalesCipherTrustModule",
             return_value=mock_module,
-        ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.validate_parameters",
-            return_value=None,
         ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_services.restartCMServices",
             return_value={"status": "ok"},

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# (c) 2023 Thales Group. All rights reserved.
+# (c) 2023-2026 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
 #
 # Licensed under the MIT License
@@ -354,8 +354,8 @@ def validate_choice(param_name=None, param_value=None, choices=None, module_name
         return None
 
     if p_value not in p_choices:
-        error_msg = f"{module_prefix}Invalid choice for parameter"
-        raise AnsibleCMValidationException(
+        error_msg = f"{module_prefix}Invalid value for parameter"
+        raise AnsibleCMParameterException(
             message=error_msg,
             parameter=p_name,
             expected_format=f"One of: {', '.join(map(str, p_choices))}",

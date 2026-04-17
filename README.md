@@ -25,6 +25,11 @@ Tested with Python version 3.7 and above
 ### CipherTrust Manager version compatibility
 Tested with Thales CipherTrust Manager version 2.17.0.12772 and higher
 
+### Parameter naming deprecation
+This collection now supports `snake_case` parameter names alongside legacy `camelCase` names.
+Use `snake_case` in new playbooks (for example: `local_node`, `activation_date`, `usage_mask`, `wrap_key_name`).
+Legacy `camelCase` names are deprecated and emit deprecation warnings; they are planned for removal in `2.0.0`.
+
 ## Installation
 
 Before using this collection, you need to install it with the Ansible Galaxy command-line tool:

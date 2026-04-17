@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# (c) 2023 Thales Group. All rights reserved.
+# (c) 2023-2026 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
 #
 # Licensed under the MIT License
@@ -160,7 +160,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.domains im
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
     idempotent_create,
     idempotent_patch,
-    check_mode_action,
 )
 
 _schema_less = dict()
@@ -180,10 +179,6 @@ argument_spec = dict(
 )
 
 
-def validate_parameters(domain_module):
-    return True
-
-
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
@@ -199,12 +194,8 @@ def setup_module_object():
 
 
 def main():
-    global module
 
     module = setup_module_object()
-    validate_parameters(
-        domain_module=module,
-    )
 
     result = dict(
         changed=False,

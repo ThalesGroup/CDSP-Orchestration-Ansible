@@ -17,7 +17,6 @@ __metaclass__ = type
 
 import time
 import json
-import os
 from collections import OrderedDict
 
 

@@ -11,9 +11,6 @@ class TestCmResourceGetIdFromName:
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_get_id_from_name.ThalesCipherTrustModule",
             return_value=mock_module,
         ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_get_id_from_name.validate_parameters",
-            return_value=None,
-        ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_get_id_from_name.GETIdByQueryParam",
             return_value={"status": "ok"},
         ) as mock_helper:
@@ -36,9 +33,6 @@ class TestCmResourceGetIdFromName:
         with patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_get_id_from_name.ThalesCipherTrustModule",
             return_value=mock_module,
-        ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_get_id_from_name.validate_parameters",
-            return_value=None,
         ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_get_id_from_name.GETIdByQueryParam",
             return_value={"status": "ok"},

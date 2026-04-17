@@ -11,9 +11,6 @@ class TestLicenseTrialAction:
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_trial_action.ThalesCipherTrustModule",
             return_value=mock_module,
         ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_trial_action.validate_parameters",
-            return_value=None,
-        ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_trial_action.activateTrial",
             return_value={"status": "ok"},
         ) as mock_helper:
@@ -35,9 +32,6 @@ class TestLicenseTrialAction:
         with patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_trial_action.ThalesCipherTrustModule",
             return_value=mock_module,
-        ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_trial_action.validate_parameters",
-            return_value=None,
         ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_trial_action.activateTrial",
             return_value={"status": "ok"},

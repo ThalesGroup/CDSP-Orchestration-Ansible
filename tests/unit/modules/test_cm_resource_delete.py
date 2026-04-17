@@ -11,9 +11,6 @@ class TestCmResourceDelete:
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_delete.ThalesCipherTrustModule",
             return_value=mock_module,
         ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_delete.validate_parameters",
-            return_value=None,
-        ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_delete.DeleteWithoutData",
             return_value={"status": "ok"},
         ) as mock_helper:
@@ -35,9 +32,6 @@ class TestCmResourceDelete:
         with patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_delete.ThalesCipherTrustModule",
             return_value=mock_module,
-        ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_delete.validate_parameters",
-            return_value=None,
         ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_resource_delete.DeleteWithoutData",
             return_value={"status": "ok"},

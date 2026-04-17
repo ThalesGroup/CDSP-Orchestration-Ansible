@@ -11,9 +11,6 @@ class TestCmRegtoken:
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_regtoken.ThalesCipherTrustModule",
             return_value=mock_module,
         ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_regtoken.validate_parameters",
-            return_value=None,
-        ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_regtoken.create",
             return_value={"status": "ok"},
         ) as mock_helper:
@@ -35,9 +32,6 @@ class TestCmRegtoken:
         with patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_regtoken.ThalesCipherTrustModule",
             return_value=mock_module,
-        ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_regtoken.validate_parameters",
-            return_value=None,
         ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_regtoken.create",
             return_value={"status": "ok"},

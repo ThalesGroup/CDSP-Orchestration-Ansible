@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# (c) 2023 Thales Group. All rights reserved.
+# (c) 2023-2026 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
 #
 # Licensed under the MIT License

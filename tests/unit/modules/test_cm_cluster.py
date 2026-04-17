@@ -11,9 +11,6 @@ class TestCmCluster:
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_cluster.ThalesCipherTrustModule",
             return_value=mock_module,
         ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_cluster.validate_parameters",
-            return_value=None,
-        ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_cluster.new",
             return_value={"status": "ok"},
         ) as mock_helper:
@@ -35,9 +32,6 @@ class TestCmCluster:
         with patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_cluster.ThalesCipherTrustModule",
             return_value=mock_module,
-        ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_cluster.validate_parameters",
-            return_value=None,
         ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.cm_cluster.new",
             return_value={"status": "ok"},

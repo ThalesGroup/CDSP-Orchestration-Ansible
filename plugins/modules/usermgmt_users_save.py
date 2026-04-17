@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# (c) 2023 Thales Group. All rights reserved.
+# (c) 2023-2026 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
 #
 # Licensed under the MIT License
@@ -344,7 +344,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation
     validate_required_parameters,
     validate_parameter_types,
     validate_parameter_formats,
-    validate_api_response,
     validate_choice,
     validate_list_elements,
     validate_dict_keys,

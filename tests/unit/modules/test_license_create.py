@@ -11,9 +11,6 @@ class TestLicenseCreate:
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_create.ThalesCipherTrustModule",
             return_value=mock_module,
         ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_create.validate_parameters",
-            return_value=None,
-        ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_create.addLicense",
             return_value={"status": "ok"},
         ) as mock_helper:
@@ -35,9 +32,6 @@ class TestLicenseCreate:
         with patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_create.ThalesCipherTrustModule",
             return_value=mock_module,
-        ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_create.validate_parameters",
-            return_value=None,
         ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.license_create.addLicense",
             return_value={"status": "ok"},

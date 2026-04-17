@@ -11,9 +11,6 @@ class TestLicensingLockdataGet:
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.licensing_lockdata_get.ThalesCipherTrustModule",
             return_value=mock_module,
         ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.licensing_lockdata_get.validate_parameters",
-            return_value=None,
-        ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.licensing_lockdata_get.getLockdata",
             return_value={"status": "ok"},
         ) as mock_helper:
@@ -33,9 +30,6 @@ class TestLicensingLockdataGet:
         with patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.licensing_lockdata_get.ThalesCipherTrustModule",
             return_value=mock_module,
-        ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.licensing_lockdata_get.validate_parameters",
-            return_value=None,
         ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.licensing_lockdata_get.getLockdata",
             return_value={"status": "ok"},

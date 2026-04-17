@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# (c) 2023 Thales Group. All rights reserved.
+# (c) 2023-2026 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
 #
 # Licensed under the MIT License
@@ -24,6 +24,8 @@ __metaclass__ = type
 
 
 from contextlib import contextmanager
+from copy import deepcopy
+import re
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -31,6 +33,176 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
     CipherTrustError,
     CMApiException,
 )
+
+COLLECTION_NAME = "thalesgroup.ciphertrust"
+CAMELCASE_DEPRECATION_VERSION = "2.0.0"
+_FIRST_CAP_RE = re.compile(r"(.)([A-Z][a-z]+)")
+_ALL_CAP_RE = re.compile(r"([a-z0-9])([A-Z])")
+
+
+def _camel_to_snake(name):
+    """Convert camelCase/PascalCase to snake_case."""
+    interim = _FIRST_CAP_RE.sub(r"\1_\2", name)
+    return _ALL_CAP_RE.sub(r"\1_\2", interim).lower()
+
+
+def _is_camel_case_name(name):
+    if not isinstance(name, str):
+        return False
+    if "_" in name:
+        return False
+    return any(char.isupper() for char in name)
+
+
+def _ensure_alias(entry, alias):
+    aliases = list(entry.get("aliases", []))
+    if alias not in aliases:
+        aliases.append(alias)
+    entry["aliases"] = aliases
+
+
+def _ensure_deprecated_alias(entry, alias):
+    deprecated_aliases = list(entry.get("deprecated_aliases", []))
+    for existing in deprecated_aliases:
+        if isinstance(existing, dict) and existing.get("name") == alias:
+            return
+    deprecated_aliases.append(
+        {
+            "name": alias,
+            "version": CAMELCASE_DEPRECATION_VERSION,
+            "collection_name": COLLECTION_NAME,
+        }
+    )
+    entry["deprecated_aliases"] = deprecated_aliases
+
+
+def _normalize_argument_spec(argument_spec):
+    """Normalize argument_spec keys to snake_case with camelCase aliases."""
+    normalized = {}
+    legacy_tree = {}
+    legacy_to_snake = {}
+
+    for key, value in argument_spec.items():
+        key_spec = deepcopy(value)
+        snake_key = _camel_to_snake(key) if _is_camel_case_name(key) else key
+        legacy_key = key if snake_key != key else None
+
+        existing = normalized.get(snake_key)
+        if existing is None:
+            target_spec = key_spec
+            normalized[snake_key] = target_spec
+        else:
+            # Rare collision case: preserve the first canonical definition.
+            target_spec = existing
+
+        child_tree = {}
+        if isinstance(target_spec, dict):
+            options = target_spec.get("options")
+            if isinstance(options, dict):
+                normalized_options, child_tree, _ = _normalize_argument_spec(options)
+                target_spec["options"] = normalized_options
+
+        if legacy_key:
+            _ensure_alias(target_spec, legacy_key)
+            _ensure_deprecated_alias(target_spec, legacy_key)
+            legacy_to_snake[legacy_key] = snake_key
+
+        if legacy_key or child_tree:
+            legacy_tree[snake_key] = {
+                "legacy": legacy_key,
+                "children": child_tree,
+            }
+
+    return normalized, legacy_tree, legacy_to_snake
+
+
+def _rewrite_param_name(param_name, legacy_to_snake):
+    if isinstance(param_name, str):
+        return legacy_to_snake.get(param_name, param_name)
+    return param_name
+
+
+def _rewrite_required_if(required_if, legacy_to_snake):
+    if required_if is None:
+        return None
+    rewritten = []
+    for rule in required_if:
+        if not isinstance(rule, (list, tuple)):
+            rewritten.append(rule)
+            continue
+
+        mutable = list(rule)
+        if len(mutable) > 0:
+            mutable[0] = _rewrite_param_name(mutable[0], legacy_to_snake)
+        if len(mutable) > 2:
+            required_params = mutable[2]
+            if isinstance(required_params, (list, tuple)):
+                mutable[2] = [
+                    _rewrite_param_name(param_name, legacy_to_snake)
+                    for param_name in required_params
+                ]
+            else:
+                mutable[2] = _rewrite_param_name(required_params, legacy_to_snake)
+
+        rewritten.append(type(rule)(mutable) if isinstance(rule, tuple) else mutable)
+    return rewritten
+
+
+def _rewrite_grouped_rules(grouped_rules, legacy_to_snake):
+    if grouped_rules is None:
+        return None
+    rewritten = []
+    for group in grouped_rules:
+        if isinstance(group, (list, tuple)):
+            mapped_group = [
+                _rewrite_param_name(param_name, legacy_to_snake) for param_name in group
+            ]
+            rewritten.append(
+                type(group)(mapped_group) if isinstance(group, tuple) else mapped_group
+            )
+        else:
+            rewritten.append(_rewrite_param_name(group, legacy_to_snake))
+    return rewritten
+
+
+def _rewrite_required_by(required_by, legacy_to_snake):
+    if required_by is None:
+        return None
+    rewritten = {}
+    for key, values in required_by.items():
+        mapped_key = _rewrite_param_name(key, legacy_to_snake)
+        if isinstance(values, (list, tuple)):
+            mapped_values = [
+                _rewrite_param_name(param_name, legacy_to_snake) for param_name in values
+            ]
+        else:
+            mapped_values = _rewrite_param_name(values, legacy_to_snake)
+        rewritten[mapped_key] = mapped_values
+    return rewritten
+
+
+def _inject_legacy_params(params, legacy_tree):
+    if not isinstance(params, dict):
+        return
+
+    for canonical_key, metadata in legacy_tree.items():
+        if canonical_key not in params:
+            continue
+
+        value = params.get(canonical_key)
+        legacy_key = metadata.get("legacy")
+        children = metadata.get("children", {})
+
+        if legacy_key and legacy_key not in params:
+            params[legacy_key] = value
+
+        if children:
+            if isinstance(value, dict):
+                _inject_legacy_params(value, children)
+            elif isinstance(value, list):
+                for item in value:
+                    if isinstance(item, dict):
+                        _inject_legacy_params(item, children)
 
 
 class ThalesCipherTrustModule:
@@ -58,17 +230,38 @@ class ThalesCipherTrustModule:
 
         self.settings = local_settings
 
+        self._legacy_param_tree = {}
         if local_settings["default_args"]:
             argument_spec_full = ciphertrust_argument_spec()
             try:
                 argument_spec_full.update(kwargs["argument_spec"])
             except (TypeError, NameError):
                 pass
-            kwargs["argument_spec"] = argument_spec_full
+            normalized_spec, legacy_tree, legacy_to_snake = _normalize_argument_spec(
+                argument_spec_full
+            )
+            kwargs["argument_spec"] = normalized_spec
+            kwargs["required_if"] = _rewrite_required_if(
+                kwargs.get("required_if"), legacy_to_snake
+            )
+            kwargs["required_together"] = _rewrite_grouped_rules(
+                kwargs.get("required_together"), legacy_to_snake
+            )
+            kwargs["required_one_of"] = _rewrite_grouped_rules(
+                kwargs.get("required_one_of"), legacy_to_snake
+            )
+            kwargs["mutually_exclusive"] = _rewrite_grouped_rules(
+                kwargs.get("mutually_exclusive"), legacy_to_snake
+            )
+            kwargs["required_by"] = _rewrite_required_by(
+                kwargs.get("required_by"), legacy_to_snake
+            )
+            self._legacy_param_tree = legacy_tree
 
         self._module = ThalesCipherTrustModule.default_settings["module_class"](
             **kwargs
         )
+        _inject_legacy_params(self._module.params, self._legacy_param_tree)
         self.check_mode = self._module.check_mode
         self._diff = self._module._diff
         self._name = self._module._name

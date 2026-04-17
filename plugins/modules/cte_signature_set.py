@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# (c) 2023 Thales Group. All rights reserved.
+# (c) 2023-2026 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
 #
 # Licensed under the MIT License
@@ -239,10 +239,6 @@ argument_spec = dict(
 )
 
 
-def validate_parameters(cte_signature_set_module):
-    return True
-
-
 def setup_module_object():
     module = ThalesCipherTrustModule(
         argument_spec=argument_spec,
@@ -263,12 +259,8 @@ def setup_module_object():
 
 
 def main():
-    global module
 
     module = setup_module_object()
-    validate_parameters(
-        cte_signature_set_module=module,
-    )
 
     result = dict(
         changed=False,

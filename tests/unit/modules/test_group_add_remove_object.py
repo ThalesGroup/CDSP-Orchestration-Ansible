@@ -11,9 +11,6 @@ class TestGroupAddRemoveObject:
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.group_add_remove_object.ThalesCipherTrustModule",
             return_value=mock_module,
         ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.group_add_remove_object.validate_parameters",
-            return_value=None,
-        ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.group_add_remove_object.addUserToGroup",
             return_value={"status": "ok"},
         ) as mock_helper:
@@ -37,9 +34,6 @@ class TestGroupAddRemoveObject:
         with patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.group_add_remove_object.ThalesCipherTrustModule",
             return_value=mock_module,
-        ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.group_add_remove_object.validate_parameters",
-            return_value=None,
         ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.group_add_remove_object.addUserToGroup",
             return_value={"status": "ok"},

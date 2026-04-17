@@ -71,8 +71,48 @@ class TestThalesCipherTrustModule:
             )
 
         call_kwargs = MockAnsibleModule.call_args[1]
-        assert "localNode" in call_kwargs["argument_spec"]
+        assert "local_node" in call_kwargs["argument_spec"]
+        assert "localNode" in call_kwargs["argument_spec"]["local_node"]["aliases"]
         assert "op_type" in call_kwargs["argument_spec"]
+
+    @patch("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.AnsibleModule")
+    def test_camelcase_param_gets_snake_case_alias_and_deprecation(self, MockAnsibleModule):
+        mock_instance = MockAnsibleModule.return_value
+        mock_instance.check_mode = False
+        mock_instance._diff = False
+        mock_instance._name = "test"
+        mock_instance.params = {}
+
+        with patch.dict("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.ThalesCipherTrustModule.default_settings", {"module_class": MockAnsibleModule}):
+            ThalesCipherTrustModule(
+                argument_spec={"wrapKeyName": {"type": "str"}},
+                supports_check_mode=True,
+            )
+
+        call_kwargs = MockAnsibleModule.call_args[1]
+        entry = call_kwargs["argument_spec"]["wrap_key_name"]
+        assert "wrapKeyName" in entry["aliases"]
+        assert any(alias["name"] == "wrapKeyName" for alias in entry["deprecated_aliases"])
+
+    @patch("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.AnsibleModule")
+    def test_rewrites_required_if_to_snake_case(self, MockAnsibleModule):
+        mock_instance = MockAnsibleModule.return_value
+        mock_instance.check_mode = False
+        mock_instance._diff = False
+        mock_instance._name = "test"
+        mock_instance.params = {}
+
+        with patch.dict("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.ThalesCipherTrustModule.default_settings", {"module_class": MockAnsibleModule}):
+            ThalesCipherTrustModule(
+                argument_spec={
+                    "opType": {"type": "str"},
+                    "wrapKeyName": {"type": "str"},
+                },
+                required_if=[["opType", "create", ["wrapKeyName"]]],
+            )
+
+        call_kwargs = MockAnsibleModule.call_args[1]
+        assert call_kwargs["required_if"] == [["op_type", "create", ["wrap_key_name"]]]
 
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.AnsibleModule")
     def test_delegates_to_ansible_module(self, MockAnsibleModule):
@@ -92,6 +132,26 @@ class TestThalesCipherTrustModule:
         assert module._diff is True
         assert module._name == "my_module"
         assert module.params == {"foo": "bar"}
+
+    @patch("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.AnsibleModule")
+    def test_injects_legacy_camelcase_params(self, MockAnsibleModule):
+        mock_instance = MockAnsibleModule.return_value
+        mock_instance.check_mode = False
+        mock_instance._diff = False
+        mock_instance._name = "test"
+        mock_instance.params = {
+            "local_node": {"server_ip": "127.0.0.1"},
+            "wrap_key_name": "key-a",
+        }
+
+        with patch.dict("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.ThalesCipherTrustModule.default_settings", {"module_class": MockAnsibleModule}):
+            module = ThalesCipherTrustModule(
+                argument_spec={"wrapKeyName": {"type": "str"}},
+                supports_check_mode=True,
+            )
+
+        assert module.params["localNode"]["server_ip"] == "127.0.0.1"
+        assert module.params["wrapKeyName"] == "key-a"
 
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.AnsibleModule")
     def test_exit_json_delegates(self, MockAnsibleModule):

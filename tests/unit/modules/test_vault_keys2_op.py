@@ -11,9 +11,6 @@ class TestVaultKeys2Op:
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.vault_keys2_op.ThalesCipherTrustModule",
             return_value=mock_module,
         ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.vault_keys2_op.validate_parameters",
-            return_value=None,
-        ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.vault_keys2_op.archive",
             return_value={"status": "ok"},
         ) as mock_helper:
@@ -35,9 +32,6 @@ class TestVaultKeys2Op:
         with patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.vault_keys2_op.ThalesCipherTrustModule",
             return_value=mock_module,
-        ), patch(
-            "ansible_collections.thalesgroup.ciphertrust.plugins.modules.vault_keys2_op.validate_parameters",
-            return_value=None,
         ), patch(
             "ansible_collections.thalesgroup.ciphertrust.plugins.modules.vault_keys2_op.archive",
             return_value={"status": "ok"},
