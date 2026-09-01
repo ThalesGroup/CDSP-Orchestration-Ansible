@@ -16,10 +16,10 @@ class TestCmResourceGetIdFromName:
         ) as mock_helper:
             mock_module.check_mode = False
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "resource_type": "keys",
-            "query_param": "name",
-            "query_param_value": "test-key",
+                "localNode": TEST_NODE.copy(),
+                "resource_type": "keys",
+                "query_param": "name",
+                "query_param_value": "test-key",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:
@@ -39,10 +39,10 @@ class TestCmResourceGetIdFromName:
         ) as mock_helper:
             mock_module.check_mode = True
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "resource_type": "keys",
-            "query_param": "name",
-            "query_param_value": "test-key",
+                "localNode": TEST_NODE.copy(),
+                "resource_type": "keys",
+                "query_param": "name",
+                "query_param_value": "test-key",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:

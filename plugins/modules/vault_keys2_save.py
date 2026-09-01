@@ -35,7 +35,8 @@ options:
           - Only required if the op_type is patch or create_version
         type: str
         default: null
-    activationDate:
+    activation_date:
+        aliases: [activationDate]
         description: Date/time the object becomes active
         required: false
         type: str
@@ -71,12 +72,14 @@ options:
             description: Type of alias (allowed values are string and uri)
             type: str
         required: false
-    archiveDate:
+    archive_date:
+        aliases: [archiveDate]
         description: Date/time the object becomes archived
         required: false
         default: null
         type: str
-    certType:
+    cert_type:
+        aliases: [certType]
         description:
           - This specifies the type of certificate object that is being created
           - Valid values are x509-pem and x509-der
@@ -87,12 +90,14 @@ options:
         choices: [x509-pem, x509-der]
         required: false
         default: null
-    compromiseDate:
+    compromise_date:
+        aliases: [compromiseDate]
         description: Date/time the object entered into the compromised state.
         type: str
         required: false
         default: null
-    compromiseOccurrenceDate:
+    compromise_occurrence_date:
+        aliases: [compromiseOccurrenceDate]
         description:
           - Date/time when the object was first believed to be compromised, if known
           - Only valid if the revocation reason is CACompromise or KeyCompromise, otherwise ignored.
@@ -121,17 +126,20 @@ options:
         type: str
         required: false
         default: null
-    deactivationDate:
+    deactivation_date:
+        aliases: [deactivationDate]
         description: Date/time the object becomes inactive
         type: str
         required: false
         default: null
-    defaultIV:
+    default_iv:
+        aliases: [defaultIV]
         description: Deprecated
         type: str
         required: false
         default: null
-    destroyDate:
+    destroy_date:
+        aliases: [destroyDate]
         description: Date/time the object was destroyed.
         type: str
         required: false
@@ -151,23 +159,27 @@ options:
         type: str
         required: false
         default: null
-    generateKeyId:
+    generate_key_id:
+        aliases: [generateKeyId]
         description: If specified as true, the key''s keyId identifier of type long is generated. Defaults to false.
         type: bool
         required: false
         default: false
-    hkdfCreateParameters:
+    hkdf_create_parameters:
+        aliases: [hkdfCreateParameters]
         description: Information which is used to create a Key using HKDF.
         type: dict
         suboptions:
-          hashAlgorithm:
+          hash_algorithm:
+            aliases: [hashAlgorithm]
             description:
               - Hash Algorithm is used for HKDF.
               - This is required if ikmKeyName is specified, default is hmac-sha256.
             type: str
             choices: [hmac-sha1, hmac-sha224, hmac-sha256, hmac-sha384, hmac-sha512]
             default: hmac-sha256
-          ikmKeyName:
+          ikm_key_name:
+            aliases: [ikmKeyName]
             description: Any existing symmetric key. Mandatory while using HKDF key generation.
             type: str
             required: false
@@ -188,12 +200,14 @@ options:
         type: str
         required: false
         default: null
-    idSize:
+    id_size:
+        aliases: [idSize]
         description: Size of the ID for the key
         type: int
         required: false
         default: null
-    keyId:
+    key_id:
+        aliases: [keyId]
         description:
           - Additional identifier of the key. The format of this value is of type long
           - This is optional and applicable for import key only. If set, the value is imported as the key''s keyId.
@@ -206,14 +220,16 @@ options:
         type: dict
         required: false
         default: null
-    macSignBytes:
+    mac_sign_bytes:
+        aliases: [macSignBytes]
         description:
           - This parameter specifies the MAC/Signature bytes to be used for verification while importing a key
           - The "wrappingMethod" should be "mac/sign" and the required parameters for the verification must be set.
         type: str
         required: false
         default: null
-    macSignKeyIdentifier:
+    mac_sign_key_identifier:
+        aliases: [macSignKeyIdentifier]
         description:
           - This parameter specifies the identifier of the key to be used for generating MAC or signature of the key material
           - The "wrappingMethod" should be "mac/sign" to verify the MAC/signature("macSignBytes") of the key material("material")
@@ -222,7 +238,8 @@ options:
         type: str
         required: false
         default: null
-    macSignKeyIdentifierType:
+    mac_sign_key_identifier_type:
+        aliases: [macSignKeyIdentifierType]
         description:
           - This parameter specifies the identifier of the key("macSignKeyIdentifier") used for generating MAC or signature of the key material
           - The "wrappingMethod" should be "mac/sign" to verify the mac/signature("macSignBytes") of the key material("material")
@@ -241,7 +258,8 @@ options:
         description: Optional end-user or service data stored with the key
         type: dict
         suboptions:
-          ownerId:
+          owner_id:
+            aliases: [ownerId]
             description:
               - Optional owner information for the key, required for non-admin. Value should be the user''s user_id
             type: str
@@ -252,39 +270,48 @@ options:
               - Optional permissions associated with this key
             type: dict
             suboptions:
-              UseKey:
+              use_key:
+                aliases: [UseKey]
                 description: Permission to use key
                 type: list
                 elements: str
-              ReadKey:
+              read_key:
+                aliases: [ReadKey]
                 description: Permission to read key
                 type: list
                 elements: str
-              ExportKey:
+              export_key:
+                aliases: [ExportKey]
                 description: Permission to export key
                 type: list
                 elements: str
-              MACWithKey:
+              mac_with_key:
+                aliases: [MACWithKey]
                 description: Permission to use MAC with key
                 type: list
                 elements: str
-              SignWithKey:
+              sign_with_key:
+                aliases: [SignWithKey]
                 description: Permission to sign with the key
                 type: list
                 elements: str
-              DecryptWithKey:
+              decrypt_with_key:
+                aliases: [DecryptWithKey]
                 description: Permission to descrypt with the key
                 type: list
                 elements: str
-              EncryptWithKey:
+              encrypt_with_key:
+                aliases: [EncryptWithKey]
                 description: Permission to encrypt with the key
                 type: list
                 elements: str
-              MACVerifyWithKey:
+              mac_verify_with_key:
+                aliases: [MACVerifyWithKey]
                 description: Permission to verify MAC with the key
                 type: list
                 elements: str
-              SignVerifyWithKey:
+              sign_verify_with_key:
+                aliases: [SignVerifyWithKey]
                 description: Permission to verify sign with the key
                 type: list
                 elements: str
@@ -302,7 +329,8 @@ options:
               cte_versioned:
                 description: CTE versioned
                 type: bool
-          versionedKey:
+          versioned_key:
+            aliases: [versionedKey]
             description: if the key is versioned
             type: bool
         required: false
@@ -322,7 +350,8 @@ options:
         type: str
         required: false
         default: null
-    objectType:
+    object_type:
+        aliases: [objectType]
         description:
           - This specifies the type of object that is being created
           - The object type is inferred for many objects, but must be supplied for the certificate object.
@@ -336,23 +365,27 @@ options:
         type: bool
         required: false
         default: false
-    processStartDate:
+    process_start_date:
+        aliases: [processStartDate]
         description:
           - Date/time when a Managed Symmetric Key Object MAY begin to be used to process cryptographically protected information
         type: str
         required: false
         default: null
-    protectStopDate:
+    protect_stop_date:
+        aliases: [protectStopDate]
         description:
           - Date/time after which a Managed Symmetric Key Object SHALL NOT be used for applying cryptographic protection
         type: str
         required: false
         default: null
-    publicKeyParameters:
+    public_key_parameters:
+        aliases: [publicKeyParameters]
         description: Information needed to create a public key
         type: dict
         suboptions:
-          activationDate:
+          activation_date:
+            aliases: [activationDate]
             description: Date/time the object becomes active
             required: false
             type: str
@@ -375,12 +408,14 @@ options:
                 description: alias type
                 type: str
             required: false
-          archiveDate:
+          archive_date:
+            aliases: [archiveDate]
             description: Date/time the object becomes archived
             required: false
             default: null
             type: str
-          deactivationDate:
+          deactivation_date:
+            aliases: [deactivationDate]
             description: Date/time the object becomes inactive
             type: str
             required: false
@@ -412,7 +447,8 @@ options:
             type: bool
             required: false
             default: false
-          usageMask:
+          usage_mask:
+            aliases: [usageMask]
             description:
                 - Cryptographic usage mask.
                 - Add the usage masks to allow certain usages.
@@ -444,18 +480,21 @@ options:
             required: false
         required: false
         default: null
-    revocationMessage:
+    revocation_message:
+        aliases: [revocationMessage]
         description: Message explaining revocation.
         type: str
         required: false
         default: null
-    revocationReason:
+    revocation_reason:
+        aliases: [revocationReason]
         description: The reason the key is being revoked.
         choices: [Unspecified, KeyCompromise, CACompromise, AffiliationChanged, Superseded, CessationOfOperation, PrivilegeWithdrawn]
         type: str
         required: false
         default: null
-    rotationFrequencyDays:
+    rotation_frequency_days:
+        aliases: [rotationFrequencyDays]
         description:
             - Number of days from current date to rotate the key.
             - It should be greater than or equal to 0.
@@ -464,7 +503,8 @@ options:
         type: str
         required: false
         default: null
-    secretDataEncoding:
+    secret_data_encoding:
+        aliases: [secretDataEncoding]
         description:
             - For pkcs12 format, this field specifies the encoding method used for the secretDataLink material.
             - Ignore this field if secretData is created from REST and is in plain format.
@@ -472,14 +512,16 @@ options:
         type: str
         required: false
         default: null
-    secretDataLink:
+    secret_data_link:
+        aliases: [secretDataLink]
         description:
             - For pkcs12 format, either secretDataLink or password should be specified.
             - The value can be either ID or name of Secret Data.
         type: str
         required: false
         default: null
-    signingAlgo:
+    signing_algo:
+        aliases: [signingAlgo]
         description:
             - This parameter specifies the algorithm to be used for generating the signature
             - Signature for the verification of the "macSignBytes" during import of key material.
@@ -509,7 +551,8 @@ options:
         type: bool
         required: false
         default: false
-    usageMask:
+    usage_mask:
+        aliases: [usageMask]
         description:
           - Cryptographic usage mask
           - Add the usage masks to allow certain usages
@@ -552,11 +595,13 @@ options:
         type: str
         required: false
         default: null
-    wrapHKDF:
+    wrap_hkdf:
+        aliases: [wrapHKDF]
         description: Information which is used to wrap a Key using HKDF.
         type: dict
         suboptions:
-          hashAlgorithm:
+          hash_algorithm:
+            aliases: [hashAlgorithm]
             description: Hash Algorithm is used for HKDF Wrapping.
             type: str
             choices: [hmac-sha1, hmac-sha224, hmac-sha256, hmac-sha384, hmac-sha512]
@@ -567,7 +612,8 @@ options:
             type: str
             required: false
             default: null
-          okmLen:
+          okm_len:
+            aliases: [okmLen]
             description: The desired output key material length in integer.
             type: int
             required: false
@@ -578,13 +624,15 @@ options:
             default: null
         required: false
         default: null
-    wrapKeyIDType:
+    wrap_key_id_type:
+        aliases: [wrapKeyIDType]
         description: IDType specifies how the wrapKeyName should be interpreted.
         type: str
         choices: [name, id, alias]
         required: false
         default: null
-    wrapKeyName:
+    wrap_key_name:
+        aliases: [wrapKeyName]
         description:
           - While creating a new key, If includeMaterial is true, then only the key material will be wrapped with key material.
           - The response "material" property will be the base64 encoded ciphertext
@@ -594,13 +642,15 @@ options:
         type: str
         required: false
         default: null
-    wrapPBE:
+    wrap_pbe:
+        aliases: [wrapPBE]
         description:
           - WrapPBE produces a derived key from a password and other parameters like salt
           - PBE is currently only supported to wrap symmetric keys (AES), private Keys and certificates.
         type: dict
         suboptions:
-          hashAlgorithm:
+          hash_algorithm:
+            aliases: [hashAlgorithm]
             description: Underlying hashing algorithm that acts as a pseudorandom function to generate derive keys.
             type: str
             choices:
@@ -637,14 +687,16 @@ options:
             type: str
             required: false
             default: null
-          passwordIdentifier:
+          password_identifier:
+            aliases: [passwordIdentifier]
             description:
               - Secret password identifier for password
               - It cannot be used in conjunction with password.
             type: str
             required: false
             default: null
-          passwordIdentifierType:
+          password_identifier_type:
+            aliases: [passwordIdentifierType]
             description: Type of the Passwordidentifier. If not set then default value is name.
             type: str
             choices: [id, name, slug]
@@ -665,14 +717,16 @@ options:
             default: null
         required: false
         default: null
-    wrapPublicKey:
+    wrap_public_key:
+        aliases: [wrapPublicKey]
         description:
           - If the algorithm is aes, tdes, hmac-*, seed or aria, this value will be used to encrypt the returned key material
           - This value is ignored for other algorithms
         type: str
         required: false
         default: null
-    wrapPublicKeyPadding:
+    wrap_public_key_padding:
+        aliases: [wrapPublicKeyPadding]
         description:
           - WrapPublicKeyPadding specifies the type of padding scheme that needs to be set when importing the Key using the specified wrapkey
           - Accepted values are "pkcs1", "oaep", "oaep256", "oaep384", "oaep512"
@@ -683,14 +737,16 @@ options:
         choices: [pkcs1, oaep, oaep256, oaep384, oaep512]
         required: false
         default: null
-    wrapRSAAES:
+    wrap_rsaaes:
+        aliases: [wrapRSAAES]
         description:
           - Information which is used to wrap/unwrap asymmetric keys using RSA AES KWP method
           - This method internally requires AES key size to generate a temporary AES key and RSA padding
           - To use WrapRSAAES, algorithm "RSA/RSAAESKEYWRAPPADDING" must be specified in WrappingEncryptionAlgo.
         type: dict
         suboptions:
-          aesKeySize:
+          aes_key_size:
+            aliases: [aesKeySize]
             description: Size of AES key for RSA AES KWP.
             type: int
             choices: [128, 192, 256]
@@ -704,14 +760,16 @@ options:
             default: oaep256
         required: false
         default: null
-    wrappingEncryptionAlgo:
+    wrapping_encryption_algo:
+        aliases: [wrappingEncryptionAlgo]
         description:
           - It indicates the Encryption Algorithm information for wrapping the key. Format is Algorithm/Mode/Padding
         type: str
         choices: [AES/AESKEYWRAP, AES/AESKEYWRAPPADDING, RSA/RSAAESKEYWRAPPADDING]
         required: false
         default: null
-    wrappingHashAlgo:
+    wrapping_hash_algo:
+        aliases: [wrappingHashAlgo]
         description:
           - This parameter specifies the hashing algorithm used if "wrappingMethod" corresponds to "mac/sign"
           - In case of MAC operation, the hashing algorithm used will be inferred from the type of HMAC key("macSignKeyIdentifier").
@@ -719,7 +777,8 @@ options:
         type: str
         required: false
         default: null
-    wrappingMethod:
+    wrapping_method:
+        aliases: [wrappingMethod]
         description:
           - This parameter specifies the wrapping method used to wrap/mac/sign the key material.
         type: str
@@ -731,7 +790,8 @@ options:
         type: bool
         required: false
         default: false
-    allVersions:
+    all_versions:
+        aliases: [allVersions]
         description:
           - To update the group permissions/custom attribute or both in metadata of all versions of the key
           - By default it is set to false
@@ -753,12 +813,12 @@ EXAMPLES = """
 - name: "Create Key"
   thalesgroup.ciphertrust.vault_keys2_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: create
     name: "key_name"
     algorithm: aes
@@ -768,12 +828,12 @@ EXAMPLES = """
 - name: "Patch Key"
   thalesgroup.ciphertrust.vault_keys2_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: patch
     cm_key_id: "4ae2649a705e479589ef65759d3287f6ff452a788531445fbc7f0240516d028d"
     unexportable: false
@@ -1105,7 +1165,7 @@ def validate_parameters(user_module):
     """
     params = user_module.params
     op_type = params.get("op_type")
-    
+
     # Define validation rules based on op_type
     validation_rules = {
         "create": {
@@ -1135,10 +1195,10 @@ def validate_parameters(user_module):
             }
         }
     }
-    
+
     # Get validation rules for current op_type
     rules = validation_rules.get(op_type, {})
-    
+
     # Validate required parameters
     if rules.get("required"):
         missing_params = [p for p in rules["required"] if not params.get(p)]
@@ -1154,7 +1214,7 @@ def validate_parameters(user_module):
                     ", ".join(rules["required"])
                 )
             )
-    
+
     # Validate conditional required parameters
     if rules.get("conditional_required"):
         for param, conditions in rules["conditional_required"].items():
@@ -1176,7 +1236,7 @@ def validate_parameters(user_module):
                                     "{}: 'secp256r1'".format(condition_param) if condition_param == "curveid" else "{}: <value>".format(condition_param)
                                 )
                             )
-    
+
     # Validate conditional not allowed parameters
     if rules.get("conditional_not_allowed"):
         for param, forbidden_ops in rules["conditional_not_allowed"].items():
@@ -1191,7 +1251,7 @@ def validate_parameters(user_module):
                         op_type
                     )
                 )
-    
+
     # Validate parameter types
     type_validations = [
         {"param": "size", "expected_type": "int", "optional": True},
@@ -1204,7 +1264,7 @@ def validate_parameters(user_module):
         {"param": "aesKeySize", "expected_type": "int", "optional": True},
         {"param": "index", "expected_type": "int", "optional": True},
     ]
-    
+
     for validation in type_validations:
         param = validation["param"]
         if params.get(param) is not None:
@@ -1222,28 +1282,49 @@ def validate_parameters(user_module):
                         params.get(param)
                     )
                 )
-    
+
     # Validate choice parameters
     choice_validations = [
         {"param": "op_type", "choices": ["create", "patch", "create_version"]},
         {"param": "algorithm", "choices": ["aes", "tdes", "rsa", "ec", "hmac-sha1", "hmac-sha256", "hmac-sha384", "hmac-sha512", "seed", "aria", "opaque"]},
-        {"param": "curveid", "choices": ["secp224k1", "secp224r1", "secp256k1", "secp384r1", "secp521r1", "prime256v1", "brainpoolP224r1", "brainpoolP224t1", "brainpoolP256r1", "brainpoolP256t1", "brainpoolP384r1", "brainpoolP384t1", "brainpoolP512r1", "brainpoolP512t1"]},
+        {
+            "param": "curveid",
+            "choices": [
+                "secp224k1", "secp224r1", "secp256k1", "secp384r1", "secp521r1", "prime256v1", "brainpoolP224r1", "brainpoolP224t1", "brainpoolP256r1",
+                "brainpoolP256t1", "brainpoolP384r1", "brainpoolP384t1", "brainpoolP512r1", "brainpoolP512t1",
+            ],
+        },
         {"param": "objectType", "choices": ["Symmetric Key", "Public Key", "Private Key", "Secret Data", "Opaque Object", "Certificate"]},
         {"param": "certType", "choices": ["x509-pem", "x509-der"]},
         {"param": "format", "choices": ["pkcs1", "pkcs8", "raw", "x962", "spki"]},
         {"param": "wrappingMethod", "choices": ["encrypt", "mac/sign", "pbe"]},
         {"param": "wrappingEncryptionAlgo", "choices": ["AES/AESKEYWRAP", "AES/AESKEYWRAPPADDING", "RSA/RSAAESKEYWRAPPADDING"]},
-        {"param": "wrappingHashAlgo", "choices": ["sha1", "sha224", "sha256", "sha384", "sha512", "sha512/224", "sha512/256", "sha3-224", "sha3-256", "sha3-384", "sha3-512"], "optional": True},
+        {
+            "param": "wrappingHashAlgo",
+            "choices": ["sha1", "sha224", "sha256", "sha384", "sha512", "sha512/224", "sha512/256", "sha3-224", "sha3-256", "sha3-384", "sha3-512"],
+            "optional": True,
+        },
         {"param": "padding", "choices": ["oaep", "oaep256", "oaep384", "oaep512"], "optional": True},
-        {"param": "hashAlgorithm", "choices": ["hmac-sha1", "hmac-sha224", "hmac-sha256", "hmac-sha384", "hmac-sha512", "hmac-sha512/224", "hmac-sha512/256", "sha1", "sha224", "sha256", "sha384", "sha512", "sha512/224", "sha512/256", "sha3-224", "sha3-256", "sha3-384", "sha3-512"], "optional": True},
+        {
+            "param": "hashAlgorithm",
+            "choices": [
+                "hmac-sha1", "hmac-sha224", "hmac-sha256", "hmac-sha384", "hmac-sha512", "hmac-sha512/224", "hmac-sha512/256", "sha1", "sha224", "sha256",
+                "sha384", "sha512", "sha512/224", "sha512/256", "sha3-224", "sha3-256", "sha3-384", "sha3-512",
+            ],
+            "optional": True,
+        },
         {"param": "passwordIdentifierType", "choices": ["name", "id", "slug"], "optional": True},
         {"param": "macSignKeyIdentifierType", "choices": ["name", "id", "alias"], "optional": True},
         {"param": "wrapKeyIDType", "choices": ["name", "id", "alias"], "optional": True},
         {"param": "signingAlgo", "choices": ["RSA", "RSA-PSS"], "optional": True},
-        {"param": "revocationReason", "choices": ["Unspecified", "KeyCompromise", "CACompromise", "AffiliationChanged", "Superseded", "CessationOfOperation", "PrivilegeWithdrawn"], "optional": True},
+        {
+            "param": "revocationReason",
+            "choices": ["Unspecified", "KeyCompromise", "CACompromise", "AffiliationChanged", "Superseded", "CessationOfOperation", "PrivilegeWithdrawn"],
+            "optional": True,
+        },
         {"param": "state", "choices": ["Pre-Active", "Active", "Deactivated", "Compromised", "Destroyed"], "optional": True},
     ]
-    
+
     for validation in choice_validations:
         param = validation["param"]
         if params.get(param) is not None:
@@ -1255,7 +1336,7 @@ def validate_parameters(user_module):
                 optional=validation.get("optional", False),
                 param_type="str"
             )
-    
+
     # Validate string length constraints
     string_length_validations = [
         {"param": "name", "min": 1, "max": 255, "message": "Key name should not contain special characters such as angular brackets (<,>) and backslash (\\)"},
@@ -1267,7 +1348,7 @@ def validate_parameters(user_module):
         {"param": "secretDataLink", "min": 1, "max": 255, "optional": True},
         {"param": "cm_key_id", "min": 1, "max": 255, "optional": True},
     ]
-    
+
     for validation in string_length_validations:
         param = validation["param"]
         if params.get(param) is not None:
@@ -1287,7 +1368,7 @@ def validate_parameters(user_module):
                             value
                         )
                     )
-            
+
             # Validate length
             if len(value) < validation["min"] or len(value) > validation["max"]:
                 raise AnsibleCMParameterException(
@@ -1302,17 +1383,27 @@ def validate_parameters(user_module):
                         len(value)
                     )
                 )
-    
+
     # Validate dict keys for nested parameters
     dict_validations = [
         {"param": "meta", "allowed_keys": ["ownerId", "permissions", "cte", "versionedKey"], "optional": True},
-        {"param": "publicKeyParameters", "allowed_keys": ["activationDate", "aliases", "archiveDate", "deactivationDate", "meta", "name", "state", "undeletable", "unexportable", "usageMask"], "optional": True},
+        {
+            "param": "publicKeyParameters",
+            "allowed_keys": [
+                "activationDate", "aliases", "archiveDate", "deactivationDate", "meta", "name", "state", "undeletable", "unexportable", "usageMask",
+            ],
+            "optional": True,
+        },
         {"param": "wrapHKDF", "allowed_keys": ["hashAlgorithm", "ikmKeyName", "info", "salt"], "optional": True},
-        {"param": "wrapPBE", "allowed_keys": ["hashAlgorithm", "dklen", "iteration", "password", "passwordIdentifier", "passwordIdentifierType", "purpose", "salt"], "optional": True},
+        {
+            "param": "wrapPBE",
+            "allowed_keys": ["hashAlgorithm", "dklen", "iteration", "password", "passwordIdentifier", "passwordIdentifierType", "purpose", "salt"],
+            "optional": True,
+        },
         {"param": "wrapRSAAES", "allowed_keys": ["aesKeySize", "padding"], "optional": True},
         {"param": "hkdfCreateParameters", "allowed_keys": ["hashAlgorithm", "ikmKeyName", "info", "salt"], "optional": True},
     ]
-    
+
     for validation in dict_validations:
         param = validation["param"]
         if params.get(param) is not None:
@@ -1323,14 +1414,14 @@ def validate_parameters(user_module):
                 allowed_keys=validation["allowed_keys"],
                 optional=validation.get("optional", False)
             )
-    
+
     # Validate list elements for list parameters
     list_validations = [
         {"param": "aliases", "optional": True},
         {"param": "labels", "optional": True},
         {"param": "usageMask", "optional": True},  # usageMask is int but can be thought of as bit flags
     ]
-    
+
     for validation in list_validations:
         param = validation["param"]
         if params.get(param) is not None:
@@ -1341,7 +1432,7 @@ def validate_parameters(user_module):
                 element_type="dict" if param == "aliases" else "str",
                 optional=validation.get("optional", False)
             )
-    
+
     return True
 
 
@@ -1448,6 +1539,7 @@ def main():
                 module, client,
                 endpoint="vault/keys2",
                 resource_id=module.params.get("cm_key_id"),
+                ignore_fields=("cm_key_id",),
                 patch_fn=patch,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

@@ -3,8 +3,7 @@
 """Unit tests for plugins/module_utils/keys2.py"""
 
 import json
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.keys2 import (
     _key_op_url,

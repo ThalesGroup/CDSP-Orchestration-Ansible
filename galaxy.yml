@@ -1,4 +1,5 @@
-### REQUIRED
+---
+# ## REQUIRED
 # The namespace of the collection. This can be a company/brand/organization or product namespace under which all
 # content lives. May only contain alphanumeric lowercase characters and underscores. Namespaces cannot start with
 # underscores or numbers and cannot contain consecutive underscores
@@ -8,7 +9,7 @@ namespace: thalesgroup
 name: ciphertrust
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 1.0.3
+version: 1.0.4
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -50,7 +51,6 @@ tags:
 # L(specifiers,https://python-semanticversion.readthedocs.io/en/latest/#requirement-specification). Multiple version
 # range specifiers can be set and are separated by ','
 dependencies: {}
-
 # The URL of the originating SCM repository
 repository: https://github.com/ThalesGroup/CDSP-Orchestration-Ansible
 
@@ -72,3 +72,13 @@ build_ignore:
   - .venv
   - dist
   - .gitignore
+  - .github
+  - .vscode
+  - tests
+  - docs
+  - mkdocs.yml
+  - run_tests.py
+  - ROADMAP.md
+  - epics
+  - "*.pyc"
+  - __pycache__

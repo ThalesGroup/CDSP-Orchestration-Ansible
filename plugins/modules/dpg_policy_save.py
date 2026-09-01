@@ -818,42 +818,42 @@ EXAMPLES = """
 - name: "Create DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     name: DPGPolicyName
     proxy_config:
-    - api_url: "/api/sample/resource/id"
-      destination_url: "http://localhost:8080"
-      json_request_post_tokens:
-      - name: "creditCard.[*].CCNumber"
-        operation: "protect"
-        protection_policy: "CC_ProtectionPolicy"
-      - name: "creditCard.[*].cvv"
-        operation: "protect"
-        protection_policy: "cvv_ProtectionPolicy"
-      json_response_get_tokens:
-      - name: "creditCard.[*].cvv"
-        operation: "reveal"
-        protection_policy: "cvv_ProtectionPolicy"
-        access_policy: "cc_access_policy"
+      - api_url: "/api/sample/resource/id"
+        destination_url: "http://localhost:8080"
+        json_request_post_tokens:
+          - name: "creditCard.[*].CCNumber"
+            operation: "protect"
+            protection_policy: "CC_ProtectionPolicy"
+          - name: "creditCard.[*].cvv"
+            operation: "protect"
+            protection_policy: "cvv_ProtectionPolicy"
+        json_response_get_tokens:
+          - name: "creditCard.[*].cvv"
+            operation: "reveal"
+            protection_policy: "cvv_ProtectionPolicy"
+            access_policy: "cc_access_policy"
   register: _result
 
 - name: "Patch DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: patch
     policy_id: <DPGPolicyID>
     description: "Updated via Ansible"
@@ -861,32 +861,32 @@ EXAMPLES = """
 - name: "Add api_url to DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: add-api-url
     policy_id: <DPGPolicyID>
     api_url: "/api/v2/sample/resource/id"
     destination_url: "http://localhost:8080"
     json_request_post_tokens:
-    - name: "creditCard.[*].cvv"
-      operation: "protect"
-      protection_policy: "cvv_ProtectionPolicy"
+      - name: "creditCard.[*].cvv"
+        operation: "protect"
+        protection_policy: "cvv_ProtectionPolicy"
 
 - name: "Update api_url in DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: update-api-url
     policy_id: <DPGPolicyID>
     api_url_id: <API_URL_ID>
@@ -895,13 +895,13 @@ EXAMPLES = """
 - name: "Delete api_url from DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: delete-api-url
     policy_id: <DPGPolicyID>
     api_url_id: <API_URL_ID>
@@ -911,13 +911,13 @@ EXAMPLES = """
     key: <DPGPolicyID>
     resource_type: "dpg-policies"
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
 """
 
 RETURN = r"""
@@ -1130,7 +1130,7 @@ def validate_parameters(dpg_policy_module):
     Raises appropriate exceptions with detailed error messages.
     """
     op_type = dpg_policy_module.params.get("op_type")
-    
+
     # Validate op_type choice
     valid_op_types = ["create", "patch", "add-api-url", "update-api-url", "delete-api-url"]
     try:
@@ -1142,7 +1142,7 @@ def validate_parameters(dpg_policy_module):
                     f"Example: op_type: create",
             documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
         )
-    
+
     # Required parameters for each op_type
     required_params = {
         "create": ["name"],
@@ -1151,7 +1151,7 @@ def validate_parameters(dpg_policy_module):
         "update-api-url": ["policy_id", "api_url_id", "destination_url"],
         "delete-api-url": ["policy_id", "api_url_id"],
     }
-    
+
     # Validate required parameters based on op_type
     if op_type in required_params:
         try:
@@ -1168,7 +1168,7 @@ def validate_parameters(dpg_policy_module):
                         f"Example: policy_id: 'policy-123'",
                 documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
             )
-    
+
     # Validate parameter types
     try:
         if op_type == "create":
@@ -1202,19 +1202,19 @@ def validate_parameters(dpg_policy_module):
                     f"Example: policy_id: 'policy-123' (string)",
             documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
         )
-    
+
     # Validate proxy_config if provided
     try:
         if dpg_policy_module.params.get("proxy_config"):
             proxy_config = dpg_policy_module.params.get("proxy_config")
             if not isinstance(proxy_config, list):
                 raise AnsibleCMFormatException(
-                    message=f"proxy_config must be a list. "
-                            f"Expected: list of dictionaries. "
-                            f"Example: proxy_config: [{{api_url: '/api/v2/...', destination_url: 'http://...'}}]",
+                    message="proxy_config must be a list. "
+                            "Expected: list of dictionaries. "
+                            "Example: proxy_config: [{api_url: '/api/v2/...', destination_url: 'http://...'}]",
                     documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
                 )
-            
+
             # Validate each proxy_config item
             for idx, config in enumerate(proxy_config):
                 if not isinstance(config, dict):
@@ -1224,7 +1224,7 @@ def validate_parameters(dpg_policy_module):
                                 f"Example: {{api_url: '/api/v2/...', destination_url: 'http://localhost:8080'}}",
                         documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
                     )
-                
+
                 # Validate api_url format
                 if "api_url" in config:
                     validate_parameter_formats(
@@ -1233,7 +1233,7 @@ def validate_parameters(dpg_policy_module):
                         module_name="dpg_policy_save",
                         op_type=op_type
                     )
-                
+
                 # Validate destination_url format (basic URL validation)
                 if "destination_url" in config:
                     destination_url = config["destination_url"]
@@ -1251,7 +1251,7 @@ def validate_parameters(dpg_policy_module):
                     f"Example: proxy_config: [{{api_url: '/api/v2/sample/resource/id', destination_url: 'http://localhost:8080'}}]",
             documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
         )
-    
+
     # Validate API tokens if provided
     try:
         token_params = [
@@ -1262,7 +1262,7 @@ def validate_parameters(dpg_policy_module):
             "url_request_delete_tokens", "url_request_get_tokens", "url_request_patch_tokens",
             "url_request_post_tokens", "url_request_put_tokens"
         ]
-        
+
         for token_param in token_params:
             if dpg_policy_module.params.get(token_param):
                 tokens = dpg_policy_module.params.get(token_param)
@@ -1273,7 +1273,7 @@ def validate_parameters(dpg_policy_module):
                                 f"Example: [{'{'}name: 'creditCard.[*].CCNumber', operation: 'protect', protection_policy: 'CC_ProtectionPolicy'{'}'}]",
                         documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
                     )
-                
+
                 # Validate each token
                 for idx, token in enumerate(tokens):
                     if not isinstance(token, dict):
@@ -1283,7 +1283,7 @@ def validate_parameters(dpg_policy_module):
                                     f"Example: {{'name': 'creditCard.[*].CCNumber', 'operation': 'protect', 'protection_policy': 'CC_ProtectionPolicy'}}",
                             documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
                         )
-                    
+
                     # Validate required keys in token
                     required_token_keys = ["name", "operation", "protection_policy"]
                     try:
@@ -1302,7 +1302,7 @@ def validate_parameters(dpg_policy_module):
                                     f"Example: {{'name': 'creditCard.[*].CCNumber', 'operation': 'protect', 'protection_policy': 'CC_ProtectionPolicy'}}",
                             documentation_link=DOCUMENTATION_LINKS.get("dpg_policy_save", "")
                         )
-                    
+
                     # Validate operation value
                     if "operation" in token:
                         validate_choice(
@@ -1314,7 +1314,7 @@ def validate_parameters(dpg_policy_module):
                         )
     except (AnsibleCMFormatException, AnsibleCMParameterException) as e:
         raise
-    
+
     return True
 
 
@@ -1368,6 +1368,7 @@ def main():
                 module, client,
                 endpoint="data-protection/dpg-policies",
                 resource_id=module.params.get("policy_id"),
+                ignore_fields=("policy_id",),
                 patch_fn=updateDPGPolicy,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

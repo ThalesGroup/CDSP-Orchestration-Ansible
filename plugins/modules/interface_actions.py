@@ -85,23 +85,28 @@ options:
       type: list
       elements: dict
       suboptions:
-        C:
+        c:
+          aliases: [C]
           description:
             - Country, for example "US"
           type: str
-        L:
+        l:
+          aliases: [L]
           description:
             - Location, for example "Belcamp"
           type: str
-        O:
+        o:
+          aliases: [O]
           description:
             - Organization, for example "Thales Group"
           type: str
-        OU:
+        ou:
+          aliases: [OU]
           description:
             - Organizational Unit, for example "RnD"
           type: str
-        ST:
+        st:
+          aliases: [ST]
           description:
             - State/province, for example "MD"
           type: str
@@ -117,12 +122,12 @@ EXAMPLES = """
 - name: "Add Cert to Interface"
   thalesgroup.ciphertrust.interface_actions:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: put_certificate
     interface_id: "interface_identifier"
     certificate: "cert_key_data"
@@ -131,48 +136,48 @@ EXAMPLES = """
 - name: "Enable Interface"
   thalesgroup.ciphertrust.interface_actions:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: enable
     interface_id: "interface_identifier"
 
 - name: "Disable Interface"
   thalesgroup.ciphertrust.interface_actions:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: disable
     interface_id: "interface_identifier"
 
 - name: "Restore default TLS Ciphers"
   thalesgroup.ciphertrust.interface_actions:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: restore-default-tls-ciphers
     interface_id: "interface_identifier"
 
 - name: "Create CSR"
   thalesgroup.ciphertrust.interface_actions:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: csr
     interface_id: "interface_identifier"
     cn: "csr_cn"
@@ -180,24 +185,24 @@ EXAMPLES = """
 - name: "Auto Generate Server Certificate"
   thalesgroup.ciphertrust.interface_actions:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: auto-gen-server-cert
     interface_id: "interface_identifier"
 
 - name: "Use certificate"
   thalesgroup.ciphertrust.interface_actions:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: use-certificate
     interface_id: "interface_identifier"
     copy_from: "Name_Source_Interface"

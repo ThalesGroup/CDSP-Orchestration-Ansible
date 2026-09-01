@@ -47,7 +47,8 @@ options:
           - Value for the key is the profile name of protectapp/Kmip client profile to be mapped with the token for protectapp/Kmip client registration.
         type: dict
         suboptions:
-          ClientProfile:
+          client_profile:
+            aliases: [ClientProfile]
             description: Client Profile name
             type: str
     lifetime:
@@ -71,13 +72,13 @@ EXAMPLES = """
 - name: "Create Registration Token"
   thalesgroup.ciphertrust.cm_regtoken:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     ca_id: 76c4da32-0953-4c6a-bf77-c5a70314244c
     cert_duration: 730
@@ -202,6 +203,7 @@ def main():
                 module, client,
                 endpoint="client-management/regtokens",
                 resource_id=module.params.get("id"),
+                ignore_fields=("id",),
                 patch_fn=patch,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

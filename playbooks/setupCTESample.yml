@@ -4,14 +4,14 @@
 #
 
 ---
-  - name: "Sample playbook to configure and setup CTE"
-    hosts: localhost
-    connection: local
+- name: "Sample playbook to configure and setup CTE"
+  hosts: localhost
+  connection: local
 
-    vars_files:
-      - vars/cte.yml
+  vars_files:
+    - vars/cte.yml
 
-    tasks:
+  tasks:
     - name: "Create Key"
       thalesgroup.ciphertrust.vault_keys2_save:
         op_type: create
@@ -119,4 +119,5 @@
       register: output
 
     - name: Debug Output
-      debug: var=output
+      debug:
+        var: output

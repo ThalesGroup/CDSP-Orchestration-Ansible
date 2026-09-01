@@ -1,5 +1,11 @@
 # cte4u Role
 
+!!! warning "Not yet implemented"
+    This role is a placeholder: its `tasks/main.yml` is empty, so including it
+    has no effect. The variables and example below describe the *intended*
+    interface, not current behaviour. Use the collection's modules directly, or
+    the [`crdp`](crdp.md) role, which is implemented.
+
 Role for setting up CTE for Unix/Linux systems.
 
 ## Role Variables

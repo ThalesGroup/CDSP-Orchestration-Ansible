@@ -1,6 +1,5 @@
 import os
 import glob
-import re
 
 TEST_DIR = os.path.join(os.path.dirname(__file__), "modules")
 PLUGIN_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../plugins/modules"))
@@ -63,6 +62,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from test_helpers import MockExitJsonException, MockFailJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.{module_name} import main
 
+
 class Test{class_name}:
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.{module_name}.ThalesCipherTrustModule")
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.{module_name}.idempotent_create")
@@ -110,6 +110,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from test_helpers import MockExitJsonException, MockFailJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.{module_name} import main
 
+
 class Test{class_name}:
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.{module_name}.ThalesCipherTrustModule")
     def test_execution(self, mock_thales_module, mock_module):
@@ -130,15 +131,19 @@ class Test{class_name}:
             pass
 """
 
+
 def get_params_str(params_dict):
-    if not params_dict: return ""
+    if not params_dict:
+        return ""
     return "\\n".join([f'            "{k}": "{v}",' if isinstance(v, str) else f'            "{k}": {v},' for k, v in params_dict.items()])
+
 
 for filepath in glob.glob(os.path.join(PLUGIN_DIR, "*.py")):
     basename = os.path.basename(filepath)
-    if basename == "__init__.py": continue
+    if basename == "__init__.py":
+        continue
     module_name = basename[:-3]
-    
+
     class_name = "".join([part.capitalize() for part in module_name.split("_")])
     test_filepath = os.path.join(TEST_DIR, f"test_{module_name}.py")
 
@@ -146,19 +151,19 @@ for filepath in glob.glob(os.path.join(PLUGIN_DIR, "*.py")):
     module_configs = MODULE_PARAMS.get(module_name, {})
     create_params = module_configs.get("create", {})
     patch_params = module_configs.get("patch", {})
-    
+
     # Check if we need to add a generic ID field for patch if not present
     patch_id_field = ID_FIELDS.get(module_name, "id")
     if patch_id_field not in patch_params:
         patch_params[patch_id_field] = "id-123"
-    
+
     with open(filepath, "r", encoding="utf-8") as f:
         src = f.read()
 
     if "idempotent_create" in src and "idempotent_patch" in src:
         templ = SAVE_TEMPLATE
         out_content = templ.format(
-            module_name=module_name, 
+            module_name=module_name,
             class_name=class_name,
             extra_params_create=get_params_str(create_params),
             extra_params_patch=get_params_str(patch_params)
@@ -166,14 +171,12 @@ for filepath in glob.glob(os.path.join(PLUGIN_DIR, "*.py")):
     else:
         templ = BASIC_TEMPLATE
         out_content = templ.format(
-            module_name=module_name, 
+            module_name=module_name,
             class_name=class_name,
-            extra_params_basic=get_params_str(create_params) # Use create params as basic fallback
+            extra_params_basic=get_params_str(create_params),  # create params as fallback
         )
 
     with open(test_filepath, "w", encoding="utf-8") as f:
         f.write(out_content.replace("\\n", "\n"))
 
 print("Generated op-specific hardened templates!")
-
-

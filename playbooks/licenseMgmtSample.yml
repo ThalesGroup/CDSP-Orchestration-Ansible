@@ -3,14 +3,14 @@
 # Author: Anurag Jain, Developer Advocate, Thales
 #
 ---
-  - name: "Sample playbook for License Management on CipherTrust Manager"
-    hosts: localhost
-    connection: local
+- name: "Sample playbook for License Management on CipherTrust Manager"
+  hosts: localhost
+  connection: local
 
-    vars_files:
-      - vars/licenseMgmt.yml
+  vars_files:
+    - vars/licenseMgmt.yml
 
-    tasks:
+  tasks:
     - name: "Get trial license ID from CM"
       thalesgroup.ciphertrust.license_trial_get:
         localNode: "{{ this_node_connection_string }}"
@@ -37,7 +37,8 @@
       thalesgroup.ciphertrust.license_create:
         localNode: "{{ this_node_connection_string }}"
         license: "{{ license_string }}"
-      ignore_errors: true # Set to true if it is ok to ignore error and continue to next step 
+      ignore_errors: true # Set to true if it is ok to ignore error and continue to next step
 
     - name: Debug Output
-      debug: var=output
+      debug:
+        var: output

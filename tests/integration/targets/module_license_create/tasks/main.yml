@@ -13,32 +13,30 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
-####################################################################
+# ###################################################################
 # WARNING: These are designed specifically for Ansible tests       #
 # and should not be used as examples of how to write Ansible roles #
-####################################################################
+# ###################################################################
 
-## Verify that integration_config was specified
+# # Verify that integration_config was specified
 - block:
-  - assert:
-      that:
-        - this_node_connection_string is defined
-        - license_string is defined
+    - assert:
+        that:
+          - this_node_connection_string is defined
+          - license_string is defined
 
 ## Validate the add license module
 - block:
-  - name: "Add License"
-    thalesgroup.ciphertrust.license_create:
-      localNode: "{{ this_node_connection_string }}"
-      license: "{{ license_string }}"
-    register: _result_add
+    - name: "Add License"
+      thalesgroup.ciphertrust.license_create:
+        localNode: "{{ this_node_connection_string }}"
+        license: "{{ license_string }}"
+      register: _result_add
 
-  - assert:
-      that:
-        - _result_add is not failed
-        - _result_add.response.message is match("Resource created successfully")
+    - assert:
+        that:
+          - _result_add is not failed
+          - _result_add.response.message is match("Resource created successfully")
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail

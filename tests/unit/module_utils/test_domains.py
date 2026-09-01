@@ -3,8 +3,7 @@
 """Unit tests for plugins/module_utils/domains.py"""
 
 import json
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.domains import (
     create,

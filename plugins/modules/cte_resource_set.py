@@ -32,7 +32,8 @@ options:
       description:
         - Identifier of the CTE ResourceSet to be patched or deleted
       type: str
-    resourceIndex:
+    resource_index:
+      aliases: [resourceIndex]
       description:
         - Identifier of the CTE Resource within ResourceSet to be patched or deleted
       type: int
@@ -147,13 +148,13 @@ EXAMPLES = """
 - name: "Add resource to a ResourceSet"
   thalesgroup.ciphertrust.cte_resource_set:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: add_resource
     id: "resourceSetID"
     resources:
@@ -331,6 +332,7 @@ def main():
                 module, client,
                 endpoint="transparent-encryption/resourcesets",
                 resource_id=module.params.get("id"),
+                ignore_fields=("id",),
                 patch_fn=updateResourceSet,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

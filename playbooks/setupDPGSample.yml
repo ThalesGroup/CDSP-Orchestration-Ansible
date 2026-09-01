@@ -4,14 +4,14 @@
 #
 
 ---
-  - name: "Sample playbook to configure and setup a new DPG instance"
-    hosts: localhost
-    connection: local
+- name: "Sample playbook to configure and setup a new DPG instance"
+  hosts: localhost
+  connection: local
 
-    vars_files:
-      - vars/dpg.yml
+  vars_files:
+    - vars/dpg.yml
 
-    tasks:
+  tasks:
     - name: "Create Key"
       thalesgroup.ciphertrust.vault_keys2_save:
         op_type: create
@@ -49,7 +49,7 @@
           - 0061-007A
         encoding: UTF-8
       register: charset
-    
+
     - name: "Create Protection Policy for non-CARD"
       thalesgroup.ciphertrust.dpg_protection_policy_save:
         localNode: "{{ this_node_connection_string }}"
@@ -132,4 +132,5 @@
       register: output
 
     - name: Debug Output
-      debug: var=output
+      debug:
+        var: output

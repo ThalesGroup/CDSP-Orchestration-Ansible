@@ -4,6 +4,7 @@ from unittest.mock import patch
 from test_helpers import MockExitJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.interface_save import main
 
+
 class TestInterfaceSave:
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.interface_save.ThalesCipherTrustModule")
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.interface_save.idempotent_create")

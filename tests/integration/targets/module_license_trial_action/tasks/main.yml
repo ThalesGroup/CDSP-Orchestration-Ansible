@@ -13,59 +13,56 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
-####################################################################
+# ###################################################################
 # WARNING: These are designed specifically for Ansible tests       #
 # and should not be used as examples of how to write Ansible roles #
-####################################################################
+# ###################################################################
 
-## Verify that integration_config was specified
+# # Verify that integration_config was specified
 - block:
-  - assert:
-      that:
-        - this_node_connection_string is defined
+    - assert:
+        that:
+          - this_node_connection_string is defined
 
 ## Validate the trial license actions
 - block:
+    - name: "Get trial license ID from CM"
+      thalesgroup.ciphertrust.license_trial_get:
+        localNode: "{{ this_node_connection_string }}"
+      register: license
 
-  - name: "Get trial license ID from CM"
-    thalesgroup.ciphertrust.license_trial_get:
-      localNode: "{{ this_node_connection_string }}"
-    register: license
+    - assert:
+        that:
+          - license is not failed
+          - license.response.id is string
 
-  - assert:
-      that:
-        - license is not failed
-        - license.response.id is string
+    - name: "Save trial license ID"
+      set_fact:
+        trial_license_id_reg: "{{ license.response.id }}"
 
-  - name: "Save trial license ID"
-    set_fact:
-      trial_license_id_reg: "{{ license.response.id }}"
+    - name: "Activate Trial License"
+      thalesgroup.ciphertrust.license_trial_action:
+        action_type: activate
+        trialId: "{{ trial_license_id_reg }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_activate
 
-  - name: "Activate Trial License"
-    thalesgroup.ciphertrust.license_trial_action:
-      action_type: activate
-      trialId: "{{ trial_license_id_reg }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_activate
+    - assert:
+        that:
+          - _result_activate is not failed
+          - _result_activate.response.message is match("Resource created successfully")
 
-  - assert:
-      that:
-        - _result_activate is not failed
-        - _result_activate.response.message is match("Resource created successfully")
+    - name: "Deactivate Trial License"
+      thalesgroup.ciphertrust.license_trial_action:
+        action_type: deactivate
+        trialId: "{{ trial_license_id_reg }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_deactivate
 
-  - name: "Deactivate Trial License"
-    thalesgroup.ciphertrust.license_trial_action:
-      action_type: deactivate
-      trialId: "{{ trial_license_id_reg }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_deactivate
-
-  - assert:
-      that:
-        - _result_deactivate is not failed
-        - _result_deactivate.response.message is match("Resource created successfully")
+    - assert:
+        that:
+          - _result_deactivate is not failed
+          - _result_deactivate.response.message is match("Resource created successfully")
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail

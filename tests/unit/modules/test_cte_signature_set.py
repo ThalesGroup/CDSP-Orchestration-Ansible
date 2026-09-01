@@ -4,6 +4,7 @@ from unittest.mock import patch
 from test_helpers import MockExitJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.cte_signature_set import main
 
+
 class TestCteSignatureSet:
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.cte_signature_set.ThalesCipherTrustModule")
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.cte_signature_set.idempotent_create")
@@ -31,7 +32,6 @@ class TestCteSignatureSet:
             "localNode": TEST_NODE.copy(),
             "op_type": "patch",
             "name": "Test1",
-            "id": "123",
             "meta": None,
             "profile_id": "prof1", "policy_id": "pol1", "format_id": "form1",
             "id": "id-123",

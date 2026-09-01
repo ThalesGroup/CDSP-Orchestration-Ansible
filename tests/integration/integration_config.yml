@@ -5,7 +5,7 @@ cm_connection_string:
   server_port: 5432
   user: admin
   password: ChangeIt01!
-  verify: False
+  verify: false
   auth_domain_path:
 local_ca_id: "146b5095-8f9b-47c6-a43c-a6ee4b58b23b"
 nae_interface_port_number: 9005
@@ -15,5 +15,5 @@ cluster_nodes:
     server_port: 5432
     user: admin
     password: ChangeIt01!
-    verify: False
+    verify: false
     auth_domain_path:

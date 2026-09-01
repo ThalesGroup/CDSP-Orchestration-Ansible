@@ -16,10 +16,10 @@ class TestCmServices:
         ) as mock_helper:
             mock_module.check_mode = False
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "op_type": "restart",
-            "services": ['nae'],
-            "delay": 1,
+                "localNode": TEST_NODE.copy(),
+                "op_type": "restart",
+                "services": ['nae'],
+                "delay": 1,
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:
@@ -39,10 +39,10 @@ class TestCmServices:
         ) as mock_helper:
             mock_module.check_mode = True
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "op_type": "restart",
-            "services": ['nae'],
-            "delay": 1,
+                "localNode": TEST_NODE.copy(),
+                "op_type": "restart",
+                "services": ['nae'],
+                "delay": 1,
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:

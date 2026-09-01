@@ -16,9 +16,9 @@ class TestCmRegtoken:
         ) as mock_helper:
             mock_module.check_mode = False
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "op_type": "create",
-            "name_prefix": "reg-",
+                "localNode": TEST_NODE.copy(),
+                "op_type": "create",
+                "name_prefix": "reg-",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:
@@ -38,9 +38,9 @@ class TestCmRegtoken:
         ) as mock_helper:
             mock_module.check_mode = True
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "op_type": "create",
-            "name_prefix": "reg-",
+                "localNode": TEST_NODE.copy(),
+                "op_type": "create",
+                "name_prefix": "reg-",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:

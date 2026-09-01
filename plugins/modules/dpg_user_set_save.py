@@ -50,47 +50,47 @@ EXAMPLES = """
 - name: "Create User Set"
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     name: AnsibleIntegrationTest_UserSet
     description: "Created via Ansible"
     users:
-    - "AnsibleIntegrationTest_User1"
-    - "AnsibleIntegrationTest_User2"
+      - "AnsibleIntegrationTest_User1"
+      - "AnsibleIntegrationTest_User2"
 
 - name: "Patch User Set"
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: patch
     user_set_id: <UserSetID>
     users:
-    - "AnsibleIntegrationTest_User1"
-    - "AnsibleIntegrationTest_User2"
-    - "AnsibleIntegrationTest_User3"
+      - "AnsibleIntegrationTest_User1"
+      - "AnsibleIntegrationTest_User2"
+      - "AnsibleIntegrationTest_User3"
 
 - name: "Delete UserSet ID"
   thalesgroup.ciphertrust.cm_resource_delete:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     key: <UserSetID>
     resource_type: "user-sets"
 """
@@ -218,6 +218,7 @@ def main():
                 module, client,
                 endpoint="data-protection/user-sets",
                 resource_id=module.params.get("user_set_id"),
+                ignore_fields=("user_set_id",),
                 patch_fn=updateUserSet,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

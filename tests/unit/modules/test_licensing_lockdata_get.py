@@ -16,7 +16,7 @@ class TestLicensingLockdataGet:
         ) as mock_helper:
             mock_module.check_mode = False
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
+                "localNode": TEST_NODE.copy(),
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:
@@ -36,7 +36,7 @@ class TestLicensingLockdataGet:
         ) as mock_helper:
             mock_module.check_mode = True
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
+                "localNode": TEST_NODE.copy(),
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:

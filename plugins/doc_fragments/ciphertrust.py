@@ -24,7 +24,8 @@ class ModuleDocFragment(object):
 
     DOCUMENTATION = r"""
 options:
-  localNode:
+  local_node:
+    aliases: [localNode]
     description:
       - Connection parameters for the CipherTrust Manager (CM) instance.
       - Holds IP/FQDN, port, admin credentials, and TLS-verification flag.

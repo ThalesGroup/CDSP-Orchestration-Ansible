@@ -57,13 +57,13 @@ EXAMPLES = """
 - name: "Create Masking Format"
   thalesgroup.ciphertrust.dpg_masking_format_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     name: AnsibleIntegrationTest_MaskingFormat
     ending_characters: 2
@@ -74,13 +74,13 @@ EXAMPLES = """
 - name: "Patch Masking Format"
   thalesgroup.ciphertrust.dpg_masking_format_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: patch
     masking_format_id: <MaskingFormatID>
     ending_characters: 4
@@ -92,13 +92,13 @@ EXAMPLES = """
     key: <MaskingFormatID>
     resource_type: "masking-formats"
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
 """
 
 RETURN = r"""
@@ -228,6 +228,7 @@ def main():
                 module, client,
                 endpoint="data-protection/masking-formats",
                 resource_id=module.params.get("masking_format_id"),
+                ignore_fields=("masking_format_id",),
                 patch_fn=updateMaskingFormat,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

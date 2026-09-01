@@ -77,13 +77,13 @@ EXAMPLES = """
 - name: "Create CTE Signature Set"
   thalesgroup.ciphertrust.cte_signature_set:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     name: TestSignSet
     source_list:
@@ -94,13 +94,13 @@ EXAMPLES = """
 - name: "Add signature to a Signature Set"
   thalesgroup.ciphertrust.cte_signature_set:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: add_signature
     id: "signatureSetID"
     source_list:
@@ -110,13 +110,13 @@ EXAMPLES = """
 - name: "Remove a signature from a Signature Set"
   thalesgroup.ciphertrust.cte_signature_set:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: delete_signature
     id: "signatureSetID"
     signature_id: "signatureSetID"
@@ -124,13 +124,13 @@ EXAMPLES = """
 - name: "Sends a signature signing request to the client"
   thalesgroup.ciphertrust.cte_signature_set:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: sign_app
     id: "signatureSetID"
     client_id: Client1
@@ -293,6 +293,7 @@ def main():
                 module, client,
                 endpoint="transparent-encryption/signaturesets",
                 resource_id=module.params.get("id"),
+                ignore_fields=("id",),
                 patch_fn=updateSignatureSet,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

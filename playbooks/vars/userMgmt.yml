@@ -1,3 +1,4 @@
+---
 this_node_address: <CM_IP_OR_FQDN>
 this_node_private_ip: <CM_PRIVATE_IP>
 this_node_username: <CM_ADMIN_USERNAME>
@@ -10,7 +11,7 @@ this_node_connection_string:
   user: "{{ this_node_username }}"
   password: "{{ this_node_password }}"
   auth_domain_path: "{{ this_node_tenant_id }}"
-  verify: False
+  verify: false
 
 var_username: "<USERNAME>"
 var_password: "<PASSWORD>"

@@ -54,16 +54,6 @@ This section provides documentation for all modules in the ThalesGroup CipherTru
 - `license_trial_get` - Get trial license information
 - `licensing_lockdata_get` - Get licensing lock data
 
-### Cloud Connector Modules
-
-- `cckm_aws` - AWS Cloud Connector management
-- `cckm_azure` - Azure Cloud Connector management
-- `cckm_gcp` - GCP Cloud Connector management
-
-### Connection Management Modules
-
-- `connection_management` - Connection management for cloud providers
-
 ## Module Documentation
 
 Click on any module name to view its detailed documentation.

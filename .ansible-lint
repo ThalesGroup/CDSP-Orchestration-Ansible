@@ -1,12 +1,20 @@
 ---
 profile: basic
+
+# plugins/, roles/ and playbooks/ are shipped content and are linted.
+# tests/ is excluded: integration targets are exercised by `ansible-test
+# integration`, which has its own conventions, and linting them for play
+# names adds churn without protecting users.
 exclude_paths:
   - .ansible/
   - .git/
   - .venv/
   - changelogs/
   - mkdocs.yml
-  - playbooks/
-  - plugins/
-  - roles/
   - tests/
+
+skip_list:
+  # Renaming the crdp role's public variables to a crdp_ prefix would break
+  # every existing playbook that sets them. Deferred to 2.0.0, which already
+  # carries the camelCase -> snake_case parameter migration.
+  - var-naming[no-role-prefix]

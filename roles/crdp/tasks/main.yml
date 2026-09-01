@@ -19,7 +19,7 @@
       server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
-      verify: False
+      verify: false
       auth_domain_path:
     register: key
 
@@ -31,7 +31,7 @@
       server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
-      verify: False
+      verify: false
       auth_domain_path:
     op_type: "create"
     name: masked
@@ -47,7 +47,7 @@
       server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
-      verify: False
+      verify: false
       auth_domain_path:
     op_type: "create"
     name: plain
@@ -63,7 +63,7 @@
       server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
-      verify: False
+      verify: false
       auth_domain_path:
     query_param: "name"
     query_param_value: "SHOW_LAST_FOUR"
@@ -78,7 +78,7 @@
       server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
-      verify: False
+      verify: false
       auth_domain_path:
     op_type: "create"
     name: crdp_access_policy
@@ -99,7 +99,7 @@
       server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
-      verify: False
+      verify: false
       auth_domain_path:
     query_param: "name"
     query_param_value: "LAST_FOUR"
@@ -114,7 +114,7 @@
       server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
-      verify: False
+      verify: false
       auth_domain_path:
     op_type: create
     name: crdp
@@ -133,15 +133,15 @@
       server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
-      verify: False
+      verify: false
       auth_domain_path:
     op_type: create
     access_policy_name: crdp_access_policy
     masking_format_id: "{{ masking_format_static['response']['id'] }}"
     name: crdp_protection_policy
     key: crdp
-    #tweak: "1628462495815733"
-    #tweak_algorithm: "SHA1"
+    # tweak: "1628462495815733"
+    # tweak_algorithm: "SHA1"
     algorithm: "AES/CBC/PKCS5Padding"
     character_set_id: "{{ charset['response']['id'] }}"
   register: protection_policy
@@ -154,12 +154,12 @@
     lifetime: 30d
     cert_duration: 730
     max_clients: 200
-    #ca_id: "{{ ca_id }}"
-    #nae_iface_port: 9006
+    # ca_id: "{{ ca_id }}"
+    # nae_iface_port: 9006
     csr_parameters:
       csr_cn: admin
-    #policy_id: "{{ policy['response']['id'] }}"
-    #configurations:
+    # policy_id: "{{ policy['response']['id'] }}"
+    # configurations:
     #  auth_method_used:
     #    scheme_name: Basic
     #  tls_to_appserver:
@@ -171,6 +171,6 @@
       server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
-      verify: False
+      verify: false
       auth_domain_path:
   register: profile

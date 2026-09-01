@@ -28,6 +28,7 @@ from copy import deepcopy
 import re
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.six.moves.urllib.error import HTTPError, URLError
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CipherTrustError,
@@ -99,7 +100,9 @@ def _normalize_argument_spec(argument_spec):
         if isinstance(target_spec, dict):
             options = target_spec.get("options")
             if isinstance(options, dict):
-                normalized_options, child_tree, _ = _normalize_argument_spec(options)
+                normalized_options, child_tree, _unused = _normalize_argument_spec(
+                    options
+                )
                 target_spec["options"] = normalized_options
 
         if legacy_key:
@@ -241,21 +244,26 @@ class ThalesCipherTrustModule:
                 argument_spec_full
             )
             kwargs["argument_spec"] = normalized_spec
-            kwargs["required_if"] = _rewrite_required_if(
-                kwargs.get("required_if"), legacy_to_snake
+            # Only forward a constraint when the caller actually supplied one.
+            # Passing an explicit ``None`` makes AnsibleModule's schema
+            # validation reject the module (``required_by`` expects a dict).
+            rewritten = (
+                ("required_if", _rewrite_required_if(
+                    kwargs.get("required_if"), legacy_to_snake)),
+                ("required_together", _rewrite_grouped_rules(
+                    kwargs.get("required_together"), legacy_to_snake)),
+                ("required_one_of", _rewrite_grouped_rules(
+                    kwargs.get("required_one_of"), legacy_to_snake)),
+                ("mutually_exclusive", _rewrite_grouped_rules(
+                    kwargs.get("mutually_exclusive"), legacy_to_snake)),
+                ("required_by", _rewrite_required_by(
+                    kwargs.get("required_by"), legacy_to_snake)),
             )
-            kwargs["required_together"] = _rewrite_grouped_rules(
-                kwargs.get("required_together"), legacy_to_snake
-            )
-            kwargs["required_one_of"] = _rewrite_grouped_rules(
-                kwargs.get("required_one_of"), legacy_to_snake
-            )
-            kwargs["mutually_exclusive"] = _rewrite_grouped_rules(
-                kwargs.get("mutually_exclusive"), legacy_to_snake
-            )
-            kwargs["required_by"] = _rewrite_required_by(
-                kwargs.get("required_by"), legacy_to_snake
-            )
+            for constraint_name, value in rewritten:
+                if value is None:
+                    kwargs.pop(constraint_name, None)
+                else:
+                    kwargs[constraint_name] = value
             self._legacy_param_tree = legacy_tree
 
         self._module = ThalesCipherTrustModule.default_settings["module_class"](
@@ -281,9 +289,6 @@ class ThalesCipherTrustModule:
 
     def warn(self, *args, **kwargs):
         return self._module.warn(*args, **kwargs)
-
-    def deprecate(self, *args, **kwargs):
-        return self._module.deprecate(*args, **kwargs)
 
     def boolean(self, *args, **kwargs):
         return self._module.boolean(*args, **kwargs)
@@ -326,6 +331,8 @@ def handle_module_error(module, exc):
 
     * ``CMApiException`` → includes the HTTP/application error code.
     * Any other ``CipherTrustError`` subclass → uses its composed ``message``.
+    * ``HTTPError`` / ``URLError`` → raw urllib errors from any code path that
+      bypasses ``CipherTrustClient``; translated rather than allowed to escape.
     * Anything else → bubbles up as "Unexpected error: <repr>".
     """
     if isinstance(exc, CMApiException):
@@ -336,6 +343,14 @@ def handle_module_error(module, exc):
             msg = "API Error: {0}".format(exc.message or "")
     elif isinstance(exc, CipherTrustError):
         msg = exc.message or str(exc)
+    elif isinstance(exc, HTTPError):
+        msg = "API Error (code: {0}): {1}".format(
+            exc.code, getattr(exc, "reason", "") or exc
+        )
+    elif isinstance(exc, URLError):
+        msg = "Could not connect to CipherTrust Manager: {0}".format(
+            getattr(exc, "reason", exc)
+        )
     else:
         msg = "Unexpected error: {0}".format(exc)
     module.fail_json(msg=msg)
@@ -353,10 +368,11 @@ def ciphertrust_operation(module):
             result["changed"] = changed
             result["response"] = response
 
-    Any raised :class:`CipherTrustError` (or subclass) triggers a clean
+    Any raised :class:`CipherTrustError` (or subclass), as well as raw
+    ``HTTPError``/``URLError`` from urllib, triggers a clean
     ``module.fail_json`` via :func:`handle_module_error`.
     """
     try:
         yield
-    except CipherTrustError as exc:
+    except (CipherTrustError, HTTPError, URLError) as exc:
         handle_module_error(module, exc)

@@ -576,6 +576,7 @@ def main():
                 module, client,
                 endpoint="transparent-encryption/clients",
                 resource_id=module.params.get("id"),
+                ignore_fields=("id",),
                 patch_fn=patchClient,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

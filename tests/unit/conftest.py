@@ -69,6 +69,8 @@ except Exception:
     sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins"] = plugins
     sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins.module_utils"] = plugins.module_utils
     sys.modules["ansible_collections.thalesgroup.ciphertrust.plugins.modules"] = plugins.modules
+
+
 @pytest.fixture
 def localNode():
     """Explicit localNode fixture for tests that need a reusable CM node dict."""
@@ -83,6 +85,7 @@ def local_node(localNode):
 # ---------------------------------------------------------------------------
 # Module-level fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def mock_module():

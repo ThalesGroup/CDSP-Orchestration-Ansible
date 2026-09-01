@@ -13,81 +13,79 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
-####################################################################
+# ###################################################################
 # WARNING: These are designed specifically for Ansible tests       #
 # and should not be used as examples of how to write Ansible roles #
-####################################################################
+# ###################################################################
 
-## Verify that integration_config was specified
+# # Verify that integration_config was specified
 - block:
-  - assert:
-      that:
-        - this_node_connection_string is defined
-        - group_name is defined
-        - new_group_name is defined
+    - assert:
+        that:
+          - this_node_connection_string is defined
+          - group_name is defined
+          - new_group_name is defined
 
 ## Validate the create group module
 - block:
-  - name: "Create Group"
-    thalesgroup.ciphertrust.group_save:
-      op_type: create
-      name: "{{ group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_create
+    - name: "Create Group"
+      thalesgroup.ciphertrust.group_save:
+        op_type: create
+        name: "{{ group_name }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_create
 
-  - assert:
-      that:
-        - _result_create is not failed
-        - _result_create.response.id is string
+    - assert:
+        that:
+          - _result_create is not failed
+          - _result_create.response.id is string
 
-  - name: "Patch Group"
-    thalesgroup.ciphertrust.group_save:
-      op_type: patch
-      old_name: "{{ group_name }}"
-      name: "{{ new_group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_patch
+    - name: "Patch Group"
+      thalesgroup.ciphertrust.group_save:
+        op_type: patch
+        old_name: "{{ group_name }}"
+        name: "{{ new_group_name }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_patch
 
-  - assert:
-      that:
-        - _result_patch is not failed
-        - _result_patch.response.message is match("Resource updated successfully")
+    - assert:
+        that:
+          - _result_patch is not failed
+          - _result_patch.response.message is match("Resource updated successfully")
 
-  # Create User for testing add/remove user to group testing
-  - name: "Create User"
-    thalesgroup.ciphertrust.usermgmt_users_save:
-      localNode: "{{ this_node_connection_string }}"
-      op_type: "create"
-      username: "{{ username }}"
-      password: "{{ password }}"
-      email: "{{ email }}"
-      name: "{{ firstname_lastname }}"
-    register: _result_user_create
+    # Create User for testing add/remove user to group testing
+    - name: "Create User"
+      thalesgroup.ciphertrust.usermgmt_users_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: "create"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        email: "{{ email }}"
+        name: "{{ firstname_lastname }}"
+      register: _result_user_create
 
-  - assert:
-      that:
-        - _result_user_create is not failed
-        - _result_user_create.response.id is string
+    - assert:
+        that:
+          - _result_user_create is not failed
+          - _result_user_create.response.id is string
 
-  - name: "Save user ID"
-    set_fact:
-      user_id: "{{ _result_user_create.response.id }}"
+    - name: "Save user ID"
+      set_fact:
+        user_id: "{{ _result_user_create.response.id }}"
 
-  - name: "Add User to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user
+    - name: "Add User to Group"
+      thalesgroup.ciphertrust.group_add_remove_object:
+        op_type: add
+        object_type: user
+        object_id: "{{ user_id }}"
+        name: "{{ new_group_name }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_add_user
 
-  - assert:
-      that:
-        - _result_add_user is not failed
-        - _result_add_user.response.message is match("Resource created successfully")
+    - assert:
+        that:
+          - _result_add_user is not failed
+          - _result_add_user.response.message is match("Resource created successfully")
 
   # Create Client for testing add/remove client to group testing
   # - name: "Create CTE Client"
@@ -123,19 +121,19 @@
   #       - _result_add_client is not failed
   #       - _result_add_client.response.message is match("Resource created successfully")
 
-  - name: "Remove User from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: user
-      object_id: "{{ user_id }}"
-      name: "{{ new_group_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_remove_user
+    - name: "Remove User from Group"
+      thalesgroup.ciphertrust.group_add_remove_object:
+        op_type: remove
+        object_type: user
+        object_id: "{{ user_id }}"
+        name: "{{ new_group_name }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_remove_user
 
-  - assert:
-      that:
-        - _result_remove_user is not failed
-        - _result_remove_user.response is match("Resource deleted successfully")
+    - assert:
+        that:
+          - _result_remove_user is not failed
+          - _result_remove_user.response is match("Resource deleted successfully")
 
   # - name: "Remove Client from Group"
   #   thalesgroup.ciphertrust.group_add_remove_object:
@@ -165,17 +163,17 @@
   #       - _result_delete_client is not failed
   #       - _result_delete_client.response.message is match("Resource updated successfully")
 
-  - name: "Delete User ID"
-    thalesgroup.ciphertrust.cm_resource_delete:
-      key: "{{ user_id }}"
-      resource_type: "users"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_delete_user
+    - name: "Delete User ID"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        key: "{{ user_id }}"
+        resource_type: "users"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_delete_user
 
-  - assert:
-      that:
-        - _result_delete_user is not failed
-        - _result_delete_user.response.message is match("Resource deletion succesful")
+    - assert:
+        that:
+          - _result_delete_user is not failed
+          - _result_delete_user.response.message is match("Resource deletion succesful")
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail

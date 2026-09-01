@@ -3,8 +3,7 @@
 """Unit tests for plugins/module_utils/services.py"""
 
 import json
-import pytest
-from unittest.mock import patch, MagicMock, call
+from unittest.mock import patch
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.services import (
     restartCMServices,

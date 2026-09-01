@@ -13,100 +13,98 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
-####################################################################
+# ###################################################################
 # WARNING: These are designed specifically for Ansible tests       #
 # and should not be used as examples of how to write Ansible roles #
-####################################################################
+# ###################################################################
 
-## Verify that integration_config was specified
+# # Verify that integration_config was specified
 - block:
-  - assert:
-      that:
-        - this_node_connection_string is defined
-        - username is defined
-        - password is defined
-        - email is defined
-        - name is defined
-        - new_email is defined
-        - new_name is defined
-        - new_password is defined
-        - new_self_name is defined
+    - assert:
+        that:
+          - this_node_connection_string is defined
+          - username is defined
+          - password is defined
+          - email is defined
+          - name is defined
+          - new_email is defined
+          - new_name is defined
+          - new_password is defined
+          - new_self_name is defined
 
 ## Validate the create user module
 - block:
-  - name: "Create User"
-    thalesgroup.ciphertrust.usermgmt_users_save:
-      localNode: "{{ this_node_connection_string }}"
-      op_type: "create"
-      username: "{{ username }}"
-      password: "{{ password }}"
-      email: "{{ email }}"
-      name: "{{ name }}"
-    register: _result_create
+    - name: "Create User"
+      thalesgroup.ciphertrust.usermgmt_users_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: "create"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        email: "{{ email }}"
+        name: "{{ name }}"
+      register: _result_create
 
-  - assert:
-      that:
-        - _result_create is not failed
-        - _result_create.response.id is string
+    - assert:
+        that:
+          - _result_create is not failed
+          - _result_create.response.id is string
 
-  - name: "Save user ID"
-    set_fact:
-      user_id: "{{ _result_create.response.id }}"
+    - name: "Save user ID"
+      set_fact:
+        user_id: "{{ _result_create.response.id }}"
 
-  - name: "Patch User"
-    thalesgroup.ciphertrust.usermgmt_users_save:
-      op_type: "patch"
-      cm_user_id: "{{ user_id }}"
-      username: "{{ username }}"
-      email: "{{ new_email }}"
-      name: "{{ new_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_patch
+    - name: "Patch User"
+      thalesgroup.ciphertrust.usermgmt_users_save:
+        op_type: "patch"
+        cm_user_id: "{{ user_id }}"
+        username: "{{ username }}"
+        email: "{{ new_email }}"
+        name: "{{ new_name }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_patch
 
-  - assert:
-      that:
-        - _result_patch is not failed
-        - _result_patch.response.message is match("Resource updated successfully")
+    - assert:
+        that:
+          - _result_patch is not failed
+          - _result_patch.response.message is match("Resource updated successfully")
 
-  - name: "Change Password"
-    thalesgroup.ciphertrust.usermgmt_users_save:
-      op_type: "changepw"
-      username: "{{ username }}"
-      password: "{{ password }}"
-      new_password: "{{ new_password }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_changepw
+    - name: "Change Password"
+      thalesgroup.ciphertrust.usermgmt_users_save:
+        op_type: "changepw"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        new_password: "{{ new_password }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_changepw
 
-  - assert:
-      that:
-        - _result_changepw is not failed
-        - _result_changepw.response.message is match("Resource updated successfully")
+    - assert:
+        that:
+          - _result_changepw is not failed
+          - _result_changepw.response.message is match("Resource updated successfully")
 
-  - name: "Update Self"
-    thalesgroup.ciphertrust.usermgmt_users_save:
-      op_type: "patch_self"
-      name: "{{ new_self_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_patch_self
+    - name: "Update Self"
+      thalesgroup.ciphertrust.usermgmt_users_save:
+        op_type: "patch_self"
+        name: "{{ new_self_name }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_patch_self
 
-  - assert:
-      that:
-        - _result_patch_self is not failed
-        - _result_patch_self.response.message is match("Resource updated successfully")
+    - assert:
+        that:
+          - _result_patch_self is not failed
+          - _result_patch_self.response.message is match("Resource updated successfully")
 
-  - name: "Delete User ID"
-    thalesgroup.ciphertrust.cm_resource_delete:
-      key: "{{ user_id }}"
-      resource_type: "users"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_delete_user
+    - name: "Delete User ID"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        key: "{{ user_id }}"
+        resource_type: "users"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_delete_user
 
-  - assert:
-      that:
-        - _result_delete_user is not failed
-        - _result_delete_user.response.message is match("Resource deletion succesful")
+    - assert:
+        that:
+          - _result_delete_user is not failed
+          - _result_delete_user.response.message is match("Resource deletion succesful")
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail

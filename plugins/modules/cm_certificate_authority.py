@@ -37,15 +37,18 @@ options:
         - Signature algorithm is selected based on the algorithm and size.
       type: str
       choices: ['RSA', 'ECDSA']
-    dnsNames:
+    dns_names:
+      aliases: [dnsNames]
       description: Subject Alternative Names (SAN) values
       type: list
       elements: str
-    emailAddresses:
+    email_addresses:
+      aliases: [emailAddresses]
       description: E-mail addresses
       type: list
       elements: str
-    ipAddresses:
+    ip_addresses:
+      aliases: [ipAddresses]
       description: IP addresses
       type: list
       elements: str
@@ -59,23 +62,28 @@ options:
       type: list
       elements: dict
       suboptions:
-        C:
+        c:
+          aliases: [C]
           description:
             - Country, for example "US"
           type: str
-        L:
+        l:
+          aliases: [L]
           description:
             - Location, for example "Belcamp"
           type: str
-        O:
+        o:
+          aliases: [O]
           description:
             - Organization, for example "Thales Group"
           type: str
-        OU:
+        ou:
+          aliases: [OU]
           description:
             - Organizational Unit, for example "RnD"
           type: str
-        ST:
+        st:
+          aliases: [ST]
           description:
             - State/province, for example "MD"
           type: str
@@ -98,13 +106,15 @@ options:
     duration:
       description: Duration in days of certificate. Either duration or notAfter date must be specified.
       type: int
-    notAfter:
+    not_after:
+      aliases: [notAfter]
       description:
         - End date of certificate
         - Either notAfter or duration must be specified
         - notAfter overrides duration if both are given.
       type: str
-    notBefore:
+    not_before:
+      aliases: [notBefore]
       description: Start date of certificate
       type: str
     reason:
@@ -121,7 +131,8 @@ options:
         - privilegeWithdrawn
         - aACompromise
       type: str
-    csrParams:
+    csr_params:
+      aliases: [csrParams]
       description:
         - Parameters to be used during creating CSR like the subject, x509 extensions and signature algorithm used.
       type: dict
@@ -129,15 +140,18 @@ options:
         cn:
           description: Common Name
           type: str
-        dnsNames:
+        dns_names:
+          aliases: [dnsNames]
           description: Subject Alternative Names (SAN) values
           type: list
           elements: str
-        emailAddresses:
+        email_addresses:
+          aliases: [emailAddresses]
           description: E-mail addresses
           type: list
           elements: str
-        extendedKeyUsage:
+        extended_key_usage:
+          aliases: [extendedKeyUsage]
           description:
             - List of names of the permitted extended key usages added as CSR extensions
             - Valid values can be one or more of any
@@ -157,11 +171,13 @@ options:
             - These keyUsage are allowed for CSR creation
           type: list
           elements: str
-        ipAddresses:
+        ip_addresses:
+          aliases: [ipAddresses]
           description: IP addresses
           type: list
           elements: str
-        keyUsage:
+        key_usage:
+          aliases: [keyUsage]
           description:
             - List of names of the permitted key usages added as CSR extensions.
             - Valid values can be one or more of
@@ -177,17 +193,20 @@ options:
             - These keyUsage are allowed for CSR creation.
           type: list
           elements: str
-        isCA:
+        is_ca:
+          aliases: [isCA]
           description:
             - If set, the value of the basic constraints extension value for CA is set to that boolean value and unset otherwise.
           type: bool
-        maxPathLen:
+        max_path_len:
+          aliases: [maxPathLen]
           description:
             - This parameter is valid only when is CA parameter is set to true
             - Specifies the maximum number of CAs that can appear below this one in a chain
             - If maxPathLen is -1, pathlen is unset.
           type: int
-        signatureAlgorithm:
+        signature_algorithm:
+          aliases: [signatureAlgorithm]
           description: Signature algorithm used for creating the CSR.
           choices:
             - sha512WithRSA
@@ -199,7 +218,8 @@ options:
             - ecdsaWithSHA256
             - ecdsaWithSHA1
           type: str
-        subjectKeyIdentifierHash:
+        subject_key_identifier_hash:
+          aliases: [subjectKeyIdentifierHash]
           description: If set to true, the Subject Key Identifier extension is set to the hash specified by RFC5280, else unset
           type: bool
         names:
@@ -209,27 +229,33 @@ options:
           type: list
           elements: dict
           suboptions:
-            C:
+            c:
+              aliases: [C]
               description:
                 - Country, for example "US"
               type: str
-            L:
+            l:
+              aliases: [L]
               description:
                 - Location, for example "Belcamp"
               type: str
-            O:
+            o:
+              aliases: [O]
               description:
                 - Organization, for example "Thales Group"
               type: str
-            OU:
+            ou:
+              aliases: [OU]
               description:
                 - Organizational Unit, for example "RnD"
               type: str
-            ST:
+            st:
+              aliases: [ST]
               description:
                 - State/province, for example "MD"
               type: str
-    keyGenParams:
+    key_gen_params:
+      aliases: [keyGenParams]
       description: Parameters to be used for creating an asymmetric key to be used for CSR creation.
       type: dict
       suboptions:
@@ -244,7 +270,8 @@ options:
           description: Cryptographic curve id for elliptic key
           type: str
           choices: ['secp224r1', 'secp384r1', 'secp521r1', 'prime256v1']
-        keyName:
+        key_name:
+          aliases: [keyName]
           description: Name of key to be generated for CSR creation
           type: str
         size:
@@ -252,23 +279,28 @@ options:
             - Size of key to be generated for CSR creation
             - Refer create key API for sizes for EC and RSA keys and their default values.
           type: str
-    keyID:
+    key_id:
+      aliases: [keyID]
       description: Type of the identifier, keyID, for the private key to be used for creating CSR.
       type: str
-    keyIDType:
+    key_id_type:
+      aliases: [keyIDType]
       description: Parameters to be used for creating an asymmetric key to be used for CSR creation.
       type: str
-    keyVersion:
+    key_version:
+      aliases: [keyVersion]
       description: Version of the private key, keyID, to be used for creating CSR.
       type: int
-    encryptionAlgo:
+    encryption_algo:
+      aliases: [encryptionAlgo]
       description: Private key encryption algorithm.
       choices: [AES256, AES192, AES128, TDES]
       type: str
     password:
       description: Password to PEM-encrypt the private key. If not specified, the private key is not encrypted in return.
       type: str
-    privateKeyBytes:
+    private_key_bytes:
+      aliases: [privateKeyBytes]
       description:
         - Private Key bytes of the key which is to be used while creating CSR(Algorithm and size should be according to this key).
         - If not given will generate key internally as per algorithm and size.
@@ -592,6 +624,7 @@ def main():
                 module, client,
                 endpoint="ca/local-cas",
                 resource_id=module.params.get("id"),
+                ignore_fields=("id",),
                 patch_fn=updateLocalCA,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

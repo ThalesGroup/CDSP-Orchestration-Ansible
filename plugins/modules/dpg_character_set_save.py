@@ -49,50 +49,49 @@ EXAMPLES = """
 - name: "Create Character Set"
   thalesgroup.ciphertrust.dpg_character_set_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     name: DPGAlphaNum
     range:
-    - "0030-0039"
-    - "0041-005A"
+      - "0030-0039"
+      - "0041-005A"
     encoding: "UTF-8"
 
 - name: "Patch Character Set"
   thalesgroup.ciphertrust.dpg_character_set_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: patch
     char_set_id: <CharSetID>
     range:
-    - "0030-0039"
-    - "0041-005A"
-    - "0061-007A"
+      - "0030-0039"
+      - "0041-005A"
+      - "0061-007A"
 
 - name: "Delete charset by ID"
   thalesgroup.ciphertrust.cm_resource_delete:
     key: <CharSetID>
     resource_type: "character-sets"
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
-
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
 """
 
 RETURN = r"""
@@ -218,6 +217,7 @@ def main():
                 module, client,
                 endpoint="data-protection/character-sets",
                 resource_id=module.params.get("char_set_id"),
+                ignore_fields=("char_set_id",),
                 patch_fn=updateCharacterSet,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

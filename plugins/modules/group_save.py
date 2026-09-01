@@ -60,26 +60,26 @@ EXAMPLES = """
 - name: "Create Group"
   thalesgroup.ciphertrust.group_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     name: "group_name"
 
 - name: "Patch Group"
   thalesgroup.ciphertrust.group_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: patch
     old_name: "group_name"
     name: "new_name"
@@ -199,6 +199,7 @@ def main():
                 module, client,
                 endpoint="usermgmt/groups",
                 resource_id=module.params.get("old_name"),
+                ignore_fields=("old_name",),
                 patch_fn=patch,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

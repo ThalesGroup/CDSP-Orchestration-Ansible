@@ -16,11 +16,11 @@ class TestGroupAddRemoveObject:
         ) as mock_helper:
             mock_module.check_mode = False
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "op_type": "add",
-            "object_type": "user",
-            "object_id": "user-123",
-            "name": "group-abc",
+                "localNode": TEST_NODE.copy(),
+                "op_type": "add",
+                "object_type": "user",
+                "object_id": "user-123",
+                "name": "group-abc",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:
@@ -40,11 +40,11 @@ class TestGroupAddRemoveObject:
         ) as mock_helper:
             mock_module.check_mode = True
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "op_type": "add",
-            "object_type": "user",
-            "object_id": "user-123",
-            "name": "group-abc",
+                "localNode": TEST_NODE.copy(),
+                "op_type": "add",
+                "object_type": "user",
+                "object_id": "user-123",
+                "name": "group-abc",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:

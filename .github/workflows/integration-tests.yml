@@ -29,7 +29,6 @@ jobs:
   integration-tests:
     name: Run Integration Tests
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     defaults:
       run:
@@ -75,7 +74,6 @@ jobs:
 
       - name: Run integration tests
         if: steps.precheck.outputs.run-tests == 'true'
-        continue-on-error: true
         run: |
           target="${{ github.event.inputs.target || 'all' }}"
           if [ "$target" = "all" ]; then

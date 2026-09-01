@@ -18,6 +18,27 @@ __metaclass__ = type
 
 from ansible.module_utils.six.moves.urllib.error import HTTPError
 
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+)
+
+
+# Kwargs that route the request (build the URL, identify the resource) rather
+# than describe desired state.  They are never present in a GET response, so
+# comparing them would report a change on every run.
+_ALWAYS_IGNORED = frozenset(["node"])
+
+
+def _is_not_found(exc):
+    """True when *exc* means 'the resource does not exist'.
+
+    Any other failure (auth, permissions, server fault) must propagate: a
+    500 silently treated as 'absent' leads to a duplicate create.
+    """
+    if isinstance(exc, CMApiException):
+        return getattr(exc, "api_error_code", None) == 404
+    return getattr(exc, "code", None) == 404
+
 
 # ---------------------------------------------------------------------------
 # Resource lookup
@@ -34,14 +55,17 @@ def find_resource_by_query(client, endpoint, param, value):
         response = client.get(
             endpoint + "?skip=0&limit=1&" + param + "=" + str(value)
         )
-        if (
-            isinstance(response, dict)
-            and response.get("resources")
-            and len(response["resources"]) > 0
-        ):
-            return response["resources"][0]
-    except HTTPError:
-        pass
+    except (CMApiException, HTTPError) as exc:
+        if _is_not_found(exc):
+            return None
+        raise
+
+    if (
+        isinstance(response, dict)
+        and response.get("resources")
+        and len(response["resources"]) > 0
+    ):
+        return response["resources"][0]
     return None
 
 
@@ -94,7 +118,8 @@ def idempotent_create(module, client, endpoint, lookup_param, lookup_value,
 
 
 def idempotent_patch(module, client, endpoint, resource_id,
-                     patch_fn, patch_kwargs, compare_fields=None):
+                     patch_fn, patch_kwargs, compare_fields=None,
+                     ignore_fields=None):
     """Idempotent resource update.
 
     1. GET current state by *resource_id*.
@@ -103,16 +128,30 @@ def idempotent_patch(module, client, endpoint, resource_id,
     4. In check mode → ``changed=True``, skip write.
     5. Otherwise PATCH → ``changed=True``.
 
+    *ignore_fields* names kwargs that route the request rather than describe
+    desired state — the resource identifier (``cm_key_id``, ``policy_id``,
+    ``old_name`` …).  They are absent from the GET response, so including
+    them in the comparison would make every patch report ``changed=True``
+    and issue a redundant write.  Callers must pass their routing key.
+
+    *compare_fields* optionally restricts the comparison to an explicit list.
+
     Returns ``(changed, response, diff_or_None)``.
     """
     try:
         current = client.get(endpoint + "/" + resource_id)
-    except HTTPError:
+    except (CMApiException, HTTPError) as exc:
+        if not _is_not_found(exc):
+            raise
         current = {}
+
+    ignored = set(_ALWAYS_IGNORED)
+    if ignore_fields:
+        ignored.update(ignore_fields)
 
     desired = {
         k: v for k, v in patch_kwargs.items()
-        if k not in ("node",) and v is not None
+        if k not in ignored and v is not None
     }
 
     if not resource_needs_update(current, desired, compare_fields):

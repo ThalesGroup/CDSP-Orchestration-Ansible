@@ -92,13 +92,13 @@ EXAMPLES = """
 - name: "Create Protection Policy"
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     algorithm: "AES/CBC/PKCS5Padding"
     key: <CM_KEY_ID>
@@ -111,13 +111,13 @@ EXAMPLES = """
 - name: "Patch Protection Policy"
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: patch
     policy_name: DemoProtectionPolicy
     tweak: 1628462495815733
@@ -128,13 +128,13 @@ EXAMPLES = """
     key: DemoProtectionPolicy
     resource_type: "protection-policies"
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
 """
 
 RETURN = r"""
@@ -284,6 +284,7 @@ def main():
                 module, client,
                 endpoint="data-protection/protection-policies",
                 resource_id=module.params.get("policy_name"),
+                ignore_fields=("policy_name",),
                 patch_fn=updateProtectionPolicy,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

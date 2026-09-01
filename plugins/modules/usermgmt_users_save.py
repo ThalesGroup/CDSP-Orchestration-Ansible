@@ -890,6 +890,7 @@ def main():
                 module, client,
                 endpoint="usermgmt/users",
                 resource_id=module.params.get("cm_user_id"),
+                ignore_fields=("cm_user_id",),
                 patch_fn=patch,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

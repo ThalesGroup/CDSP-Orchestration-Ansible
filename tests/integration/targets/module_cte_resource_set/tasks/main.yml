@@ -2,101 +2,101 @@
 # (c) 2023-2026 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
 
-####################################################################
+# ###################################################################
 # WARNING: These are designed specifically for Ansible tests       #
 # and should not be used as examples of how to write Ansible roles #
-####################################################################
+# ###################################################################
 
-## Verify that integration_config was specified
+# # Verify that integration_config was specified
 - block:
-  - assert:
-      that:
-        - this_node_connection_string is defined
-        - resource_set_name is defined
+    - assert:
+        that:
+          - this_node_connection_string is defined
+          - resource_set_name is defined
 
 ## Validate the CTE Resource Set module
 - block:
-  - name: "Create CTE ResourceSet"
-    thalesgroup.ciphertrust.cte_resource_set:
-      op_type: create
-      name: "{{ resource_set_name }}"
-      type: Directory
-      description: "Created via Ansible"
-      resources: "{{ initial_resources_list }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_create
+    - name: "Create CTE ResourceSet"
+      thalesgroup.ciphertrust.cte_resource_set:
+        op_type: create
+        name: "{{ resource_set_name }}"
+        type: Directory
+        description: "Created via Ansible"
+        resources: "{{ initial_resources_list }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_create
 
-  - assert:
-      that:
-        - _result_create is not failed
-        - _result_create.response.id is string
+    - assert:
+        that:
+          - _result_create is not failed
+          - _result_create.response.id is string
 
-  - name: "Patch CTE ResourceSet"
-    thalesgroup.ciphertrust.cte_resource_set:
-      op_type: patch
-      id: "{{ _result_create.response.id }}"
-      description: "Updated via Ansible"
-      resources: "{{ updated_resources_list }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_patch
+    - name: "Patch CTE ResourceSet"
+      thalesgroup.ciphertrust.cte_resource_set:
+        op_type: patch
+        id: "{{ _result_create.response.id }}"
+        description: "Updated via Ansible"
+        resources: "{{ updated_resources_list }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_patch
 
-  - assert:
-      that:
-        - _result_patch is not failed
-        - _result_patch.response.message is match("Resource updated successfully")
+    - assert:
+        that:
+          - _result_patch is not failed
+          - _result_patch.response.message is match("Resource updated successfully")
 
-  - name: "Add Resources to ResourceSet"
-    thalesgroup.ciphertrust.cte_resource_set:
-      op_type: add_resource
-      id: "{{ _result_create.response.id }}"
-      resources: "{{ add_resource_to_set }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_resource
+    - name: "Add Resources to ResourceSet"
+      thalesgroup.ciphertrust.cte_resource_set:
+        op_type: add_resource
+        id: "{{ _result_create.response.id }}"
+        resources: "{{ add_resource_to_set }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_add_resource
 
-  - assert:
-      that:
-        - _result_add_resource is not failed
-        - _result_add_resource.response.message is match("Resource updated successfully")
+    - assert:
+        that:
+          - _result_add_resource is not failed
+          - _result_add_resource.response.message is match("Resource updated successfully")
 
-  - name: "Update Resource in ResourceSet"
-    thalesgroup.ciphertrust.cte_resource_set:
-      op_type: patch_resource
-      id: "{{ _result_create.response.id }}"
-      resourceIndex: "{{ resource_index_to_be_updated }}"
-      directory: "{{ idx2_updated_directory }}"
-      file: "{{ idx2_updated_file }}"
-      hdfs: "{{ idx2_updated_hdfs }}"
-      include_subfolders: "{{ idx2_updated_include_subfolders }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_upd_resource
+    - name: "Update Resource in ResourceSet"
+      thalesgroup.ciphertrust.cte_resource_set:
+        op_type: patch_resource
+        id: "{{ _result_create.response.id }}"
+        resourceIndex: "{{ resource_index_to_be_updated }}"
+        directory: "{{ idx2_updated_directory }}"
+        file: "{{ idx2_updated_file }}"
+        hdfs: "{{ idx2_updated_hdfs }}"
+        include_subfolders: "{{ idx2_updated_include_subfolders }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_upd_resource
 
-  - assert:
-      that:
-        - _result_upd_resource is not failed
-        - _result_upd_resource.response.message is match("Resource updated successfully")
+    - assert:
+        that:
+          - _result_upd_resource is not failed
+          - _result_upd_resource.response.message is match("Resource updated successfully")
 
-  - name: "Remove Resource from ResourceSet"
-    thalesgroup.ciphertrust.cte_resource_set:
-      op_type: delete_resource
-      id: "{{ _result_create.response.id }}"
-      localNode: "{{ this_node_connection_string }}"
-      resourceIndex: "{{ resource_index_to_be_deleted }}"
-    register: _result_del_resource
+    - name: "Remove Resource from ResourceSet"
+      thalesgroup.ciphertrust.cte_resource_set:
+        op_type: delete_resource
+        id: "{{ _result_create.response.id }}"
+        localNode: "{{ this_node_connection_string }}"
+        resourceIndex: "{{ resource_index_to_be_deleted }}"
+      register: _result_del_resource
 
-  - assert:
-      that:
-        - _result_del_resource is not failed
-  
-  - name: "Delete Resource Set"
-    thalesgroup.ciphertrust.cm_resource_delete:
-      key: "{{ _result_create.response.id }}"
-      resource_type: "resourceset"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_delete_resource_set
-    
-  - assert:
-      that:
-        - _result_delete_resource_set is not failed
+    - assert:
+        that:
+          - _result_del_resource is not failed
+
+    - name: "Delete Resource Set"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        key: "{{ _result_create.response.id }}"
+        resource_type: "resourceset"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_delete_resource_set
+
+    - assert:
+        that:
+          - _result_delete_resource_set is not failed
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail

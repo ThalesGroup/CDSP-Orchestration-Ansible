@@ -13,10 +13,16 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules im
     ciphertrust_operation,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CipherTrustError,
     CMApiException,
     AnsibleCMException,
-    AnsibleCMValidationException,
+)
+
+from ansible.module_utils.six.moves.urllib.error import HTTPError, URLError
+from test_helpers import MockFailJsonException
+
+DEFAULT_SETTINGS_PATH = (
+    "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils"
+    ".modules.ThalesCipherTrustModule.default_settings"
 )
 
 
@@ -64,7 +70,7 @@ class TestThalesCipherTrustModule:
         mock_instance._name = "test"
         mock_instance.params = {}
 
-        with patch.dict("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.ThalesCipherTrustModule.default_settings", {"module_class": MockAnsibleModule}):
+        with patch.dict(DEFAULT_SETTINGS_PATH, {"module_class": MockAnsibleModule}):
             module = ThalesCipherTrustModule(
                 argument_spec={"op_type": {"type": "str", "required": True}},
                 supports_check_mode=True,
@@ -83,7 +89,7 @@ class TestThalesCipherTrustModule:
         mock_instance._name = "test"
         mock_instance.params = {}
 
-        with patch.dict("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.ThalesCipherTrustModule.default_settings", {"module_class": MockAnsibleModule}):
+        with patch.dict(DEFAULT_SETTINGS_PATH, {"module_class": MockAnsibleModule}):
             ThalesCipherTrustModule(
                 argument_spec={"wrapKeyName": {"type": "str"}},
                 supports_check_mode=True,
@@ -102,7 +108,7 @@ class TestThalesCipherTrustModule:
         mock_instance._name = "test"
         mock_instance.params = {}
 
-        with patch.dict("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.ThalesCipherTrustModule.default_settings", {"module_class": MockAnsibleModule}):
+        with patch.dict(DEFAULT_SETTINGS_PATH, {"module_class": MockAnsibleModule}):
             ThalesCipherTrustModule(
                 argument_spec={
                     "opType": {"type": "str"},
@@ -122,7 +128,7 @@ class TestThalesCipherTrustModule:
         mock_instance._name = "my_module"
         mock_instance.params = {"foo": "bar"}
 
-        with patch.dict("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.ThalesCipherTrustModule.default_settings", {"module_class": MockAnsibleModule}):
+        with patch.dict(DEFAULT_SETTINGS_PATH, {"module_class": MockAnsibleModule}):
             module = ThalesCipherTrustModule(
                 argument_spec={},
                 supports_check_mode=True,
@@ -144,7 +150,7 @@ class TestThalesCipherTrustModule:
             "wrap_key_name": "key-a",
         }
 
-        with patch.dict("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.ThalesCipherTrustModule.default_settings", {"module_class": MockAnsibleModule}):
+        with patch.dict(DEFAULT_SETTINGS_PATH, {"module_class": MockAnsibleModule}):
             module = ThalesCipherTrustModule(
                 argument_spec={"wrapKeyName": {"type": "str"}},
                 supports_check_mode=True,
@@ -160,9 +166,9 @@ class TestThalesCipherTrustModule:
         mock_instance._diff = False
         mock_instance._name = "test"
 
-        with patch.dict("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.ThalesCipherTrustModule.default_settings", {"module_class": MockAnsibleModule}):
+        with patch.dict(DEFAULT_SETTINGS_PATH, {"module_class": MockAnsibleModule}):
             module = ThalesCipherTrustModule(argument_spec={})
-        
+
         module.exit_json(changed=True, response={"id": "123"})
         mock_instance.exit_json.assert_called_once_with(changed=True, response={"id": "123"})
 
@@ -173,9 +179,9 @@ class TestThalesCipherTrustModule:
         mock_instance._diff = False
         mock_instance._name = "test"
 
-        with patch.dict("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.ThalesCipherTrustModule.default_settings", {"module_class": MockAnsibleModule}):
+        with patch.dict(DEFAULT_SETTINGS_PATH, {"module_class": MockAnsibleModule}):
             module = ThalesCipherTrustModule(argument_spec={})
-        
+
         module.fail_json(msg="something broke")
         mock_instance.fail_json.assert_called_once_with(msg="something broke")
 
@@ -186,7 +192,7 @@ class TestThalesCipherTrustModule:
         mock_instance._diff = False
         mock_instance._name = "test"
 
-        with patch.dict("ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules.ThalesCipherTrustModule.default_settings", {"module_class": MockAnsibleModule}):
+        with patch.dict(DEFAULT_SETTINGS_PATH, {"module_class": MockAnsibleModule}):
             module = ThalesCipherTrustModule(
                 argument_spec={"op_type": {"type": "str"}},
                 default_args=False,
@@ -283,3 +289,43 @@ class TestCiphertrustOperation:
                 raise ValueError("not a CT error")
 
         module.fail_json.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# Raw urllib errors must not escape ciphertrust_operation
+# ---------------------------------------------------------------------------
+
+class TestRawUrllibErrorHandling:
+    """Defence in depth: CipherTrustClient translates transport errors, but any
+    code path that bypasses it must still fail cleanly rather than traceback."""
+
+    @staticmethod
+    def _module():
+        module = MagicMock()
+
+        def fail_json(**kwargs):
+            raise MockFailJsonException(**kwargs)
+
+        module.fail_json = fail_json
+        return module
+
+    def test_http_error_becomes_fail_json(self):
+        module = self._module()
+
+        with pytest.raises(MockFailJsonException) as exc_info:
+            with ciphertrust_operation(module):
+                raise HTTPError(
+                    "https://cm.example.com/api/v1/vault/keys2",
+                    400, "Bad Request", {}, None,
+                )
+
+        assert "400" in exc_info.value.kwargs["msg"]
+
+    def test_url_error_becomes_fail_json(self):
+        module = self._module()
+
+        with pytest.raises(MockFailJsonException) as exc_info:
+            with ciphertrust_operation(module):
+                raise URLError("connection refused")
+
+        assert "connection refused" in exc_info.value.kwargs["msg"]

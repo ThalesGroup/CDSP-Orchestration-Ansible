@@ -28,7 +28,8 @@ options:
         choices: [activate, deactivate]
         required: true
         type: str
-    trialId:
+    trial_id:
+        aliases: [trialId]
         description: CM ID of the trial license
         required: true
         type: str
@@ -39,24 +40,24 @@ EXAMPLES = """
 - name: "Activate Trial License"
   thalesgroup.ciphertrust.license_trial_action:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     action_type: activate
     trialId: trial_id
 
 - name: "De-activate Trial License"
   thalesgroup.ciphertrust.license_trial_action:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     action_type: deactivate
     trialId: trial_id
 """

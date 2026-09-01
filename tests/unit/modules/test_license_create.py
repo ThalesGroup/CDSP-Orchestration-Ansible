@@ -16,9 +16,9 @@ class TestLicenseCreate:
         ) as mock_helper:
             mock_module.check_mode = False
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "license": "ABC-123-LICENSE",
-            "bind_type": "auto",
+                "localNode": TEST_NODE.copy(),
+                "license": "ABC-123-LICENSE",
+                "bind_type": "auto",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:
@@ -38,9 +38,9 @@ class TestLicenseCreate:
         ) as mock_helper:
             mock_module.check_mode = True
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "license": "ABC-123-LICENSE",
-            "bind_type": "auto",
+                "localNode": TEST_NODE.copy(),
+                "license": "ABC-123-LICENSE",
+                "bind_type": "auto",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:

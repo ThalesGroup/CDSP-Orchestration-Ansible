@@ -32,7 +32,8 @@ options:
       description:
         - Identifier of the CTE ProcessSet to be patched or deleted
       type: str
-    processIndex:
+    process_index:
+      aliases: [processIndex]
       description:
         - Identifier of the CTE Process within ProcessSet to be patched or deleted
       type: int
@@ -80,13 +81,13 @@ EXAMPLES = """
 - name: "Create CTE ProcessSet"
   thalesgroup.ciphertrust.cte_process_set:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     name: TestProcessSet
     description: "via Ansible"
@@ -102,13 +103,13 @@ EXAMPLES = """
 - name: "Add process to ProcessSet"
   thalesgroup.ciphertrust.cte_process_set:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: add_process
     id: "processSetID"
     processes:
@@ -265,6 +266,7 @@ def main():
                 module, client,
                 endpoint="transparent-encryption/processsets",
                 resource_id=module.params.get("id"),
+                ignore_fields=("id",),
                 patch_fn=updateProcessSet,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

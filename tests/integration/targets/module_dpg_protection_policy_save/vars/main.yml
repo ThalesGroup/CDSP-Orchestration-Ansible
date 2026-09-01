@@ -1,3 +1,4 @@
+---
 this_node_connection_string: "{{ cm_connection_string }}"
 
 # Vars for module_group_save

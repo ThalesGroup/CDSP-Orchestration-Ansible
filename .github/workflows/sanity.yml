@@ -1,12 +1,10 @@
+---
 name: Sanity
 
 on:
   push:
-    branches: ["main"]
   pull_request:
-    branches: ["main"]
   workflow_dispatch:
-
 permissions:
   contents: read
 
@@ -50,18 +48,4 @@ jobs:
 
       - name: Run ansible-test sanity
         run: |
-          ansible-test sanity --color yes -v \
-            --test action-plugin-docs \
-            --test ansible-doc \
-            --test changelog \
-            --test compile \
-            --test line-endings \
-            --test no-assert \
-            --test no-get-exception \
-            --test no-illegal-filenames \
-            --test no-smart-quotes \
-            --test replace-urlopen \
-            --test runtime-metadata \
-            --test symlinks \
-            --test use-argspec-type-path \
-            --test use-compat-six
+          ansible-test sanity --color yes -v --requirements

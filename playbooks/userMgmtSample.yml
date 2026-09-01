@@ -3,14 +3,14 @@
 # Author: Anurag Jain, Developer Advocate, Thales
 #
 ---
-  - name: "Sample playbook for Group and User Management on CipherTrust Manager"
-    hosts: localhost
-    connection: local
+- name: "Sample playbook for Group and User Management on CipherTrust Manager"
+  hosts: localhost
+  connection: local
 
-    vars_files:
-      - vars/userMgmt.yml
+  vars_files:
+    - vars/userMgmt.yml
 
-    tasks:
+  tasks:
     - name: "Create new user"
       thalesgroup.ciphertrust.usermgmt_users_save:
         localNode: "{{ this_node_connection_string }}"
@@ -53,4 +53,5 @@
         name: "{{ var_new_self_name }}"
 
     - name: Debug Output
-      debug: var=output
+      debug:
+        var: output

@@ -1,5 +1,6 @@
 ---
-- hosts: localhost
+- name: Test the cte4k8s role
+  hosts: localhost
   remote_user: root
   roles:
     - cte4k8s

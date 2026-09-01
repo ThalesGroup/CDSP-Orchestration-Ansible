@@ -31,7 +31,8 @@ options:
     id:
       description: Identifier of the CTE CSI Storage Group to be patched
       type: str
-    userIndex:
+    user_index:
+      aliases: [userIndex]
       description:
         - Identifier of the CTE User within UserSet to be patched or deleted
       type: int
@@ -82,13 +83,13 @@ EXAMPLES = """
 - name: "Create CTE Userset"
   thalesgroup.ciphertrust.cte_user_set:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     name: UserSet1
     description: "Using Ansible"
@@ -106,13 +107,13 @@ EXAMPLES = """
 - name: "Add user to UserSet"
   thalesgroup.ciphertrust.cte_user_set:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: add_user
     id: "usersetID"
     users:
@@ -274,6 +275,7 @@ def main():
                 module, client,
                 endpoint="transparent-encryption/usersets",
                 resource_id=module.params.get("id"),
+                ignore_fields=("id",),
                 patch_fn=updateUserSet,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

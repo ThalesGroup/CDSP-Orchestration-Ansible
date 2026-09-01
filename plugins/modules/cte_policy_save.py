@@ -324,12 +324,14 @@ options:
     resource_set_id:
       description: ID of the resource set linked with the rule
       type: str
-    dataTxRuleId:
+    data_tx_rule_id:
+      aliases: [dataTxRuleId]
       description:
         - An identifier for the CTE Data-Transformation Rule
         - Can be an ID of type UUIDv4 or a URI
       type: str
-    keyRuleId:
+    key_rule_id:
+      aliases: [keyRuleId]
       description: An identifier for the CTE Key Rule. Can be an ID of type UUIDv4 or a URI
       type: str
     current_keys:
@@ -383,7 +385,8 @@ options:
             - uuid
             - muid
             - key_id
-    ldtRuleId:
+    ldt_rule_id:
+      aliases: [ldtRuleId]
       description: An identifier for the CTE LDT Key Rule. Can be an ID of type UUIDv4 or a URI
       type: str
     action:
@@ -410,10 +413,12 @@ options:
     user_set_id:
       description: ID of the resource set to link to the policy. Supported for Standard and LDT policies
       type: str
-    securityRuleId:
+    security_rule_id:
+      aliases: [securityRuleId]
       description: An identifier for the CTE Security Rule. Can be an ID of type UUIDv4 or a URI
       type: str
-    idtRuleId:
+    idt_rule_id:
+      aliases: [idtRuleId]
       description: An identifier for the CTE IDT Key Rule. Can be an ID of type UUIDv4 or a URI
       type: str
     current_key:
@@ -443,13 +448,13 @@ EXAMPLES = """
 - name: "Create CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     name: "Policy-Ans-001"
     description: "Created via Ansible"
@@ -477,13 +482,13 @@ EXAMPLES = """
 - name: "Add new data transformation rule to a CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: add_data_transfer_rule
     policy_id: "policyID"
     rule_name: "datatxrules"
@@ -494,13 +499,13 @@ EXAMPLES = """
 - name: "Delete a data transformation rule from a CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: remove_data_transfer_rule
     policy_id: "policyID"
     rule_name: "datatxrules"
@@ -790,6 +795,7 @@ def main():
                 module, client,
                 endpoint="transparent-encryption/policies",
                 resource_id=module.params.get("policy_id"),
+                ignore_fields=("policy_id",),
                 patch_fn=updateCTEPolicy,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

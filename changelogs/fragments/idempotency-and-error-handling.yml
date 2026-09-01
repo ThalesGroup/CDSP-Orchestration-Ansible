@@ -1,0 +1,50 @@
+bugfixes:
+  - >-
+    All modules now fail cleanly via ``fail_json`` when CipherTrust Manager
+    returns an HTTP error status or is unreachable. Previously ``HTTPError``
+    and ``URLError`` escaped the collection's error handling and the module
+    aborted with a Python traceback
+    (https://github.com/ThalesGroup/CDSP-Orchestration-Ansible).
+  - >-
+    ``op_type: patch`` operations are now idempotent. The resource identifier
+    passed to the patch helper (``cm_key_id``, ``policy_id``, ``old_name`` and
+    equivalents) is no longer compared against the resource's current state,
+    which previously made every patch report ``changed=true`` and issue a
+    redundant write on each run.
+  - >-
+    A failed resource lookup other than "not found" (for example HTTP 403 or
+    500) is now reported as an error instead of being treated as "resource
+    absent", which could lead to a duplicate create attempt.
+
+removed_features:
+  - >-
+    Removed the unused ``cache``, ``connection_management``, ``cckm_aws``,
+    ``cckm_azure``, ``cckm_gcp`` and ``cckm_commons`` module_utils. None of
+    them were imported by any module in the collection; the CCKM helpers will
+    return alongside the CCKM modules that use them.
+  - >-
+    Removed ``playbooks/cckm_az.yml``, ``playbooks/cckm_gcp.yml`` and
+    ``playbooks/vars/cckm.yml``, along with the CCKM and connection-management
+    entries in the documentation. They referenced modules that have never
+    existed in this collection and failed immediately when run.
+
+minor_changes:
+  - >-
+    CI now runs on every branch rather than only ``main``, ``ansible-test
+    sanity`` runs its full default test set instead of a hand-picked subset,
+    ``ansible-lint`` covers ``plugins/``, ``roles/`` and ``playbooks/``, and
+    integration-test failures fail the build. The collection is clean under
+    all 24 sanity tests and under ansible-lint's ``basic`` profile.
+  - >-
+    Module documentation now uses the same snake_case option names the modules
+    actually accept, with the historical camelCase spellings recorded as
+    aliases. Previously ``ansible-doc`` advertised camelCase names while the
+    argument_spec had been normalized to snake_case at runtime.
+  - >-
+    Fixed ``playbooks/cluster.yml``, which referenced a non-existent
+    ``cm_cluster_join`` module instead of ``cm_cluster`` with ``op_type: join``.
+  - >-
+    The ``dpg``, ``cte4u`` and ``cte4k8s`` roles are now clearly documented as
+    unimplemented placeholders, and their ``meta/main.yml`` files carry real
+    author, license and ``min_ansible_version`` metadata instead of the
+    ``ansible-galaxy init`` boilerplate.

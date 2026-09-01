@@ -16,9 +16,9 @@ class TestCmResourceDelete:
         ) as mock_helper:
             mock_module.check_mode = False
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "resource_type": "keys",
-            "key": "key-123",
+                "localNode": TEST_NODE.copy(),
+                "resource_type": "keys",
+                "key": "key-123",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:
@@ -38,9 +38,9 @@ class TestCmResourceDelete:
         ) as mock_helper:
             mock_module.check_mode = True
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "resource_type": "keys",
-            "key": "key-123",
+                "localNode": TEST_NODE.copy(),
+                "resource_type": "keys",
+                "key": "key-123",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:

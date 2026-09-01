@@ -85,13 +85,6 @@ def recover(**kwargs):
 def revoke(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     url = _key_op_url(kwargs["cm_key_id"], "revoke", kwargs.get("key_version"), kwargs.get("id_type"))
-    exclude = _OP_EXCLUDE | {"messageStr"}
-    payload = build_request_payload(
-        {k: v for k, v in kwargs.items() if k not in exclude},
-        remap={"messageStr": "message"},
-    )
-    # Re-add messageStr → message mapping for data that was excluded above
-    # but needs the remap.  Simpler: include it and let remap handle it.
     payload_dict = {k: v for k, v in kwargs.items() if k not in _OP_EXCLUDE}
     return client.post(url, data=build_request_payload(payload_dict, remap={"messageStr": "message"}))
 

@@ -218,13 +218,13 @@ EXAMPLES = """
 - name: "Create DPG Client Profile"
   thalesgroup.ciphertrust.dpg_client_profile_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     name: DPGClientProfile
     op_type: create
     app_connector_type: DPG
@@ -240,13 +240,13 @@ EXAMPLES = """
 - name: "Patch DPG Client Profile"
   thalesgroup.ciphertrust.dpg_client_profile_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: patch
     profile_id: <DPGClientProfileID>
     lifetime: 180d
@@ -452,6 +452,7 @@ def main():
                 module, client,
                 endpoint="data-protection/client-profiles",
                 resource_id=module.params.get("profile_id"),
+                ignore_fields=("profile_id",),
                 patch_fn=updateClientProfile,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

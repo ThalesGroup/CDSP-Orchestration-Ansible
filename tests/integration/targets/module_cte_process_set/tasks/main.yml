@@ -2,142 +2,142 @@
 # (c) 2023-2026 Thales Group. All rights reserved.
 # Author: Anurag Jain, Developer Advocate, Thales
 
-####################################################################
+# ###################################################################
 # WARNING: These are designed specifically for Ansible tests       #
 # and should not be used as examples of how to write Ansible roles #
-####################################################################
+# ###################################################################
 
-## Verify that integration_config was specified
+# # Verify that integration_config was specified
 - block:
-  - assert:
-      that:
-        - this_node_connection_string is defined
+    - assert:
+        that:
+          - this_node_connection_string is defined
 
 ## Validate the CTE Process Set module
 ## Before adding the ProcessSet, we would need to create the signature set first
 - block:
-  - name: "Create CTE Signature Set"
-    thalesgroup.ciphertrust.cte_signature_set:
-      op_type: create
-      name: "{{ signature_set_name }}"
-      description: "Created via Ansible"
-      source_list:
-        - "/home/ansible"
-        - "/home/user1"
-        - "/home/user2"
-        - "/home/user3"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_create_ss
+    - name: "Create CTE Signature Set"
+      thalesgroup.ciphertrust.cte_signature_set:
+        op_type: create
+        name: "{{ signature_set_name }}"
+        description: "Created via Ansible"
+        source_list:
+          - "/home/ansible"
+          - "/home/user1"
+          - "/home/user2"
+          - "/home/user3"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_create_ss
 
-  - assert:
-      that:
-        - _result_create_ss is not failed
-        - _result_create_ss.response.id is string
+    - assert:
+        that:
+          - _result_create_ss is not failed
+          - _result_create_ss.response.id is string
 
 - block:
-  - name: "Create CTE Process Set"
-    thalesgroup.ciphertrust.cte_process_set:
-      op_type: create
-      name: "{{ process_set_name }}"
-      description: "Created via Ansible"
-      processes:
-        - signature: "{{ _result_create_ss.response.id }}"
-          directory: "/home/ansible"
-          file: "*"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_create
+    - name: "Create CTE Process Set"
+      thalesgroup.ciphertrust.cte_process_set:
+        op_type: create
+        name: "{{ process_set_name }}"
+        description: "Created via Ansible"
+        processes:
+          - signature: "{{ _result_create_ss.response.id }}"
+            directory: "/home/ansible"
+            file: "*"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_create
 
-  - assert:
-      that:
-        - _result_create is not failed
-        - _result_create.response.id is string
+    - assert:
+        that:
+          - _result_create is not failed
+          - _result_create.response.id is string
 
-  - name: "Patch CTE Process Set"
-    thalesgroup.ciphertrust.cte_process_set:
-      op_type: patch
-      id: "{{ _result_create.response.id }}"
-      description: "Updated via Ansible"
-      processes:
-        - signature: "{{ _result_create_ss.response.id }}"
-          directory: "/home/ansible"
-          file: "*"
-        - signature: "{{ _result_create_ss.response.id }}"
-          directory: "/home/user1"
-          file: "*"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_patch
+    - name: "Patch CTE Process Set"
+      thalesgroup.ciphertrust.cte_process_set:
+        op_type: patch
+        id: "{{ _result_create.response.id }}"
+        description: "Updated via Ansible"
+        processes:
+          - signature: "{{ _result_create_ss.response.id }}"
+            directory: "/home/ansible"
+            file: "*"
+          - signature: "{{ _result_create_ss.response.id }}"
+            directory: "/home/user1"
+            file: "*"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_patch
 
-  - assert:
-      that:
-        - _result_patch is not failed
-        - _result_patch.response.message is match("Resource updated successfully")
+    - assert:
+        that:
+          - _result_patch is not failed
+          - _result_patch.response.message is match("Resource updated successfully")
 
-  - name: "Add Processes to Process Set"
-    thalesgroup.ciphertrust.cte_process_set:
-      op_type: add_process
-      id: "{{ _result_create.response.id }}"
-      resources:
-        - signature: "{{ _result_create_ss.response.id }}"
-          directory: "/home/user2"
-          file: "*"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_process
+    - name: "Add Processes to Process Set"
+      thalesgroup.ciphertrust.cte_process_set:
+        op_type: add_process
+        id: "{{ _result_create.response.id }}"
+        resources:
+          - signature: "{{ _result_create_ss.response.id }}"
+            directory: "/home/user2"
+            file: "*"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_add_process
 
-  - assert:
-      that:
-        - _result_add_process is not failed
-        - _result_add_process.response.message is match("Resource updated successfully")
+    - assert:
+        that:
+          - _result_add_process is not failed
+          - _result_add_process.response.message is match("Resource updated successfully")
 
-  - name: "Update Process in Process Set"
-    thalesgroup.ciphertrust.cte_process_set:
-      op_type: patch_process
-      id: "{{ _result_create.response.id }}"
-      processIndex: 2
-      directory: "/home/user3"
-      file: "*"
-      signature: "{{ _result_create_ss.response.id }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_upd_process
+    - name: "Update Process in Process Set"
+      thalesgroup.ciphertrust.cte_process_set:
+        op_type: patch_process
+        id: "{{ _result_create.response.id }}"
+        processIndex: 2
+        directory: "/home/user3"
+        file: "*"
+        signature: "{{ _result_create_ss.response.id }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_upd_process
 
-  - assert:
-      that:
-        - _result_upd_process is not failed
-        - _result_upd_process.response.message is match("Resource updated successfully")
+    - assert:
+        that:
+          - _result_upd_process is not failed
+          - _result_upd_process.response.message is match("Resource updated successfully")
 
-  - name: "Remove Process from Process Set"
-    thalesgroup.ciphertrust.cte_process_set:
-      op_type: delete_process
-      id: "{{ _result_create.response.id }}"
-      localNode: "{{ this_node_connection_string }}"
-      processIndex: 2
-    register: _result_del_process
+    - name: "Remove Process from Process Set"
+      thalesgroup.ciphertrust.cte_process_set:
+        op_type: delete_process
+        id: "{{ _result_create.response.id }}"
+        localNode: "{{ this_node_connection_string }}"
+        processIndex: 2
+      register: _result_del_process
 
-  - assert:
-      that:
-        - _result_del_process is not failed
-        - _result_del_process.response is match("Resource deleted successfully")
-  
-  - name: "Delete Process Set"
-    thalesgroup.ciphertrust.cm_resource_delete:
-      key: "{{ _result_create.response.id }}"
-      resource_type: "processset"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_delete_process_set
-    
-  - assert:
-      that:
-        - _result_delete_process_set is not failed
-  
-  - name: "Delete Signature Set"
-    thalesgroup.ciphertrust.cm_resource_delete:
-      key: "{{ _result_create_ss.response.id }}"
-      resource_type: "signatureset"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_delete_signature_set
-    
-  - assert:
-      that:
-        - _result_delete_signature_set is not failed
+    - assert:
+        that:
+          - _result_del_process is not failed
+          - _result_del_process.response is match("Resource deleted successfully")
+
+    - name: "Delete Process Set"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        key: "{{ _result_create.response.id }}"
+        resource_type: "processset"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_delete_process_set
+
+    - assert:
+        that:
+          - _result_delete_process_set is not failed
+
+    - name: "Delete Signature Set"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        key: "{{ _result_create_ss.response.id }}"
+        resource_type: "signatureset"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_delete_signature_set
+
+    - assert:
+        that:
+          - _result_delete_signature_set is not failed
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail

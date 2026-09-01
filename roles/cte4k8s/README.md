@@ -1,38 +1,49 @@
-Role Name
-=========
+CTE for Kubernetes Role
+=======================
 
-A brief description of the role goes here.
+> **Status: not yet implemented.**
+> This role is a placeholder. `tasks/main.yml` is empty, so including it has
+> no effect. It is published so the role name is reserved and so the intended
+> interface can be reviewed, but it configures nothing today.
+>
+> Track progress in the [collection issue tracker][issues]. Until this notice
+> is removed, use the modules in `thalesgroup.ciphertrust` directly, or the
+> `crdp` role, which is implemented.
+
+[issues]: https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/issues
+
+Purpose
+-------
+
+Configure CipherTrust Transparent Encryption for Kubernetes workloads.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- CipherTrust Manager reachable from the Ansible controller
+- Admin credentials for the target CipherTrust Manager
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+None yet. Variables will be documented here alongside the implementation.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+Not applicable while the role is unimplemented.
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Anurag Jain (@anugram), Thales Group.

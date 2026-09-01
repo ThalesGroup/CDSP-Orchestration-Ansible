@@ -4,6 +4,7 @@ from unittest.mock import patch
 from test_helpers import MockExitJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.vault_keys2_save import main
 
+
 class TestVaultKeys2Save:
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.vault_keys2_save.ThalesCipherTrustModule")
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.vault_keys2_save.idempotent_create")

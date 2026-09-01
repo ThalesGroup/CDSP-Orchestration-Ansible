@@ -13,7 +13,7 @@ __metaclass__ = type
 import json
 import time
 from ansible.module_utils.urls import Request
-from ansible.module_utils.six.moves.urllib.error import HTTPError
+from ansible.module_utils.six.moves.urllib.error import HTTPError, URLError
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -56,6 +56,37 @@ def _build_query_string(params):
     if parts:
         return "?" + "&".join(parts)
     return ""
+
+
+def _error_detail(err):
+    """Best-effort extraction of CM's error description from an HTTPError body.
+
+    CM returns a JSON body such as ``{"codeDesc": "...", "message": "..."}``
+    on most failures.  Falls back to the raw (truncated) body, then to the
+    HTTP reason phrase.  Never includes request headers, so the bearer token
+    and password cannot leak into the message.
+    """
+    body = b""
+    try:
+        body = err.read()
+    except Exception:
+        body = b""
+
+    if body:
+        if isinstance(body, bytes):
+            body = body.decode("utf-8", "replace")
+        try:
+            parsed = json.loads(body)
+        except (ValueError, TypeError):
+            return body.strip()[:512]
+        if isinstance(parsed, dict):
+            for key in ("codeDesc", "message", "error", "detail"):
+                value = parsed.get(key)
+                if value:
+                    return str(value)[:512]
+        return str(parsed)[:512]
+
+    return str(getattr(err, "reason", "") or getattr(err, "msg", "") or "")[:512]
 
 
 # ---------------------------------------------------------------------------
@@ -116,9 +147,31 @@ class CipherTrustClient(object):
             payload["auth_domain_path"] = self._auth_domain_path
 
         r = Request(headers=headers, timeout=120, validate_certs=self._verify)
-        _res = r.open(method="POST", url=auth_url, data=json.dumps(payload))
-        response = json.loads(_res.read())
-        self._token = response["jwt"]
+        try:
+            _res = r.open(method="POST", url=auth_url, data=json.dumps(payload))
+            response = json.loads(_res.read())
+            self._token = response["jwt"]
+        except HTTPError as err:
+            raise CMApiException(
+                message="Authentication to CipherTrust Manager at {0} failed "
+                        "for user '{1}': {2}".format(
+                            self._server_ip, self._user, _error_detail(err)
+                        ),
+                api_error_code=err.code,
+            )
+        except URLError as err:
+            raise CMApiException(
+                message="Could not connect to CipherTrust Manager at {0}: {1}".format(
+                    self._server_ip, getattr(err, "reason", err)
+                ),
+            )
+        except (ValueError, TypeError, KeyError):
+            raise CMApiException(
+                message="Unexpected authentication response from CipherTrust "
+                        "Manager at {0}: no JWT in response body.".format(
+                            self._server_ip
+                        ),
+            )
         _jwt_cache[self._cache_key] = (self._token, time.time() + _TOKEN_TTL)
 
     def _headers(self):
@@ -134,7 +187,9 @@ class CipherTrustClient(object):
         """Execute an API call and return the parsed response body.
 
         Raises ``CMApiException`` on application-level errors (``codeDesc``
-        in the response) and re-raises ``HTTPError`` on transport errors.
+        in the response), on HTTP error statuses, and on connection failures,
+        so that ``ciphertrust_operation`` can turn any of them into a clean
+        ``fail_json`` instead of letting a traceback escape the module.
         """
         url = self._base_url + endpoint
         try:
@@ -163,7 +218,20 @@ class CipherTrustClient(object):
 
             return response
         except HTTPError as err:
-            raise err
+            raise CMApiException(
+                message="{0} {1} failed: {2}".format(
+                    method, endpoint, _error_detail(err)
+                ),
+                api_error_code=err.code,
+            )
+        except URLError as err:
+            raise CMApiException(
+                message="Could not connect to CipherTrust Manager at {0} "
+                        "for {1} {2}: {3}".format(
+                            self._server_ip, method, endpoint,
+                            getattr(err, "reason", err),
+                        ),
+            )
 
     def get(self, endpoint):
         return self.request("GET", endpoint)

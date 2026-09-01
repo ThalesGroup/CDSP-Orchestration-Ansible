@@ -16,9 +16,9 @@ class TestInterfaceActions:
         ) as mock_helper:
             mock_module.check_mode = False
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "op_type": "enable",
-            "interface_id": "intf-123",
+                "localNode": TEST_NODE.copy(),
+                "op_type": "enable",
+                "interface_id": "intf-123",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:
@@ -38,9 +38,9 @@ class TestInterfaceActions:
         ) as mock_helper:
             mock_module.check_mode = True
             mock_module.params = {
-            "localNode": TEST_NODE.copy(),
-            "op_type": "enable",
-            "interface_id": "intf-123",
+                "localNode": TEST_NODE.copy(),
+                "op_type": "enable",
+                "interface_id": "intf-123",
             }
 
             with pytest.raises(MockExitJsonException) as excinfo:

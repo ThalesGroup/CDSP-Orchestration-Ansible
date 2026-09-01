@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Validate per-scope coverage thresholds from coverage.xml.
 
 Usage:
@@ -74,4 +73,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

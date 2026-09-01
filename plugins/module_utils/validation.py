@@ -53,12 +53,12 @@ def validate_required_parameters(params=None, required_params=None, module_name=
         actual_params = actual_params.params
     if actual_params is None:
         actual_params = {}
-        
+
     # Extract required_params from possible sources
     actual_req = required_params or required_parameters or kwargs.get("required_keys")
     if actual_req is None:
         actual_req = []
-        
+
     missing_params = []
 
     for param in actual_req:
@@ -344,7 +344,7 @@ def validate_choice(param_name=None, param_value=None, choices=None, module_name
     p_name = param_name or kwargs.get("parameter_name")
     p_value = param_value if param_value is not None else value
     p_choices = choices or kwargs.get("valid_choices")
-    
+
     if p_choices is None:
         p_choices = []
 

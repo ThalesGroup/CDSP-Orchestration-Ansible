@@ -13,105 +13,103 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
-####################################################################
+# ###################################################################
 # WARNING: These are designed specifically for Ansible tests       #
 # and should not be used as examples of how to write Ansible roles #
-####################################################################
+# ###################################################################
 
-## Verify that integration_config was specified
+# # Verify that integration_config was specified
 - block:
-  - assert:
-      that:
-        - this_node_connection_string is defined
-        - group1_name is defined
-        - group1_description is defined
-        - user1_name is defined
-        - user1_email is defined
-        - user1_password is defined
+    - assert:
+        that:
+          - this_node_connection_string is defined
+          - group1_name is defined
+          - group1_description is defined
+          - user1_name is defined
+          - user1_email is defined
+          - user1_password is defined
 
 - block:
-  - name: "Create Test Group"
-    thalesgroup.ciphertrust.group_save:
-      op_type: create
-      name: "{{ group1_name }}"
-      description: "{{ group1_description }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_create_group
+    - name: "Create Test Group"
+      thalesgroup.ciphertrust.group_save:
+        op_type: create
+        name: "{{ group1_name }}"
+        description: "{{ group1_description }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_create_group
 
-  - assert:
-      that:
-        - _result_create_group is not failed
-        - _result_create_group.response.id is string
+    - assert:
+        that:
+          - _result_create_group is not failed
+          - _result_create_group.response.id is string
 
-  - name: "Create Test User"
-    thalesgroup.ciphertrust.usermgmt_users_save:
-      op_type: create
-      name: "{{ user1_name }}"
-      email: "{{ user1_email }}"
-      password: "{{ user1_password }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_create_user
+    - name: "Create Test User"
+      thalesgroup.ciphertrust.usermgmt_users_save:
+        op_type: create
+        name: "{{ user1_name }}"
+        email: "{{ user1_email }}"
+        password: "{{ user1_password }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_create_user
 
-  - assert:
-      that:
-        - _result_create_user is not failed
-        - _result_create_user.response.id is string
+    - assert:
+        that:
+          - _result_create_user is not failed
+          - _result_create_user.response.id is string
 
-  - name: "Add User to Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: add
-      object_type: user
-      object_id: "{{ _result_create_user.response.id }}"
-      name: "{{ group1_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_add_user_to_group
+    - name: "Add User to Group"
+      thalesgroup.ciphertrust.group_add_remove_object:
+        op_type: add
+        object_type: user
+        object_id: "{{ _result_create_user.response.id }}"
+        name: "{{ group1_name }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_add_user_to_group
 
-  - assert:
-      that:
-        - _result_add_user_to_group is not failed
-        - _result_add_user_to_group.response.id is string
+    - assert:
+        that:
+          - _result_add_user_to_group is not failed
+          - _result_add_user_to_group.response.id is string
 
-  - name: "Remove User from Group"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: user
-      object_id: "{{ _result_create_user.response.id }}"
-      name: "{{ group1_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_remove_user_from_group
+    - name: "Remove User from Group"
+      thalesgroup.ciphertrust.group_add_remove_object:
+        op_type: remove
+        object_type: user
+        object_id: "{{ _result_create_user.response.id }}"
+        name: "{{ group1_name }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_remove_user_from_group
 
-  - assert:
-      that:
-        - _result_remove_user_from_group is not failed
-        - _result_remove_user_from_group.response.id is string
+    - assert:
+        that:
+          - _result_remove_user_from_group is not failed
+          - _result_remove_user_from_group.response.id is string
 
-  - name: "Cleanup - Remove User from Group (if still present)"
-    thalesgroup.ciphertrust.group_add_remove_object:
-      op_type: remove
-      object_type: user
-      object_id: "{{ _result_create_user.response.id }}"
-      name: "{{ group1_name }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_cleanup_remove
-    ignore_errors: true
+    - name: "Cleanup - Remove User from Group (if still present)"
+      thalesgroup.ciphertrust.group_add_remove_object:
+        op_type: remove
+        object_type: user
+        object_id: "{{ _result_create_user.response.id }}"
+        name: "{{ group1_name }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_cleanup_remove
+      ignore_errors: true
 
-  - name: "Cleanup - Delete Test User"
-    thalesgroup.ciphertrust.usermgmt_users_save:
-      op_type: delete
-      id: "{{ _result_create_user.response.id }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_cleanup_user
-    ignore_errors: true
+    - name: "Cleanup - Delete Test User"
+      thalesgroup.ciphertrust.usermgmt_users_save:
+        op_type: delete
+        id: "{{ _result_create_user.response.id }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_cleanup_user
+      ignore_errors: true
 
-  - name: "Cleanup - Delete Test Group"
-    thalesgroup.ciphertrust.group_save:
-      op_type: delete
-      id: "{{ _result_create_group.response.id }}"
-      localNode: "{{ this_node_connection_string }}"
-    register: _result_cleanup_group
-    ignore_errors: true
+    - name: "Cleanup - Delete Test Group"
+      thalesgroup.ciphertrust.group_save:
+        op_type: delete
+        id: "{{ _result_create_group.response.id }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_cleanup_group
+      ignore_errors: true
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail

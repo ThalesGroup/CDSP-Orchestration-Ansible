@@ -208,7 +208,8 @@ You can use GitHub issues page and [Thales Community Forum](https://supportporta
 
 ## Release Notes and Roadmap
 
-See the rendered changelog
+See [CHANGELOG.rst](CHANGELOG.rst) for rendered release notes.
+See [ROADMAP.md](ROADMAP.md) for planned milestones and backlog.
 
 
 ## Related Information
@@ -219,4 +220,4 @@ See the rendered changelog
 
 ## License Information
 
-[MIT] (https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/blob/main/LICENSE)
+[MIT](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/blob/main/LICENSE)

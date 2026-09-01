@@ -220,23 +220,28 @@ options:
           type: list
           elements: dict
           suboptions:
-            C:
+            c:
+              aliases: [C]
               description:
                 - Country, for example "US"
               type: str
-            L:
+            l:
+              aliases: [L]
               description:
                 - Location, for example "Belcamp"
               type: str
-            O:
+            o:
+              aliases: [O]
               description:
                 - Organization, for example "Thales Group"
               type: str
-            OU:
+            ou:
+              aliases: [OU]
               description:
                 - Organizational Unit, for example "RnD"
               type: str
-            ST:
+            st:
+              aliases: [ST]
               description:
                 - State/province, for example "MD"
               type: str
@@ -266,12 +271,12 @@ EXAMPLES = """
 - name: "Create Interface"
   thalesgroup.ciphertrust.interface_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: create
     port: 9005
     auto_registration: false
@@ -640,7 +645,15 @@ def validate_parameters(user_module):
             raise AnsibleCMFormatException(
                 parameter="local_auto_gen_attributes",
                 expected_format="dictionary with 'cn' (required) and optional 'dns_names', 'email_addresses', 'ip_addresses', 'names', 'uid'",
-                example="local_auto_gen_attributes:\n  cn: \"example.com\"\n  dns_names:\n    - \"example.com\"\n  names:\n    - O: \"Thales Group\"\n      OU: \"RnD\"",
+                example=(
+                    "local_auto_gen_attributes:\n"
+                    "  cn: \"example.com\"\n"
+                    "  dns_names:\n"
+                    "    - \"example.com\"\n"
+                    "  names:\n"
+                    "    - O: \"Thales Group\"\n"
+                    "      OU: \"RnD\""
+                ),
                 documentation_link=DOCUMENTATION_LINKS.get(
                     "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
                 ),
@@ -736,6 +749,7 @@ def main():
                 module, client,
                 endpoint="configs/interfaces",
                 resource_id=module.params.get("interface_id"),
+                ignore_fields=("interface_id",),
                 patch_fn=patch,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

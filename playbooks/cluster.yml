@@ -4,15 +4,15 @@
 #
 
 ---
-  - name: "Create and join Ciphertrust Manager Role"
-    hosts: localhost
-    connection: local
+- name: "Create and join Ciphertrust Manager Role"
+  hosts: localhost
+  connection: local
 
-    vars_files:
-      - vars/cluster.yaml
+  vars_files:
+    - vars/cluster.yaml
 
-    tasks:
-    #Skip this task if there is already a cluster with at least one member
+  tasks:
+    # Skip this task if there is already a cluster with at least one member
     - name: "Create new cluster"
       thalesgroup.ciphertrust.cm_cluster:
         localNode: "{{ this_node_connection_string }}"
@@ -23,7 +23,7 @@
         minutes: 1
 
     - name: "Join nodes to the cluster"
-      thalesgroup.ciphertrust.cm_cluster_join:
+      thalesgroup.ciphertrust.cm_cluster:
         localNode: "{{ this_node_connection_string }}"
         op_type: join
         nodes: "{{ cluster_nodes }}"
@@ -34,4 +34,5 @@
         minutes: 2
 
     - name: Debug Output
-      debug: var=output
+      ansible.builtin.debug:
+        var: output

@@ -1,3 +1,4 @@
+---
 this_node_connection_string: "{{ cm_connection_string }}"
 
 client_group_name: AnsibleGroup

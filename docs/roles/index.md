@@ -4,6 +4,17 @@ This section provides documentation for all roles in the ThalesGroup CipherTrust
 
 ## Available Roles
 
+| Role | Status |
+|------|--------|
+| [`crdp`](crdp.md) | Implemented |
+| [`cte4k8s`](cte4k8s.md) | Not yet implemented (placeholder) |
+| [`cte4u`](cte4u.md) | Not yet implemented (placeholder) |
+| [`dpg`](dpg.md) | Not yet implemented (placeholder) |
+
+Placeholder roles ship with an empty `tasks/main.yml`; the features and
+variables listed for them below describe the intended interface, not
+current behaviour.
+
 ### crdp
 
 Role for setting up CipherTrust Ransomware Defense Platform (CRDP).
@@ -34,6 +45,8 @@ Role for setting up CipherTrust Ransomware Defense Platform (CRDP).
 
 ### cte4k8s
 
+**Not yet implemented — placeholder role.**
+
 Role for setting up CTE integration with Kubernetes.
 
 **Features:**
@@ -59,6 +72,8 @@ Role for setting up CTE integration with Kubernetes.
 
 ### cte4u
 
+**Not yet implemented — placeholder role.**
+
 Role for setting up CTE for Unix/Linux systems.
 
 **Features:**
@@ -83,6 +98,8 @@ Role for setting up CTE for Unix/Linux systems.
 ```
 
 ### dpg
+
+**Not yet implemented — placeholder role.**
 
 Role for setting up Data Protection Gateway (DPG).
 

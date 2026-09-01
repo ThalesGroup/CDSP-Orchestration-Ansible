@@ -4,6 +4,7 @@ from unittest.mock import patch
 from test_helpers import MockExitJsonException, TEST_NODE
 from ansible_collections.thalesgroup.ciphertrust.plugins.modules.dpg_access_policy_save import main
 
+
 class TestDpgAccessPolicySave:
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.dpg_access_policy_save.ThalesCipherTrustModule")
     @patch("ansible_collections.thalesgroup.ciphertrust.plugins.modules.dpg_access_policy_save.idempotent_create")
@@ -31,7 +32,6 @@ class TestDpgAccessPolicySave:
             "localNode": TEST_NODE.copy(),
             "op_type": "patch",
             "name": "Test1",
-            "id": "123",
             "meta": None,
             "profile_id": "prof1", "policy_id": "pol1", "format_id": "form1",
             "id": "id-123",

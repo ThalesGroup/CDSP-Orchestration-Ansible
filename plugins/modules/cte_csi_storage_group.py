@@ -78,13 +78,13 @@ EXAMPLES = """
 - name: "Create CSI Storage Group"
   thalesgroup.ciphertrust.cte_csi_storage_group:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     name: AnsibleCSI_SG_1
     k8s_namespace: AnsibleK8s_NS_1
@@ -96,13 +96,13 @@ EXAMPLES = """
 - name: "Edit CSI Storage Group"
   thalesgroup.ciphertrust.cte_csi_storage_group:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: create
     id: "sg_id"
     description: "Test CSIStorageGroup Updated"
@@ -111,13 +111,13 @@ EXAMPLES = """
 - name: "Add clients to the CSI Storage Group"
   thalesgroup.ciphertrust.cte_csi_storage_group:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: add_client
     id: "sg_id"
     client_list:
@@ -127,13 +127,13 @@ EXAMPLES = """
 - name: "Add guardpolicy to the CSI Storage Group"
   thalesgroup.ciphertrust.cte_csi_storage_group:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
     op_type: add_guard_point
     id: "sg_id"
     policy_list:
@@ -294,6 +294,7 @@ def main():
                 module, client,
                 endpoint="transparent-encryption/csigroups",
                 resource_id=module.params.get("id"),
+                ignore_fields=("id",),
                 patch_fn=updateCSIStorageGroup,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

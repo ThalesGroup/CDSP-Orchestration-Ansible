@@ -79,12 +79,12 @@ EXAMPLES = """
 - name: "Create Domain"
   thalesgroup.ciphertrust.domain_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: create
     admins:
       - local|4d1c26ab-8730-4d44-af5c-9a8641d0266d
@@ -95,12 +95,12 @@ EXAMPLES = """
 - name: "Patch Domain"
   thalesgroup.ciphertrust.domain_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
     op_type: patch
     domain_id: "ID_STRING"
     connection_id: "ID_STRING"
@@ -232,6 +232,7 @@ def main():
                 module, client,
                 endpoint="domains",
                 resource_id=module.params.get("domain_id"),
+                ignore_fields=("domain_id",),
                 patch_fn=patch,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

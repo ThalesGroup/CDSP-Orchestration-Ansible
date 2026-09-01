@@ -92,32 +92,32 @@ EXAMPLES = """
 - name: "Create Access Policy"
   thalesgroup.ciphertrust.dpg_access_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path: domain
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path: domain
     op_type: create
     name: DemoAccessPolicy
     default_reveal_type: "Ciphertext"
     user_set_policy:
-    - reveal_type: Plaintext
-      user_set_id: <UserSetID>
-    - reveal_type: Ciphertext
-      user_set_id: <UserSetID>
+      - reveal_type: Plaintext
+        user_set_id: <UserSetID>
+      - reveal_type: Ciphertext
+        user_set_id: <UserSetID>
 
 - name: "Patch Access Policy"
   thalesgroup.ciphertrust.dpg_access_policy_save:
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path: domain
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path: domain
     op_type: patch
     policy_id: <accessPolicyID>
     name: DemoAccessPolicyUPD
@@ -131,13 +131,13 @@ EXAMPLES = """
     reveal_type: Plaintext
     user_set_id: <UserSetID>
     localNode:
-        server_ip: "IP/FQDN of CipherTrust Manager"
-        server_private_ip: "Private IP in case that is different from above"
-        server_port: 5432
-        user: "CipherTrust Manager Username"
-        password: "CipherTrust Manager Password"
-        verify: false
-        auth_domain_path: domain
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      server_private_ip: "Private IP in case that is different from above"
+      server_port: 5432
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path: domain
 
 - name: "Update UserSet in Access Policy"
   thalesgroup.ciphertrust.dpg_access_policy_save:
@@ -343,6 +343,7 @@ def main():
                 module, client,
                 endpoint="data-protection/access-policies",
                 resource_id=module.params.get("policy_id"),
+                ignore_fields=("policy_id",),
                 patch_fn=updateAccessPolicy,
                 patch_kwargs=dict(
                     node=module.params.get("localNode"),

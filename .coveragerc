@@ -1,7 +1,5 @@
 [run]
-omit =
-    plugins/module_utils/cckm_aws.py
-    plugins/module_utils/cckm_azure.py
-    plugins/module_utils/cckm_commons.py
-    plugins/module_utils/cckm_gcp.py
-
+branch = False
+source =
+    plugins/modules
+    plugins/module_utils

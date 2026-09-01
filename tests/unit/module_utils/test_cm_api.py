@@ -7,10 +7,14 @@ CipherTrustClient (auth, HTTP verbs, JWT caching, error handling),
 and backward-compatible wrapper functions.
 """
 
+import io
 import json
 import time
 import pytest
-from unittest.mock import MagicMock, patch, PropertyMock
+from unittest.mock import MagicMock, patch
+from ansible.module_utils.six.moves.urllib.error import HTTPError, URLError
+
+from test_helpers import MockFailJsonException
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     is_json,
@@ -22,10 +26,12 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
     DeleteWithoutData,
     GETIdByQueryParam,
     _jwt_cache,
-    _TOKEN_TTL,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ciphertrust_operation,
 )
 
 # Reusable test node
@@ -514,3 +520,173 @@ class TestBackwardCompatWrappers:
         )
         mock_instance.get.assert_called_once_with("vault/keys2")
         assert result == {"id": "abc"}
+
+
+# ---------------------------------------------------------------------------
+# Transport error handling
+#
+# CM returns 4xx/5xx for bad payloads, expired credentials, duplicate names
+# and server faults.  urllib surfaces those as HTTPError, and connection
+# failures as URLError.  Neither is part of the CipherTrustError hierarchy,
+# so unless the client translates them they escape ``ciphertrust_operation``
+# and the module dies with a traceback instead of a clean fail_json.
+# ---------------------------------------------------------------------------
+
+class TestTransportErrorHandling:
+
+    def setup_method(self):
+        _jwt_cache.clear()
+
+    @staticmethod
+    def _authed_client():
+        cache_key = (TEST_NODE["server_ip"], TEST_NODE["user"], "")
+        _jwt_cache[cache_key] = ("supersecretjwt", time.time() + 600)
+        return CipherTrustClient(TEST_NODE)
+
+    @staticmethod
+    def _http_error(code=400, body=None, msg="Bad Request"):
+        fp = io.BytesIO(body.encode()) if body is not None else None
+        return HTTPError(
+            "https://test.example.com/api/v1/vault/keys2", code, msg, {}, fp
+        )
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_http_error_becomes_cmapi_exception(self, MockRequest):
+        MockRequest.return_value.open.side_effect = self._http_error(
+            400, json.dumps({"codeDesc": "InvalidPayload"})
+        )
+
+        client = self._authed_client()
+        with pytest.raises(CMApiException) as exc_info:
+            client.post("vault/keys2", data="{}")
+
+        assert exc_info.value.api_error_code == 400
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_http_error_message_includes_cm_detail(self, MockRequest):
+        MockRequest.return_value.open.side_effect = self._http_error(
+            409, json.dumps({"codeDesc": "AlreadyExists", "message": "name in use"})
+        )
+
+        client = self._authed_client()
+        with pytest.raises(CMApiException) as exc_info:
+            client.post("usermgmt/groups", data="{}")
+
+        rendered = str(exc_info.value)
+        assert "AlreadyExists" in rendered or "name in use" in rendered
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_http_error_without_readable_body(self, MockRequest):
+        MockRequest.return_value.open.side_effect = self._http_error(500, None, "Boom")
+
+        client = self._authed_client()
+        with pytest.raises(CMApiException) as exc_info:
+            client.get("vault/keys2")
+
+        assert exc_info.value.api_error_code == 500
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_http_error_with_non_json_body(self, MockRequest):
+        MockRequest.return_value.open.side_effect = self._http_error(
+            502, "<html>gateway</html>", "Bad Gateway"
+        )
+
+        client = self._authed_client()
+        with pytest.raises(CMApiException) as exc_info:
+            client.get("vault/keys2")
+
+        assert exc_info.value.api_error_code == 502
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_http_error_does_not_leak_credentials(self, MockRequest):
+        MockRequest.return_value.open.side_effect = self._http_error(
+            401, json.dumps({"codeDesc": "Unauthorized"})
+        )
+
+        client = self._authed_client()
+        with pytest.raises(CMApiException) as exc_info:
+            client.get("vault/keys2")
+
+        rendered = str(exc_info.value)
+        assert "supersecretjwt" not in rendered
+        assert TEST_NODE["password"] not in rendered
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_url_error_becomes_cmapi_exception(self, MockRequest):
+        MockRequest.return_value.open.side_effect = URLError("timed out")
+
+        client = self._authed_client()
+        with pytest.raises(CMApiException) as exc_info:
+            client.get("vault/keys2")
+
+        assert "timed out" in str(exc_info.value)
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_auth_http_error_becomes_cmapi_exception(self, MockRequest):
+        MockRequest.return_value.open.side_effect = self._http_error(
+            401, json.dumps({"codeDesc": "InvalidCredentials"}), "Unauthorized"
+        )
+
+        client = CipherTrustClient(TEST_NODE)
+        with pytest.raises(CMApiException) as exc_info:
+            client.get("vault/keys2")
+
+        assert exc_info.value.api_error_code == 401
+        assert TEST_NODE["password"] not in str(exc_info.value)
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_auth_url_error_becomes_cmapi_exception(self, MockRequest):
+        MockRequest.return_value.open.side_effect = URLError("no route to host")
+
+        client = CipherTrustClient(TEST_NODE)
+        with pytest.raises(CMApiException) as exc_info:
+            client.get("vault/keys2")
+
+        assert TEST_NODE["password"] not in str(exc_info.value)
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_auth_response_without_jwt_becomes_cmapi_exception(self, MockRequest):
+        mock_response = MagicMock()
+        mock_response.read.return_value = b"<html>not the login endpoint</html>"
+        MockRequest.return_value.open.return_value = mock_response
+
+        client = CipherTrustClient(TEST_NODE)
+        with pytest.raises(CMApiException):
+            client.get("vault/keys2")
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_api_error_reaches_fail_json_not_traceback(self, MockRequest):
+        """End-to-end: a CM 400 must land in fail_json, not escape the module."""
+        MockRequest.return_value.open.side_effect = self._http_error(
+            400, json.dumps({"codeDesc": "InvalidPayload"})
+        )
+
+        module = MagicMock()
+        module.fail_json.side_effect = MockFailJsonException
+
+        client = self._authed_client()
+        with pytest.raises(MockFailJsonException):
+            with ciphertrust_operation(module):
+                client.post("vault/keys2", data="{}")
+
+        assert module.fail_json.called
