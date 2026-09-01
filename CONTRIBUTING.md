@@ -83,10 +83,10 @@ are recorded here instead:
 - `validate-modules:missing-gplv3-license` — this collection is MIT licensed
   (see `LICENSE`), while `validate-modules` expects a GPLv3-compatible module
   header by default.
-- `mkdocs.yml yamllint:unparsable-with-libyaml` — `mkdocs.yml` uses
-  `!!python/name:` tags for the pymdownx emoji extension, which libyaml cannot
-  construct. The file is documentation config, not collection content, and is
-  excluded from the build artifact via `build_ignore`.
+A waiver may only name a file that ships in the build artifact. `build_ignore`
+excludes documentation and the unit suite, and `ansible-test` fails the
+`ignores` test when a waiver points at a file it cannot find -- so a waiver for
+an excluded file passes in the repository and fails at certification time.
 
 Add a matching bullet here whenever you add a waiver, and remove the waiver as
 soon as the underlying issue is fixed — `ansible-test` fails the `ignores` test

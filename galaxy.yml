@@ -74,7 +74,13 @@ build_ignore:
   - .gitignore
   - .github
   - .vscode
-  - tests
+  # tests/ ships: `ansible-test sanity` run against the built artifact needs
+  # tests/sanity/ignore-*.txt, and certification runs it that way. Only the
+  # unit suite and its fixtures are excluded -- they are not useful to a
+  # consumer of the collection and are exercised in CI from the repo.
+  - tests/unit
+  - tests/fixtures
+  - tests/output
   - docs
   - mkdocs.yml
   - run_tests.py

@@ -11,8 +11,8 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 
-MODULES_MIN = 60.0
-MODULE_UTILS_MIN = 80.0
+MODULES_MIN = 85.0
+MODULE_UTILS_MIN = 90.0
 
 
 def _scope_coverage(report_path: Path) -> tuple[float, float]:

@@ -9,6 +9,7 @@ __metaclass__ = type
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
     build_request_payload,
+    _build_query_string,
 )
 
 
@@ -195,12 +196,23 @@ def addSignatureToSet(**kwargs):
 
 
 def getSignatureFromSetByFilter(**kwargs):
+    """Look up a signature in a set, optionally filtered by file name.
+
+    ``file_name`` is optional in the module's ``required_if`` rules, so it is
+    built into the query only when supplied. Concatenating it unconditionally
+    raised ``TypeError`` for a task that passed only ``id``.
+    """
     client = CipherTrustClient(kwargs["node"])
+    query = _build_query_string({
+        "skip": 0,
+        "limit": 1,
+        "file_name": kwargs.get("file_name"),
+    })
     return client.get(
         "transparent-encryption/signaturesets/"
         + kwargs["id"]
-        + "/signatures?skip=0&limit=1&file_name="
-        + kwargs["file_name"],
+        + "/signatures"
+        + query,
     )
 
 

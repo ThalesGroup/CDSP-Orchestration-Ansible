@@ -293,8 +293,15 @@ def GETIdByQueryParam(
     if len(response["resources"]) > 0:
         if id is None:
             return response
-        else:
-            return {"id": response["resources"][0][id]}
+        resource = response["resources"][0]
+        if id not in resource:
+            raise CMApiException(
+                message="Matching resource has no '{0}' field; got: {1}".format(
+                    id, sorted(resource)
+                ),
+                api_error_code=0,
+            )
+        return {"id": resource[id]}
     else:
         raise CMApiException(
             message="No matching records found",

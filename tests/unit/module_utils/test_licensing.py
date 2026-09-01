@@ -3,6 +3,7 @@
 """Unit tests for plugins/module_utils/licensing.py"""
 
 import json
+import pytest
 from unittest.mock import patch
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.licensing import (
@@ -39,15 +40,15 @@ class TestGetLockdata:
         assert result == {"data": {"lockCode": "ABC123"}}
 
     @patch(MODULE_PATH)
-    def test_returns_failed_on_api_error(self, MockClient):
+    def test_propagates_api_error(self, MockClient):
+        """A failed lookup must not be reported to Ansible as success."""
         mock_instance = MockClient.return_value
         mock_instance.get.side_effect = CMApiException(
             message="Forbidden", api_error_code=403
         )
 
-        result = getLockdata(TEST_NODE)
-
-        assert result == {"failed": True}
+        with pytest.raises(CMApiException):
+            getLockdata(TEST_NODE)
 
 
 class TestGetTrialLicenseId:

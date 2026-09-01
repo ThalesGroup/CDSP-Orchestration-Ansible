@@ -43,14 +43,20 @@ options:
         required: true
       server_private_ip:
         description:
-          - Internal/private IP of the CM Server, if different from
-            C(server_ip).
-          - Used for cluster node-to-node communication.
+          - Not used. Accepted for backwards compatibility only.
+          - The collection connects to C(server_ip) over HTTPS and never reads
+            this value.
+          - Deprecated; it will be removed in version 2.0.0.
         type: str
         required: false
         default: 10.10.10.10
       server_port:
-        description: Port on which CipherTrust Manager is listening.
+        description:
+          - Not used. Accepted for backwards compatibility only.
+          - The collection always connects to the CipherTrust Manager REST API
+            on the default HTTPS port; setting this has no effect, and the
+            C(5432) default is not the API port.
+          - Deprecated; it will be removed in version 2.0.0.
         type: int
         required: false
         default: 5432
@@ -70,6 +76,8 @@ options:
         description:
           - Whether to verify the CM server's TLS certificate.
           - Set to C(true) in production.
+          - The default changes to C(true) in version 2.0.0; set it explicitly
+            to keep today's behaviour across that upgrade.
         type: bool
         required: false
         default: false

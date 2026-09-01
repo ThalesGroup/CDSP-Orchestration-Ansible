@@ -15,8 +15,6 @@
     xts: false
     localNode:
       server_ip: "{{ cm_ip }}"
-      server_private_ip: "{{ cm_private_ip }}"
-      server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
       verify: false
@@ -27,8 +25,6 @@
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode:
       server_ip: "{{ cm_ip }}"
-      server_private_ip: "{{ cm_private_ip }}"
-      server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
       verify: false
@@ -43,8 +39,6 @@
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode:
       server_ip: "{{ cm_ip }}"
-      server_private_ip: "{{ cm_private_ip }}"
-      server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
       verify: false
@@ -59,8 +53,6 @@
   thalesgroup.ciphertrust.cm_resource_get_id_from_name:
     localNode:
       server_ip: "{{ cm_ip }}"
-      server_private_ip: "{{ cm_private_ip }}"
-      server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
       verify: false
@@ -74,8 +66,6 @@
   thalesgroup.ciphertrust.dpg_access_policy_save:
     localNode:
       server_ip: "{{ cm_ip }}"
-      server_private_ip: "{{ cm_private_ip }}"
-      server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
       verify: false
@@ -95,8 +85,6 @@
   thalesgroup.ciphertrust.cm_resource_get_id_from_name:
     localNode:
       server_ip: "{{ cm_ip }}"
-      server_private_ip: "{{ cm_private_ip }}"
-      server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
       verify: false
@@ -110,8 +98,6 @@
   thalesgroup.ciphertrust.dpg_character_set_save:
     localNode:
       server_ip: "{{ cm_ip }}"
-      server_private_ip: "{{ cm_private_ip }}"
-      server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
       verify: false
@@ -129,8 +115,6 @@
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode:
       server_ip: "{{ cm_ip }}"
-      server_private_ip: "{{ cm_private_ip }}"
-      server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
       verify: false
@@ -167,8 +151,6 @@
     #    tls_enabled: false
     localNode:
       server_ip: "{{ cm_ip }}"
-      server_private_ip: "{{ cm_private_ip }}"
-      server_port: 5432
       user: "{{ cm_username }}"
       password: "{{ cm_password }}"
       verify: false

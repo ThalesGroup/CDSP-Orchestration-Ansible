@@ -814,8 +814,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.vault_keys2_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -829,8 +827,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.vault_keys2_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -1329,12 +1325,10 @@ def validate_parameters(user_module):
         param = validation["param"]
         if params.get(param) is not None:
             validate_choice(
-                module=user_module,
-                parameter=param,
+                parameter_name=param,
                 value=params.get(param),
                 choices=validation["choices"],
-                optional=validation.get("optional", False),
-                param_type="str"
+                module_name="vault_keys2_save",
             )
 
     # Validate string length constraints
@@ -1408,7 +1402,7 @@ def validate_parameters(user_module):
         param = validation["param"]
         if params.get(param) is not None:
             validate_dict_keys(
-                module=user_module,
+                parameters=user_module,
                 parameter=param,
                 value=params.get(param),
                 allowed_keys=validation["allowed_keys"],
@@ -1426,7 +1420,7 @@ def validate_parameters(user_module):
         param = validation["param"]
         if params.get(param) is not None:
             validate_list_elements(
-                module=user_module,
+                parameters=user_module,
                 parameter=param,
                 value=params.get(param),
                 element_type="dict" if param == "aliases" else "str",
@@ -1452,9 +1446,6 @@ def setup_module_object():
 def main():
 
     module = setup_module_object()
-    validate_parameters(
-        user_module=module,
-    )
 
     result = dict(
         changed=False,
@@ -1463,6 +1454,8 @@ def main():
     client = CipherTrustClient(module.params.get("localNode"))
 
     with ciphertrust_operation(module):
+        validate_parameters(user_module=module)
+
         if module.params.get("op_type") == "create":
             changed, response, diff = idempotent_create(
                 module, client,

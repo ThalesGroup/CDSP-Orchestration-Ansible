@@ -819,8 +819,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -848,8 +846,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -862,8 +858,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -881,8 +875,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -896,8 +888,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.dpg_policy_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -912,8 +902,6 @@ EXAMPLES = """
     resource_type: "dpg-policies"
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -1156,10 +1144,9 @@ def validate_parameters(dpg_policy_module):
     if op_type in required_params:
         try:
             validate_required_parameters(
-                module=dpg_policy_module,
-                required_params=required_params[op_type],
-                module_name="dpg_policy_save",
-                op_type=op_type
+                parameters=dpg_policy_module,
+                required=required_params[op_type],
+                module_name="dpg_policy_save"
             )
         except AnsibleCMParameterException as e:
             raise AnsibleCMParameterException(
@@ -1174,26 +1161,23 @@ def validate_parameters(dpg_policy_module):
         if op_type == "create":
             if dpg_policy_module.params.get("name"):
                 validate_parameter_types(
-                    module=dpg_policy_module,
-                    param_types={"name": str, "description": str},
-                    module_name="dpg_policy_save",
-                    op_type=op_type
+                    parameters=dpg_policy_module,
+                    expected_types={"name": str, "description": str},
+                    module_name="dpg_policy_save"
                 )
         elif op_type == "patch":
             if dpg_policy_module.params.get("policy_id"):
                 validate_parameter_types(
-                    module=dpg_policy_module,
-                    param_types={"policy_id": str, "description": str},
-                    module_name="dpg_policy_save",
-                    op_type=op_type
+                    parameters=dpg_policy_module,
+                    expected_types={"policy_id": str, "description": str},
+                    module_name="dpg_policy_save"
                 )
         elif op_type in ["add-api-url", "update-api-url", "delete-api-url"]:
             if dpg_policy_module.params.get("policy_id"):
                 validate_parameter_types(
-                    module=dpg_policy_module,
-                    param_types={"policy_id": str, "api_url": str, "destination_url": str, "api_url_id": str},
-                    module_name="dpg_policy_save",
-                    op_type=op_type
+                    parameters=dpg_policy_module,
+                    expected_types={"policy_id": str, "api_url": str, "destination_url": str, "api_url_id": str},
+                    module_name="dpg_policy_save"
                 )
     except AnsibleCMFormatException as e:
         raise AnsibleCMFormatException(
@@ -1228,10 +1212,9 @@ def validate_parameters(dpg_policy_module):
                 # Validate api_url format
                 if "api_url" in config:
                     validate_parameter_formats(
-                        module=dpg_policy_module,
-                        param_formats={"api_url": r"^/api/.*"},
-                        module_name="dpg_policy_save",
-                        op_type=op_type
+                        parameters=dpg_policy_module,
+                        format_rules={"api_url": r"^/api/.*"},
+                        module_name="dpg_policy_save"
                     )
 
                 # Validate destination_url format (basic URL validation)
@@ -1291,9 +1274,8 @@ def validate_parameters(dpg_policy_module):
                             data=token,
                             required_keys=required_token_keys,
                             optional_keys=["access_policy", "external_version_header"],
-                            param_name=f"{token_param}[{idx}]",
-                            module_name="dpg_policy_save",
-                            op_type=op_type
+                            parameter_name=f"{token_param}[{idx}]",
+                            module_name="dpg_policy_save"
                         )
                     except AnsibleCMParameterException as e:
                         raise AnsibleCMParameterException(
@@ -1306,11 +1288,10 @@ def validate_parameters(dpg_policy_module):
                     # Validate operation value
                     if "operation" in token:
                         validate_choice(
-                            param_name=f"{token_param}[{idx}].operation",
-                            param_value=token["operation"],
-                            valid_choices=["protect", "reveal", "mask", "truncate"],
-                            module_name="dpg_policy_save",
-                            op_type=op_type
+                            parameter_name=f"{token_param}[{idx}].operation",
+                            value=token["operation"],
+                            choices=["protect", "reveal", "mask", "truncate"],
+                            module_name="dpg_policy_save"
                         )
     except (AnsibleCMFormatException, AnsibleCMParameterException) as e:
         raise
@@ -1331,9 +1312,6 @@ def setup_module_object():
 def main():
 
     module = setup_module_object()
-    validate_parameters(
-        dpg_policy_module=module,
-    )
 
     result = dict(
         changed=False,
@@ -1344,6 +1322,8 @@ def main():
     op_type = module.params.get("op_type")
 
     with ciphertrust_operation(module):
+        validate_parameters(dpg_policy_module=module)
+
         if op_type == "create":
             changed, response, diff = idempotent_create(
                 module, client,

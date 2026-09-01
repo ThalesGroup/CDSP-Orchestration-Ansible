@@ -453,3 +453,40 @@ class TestValidateDictKeys:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
+
+class TestSignaturesAreStrict:
+    """The validators used to accept any keyword via ``**kwargs``.
+
+    That hid typos and let call sites pass ``parameter=``, ``optional=`` or
+    ``op_type=`` which were silently discarded -- one such call produced error
+    messages naming ``parameter: None``. Each validator now has one signature
+    and rejects anything else.
+    """
+
+    def test_required_parameters_rejects_unknown_kwarg(self):
+        with pytest.raises(TypeError):
+            validate_required_parameters(
+                parameters={"a": 1}, required=["a"], op_type="create"
+            )
+
+    def test_choice_rejects_unknown_kwarg(self):
+        with pytest.raises(TypeError):
+            validate_choice(
+                parameter_name="algo", value="aes", choices=["aes"],
+                optional=True,
+            )
+
+    def test_choice_names_the_parameter_in_its_error(self):
+        with pytest.raises(AnsibleCMParameterException) as exc_info:
+            validate_choice(parameter_name="algorithm", value="nope",
+                            choices=["aes", "rsa"])
+
+        assert "algorithm" in str(exc_info.value)
+
+    def test_empty_parameter_dict_is_not_confused_with_absent(self):
+        """``params or parameters`` treated an empty dict as 'not supplied'."""
+        with pytest.raises(AnsibleCMValidationException) as exc_info:
+            validate_required_parameters(parameters={}, required=["name"])
+
+        assert "name" in str(exc_info.value)

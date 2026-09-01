@@ -480,8 +480,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.vault_keys2_op:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false

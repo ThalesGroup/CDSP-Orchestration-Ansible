@@ -329,3 +329,37 @@ class TestRawUrllibErrorHandling:
                 raise URLError("connection refused")
 
         assert "connection refused" in exc_info.value.kwargs["msg"]
+
+
+class TestSettingsOverrides:
+    """``default_settings`` entries must be overridable per instantiation."""
+
+    def test_module_class_kwarg_is_honoured(self):
+        """The override was read from the class dict, so this kwarg was ignored
+        and a real AnsibleModule was built instead."""
+        built = {}
+
+        class Recorder:
+            def __init__(self, **kwargs):
+                built["kwargs"] = kwargs
+                self.params = {"localNode": {}}
+                self.check_mode = False
+                self._diff = False
+                self._name = "recorder"
+
+        ThalesCipherTrustModule(
+            argument_spec=dict(op_type=dict(type="str")),
+            module_class=Recorder,
+        )
+
+        assert "kwargs" in built, "module_class override was ignored"
+        assert "argument_spec" in built["kwargs"]
+
+    def test_module_class_defaults_to_ansible_module(self):
+        assert ThalesCipherTrustModule.default_settings["module_class"] is not None
+
+    def test_no_unimplemented_settings_are_advertised(self):
+        """Every advertised setting must actually do something."""
+        assert set(ThalesCipherTrustModule.default_settings) == {
+            "default_args", "module_class",
+        }

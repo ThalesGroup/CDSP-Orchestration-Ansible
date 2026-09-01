@@ -149,8 +149,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.usermgmt_users_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -164,8 +162,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.usermgmt_users_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -179,8 +175,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.usermgmt_users_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -193,8 +187,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.usermgmt_users_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -206,8 +198,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.usermgmt_users_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -229,8 +219,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.usermgmt_users_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -251,8 +239,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.usermgmt_users_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -266,8 +252,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.usermgmt_users_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -408,18 +392,18 @@ def validate_parameters(user_module):
     if op_type == "create":
         validate_required_parameters(
             parameters={"username": username},
-            required_parameters=["username"],
+            required=["username"],
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
     elif op_type == "patch":
         validate_required_parameters(
             parameters={"cm_user_id": cm_user_id, "username": username},
-            required_parameters=["cm_user_id", "username"],
+            required=["cm_user_id", "username"],
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
     elif op_type == "changepw":
         validate_required_parameters(
@@ -428,10 +412,10 @@ def validate_parameters(user_module):
                 "password": password,
                 "new_password": new_password,
             },
-            required_parameters=["username", "password", "new_password"],
+            required=["username", "password", "new_password"],
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     # Validate parameter types
@@ -441,7 +425,7 @@ def validate_parameters(user_module):
             expected_types={"username": str},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if password is not None:
@@ -450,7 +434,7 @@ def validate_parameters(user_module):
             expected_types={"password": str},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if new_password is not None:
@@ -459,7 +443,7 @@ def validate_parameters(user_module):
             expected_types={"new_password": str},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if email is not None:
@@ -468,7 +452,7 @@ def validate_parameters(user_module):
             expected_types={"email": str},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if name is not None:
@@ -477,7 +461,7 @@ def validate_parameters(user_module):
             expected_types={"name": str},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if cm_user_id is not None:
@@ -486,7 +470,7 @@ def validate_parameters(user_module):
             expected_types={"cm_user_id": str},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if allowed_auth_methods is not None:
@@ -495,7 +479,7 @@ def validate_parameters(user_module):
             expected_types={"allowed_auth_methods": list},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if connection is not None:
@@ -504,7 +488,7 @@ def validate_parameters(user_module):
             expected_types={"connection": str},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if enable_cert_auth is not None:
@@ -513,7 +497,7 @@ def validate_parameters(user_module):
             expected_types={"enable_cert_auth": bool},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if certificate_subject_dn is not None:
@@ -522,7 +506,7 @@ def validate_parameters(user_module):
             expected_types={"certificate_subject_dn": str},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if login_flags is not None:
@@ -531,7 +515,7 @@ def validate_parameters(user_module):
             expected_types={"login_flags": dict},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if user_metadata is not None:
@@ -540,7 +524,7 @@ def validate_parameters(user_module):
             expected_types={"user_metadata": dict},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if app_metadata is not None:
@@ -549,7 +533,7 @@ def validate_parameters(user_module):
             expected_types={"app_metadata": dict},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if is_domain_user is not None:
@@ -558,7 +542,7 @@ def validate_parameters(user_module):
             expected_types={"is_domain_user": bool},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if user_id is not None:
@@ -567,7 +551,7 @@ def validate_parameters(user_module):
             expected_types={"user_id": str},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if password_change_required is not None:
@@ -576,7 +560,7 @@ def validate_parameters(user_module):
             expected_types={"password_change_required": bool},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if failed_logins_count is not None:
@@ -585,7 +569,7 @@ def validate_parameters(user_module):
             expected_types={"failed_logins_count": int},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if auth_domain is not None:
@@ -594,7 +578,7 @@ def validate_parameters(user_module):
             expected_types={"auth_domain": str},
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     # Validate parameter formats
@@ -611,7 +595,7 @@ def validate_parameters(user_module):
             },
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if email is not None:
@@ -627,7 +611,7 @@ def validate_parameters(user_module):
             },
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if name is not None:
@@ -642,7 +626,7 @@ def validate_parameters(user_module):
             },
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if cm_user_id is not None:
@@ -658,7 +642,7 @@ def validate_parameters(user_module):
             },
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if allowed_auth_methods is not None:
@@ -668,7 +652,7 @@ def validate_parameters(user_module):
             element_type=str,
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
         # Validate allowed_auth_methods choices
@@ -685,7 +669,7 @@ def validate_parameters(user_module):
             choices=valid_auth_methods,
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if connection is not None:
@@ -701,7 +685,7 @@ def validate_parameters(user_module):
             },
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if certificate_subject_dn is not None:
@@ -716,7 +700,7 @@ def validate_parameters(user_module):
             },
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if login_flags is not None:
@@ -726,7 +710,7 @@ def validate_parameters(user_module):
             valid_keys=["prevent_ui_login"],
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
         if "prevent_ui_login" in login_flags:
@@ -735,7 +719,7 @@ def validate_parameters(user_module):
                 expected_types={"prevent_ui_login": bool},
                 documentation_link=DOCUMENTATION_LINKS.get(
                     "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-                ),
+                )
             )
 
     if user_metadata is not None:
@@ -784,7 +768,7 @@ def validate_parameters(user_module):
             },
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     if password_change_required is not None:
@@ -822,7 +806,7 @@ def validate_parameters(user_module):
             },
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            ),
+            )
         )
 
     return True
@@ -844,9 +828,6 @@ def setup_module_object():
 
 def main():
     module = setup_module_object()
-    validate_parameters(
-        user_module=module,
-    )
 
     result = dict(
         changed=False,
@@ -855,6 +836,8 @@ def main():
     client = CipherTrustClient(module.params.get("localNode"))
 
     with ciphertrust_operation(module):
+        validate_parameters(user_module=module)
+
         if module.params.get("op_type") == "create":
             changed, response, diff = idempotent_create(
                 module, client,

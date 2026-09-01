@@ -64,8 +64,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.cm_resource_delete:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -85,6 +83,9 @@ response:
     type: dict
 """
 
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    AnsibleCMParameterException,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
     ciphertrust_operation,
@@ -200,13 +201,22 @@ def main():
     with ciphertrust_operation(module):
         check_mode_action(module)
         if resource_type == "cluster":
-            response = DELETEByNameOrId(
-                key=module.params.get("key"),
+            # "cluster" is a singleton resource: DELETE /cluster, no id.
+            response = DeleteWithoutData(
                 cm_node=module.params.get("localNode"),
                 cm_api_endpoint=endpoint,
             )
         else:
-            response = DeleteWithoutData(
+            if not module.params.get("key"):
+                raise AnsibleCMParameterException(
+                    message="key is required to delete a resource of type "
+                            "'{0}'".format(resource_type),
+                    parameter="key",
+                    expected_format="name or id of the resource to delete",
+                    example='key: "507a05f7-6883-41f6-961a-0e41847d887d"',
+                )
+            response = DELETEByNameOrId(
+                key=module.params.get("key"),
                 cm_node=module.params.get("localNode"),
                 cm_api_endpoint=endpoint,
             )

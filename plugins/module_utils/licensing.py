@@ -14,21 +14,17 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
     CipherTrustClient,
     build_request_payload,
 )
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    CMApiException,
-)
 
 
 def getLockdata(node):
-    result = dict()
-    try:
-        client = CipherTrustClient(node)
-        response = client.get("licensing/lockdata")
-        result["data"] = response
-        return result
-    except CMApiException:
-        result["failed"] = True
-        return result
+    """Fetch licensing lock data.
+
+    Errors propagate as ``CMApiException`` so the calling module fails
+    cleanly. This previously swallowed the exception and returned
+    ``{"failed": True}``, which Ansible reported as a successful run.
+    """
+    client = CipherTrustClient(node)
+    return {"data": client.get("licensing/lockdata")}
 
 
 def getTrialLicenseId(**kwargs):

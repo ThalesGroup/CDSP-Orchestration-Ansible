@@ -12,8 +12,8 @@ This module manages trial licenses, including creation, extension, and trial set
 |-----------|------|----------|-------------|---------|
 | `localNode` | dict | Yes | Connection parameters for CipherTrust Manager | - |
 | `localNode.server_ip` | string | Yes | CM Server IP or FQDN | - |
-| `localNode.server_private_ip` | string | No | Internal or private IP of the CM Server | `10.10.10.10` |
-| `localNode.server_port` | int | No | Port on which CM server is listening | `5432` |
+| `localNode.server_private_ip` | string | No | Not used; accepted for backwards compatibility, deprecated for removal in 2.0.0 | `10.10.10.10` |
+| `localNode.server_port` | int | No | Not used; the API port is not configurable, deprecated for removal in 2.0.0 | `5432` |
 | `localNode.user` | string | Yes | Admin username of CM | - |
 | `localNode.password` | string | Yes | Admin password of CM | - |
 | `localNode.verify` | bool | No | If SSL verification is required | `false` |
@@ -32,8 +32,6 @@ This module manages trial licenses, including creation, extension, and trial set
   thalesgroup.ciphertrust.license_trial_action:
     localNode:
       server_ip: "10.0.0.1"
-      server_private_ip: "10.0.0.2"
-      server_port: 5432
       user: "admin"
       password: "password"
       verify: false
@@ -54,8 +52,6 @@ This module manages trial licenses, including creation, extension, and trial set
   thalesgroup.ciphertrust.license_trial_action:
     localNode:
       server_ip: "10.0.0.1"
-      server_private_ip: "10.0.0.2"
-      server_port: 5432
       user: "admin"
       password: "password"
       verify: false

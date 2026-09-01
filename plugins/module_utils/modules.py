@@ -219,7 +219,6 @@ class ThalesCipherTrustModule:
 
     default_settings = {
         "default_args": True,
-        "auto_retry": True,
         "module_class": AnsibleModule,
     }
 
@@ -266,9 +265,7 @@ class ThalesCipherTrustModule:
                     kwargs[constraint_name] = value
             self._legacy_param_tree = legacy_tree
 
-        self._module = ThalesCipherTrustModule.default_settings["module_class"](
-            **kwargs
-        )
+        self._module = local_settings["module_class"](**kwargs)
         _inject_legacy_params(self._module.params, self._legacy_param_tree)
         self.check_mode = self._module.check_mode
         self._diff = self._module._diff

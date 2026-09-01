@@ -31,7 +31,6 @@ Role for setting up CipherTrust Ransomware Defense Platform (CRDP).
 
 **Variables:**
 - `this_node_address` - CipherTrust Manager IP address
-- `this_node_private_ip` - Private IP address
 - `this_node_username` - Username for authentication
 - `this_node_password` - Password for authentication
 - `this_node_connection_string` - Connection string with all connection parameters

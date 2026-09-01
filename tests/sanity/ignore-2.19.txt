@@ -1,4 +1,3 @@
-mkdocs.yml yamllint:unparsable-with-libyaml
 plugins/modules/cm_certificate_authority.py validate-modules:missing-gplv3-license
 plugins/modules/cm_cluster.py validate-modules:missing-gplv3-license
 plugins/modules/cm_regtoken.py validate-modules:missing-gplv3-license

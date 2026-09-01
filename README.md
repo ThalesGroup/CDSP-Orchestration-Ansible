@@ -73,8 +73,6 @@ You can use CipherTrust to automate some of redundant tasks desired by security 
   thalesgroup.ciphertrust.usermgmt_users_save:
     localNode:
       server_ip: "192.168.2.100"
-      server_private_ip: ""
-      server_port: "5432"
       user: "admin"
       password: "StrongPwd_1!"
       verify: False
@@ -87,8 +85,6 @@ You can use CipherTrust to automate some of redundant tasks desired by security 
   thalesgroup.ciphertrust.usermgmt_users_save:
     localNode:
       server_ip: "192.168.2.100"
-      server_private_ip: ""
-      server_port: "5432"
       user: "admin"
       password: "StrongPwd_1!"
       verify: False
@@ -117,8 +113,6 @@ The above task creates a new user on CipherTrust Manager with username john.doe 
       versionedKey: true
     localNode:
       server_ip: "192.168.2.100"
-      server_private_ip: ""
-      server_port: "5432"
       user: "admin"
       password: "StrongPwd_1!"
       verify: False
@@ -132,8 +126,6 @@ The above task creates a new key on CipherTrust Manager with details like AES al
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode:
       server_ip: "192.168.2.100"
-      server_private_ip: ""
-      server_port: "5432"
       user: "admin"
       password: "StrongPwd_1!"
       verify: False

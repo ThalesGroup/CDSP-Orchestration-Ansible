@@ -272,8 +272,6 @@ EXAMPLES = """
   thalesgroup.ciphertrust.interface_save:
     localNode:
       server_ip: "IP/FQDN of CipherTrust Manager"
-      server_private_ip: "Private IP in case that is different from above"
-      server_port: 5432
       user: "CipherTrust Manager Username"
       password: "CipherTrust Manager Password"
       verify: false
@@ -469,9 +467,9 @@ def validate_parameters(user_module):
     if op_type == "create":
         required_params = ["port", "interface_type"]
         validate_required_parameters(
-            params=user_module.params,
-            required_params=required_params,
-            module_name="interface_save",
+            parameters=user_module.params,
+            required=required_params,
+            module_name="interface_save"
         )
 
     if op_type == "patch":
@@ -514,7 +512,7 @@ def validate_parameters(user_module):
             choices=["CN", "SN", "E", "E_ND", "UID", "OU"],
             documentation_link=DOCUMENTATION_LINKS.get(
                 "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            ),
+            )
         )
 
     # Validate interface_type choices
@@ -525,7 +523,7 @@ def validate_parameters(user_module):
             choices=["web", "kmip", "nae", "snmp"],
             documentation_link=DOCUMENTATION_LINKS.get(
                 "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            ),
+            )
         )
 
     # Validate kmip_enable_hard_delete choices
@@ -536,7 +534,7 @@ def validate_parameters(user_module):
             choices=[0, 1],
             documentation_link=DOCUMENTATION_LINKS.get(
                 "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            ),
+            )
         )
 
     # Validate maximum_tls_version choices
@@ -547,7 +545,7 @@ def validate_parameters(user_module):
             choices=["tls_1_0", "tls_1_1", "tls_1_2", "tls_1_3"],
             documentation_link=DOCUMENTATION_LINKS.get(
                 "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            ),
+            )
         )
 
     # Validate minimum_tls_version choices
@@ -558,7 +556,7 @@ def validate_parameters(user_module):
             choices=["tls_1_0", "tls_1_1", "tls_1_2", "tls_1_3"],
             documentation_link=DOCUMENTATION_LINKS.get(
                 "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            ),
+            )
         )
 
     # Validate mode choices
@@ -579,7 +577,7 @@ def validate_parameters(user_module):
             ],
             documentation_link=DOCUMENTATION_LINKS.get(
                 "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            ),
+            )
         )
 
     # Validate network_interface format
@@ -626,7 +624,7 @@ def validate_parameters(user_module):
                     element_type=str,
                     documentation_link=DOCUMENTATION_LINKS.get(
                         "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-                    ),
+                    )
                 )
             # Validate local CA IDs are strings
             if "local" in trusted_cas:
@@ -636,7 +634,7 @@ def validate_parameters(user_module):
                     element_type=str,
                     documentation_link=DOCUMENTATION_LINKS.get(
                         "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-                    ),
+                    )
                 )
 
     # Validate local_auto_gen_attributes structure
@@ -699,9 +697,6 @@ def setup_module_object():
 def main():
 
     module = setup_module_object()
-    validate_parameters(
-        user_module=module,
-    )
 
     result = dict(
         changed=False,
@@ -710,6 +705,8 @@ def main():
     client = CipherTrustClient(module.params.get("localNode"))
 
     with ciphertrust_operation(module):
+        validate_parameters(user_module=module)
+
         if module.params.get("op_type") == "create":
             changed, response, diff = idempotent_create(
                 module, client,

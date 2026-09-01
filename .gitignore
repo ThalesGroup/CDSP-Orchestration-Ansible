@@ -1,3 +1,9 @@
-thalesgroup-ciphertrust-1.0.3.tar.gz
+thalesgroup-ciphertrust-*.tar.gz
 TOP_10_USER_STORIES.md
 .venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+coverage.xml
+tests/output/

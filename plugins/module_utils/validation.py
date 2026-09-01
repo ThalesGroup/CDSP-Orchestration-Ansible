@@ -43,57 +43,50 @@ DOCUMENTATION_LINKS = {
 }
 
 
-def validate_required_parameters(params=None, required_params=None, module_name=None, parameters=None, required_parameters=None, **kwargs):
-    """
-    Validate that all required parameters are present and not None/empty.
-    """
-    # Extract params from possible sources
-    actual_params = params or parameters or kwargs.get("module") or kwargs.get("user_module") or kwargs.get("dpg_policy_module")
-    if hasattr(actual_params, "params"):
-        actual_params = actual_params.params
-    if actual_params is None:
-        actual_params = {}
+def _as_params(source):
+    """Accept either a parameter dict or a module-like object carrying one.
 
-    # Extract required_params from possible sources
-    actual_req = required_params or required_parameters or kwargs.get("required_keys")
-    if actual_req is None:
-        actual_req = []
+    Callers pass a module (``user_module``/``dpg_policy_module``) in some
+    places and a plain dict in others; both are supported, but the argument
+    is always named ``parameters``.
+    """
+    if source is None:
+        return {}
+    if hasattr(source, "params"):
+        source = source.params
+    return source if source is not None else {}
 
+
+def validate_required_parameters(parameters, required, module_name=None,
+                                 documentation_link=None):
+    """Raise unless every name in *required* is present and non-empty."""
+    actual_params = _as_params(parameters)
     missing_params = []
 
-    for param in actual_req:
-        if param not in actual_params or actual_params[param] is None or actual_params[param] == "":
+    for param in required or []:
+        if (param not in actual_params
+                or actual_params[param] is None
+                or actual_params[param] == ""):
             missing_params.append(param)
 
     if missing_params:
         module_prefix = f"[{module_name}] " if module_name else ""
-        error_msg = f"{module_prefix}Missing required parameter(s)"
-        param_list = ", ".join(missing_params)
         raise AnsibleCMValidationException(
-            message=error_msg,
-            parameter=param_list,
+            message=f"{module_prefix}Missing required parameter(s)",
+            parameter=", ".join(missing_params),
             expected_format="string or value",
             example=f"Example: {missing_params[0]}: 'value'",
+            documentation_link=documentation_link,
         )
 
     return actual_params
 
 
-def validate_parameter_types(params=None, type_definitions=None, module_name=None, parameters=None, expected_types=None, **kwargs):
-    """
-    Validate parameter types against expected types.
-    """
-    # Extract params from possible sources
-    actual_params = params or parameters or kwargs.get("module") or kwargs.get("user_module") or kwargs.get("dpg_policy_module")
-    if hasattr(actual_params, "params"):
-        actual_params = actual_params.params
-    if actual_params is None:
-        actual_params = {}
-
-    # Extract type definitions
-    types = type_definitions or expected_types or kwargs.get("param_types")
-    if types is None:
-        types = {}
+def validate_parameter_types(parameters, expected_types, module_name=None,
+                             documentation_link=None):
+    """Raise unless each named parameter has the expected Python type."""
+    actual_params = _as_params(parameters)
+    types = expected_types or {}
 
     module_prefix = f"[{module_name}] " if module_name else ""
 
@@ -134,21 +127,11 @@ def validate_parameter_types(params=None, type_definitions=None, module_name=Non
     return actual_params
 
 
-def validate_parameter_formats(params=None, format_definitions=None, module_name=None, parameters=None, format_rules=None, **kwargs):
-    """
-    Validate parameter formats against regex patterns and format rules.
-    """
-    # Extract params from possible sources
-    actual_params = params or parameters or kwargs.get("module") or kwargs.get("user_module") or kwargs.get("dpg_policy_module")
-    if hasattr(actual_params, "params"):
-        actual_params = actual_params.params
-    if actual_params is None:
-        actual_params = {}
-
-    # Extract format definitions
-    formats = format_definitions or format_rules or kwargs.get("param_formats")
-    if formats is None:
-        formats = {}
+def validate_parameter_formats(parameters, format_rules, module_name=None,
+                               documentation_link=None):
+    """Raise unless each named parameter matches its format rule."""
+    actual_params = _as_params(parameters)
+    formats = format_rules or {}
 
     module_prefix = f"[{module_name}] " if module_name else ""
 
@@ -336,17 +319,12 @@ def validate_api_response(response, expected_fields=None, module_name=None):
     return response
 
 
-def validate_choice(param_name=None, param_value=None, choices=None, module_name=None, value=None, **kwargs):
-    """
-    Validate that a parameter value is one of the allowed choices.
-    """
-    # Extract names and values from aliases
-    p_name = param_name or kwargs.get("parameter_name")
-    p_value = param_value if param_value is not None else value
-    p_choices = choices or kwargs.get("valid_choices")
-
-    if p_choices is None:
-        p_choices = []
+def validate_choice(parameter_name, value, choices, module_name=None,
+                    documentation_link=None):
+    """Raise unless *value* is one of *choices*. ``None`` is allowed."""
+    p_name = parameter_name
+    p_value = value
+    p_choices = choices or []
 
     module_prefix = f"[{module_name}] " if module_name else ""
 
