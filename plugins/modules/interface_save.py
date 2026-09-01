@@ -23,6 +23,19 @@ author:
   - Anurag Jain (@anugram)
 extends_documentation_fragment:
   - thalesgroup.ciphertrust.ciphertrust
+  - thalesgroup.ciphertrust.attributes
+notes:
+  - >-
+    Depending on the operation requested, the C(response) returned by this
+    module can contain secret material such as key bytes, a private key or a
+    registration token.
+  - >-
+    Ansible cannot redact part of a return value. Set C(no_log: true) on any
+    task that performs such an operation, or the secret is written to job
+    output, callback plugins and any configured log or fact cache.
+  - >-
+    Registering the result keeps the secret in memory for the rest of the
+    play; scope those variables as tightly as the deployment allows.
 options:
     op_type:
         description: Operation to be performed

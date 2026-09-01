@@ -12,6 +12,7 @@ __metaclass__ = type
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
+    quote_segment,
     build_request_payload,
 )
 
@@ -27,7 +28,7 @@ def create(**kwargs):
 def patch(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
-        "domains/" + kwargs["domain_id"],
+        "domains/" + quote_segment(kwargs["domain_id"]),
         data=build_request_payload(
             {k: v for k, v in kwargs.items() if k not in ("node", "domain_id")}
         ),

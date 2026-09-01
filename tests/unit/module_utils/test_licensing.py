@@ -107,3 +107,29 @@ class TestDeactivateTrial:
         mock_instance.post.assert_called_once_with(
             "licensing/trials/trial-1/deactivate"
         )
+
+
+class TestTrialLookupIsDefensive:
+    """A CM with no trials returns an empty list; that must not be an
+    IndexError escaping as a traceback."""
+
+    @patch(MODULE_PATH)
+    def test_no_trials_reports_an_error(self, MockClient):
+        MockClient.return_value.get.return_value = {"resources": []}
+
+        with pytest.raises(CMApiException, match="No trial licenses"):
+            getTrialLicenseId(node=TEST_NODE)
+
+    @patch(MODULE_PATH)
+    def test_missing_resources_key_reports_an_error(self, MockClient):
+        MockClient.return_value.get.return_value = {}
+
+        with pytest.raises(CMApiException, match="No trial licenses"):
+            getTrialLicenseId(node=TEST_NODE)
+
+    @patch(MODULE_PATH)
+    def test_incomplete_trial_record_reports_the_missing_fields(self, MockClient):
+        MockClient.return_value.get.return_value = {"resources": [{"id": "t1"}]}
+
+        with pytest.raises(CMApiException, match="status"):
+            getTrialLicenseId(node=TEST_NODE)

@@ -22,6 +22,7 @@ author:
   - Anurag Jain (@anugram)
 extends_documentation_fragment:
   - thalesgroup.ciphertrust.ciphertrust
+  - thalesgroup.ciphertrust.attributes.no_diff
 options:
     op_type:
         description: Operation to be performed
@@ -96,6 +97,9 @@ response:
     type: dict
 """
 
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
     ThalesCipherTrustModule,
     ciphertrust_operation,
@@ -111,6 +115,7 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent
 )
 
 import ast
+import json
 
 _joining_node = dict(
     server_ip=dict(type="str", required=True),
@@ -134,6 +139,55 @@ def setup_module_object():
         supports_check_mode=True,
     )
     return module
+
+
+def _parse_signing_response(output):
+    """Extract the signed-certificate payload from a cluster sign response.
+
+    CipherTrust Manager returns this payload as a string in the response's
+    ``description`` field. It is JSON in current releases but has historically
+    been a Python-style dict literal, so both are accepted. Anything else, or
+    a payload missing the fields the join step needs, is reported as an API
+    error rather than raising ValueError or KeyError out of the module.
+    """
+    description_str = output.get("description") if isinstance(output, dict) else None
+    if not isinstance(description_str, str):
+        raise CMApiException(
+            message="Cluster signing response has no 'description' payload; "
+                    "got fields: {0}".format(
+                        sorted(output) if isinstance(output, dict) else type(output).__name__
+                    ),
+            api_error_code=0,
+        )
+
+    try:
+        parsed = json.loads(description_str)
+    except (ValueError, TypeError):
+        try:
+            parsed = ast.literal_eval(description_str)
+        except (ValueError, SyntaxError, TypeError):
+            raise CMApiException(
+                message="Could not parse the cluster signing response payload.",
+                api_error_code=0,
+            )
+
+    if not isinstance(parsed, dict):
+        raise CMApiException(
+            message="Cluster signing payload is a {0}, expected a mapping.".format(
+                type(parsed).__name__
+            ),
+            api_error_code=0,
+        )
+
+    missing = [f for f in ("cert", "cachain", "mkek_blob") if f not in parsed]
+    if missing:
+        raise CMApiException(
+            message="Cluster signing payload is missing {0}; got fields: {1}".format(
+                ", ".join(missing), sorted(parsed)
+            ),
+            api_error_code=0,
+        )
+    return parsed
 
 
 def main():
@@ -170,8 +224,7 @@ def main():
                     node=node,
                     csr=strCSR,
                 )
-                description_str = output['description']
-                description_dict = ast.literal_eval(description_str)
+                description_dict = _parse_signing_response(output)
                 cert = description_dict['cert']
                 caChain = description_dict['cachain']
                 mkek_blob = description_dict['mkek_blob']

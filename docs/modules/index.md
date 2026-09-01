@@ -1,6 +1,22 @@
 # Modules Documentation
 
-This section provides documentation for all modules in the ThalesGroup CipherTrust Ansible Collection.
+This collection ships 33 modules for CipherTrust Manager. The catalogue below
+groups them by area.
+
+## Where the reference documentation lives
+
+Per-module reference — every option, its type, defaults, aliases and return
+values — is generated from the modules themselves and published at
+<https://thalesgroup.github.io/CDSP-Orchestration-Ansible/branch/main>.
+
+It is not duplicated here. Hand-written copies drifted from the modules, so
+they were removed; the module source is the single source of truth.
+
+To read the documentation for a module locally:
+
+```bash
+ansible-doc thalesgroup.ciphertrust.vault_keys2_save
+```
 
 ## Module Categories
 

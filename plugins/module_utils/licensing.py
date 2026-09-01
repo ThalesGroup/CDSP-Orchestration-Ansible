@@ -12,7 +12,11 @@ __metaclass__ = type
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
+    quote_segment,
     build_request_payload,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
+    CMApiException,
 )
 
 
@@ -28,14 +32,32 @@ def getLockdata(node):
 
 
 def getTrialLicenseId(**kwargs):
+    """Return the id and status of the first trial licence.
+
+    A CipherTrust Manager with no trials returns an empty resource list; that
+    is reported as an error rather than raising ``IndexError``.
+    """
     client = CipherTrustClient(kwargs["node"])
     response = client.get("licensing/trials")
 
-    resources = response["resources"]
-    return {
-        "id": resources[0]["id"],
-        "status": resources[0]["status"],
-    }
+    resources = response.get("resources") if isinstance(response, dict) else None
+    if not resources:
+        raise CMApiException(
+            message="No trial licenses found on CipherTrust Manager.",
+            api_error_code=0,
+        )
+
+    trial = resources[0]
+    missing = [field for field in ("id", "status") if field not in trial]
+    if missing:
+        raise CMApiException(
+            message="Trial licence record is missing {0}; got fields: {1}".format(
+                ", ".join(missing), sorted(trial)
+            ),
+            api_error_code=0,
+        )
+
+    return {"id": trial["id"], "status": trial["status"]}
 
 
 def addLicense(**kwargs):
@@ -49,12 +71,12 @@ def addLicense(**kwargs):
 def activateTrial(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        "licensing/trials/" + kwargs["trialId"] + "/activate",
+        "licensing/trials/" + quote_segment(kwargs["trialId"]) + "/activate",
     )
 
 
 def deactivateTrial(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        "licensing/trials/" + kwargs["trialId"] + "/deactivate",
+        "licensing/trials/" + quote_segment(kwargs["trialId"]) + "/deactivate",
     )

@@ -18,6 +18,10 @@ __metaclass__ = type
 
 from ansible.module_utils.six.moves.urllib.error import HTTPError
 
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    _build_query_string,
+    quote_segment,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
 )
@@ -53,7 +57,7 @@ def find_resource_by_query(client, endpoint, param, value):
         return None
     try:
         response = client.get(
-            endpoint + "?skip=0&limit=1&" + param + "=" + str(value)
+            endpoint + _build_query_string({"skip": 0, "limit": 1, param: value})
         )
     except (CMApiException, HTTPError) as exc:
         if _is_not_found(exc):
@@ -139,7 +143,7 @@ def idempotent_patch(module, client, endpoint, resource_id,
     Returns ``(changed, response, diff_or_None)``.
     """
     try:
-        current = client.get(endpoint + "/" + resource_id)
+        current = client.get(endpoint + "/" + quote_segment(resource_id))
     except (CMApiException, HTTPError) as exc:
         if not _is_not_found(exc):
             raise

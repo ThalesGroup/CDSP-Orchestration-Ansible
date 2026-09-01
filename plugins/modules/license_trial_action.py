@@ -22,6 +22,7 @@ author:
   - Anurag Jain (@anugram)
 extends_documentation_fragment:
   - thalesgroup.ciphertrust.ciphertrust
+  - thalesgroup.ciphertrust.attributes.no_diff
 options:
     action_type:
         description: Operation to be performed on the trial license

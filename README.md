@@ -20,7 +20,8 @@ The primary purpose of this collection is to simplify the configuration of Ciphe
 Tested with the Ansible Core >= 2.15.0 versions, and the current development version of Ansible. Ansible Core versions prior to 2.15.0 are not supported.
 
 ### Python version compatibility
-Tested with Python version 3.7 and above
+Requires Python 3.9 or later on the Ansible controller, which is the minimum
+for ansible-core 2.15. Tested against Python 3.9 through 3.12.
 
 ### CipherTrust Manager version compatibility
 Tested with Thales CipherTrust Manager version 2.17.0.12772 and higher

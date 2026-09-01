@@ -22,6 +22,7 @@ author:
   - Anurag Jain (@anugram)
 extends_documentation_fragment:
   - thalesgroup.ciphertrust.ciphertrust
+  - thalesgroup.ciphertrust.attributes.partial_diff
 options:
     op_type:
         description: Operation to be performed

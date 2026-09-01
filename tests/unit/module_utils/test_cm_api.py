@@ -532,6 +532,17 @@ class TestBackwardCompatWrappers:
 # and the module dies with a traceback instead of a clean fail_json.
 # ---------------------------------------------------------------------------
 
+@pytest.fixture(autouse=True)
+def _no_backoff():
+    """Keep the retry policy's timing out of the test run."""
+    with patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils"
+        ".cm_api._BACKOFF_SECONDS",
+        (0, 0),
+    ):
+        yield
+
+
 class TestTransportErrorHandling:
 
     def setup_method(self):
@@ -690,3 +701,119 @@ class TestTransportErrorHandling:
                 client.post("vault/keys2", data="{}")
 
         assert module.fail_json.called
+
+
+class TestRetryPolicy:
+    """Reads are retried through a blip; writes are not replayed.
+
+    Retrying a POST, PATCH or DELETE that may already have been applied risks
+    duplicating a write against CipherTrust Manager, so only GET is retried on
+    a transient failure. A 401 is different: the request was rejected before
+    anything happened, so any method re-authenticates once and retries.
+    """
+
+    def setup_method(self):
+        _jwt_cache.clear()
+
+    @staticmethod
+    def _ok_response(payload=None):
+        response = MagicMock()
+        response.read.return_value = json.dumps(payload or {"ok": True}).encode()
+        response.getcode.return_value = 200
+        return response
+
+    @staticmethod
+    def _authed():
+        _jwt_cache[(TEST_NODE["server_ip"], TEST_NODE["user"], "")] = (
+            "jwt", time.time() + 600
+        )
+        return CipherTrustClient(TEST_NODE)
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_expired_session_is_renewed_and_the_call_retried(self, MockRequest):
+        auth = MagicMock()
+        auth.read.return_value = json.dumps({"jwt": "fresh"}).encode()
+        MockRequest.return_value.open.side_effect = [
+            HTTPError("https://cm/api/v1/vault/keys2", 401, "Unauthorized", {}, None),
+            auth,                       # re-authentication
+            self._ok_response({"id": "k1"}),
+        ]
+
+        client = self._authed()
+        assert client.get("vault/keys2") == {"id": "k1"}
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_repeated_401_gives_up(self, MockRequest):
+        auth = MagicMock()
+        auth.read.return_value = json.dumps({"jwt": "fresh"}).encode()
+        MockRequest.return_value.open.side_effect = [
+            HTTPError("https://cm/api/v1/x", 401, "Unauthorized", {}, None),
+            auth,
+            HTTPError("https://cm/api/v1/x", 401, "Unauthorized", {}, None),
+        ]
+
+        client = self._authed()
+        with pytest.raises(CMApiException) as exc_info:
+            client.get("x")
+        assert exc_info.value.api_error_code == 401
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_get_is_retried_through_a_transient_error(self, MockRequest):
+        MockRequest.return_value.open.side_effect = [
+            HTTPError("https://cm/api/v1/x", 503, "Unavailable", {}, None),
+            self._ok_response({"id": "k1"}),
+        ]
+
+        client = self._authed()
+        assert client.get("x") == {"id": "k1"}
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_get_gives_up_after_the_configured_attempts(self, MockRequest):
+        MockRequest.return_value.open.side_effect = HTTPError(
+            "https://cm/api/v1/x", 503, "Unavailable", {}, None
+        )
+
+        client = self._authed()
+        with pytest.raises(CMApiException):
+            client.get("x")
+        assert MockRequest.return_value.open.call_count == 3
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_write_is_not_replayed_on_a_transient_error(self, MockRequest):
+        MockRequest.return_value.open.side_effect = HTTPError(
+            "https://cm/api/v1/x", 503, "Unavailable", {}, None
+        )
+
+        client = self._authed()
+        with pytest.raises(CMApiException):
+            client.post("x", data="{}")
+        assert MockRequest.return_value.open.call_count == 1, \
+            "a POST must not be replayed against CipherTrust Manager"
+
+    @patch(
+        "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api.Request"
+    )
+    def test_connection_failure_is_retried_for_reads_only(self, MockRequest):
+        MockRequest.return_value.open.side_effect = URLError("connection reset")
+
+        client = self._authed()
+        with pytest.raises(CMApiException):
+            client.get("x")
+        reads = MockRequest.return_value.open.call_count
+
+        MockRequest.return_value.open.reset_mock()
+        with pytest.raises(CMApiException):
+            client.delete("x")
+        writes = MockRequest.return_value.open.call_count
+
+        assert reads == 3 and writes == 1

@@ -57,11 +57,11 @@ See the [Performance Best Practices](performance-best-practices.md) document for
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](../CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+Please read [CONTRIBUTING.md](contributing.md) for details on our code of conduct and the process for submitting pull requests.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/blob/main/LICENSE) file for details.
 
 ## Support
 

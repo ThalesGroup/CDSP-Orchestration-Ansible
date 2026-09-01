@@ -33,7 +33,6 @@ docs/
 │   ├── user-group-management.md     # User and group management examples
 │   ├── interface-management.md      # Interface management examples
 │   ├── license-management.md        # License management examples
-├── module-reference.md              # Module reference documentation
 ├── api-reference.md                 # API reference documentation
 ├── best-practices.md                # Best practices guide
 ├── troubleshooting.md               # Troubleshooting guide

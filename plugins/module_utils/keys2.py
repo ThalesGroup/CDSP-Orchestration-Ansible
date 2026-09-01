@@ -12,6 +12,7 @@ __metaclass__ = type
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
+    quote_segment,
     build_request_payload,
     _build_query_string,
 )
@@ -26,7 +27,8 @@ def _key_op_url(cm_key_id, action, key_version=None, id_type=None, includeMateri
         qs_params["type"] = id_type
     if includeMaterial is not None:
         qs_params["includeMaterial"] = includeMaterial
-    return "vault/keys2/" + cm_key_id + "/" + action + _build_query_string(qs_params)
+    return ("vault/keys2/" + quote_segment(cm_key_id) + "/" + action
+            + _build_query_string(qs_params))
 
 
 # -- CRUD -------------------------------------------------------------------
@@ -42,7 +44,7 @@ def create(**kwargs):
 def patch(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
-        "vault/keys2/" + kwargs["cm_key_id"],
+        "vault/keys2/" + quote_segment(kwargs["cm_key_id"]),
         data=build_request_payload(
             {k: v for k, v in kwargs.items() if k not in ("node", "cm_key_id")}
         ),
@@ -52,7 +54,7 @@ def patch(**kwargs):
 def version_create(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        "vault/keys2/" + kwargs["cm_key_id"] + "/versions",
+        "vault/keys2/" + quote_segment(kwargs["cm_key_id"]) + "/versions",
         data=build_request_payload(
             {k: v for k, v in kwargs.items() if k not in ("node", "cm_key_id")}
         ),

@@ -74,6 +74,16 @@ Take a look a the [Ansible Community Guide](https://docs.ansible.com/ansible/lat
 
 To contribute, follow the contributing guidelines above.
 
+### Naming conventions
+
+New code follows PEP 8: `snake_case` for functions and variables.
+
+Much of `plugins/module_utils/` predates this and uses `camelCase` or
+`PascalCase` function names (`createCTEPolicy`, `DELETEByNameOrId`). Those are
+importable by consumers, so they are not renamed piecemeal; the rename is
+scheduled for 2.0.0 alongside the `camelCase` parameter removal, with aliases
+kept for one release. Do not add new `camelCase` functions.
+
 ### Sanity test waivers
 
 `tests/sanity/ignore-<version>.txt` carries one waiver per line, and

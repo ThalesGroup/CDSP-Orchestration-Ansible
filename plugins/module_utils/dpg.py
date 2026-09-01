@@ -12,6 +12,7 @@ __metaclass__ = type
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
+    quote_segment,
     build_request_payload,
 )
 
@@ -33,7 +34,7 @@ def createAccessPolicy(**kwargs):
 def updateAccessPolicy(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
-        "data-protection/access-policies/" + kwargs["policy_id"],
+        "data-protection/access-policies/" + quote_segment(kwargs["policy_id"]),
         data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
     )
 
@@ -41,7 +42,7 @@ def updateAccessPolicy(**kwargs):
 def accessPolicyAddUserSet(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        "data-protection/access-policies/" + kwargs["policy_id"] + "/user-set",
+        "data-protection/access-policies/" + quote_segment(kwargs["policy_id"]) + "/user-set",
         data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
     )
 
@@ -50,9 +51,9 @@ def accessPolicyUpdateUserSet(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
         "data-protection/access-policies/"
-        + kwargs["policy_id"]
+        + quote_segment(kwargs["policy_id"])
         + "/user-set/"
-        + kwargs["policy_user_set_id"],
+        + quote_segment(kwargs["policy_user_set_id"]),
         data=build_request_payload(
             _exclude(kwargs, "node", "policy_id", "policy_user_set_id")
         ),
@@ -63,9 +64,9 @@ def accessPolicyDeleteUserSet(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.delete(
         "data-protection/access-policies/"
-        + kwargs["policy_id"]
+        + quote_segment(kwargs["policy_id"])
         + "/user-set/"
-        + kwargs["policy_user_set_id"],
+        + quote_segment(kwargs["policy_user_set_id"]),
     )
 
 
@@ -82,7 +83,7 @@ def createProtectionPolicy(**kwargs):
 def updateProtectionPolicy(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
-        "data-protection/protection-policies/" + kwargs["policy_name"],
+        "data-protection/protection-policies/" + quote_segment(kwargs["policy_name"]),
         data=build_request_payload(_exclude(kwargs, "node", "policy_name")),
     )
 
@@ -100,7 +101,7 @@ def createUserSet(**kwargs):
 def updateUserSet(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
-        "data-protection/user-sets/" + kwargs["user_set_id"],
+        "data-protection/user-sets/" + quote_segment(kwargs["user_set_id"]),
         data=build_request_payload(_exclude(kwargs, "node", "user_set_id")),
     )
 
@@ -118,7 +119,7 @@ def createCharacterSet(**kwargs):
 def updateCharacterSet(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
-        "data-protection/character-sets/" + kwargs["char_set_id"],
+        "data-protection/character-sets/" + quote_segment(kwargs["char_set_id"]),
         data=build_request_payload(_exclude(kwargs, "node", "char_set_id")),
     )
 
@@ -136,7 +137,7 @@ def createMaskingFormat(**kwargs):
 def updateMaskingFormat(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
-        "data-protection/masking-formats/" + kwargs["masking_format_id"],
+        "data-protection/masking-formats/" + quote_segment(kwargs["masking_format_id"]),
         data=build_request_payload(_exclude(kwargs, "node", "masking_format_id")),
     )
 
@@ -154,7 +155,7 @@ def createClientProfile(**kwargs):
 def updateClientProfile(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
-        "data-protection/client-profiles/" + kwargs["profile_id"],
+        "data-protection/client-profiles/" + quote_segment(kwargs["profile_id"]),
         data=build_request_payload(_exclude(kwargs, "node", "profile_id")),
     )
 
@@ -172,7 +173,7 @@ def createDPGPolicy(**kwargs):
 def updateDPGPolicy(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
-        "data-protection/dpg-policies/" + kwargs["policy_id"],
+        "data-protection/dpg-policies/" + quote_segment(kwargs["policy_id"]),
         data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
     )
 
@@ -180,7 +181,7 @@ def updateDPGPolicy(**kwargs):
 def dpgPolicyAddAPIUrl(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        "data-protection/dpg-policies/" + kwargs["policy_id"] + "/api-urls",
+        "data-protection/dpg-policies/" + quote_segment(kwargs["policy_id"]) + "/api-urls",
         data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
     )
 
@@ -189,9 +190,9 @@ def dpgPolicyUpdateAPIUrl(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
         "data-protection/dpg-policies/"
-        + kwargs["policy_id"]
+        + quote_segment(kwargs["policy_id"])
         + "/api-urls/"
-        + kwargs["api_url_id"],
+        + quote_segment(kwargs["api_url_id"]),
         data=build_request_payload(
             _exclude(kwargs, "node", "policy_id", "api_url_id")
         ),
@@ -202,7 +203,7 @@ def dpgPolicyDeleteAPIUrl(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.delete(
         "data-protection/dpg-policies/"
-        + kwargs["policy_id"]
+        + quote_segment(kwargs["policy_id"])
         + "/api-urls/"
-        + kwargs["api_url_id"],
+        + quote_segment(kwargs["api_url_id"]),
     )

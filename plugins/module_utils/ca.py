@@ -8,6 +8,7 @@ __metaclass__ = type
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
+    quote_segment,
     build_request_payload,
 )
 
@@ -23,7 +24,7 @@ def createLocalCA(**kwargs):
 def updateLocalCA(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
-        "ca/local-cas/" + kwargs["id"],
+        "ca/local-cas/" + quote_segment(kwargs["id"]),
         data=build_request_payload(
             {k: v for k, v in kwargs.items() if k not in ("node", "id")}
         ),
@@ -33,7 +34,7 @@ def updateLocalCA(**kwargs):
 def selfSign(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        "ca/local-cas/" + kwargs["id"] + "/self-sign",
+        "ca/local-cas/" + quote_segment(kwargs["id"]) + "/self-sign",
         data=build_request_payload(
             {k: v for k, v in kwargs.items() if k not in ("node", "id")}
         ),
@@ -43,7 +44,7 @@ def selfSign(**kwargs):
 def issueCertificate(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        "ca/local-cas/" + kwargs["id"] + "/certs",
+        "ca/local-cas/" + quote_segment(kwargs["id"]) + "/certs",
         data=build_request_payload(
             {k: v for k, v in kwargs.items() if k not in ("node", "id")}
         ),
@@ -53,7 +54,7 @@ def issueCertificate(**kwargs):
 def revokeCert(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        "ca/local-cas/" + kwargs["id"] + "/certs/" + kwargs["cert_id"] + "/revoke",
+        "ca/local-cas/" + quote_segment(kwargs["id"]) + "/certs/" + quote_segment(kwargs["cert_id"]) + "/revoke",
         data=build_request_payload(
             {k: v for k, v in kwargs.items() if k not in ("node", "id", "cert_id")}
         ),
@@ -63,7 +64,7 @@ def revokeCert(**kwargs):
 def resumeCert(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        "ca/local-cas/" + kwargs["id"] + "/certs/" + kwargs["cert_id"] + "/resume",
+        "ca/local-cas/" + quote_segment(kwargs["id"]) + "/certs/" + quote_segment(kwargs["cert_id"]) + "/resume",
     )
 
 

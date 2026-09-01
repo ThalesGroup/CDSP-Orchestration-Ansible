@@ -14,6 +14,7 @@ import json
 import time
 from ansible.module_utils.urls import Request
 from ansible.module_utils.six.moves.urllib.error import HTTPError, URLError
+from ansible.module_utils.six.moves.urllib.parse import quote, urlencode
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
     CMApiException,
@@ -27,6 +28,32 @@ def is_json(myjson):
     except (ValueError, TypeError):
         return False
     return True
+
+
+def quote_segment(value):
+    """Percent-encode a single URL path segment.
+
+    Resource names and identifiers come from playbooks and may legitimately
+    contain spaces, or maliciously contain ``/``, ``?`` or ``#``. Encoding with
+    ``safe=""`` keeps the value inside its own path segment, so a value such as
+    ``../../usermgmt/users/admin`` cannot walk out of the collection it was
+    meant to address.
+    """
+    if value is None:
+        return ""
+    return quote(str(value), safe="")
+
+
+def quote_query_value(value):
+    """Percent-encode a query-string value, preserving list separators.
+
+    CipherTrust accepts comma-separated index lists (``userIndexList=0,1``);
+    a comma is a legal sub-delimiter in a query, so it is kept literal while
+    everything that could inject another parameter is encoded.
+    """
+    if value is None:
+        return ""
+    return quote(str(value), safe=",")
 
 
 def build_request_payload(kwargs, remap=None):
@@ -44,18 +71,18 @@ def build_request_payload(kwargs, remap=None):
 
 
 def _build_query_string(params):
-    """Build a URL query string from a dict, omitting ``None`` values.
+    """Build an encoded URL query string, omitting ``None`` values.
+
+    Values are percent-encoded, so a resource name containing ``&`` cannot
+    inject additional query parameters and change what the request selects.
 
     Returns the string including the leading ``?``, or empty string if
     no params are set.
     """
-    parts = []
-    for key, value in params.items():
-        if value is not None:
-            parts.append("{0}={1}".format(key, value))
-    if parts:
-        return "?" + "&".join(parts)
-    return ""
+    pairs = [(key, value) for key, value in params.items() if value is not None]
+    if not pairs:
+        return ""
+    return "?" + urlencode(pairs)
 
 
 def _error_detail(err):
@@ -97,6 +124,14 @@ def _error_detail(err):
 _jwt_cache = {}
 
 _TOKEN_TTL = 890  # seconds — slightly under the CM 15-minute default
+
+# Transient-failure policy. Only GET is retried: replaying a POST, PATCH or
+# DELETE that may already have been applied risks duplicating a write, which
+# matters more here than resilience does. A 401 is different -- it means the
+# request was rejected before doing anything -- so any method re-authenticates
+# once and is retried.
+_RETRY_STATUSES = frozenset([429, 502, 503, 504])
+_BACKOFF_SECONDS = (1.0, 3.0)
 
 
 class CipherTrustClient(object):
@@ -174,6 +209,11 @@ class CipherTrustClient(object):
             )
         _jwt_cache[self._cache_key] = (self._token, time.time() + _TOKEN_TTL)
 
+    def _invalidate_token(self):
+        """Drop the cached JWT so the next call re-authenticates."""
+        _jwt_cache.pop(self._cache_key, None)
+        self._token = None
+
     def _headers(self):
         self._ensure_authenticated()
         return {
@@ -190,48 +230,71 @@ class CipherTrustClient(object):
         in the response), on HTTP error statuses, and on connection failures,
         so that ``ciphertrust_operation`` can turn any of them into a clean
         ``fail_json`` instead of letting a traceback escape the module.
+
+        An expired session is renewed once transparently; transient server
+        errors are retried for GET only (see ``_RETRY_STATUSES``).
         """
         url = self._base_url + endpoint
-        try:
-            r = Request(
-                headers=self._headers(), timeout=120, validate_certs=self._verify
-            )
-            _res = r.open(method=method, url=url, data=data)
-            body = _res.read()
-            status_code = _res.getcode()
+        attempt = 0
+        reauthenticated = False
 
-            if body:
-                try:
-                    response = json.loads(body)
-                except (ValueError, TypeError):
-                    # Non-JSON body (e.g. empty 204 or plain text)
-                    return body
-            else:
-                return {}
+        while True:
+            try:
+                r = Request(
+                    headers=self._headers(), timeout=120, validate_certs=self._verify
+                )
+                _res = r.open(method=method, url=url, data=data)
+                body = _res.read()
+                status_code = _res.getcode()
 
-            # CM application-level error check
-            if isinstance(response, dict) and "codeDesc" in response:
+                if body:
+                    try:
+                        response = json.loads(body)
+                    except (ValueError, TypeError):
+                        # Non-JSON body (e.g. empty 204 or plain text)
+                        return body
+                else:
+                    return {}
+
+                # CM application-level error check
+                if isinstance(response, dict) and "codeDesc" in response:
+                    raise CMApiException(
+                        message="API error: " + response.get("codeDesc", "Unknown"),
+                        api_error_code=status_code,
+                    )
+
+                return response
+
+            except HTTPError as err:
+                if err.code == 401 and not reauthenticated:
+                    # The session expired earlier than the cached TTL implied.
+                    reauthenticated = True
+                    self._invalidate_token()
+                    continue
+                if (err.code in _RETRY_STATUSES and method == "GET"
+                        and attempt < len(_BACKOFF_SECONDS)):
+                    time.sleep(_BACKOFF_SECONDS[attempt])
+                    attempt += 1
+                    continue
                 raise CMApiException(
-                    message="API error: " + response.get("codeDesc", "Unknown"),
-                    api_error_code=status_code,
+                    message="{0} {1} failed: {2}".format(
+                        method, endpoint, _error_detail(err)
+                    ),
+                    api_error_code=err.code,
                 )
 
-            return response
-        except HTTPError as err:
-            raise CMApiException(
-                message="{0} {1} failed: {2}".format(
-                    method, endpoint, _error_detail(err)
-                ),
-                api_error_code=err.code,
-            )
-        except URLError as err:
-            raise CMApiException(
-                message="Could not connect to CipherTrust Manager at {0} "
-                        "for {1} {2}: {3}".format(
-                            self._server_ip, method, endpoint,
-                            getattr(err, "reason", err),
-                        ),
-            )
+            except URLError as err:
+                if method == "GET" and attempt < len(_BACKOFF_SECONDS):
+                    time.sleep(_BACKOFF_SECONDS[attempt])
+                    attempt += 1
+                    continue
+                raise CMApiException(
+                    message="Could not connect to CipherTrust Manager at {0} "
+                            "for {1} {2}: {3}".format(
+                                self._server_ip, method, endpoint,
+                                getattr(err, "reason", err),
+                            ),
+                )
 
     def get(self, endpoint):
         return self.request("GET", endpoint)
@@ -265,7 +328,7 @@ def _client_from_node(node):
 
 def DELETEByNameOrId(key=None, cm_node=None, cm_api_endpoint=None):
     client = _client_from_node(cm_node)
-    return client.delete(cm_api_endpoint + "/" + key)
+    return client.delete(cm_api_endpoint + "/" + quote_segment(key))
 
 
 def DeleteWithoutData(cm_node=None, cm_api_endpoint=None):
@@ -278,7 +341,9 @@ def GETIdByQueryParam(
 ):
     client = _client_from_node(cm_node)
     if param is not None:
-        url = cm_api_endpoint + "/?skip=0&limit=1&" + param + "=" + value
+        url = cm_api_endpoint + "/" + _build_query_string(
+            {"skip": 0, "limit": 1, param: value}
+        )
     else:
         url = cm_api_endpoint
 

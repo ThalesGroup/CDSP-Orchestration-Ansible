@@ -12,12 +12,13 @@ __metaclass__ = type
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
+    quote_segment,
     build_request_payload,
 )
 
 
 def _iface_url(interface_id, suffix=""):
-    return "configs/interfaces/" + interface_id + suffix
+    return "configs/interfaces/" + quote_segment(interface_id) + suffix
 
 
 def create(**kwargs):
@@ -31,7 +32,7 @@ def create(**kwargs):
 def patch(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.patch(
-        _iface_url(kwargs["interface_id"]),
+        _iface_url(quote_segment(kwargs["interface_id"])),
         data=build_request_payload(
             {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
         ),
@@ -41,7 +42,7 @@ def patch(**kwargs):
 def addCertificateToInterface(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.put(
-        _iface_url(kwargs["interface_id"], "/certificate"),
+        _iface_url(quote_segment(kwargs["interface_id"]), "/certificate"),
         data=build_request_payload(
             {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
         ),
@@ -50,30 +51,30 @@ def addCertificateToInterface(**kwargs):
 
 def getCertificateFromInterface(**kwargs):
     client = CipherTrustClient(kwargs["node"])
-    return client.get(_iface_url(kwargs["interface_id"], "/certificate"))
+    return client.get(_iface_url(quote_segment(kwargs["interface_id"]), "/certificate"))
 
 
 def enableInterface(**kwargs):
     client = CipherTrustClient(kwargs["node"])
-    return client.post(_iface_url(kwargs["interface_id"], "/enable"))
+    return client.post(_iface_url(quote_segment(kwargs["interface_id"]), "/enable"))
 
 
 def disableInterface(**kwargs):
     client = CipherTrustClient(kwargs["node"])
-    return client.post(_iface_url(kwargs["interface_id"], "/disable"))
+    return client.post(_iface_url(quote_segment(kwargs["interface_id"]), "/disable"))
 
 
 def restoreDefaultTlsCiphers(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        _iface_url(kwargs["interface_id"], "/restore-default-tls-ciphers")
+        _iface_url(quote_segment(kwargs["interface_id"]), "/restore-default-tls-ciphers")
     )
 
 
 def createCsr(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        _iface_url(kwargs["interface_id"], "/csr"),
+        _iface_url(quote_segment(kwargs["interface_id"]), "/csr"),
         data=build_request_payload(
             {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
         ),
@@ -83,14 +84,14 @@ def createCsr(**kwargs):
 def autogenServerCert(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        _iface_url(kwargs["interface_id"], "/auto-gen-server-cert")
+        _iface_url(quote_segment(kwargs["interface_id"]), "/auto-gen-server-cert")
     )
 
 
 def useCertificate(**kwargs):
     client = CipherTrustClient(kwargs["node"])
     return client.post(
-        _iface_url(kwargs["interface_id"], "/use-certificate"),
+        _iface_url(quote_segment(kwargs["interface_id"]), "/use-certificate"),
         data=build_request_payload(
             {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
         ),
