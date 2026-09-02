@@ -4,8 +4,8 @@ this_node_connection_string: "{{ cm_connection_string }}"
 # Vars for module_group_save
 pp_algorithm: "FPE/FF3/ASCII"
 pp_name: AnsibleIntegrationTest_PP
-#pp_allow_single_char_input: 
-#pp_allow_single_char_input_upd: 
+# pp_allow_single_char_input:
+# pp_allow_single_char_input_upd:
 pp_iv: 16
 pp_tweak: 1628462495815733
 pp_tweak_algorithm: SHA1

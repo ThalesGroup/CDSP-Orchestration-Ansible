@@ -1,4 +1,5 @@
 ---
+this_node_connection_string: "{{ cm_connection_string }}"
 # Variables for cm_certificate_authority integration test
 
 # Connection parameters

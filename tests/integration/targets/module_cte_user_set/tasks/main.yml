@@ -8,15 +8,18 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - user_set_name is defined
           - initial_users_list is defined
 
-## Validate the CTE User Set module
-- block:
+# # Validate the CTE User Set module
+- name: Create CTE UserSet
+  block:
     - name: "Create CTE UserSet"
       thalesgroup.ciphertrust.cte_user_set:
         op_type: create
@@ -26,7 +29,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create
 
-    - assert:
+    - name: Verify create CTE UserSet
+      ansible.builtin.assert:
         that:
           - _result_create is not failed
           - _result_create.response.id is string
@@ -39,7 +43,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify update CTE UserSet
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")
@@ -52,7 +57,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_add_user
 
-    - assert:
+    - name: Verify add Users to UserSet
+      ansible.builtin.assert:
         that:
           - _result_add_user is not failed
           - _result_add_user.response.message is match("Resource updated successfully")
@@ -69,7 +75,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_upd_user
 
-    - assert:
+    - name: Verify update user in UserSet
+      ansible.builtin.assert:
         that:
           - _result_upd_user is not failed
 
@@ -81,7 +88,8 @@
         userIndex: "{{ user_index_to_be_deleted }}"
       register: _result_del_user
 
-    - assert:
+    - name: Verify remove User from UserSet
+      ansible.builtin.assert:
         that:
           - _result_del_user is not failed
 
@@ -92,7 +100,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_user_set
 
-    - assert:
+    - name: Verify delete User Set
+      ansible.builtin.assert:
         that:
           - _result_delete_user_set is not failed
 

@@ -1,4 +1,5 @@
 ---
+this_node_connection_string: "{{ cm_connection_string }}"
 # Connection string for CipherTrust Manager
 # This should be set via command line: -e "connection_string=your-cm-hostname"
 connection_string: "localhost"

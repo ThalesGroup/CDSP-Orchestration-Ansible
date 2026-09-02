@@ -19,8 +19,10 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - group1_name is defined
@@ -29,7 +31,8 @@
           - user1_email is defined
           - user1_password is defined
 
-- block:
+- name: Create Test Group
+  block:
     - name: "Create Test Group"
       thalesgroup.ciphertrust.group_save:
         op_type: create
@@ -37,7 +40,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create_group
 
-    - assert:
+    - name: Verify create Test Group
+      ansible.builtin.assert:
         that:
           - _result_create_group is not failed
           - _result_create_group.response.id is string
@@ -51,7 +55,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create_user
 
-    - assert:
+    - name: Verify create Test User
+      ansible.builtin.assert:
         that:
           - _result_create_user is not failed
           - _result_create_user.response.id is string
@@ -65,7 +70,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_add_user_to_group
 
-    - assert:
+    - name: Verify add User to Group
+      ansible.builtin.assert:
         that:
           - _result_add_user_to_group is not failed
           - _result_add_user_to_group.response.id is string
@@ -79,7 +85,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_remove_user_from_group
 
-    - assert:
+    - name: Verify remove User from Group
+      ansible.builtin.assert:
         that:
           - _result_remove_user_from_group is not failed
           - _result_remove_user_from_group.response.id is string

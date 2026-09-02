@@ -19,15 +19,18 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - user_set_name is defined
           - user_set_description is defined
           - user_set_users is defined
 
-- block:
+- name: Create UserSet
+  block:
     - name: "Create UserSet"
       thalesgroup.ciphertrust.dpg_user_set_save:
         op_type: create
@@ -37,7 +40,8 @@
         users: "{{ user_set_users }}"
       register: _result_create
 
-    - assert:
+    - name: Verify create UserSet
+      ansible.builtin.assert:
         that:
           - _result_create is not failed
           - _result_create.response.id is string
@@ -54,7 +58,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify patch UserSet
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")
@@ -66,7 +71,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_userset
 
-    - assert:
+    - name: Verify delete UserSet ID
+      ansible.builtin.assert:
         that:
           - _result_delete_userset is not failed
 

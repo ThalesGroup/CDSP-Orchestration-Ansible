@@ -8,14 +8,17 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - resource_set_name is defined
 
-## Validate the CTE Resource Set module
-- block:
+# # Validate the CTE Resource Set module
+- name: Create CTE ResourceSet
+  block:
     - name: "Create CTE ResourceSet"
       thalesgroup.ciphertrust.cte_resource_set:
         op_type: create
@@ -26,7 +29,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create
 
-    - assert:
+    - name: Verify create CTE ResourceSet
+      ansible.builtin.assert:
         that:
           - _result_create is not failed
           - _result_create.response.id is string
@@ -40,7 +44,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify patch CTE ResourceSet
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")
@@ -53,7 +58,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_add_resource
 
-    - assert:
+    - name: Verify add Resources to ResourceSet
+      ansible.builtin.assert:
         that:
           - _result_add_resource is not failed
           - _result_add_resource.response.message is match("Resource updated successfully")
@@ -70,7 +76,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_upd_resource
 
-    - assert:
+    - name: Verify update Resource in ResourceSet
+      ansible.builtin.assert:
         that:
           - _result_upd_resource is not failed
           - _result_upd_resource.response.message is match("Resource updated successfully")
@@ -83,7 +90,8 @@
         resourceIndex: "{{ resource_index_to_be_deleted }}"
       register: _result_del_resource
 
-    - assert:
+    - name: Verify remove Resource from ResourceSet
+      ansible.builtin.assert:
         that:
           - _result_del_resource is not failed
 
@@ -94,7 +102,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_resource_set
 
-    - assert:
+    - name: Verify delete Resource Set
+      ansible.builtin.assert:
         that:
           - _result_delete_resource_set is not failed
 

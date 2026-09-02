@@ -19,19 +19,23 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
 
-## Validate the trial license actions
-- block:
+# # Validate the trial license actions
+- name: Get trial license ID from CM
+  block:
     - name: "Get trial license ID from CM"
       thalesgroup.ciphertrust.license_trial_get:
         localNode: "{{ this_node_connection_string }}"
       register: license
 
-    - assert:
+    - name: Verify get trial license ID from CM
+      ansible.builtin.assert:
         that:
           - license is not failed
           - license.response.id is string
@@ -47,7 +51,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_activate
 
-    - assert:
+    - name: Verify activate Trial License
+      ansible.builtin.assert:
         that:
           - _result_activate is not failed
           - _result_activate.response.message is match("Resource created successfully")
@@ -59,7 +64,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_deactivate
 
-    - assert:
+    - name: Verify deactivate Trial License
+      ansible.builtin.assert:
         that:
           - _result_deactivate is not failed
           - _result_deactivate.response.message is match("Resource created successfully")

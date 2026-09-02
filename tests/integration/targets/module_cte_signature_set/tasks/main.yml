@@ -19,13 +19,16 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
 
-## Validate the CTE Signature Set module
-- block:
+# # Validate the CTE Signature Set module
+- name: Create CTE SignatureSet
+  block:
     - name: "Create CTE SignatureSet"
       thalesgroup.ciphertrust.cte_signature_set:
         op_type: create
@@ -35,7 +38,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create
 
-    - assert:
+    - name: Verify create CTE SignatureSet
+      ansible.builtin.assert:
         that:
           - _result_create is not failed
           - _result_create.response.id is string
@@ -48,7 +52,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify patch CTE SignatureSet
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")
@@ -61,7 +66,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_add_signature
 
-    - assert:
+    - name: Verify add Signatures to SignatureSet
+      ansible.builtin.assert:
         that:
           - _result_add_signature is not failed
           - _result_add_signature.response.message is match("Resource updated successfully")
@@ -73,7 +79,8 @@
         file_name: "{{ signature_file_name_get_id }}"
       register: _result_get_signature
 
-    - assert:
+    - name: Verify get Signature ID from SignatureSet and File Name filter
+      ansible.builtin.assert:
         that:
           - _result_get_signature is not failed
           - _result_get_signature.response.id is string
@@ -86,7 +93,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_del_signature
 
-    - assert:
+    - name: Verify remove Signature from SignatureSet
+      ansible.builtin.assert:
         that:
           - _result_del_signature is not failed
           - _result_del_signature.response is match("Resource deleted successfully")
@@ -98,7 +106,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_signature_set
 
-    - assert:
+    - name: Verify delete Signature Set
+      ansible.builtin.assert:
         that:
           - _result_delete_signature_set is not failed
 

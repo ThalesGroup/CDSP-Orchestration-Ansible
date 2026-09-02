@@ -19,21 +19,25 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - license_string is defined
 
-## Validate the add license module
-- block:
+# # Validate the add license module
+- name: Add License
+  block:
     - name: "Add License"
       thalesgroup.ciphertrust.license_create:
         localNode: "{{ this_node_connection_string }}"
         license: "{{ license_string }}"
       register: _result_add
 
-    - assert:
+    - name: Verify add License
+      ansible.builtin.assert:
         that:
           - _result_add is not failed
           - _result_add.response.message is match("Resource created successfully")

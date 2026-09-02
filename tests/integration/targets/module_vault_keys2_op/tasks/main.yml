@@ -19,8 +19,10 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - key_name is defined
@@ -32,8 +34,9 @@
           - key_reactivation_reason is defined
           - key_reactivation_message is defined
 
-## Validate the create user module
-- block:
+# # Validate the create user module
+- name: Create Key
+  block:
     - name: "Create Key"
       thalesgroup.ciphertrust.vault_keys2_save:
         op_type: create
@@ -44,7 +47,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create
 
-    - assert:
+    - name: Verify create Key
+      ansible.builtin.assert:
         that:
           - _result_create is not failed
           - _result_create.response.id is string
@@ -61,7 +65,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify patch Key
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")
@@ -74,7 +79,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create_version
 
-    - assert:
+    - name: Verify create Version
+      ansible.builtin.assert:
         that:
           - _result_create_version is not failed
           - _result_create_version.response.message is match("Resource created successfully")
@@ -86,7 +92,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_archive
 
-    - assert:
+    - name: Verify archive Key
+      ansible.builtin.assert:
         that:
           - _result_archive is not failed
           - _result_archive.response.message is match("Resource created successfully")
@@ -98,7 +105,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_recover
 
-    - assert:
+    - name: Verify recover Key
+      ansible.builtin.assert:
         that:
           - _result_recover is not failed
           - _result_recover.response.message is match("Resource created successfully")
@@ -112,7 +120,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_revoke
 
-    - assert:
+    - name: Verify revoke Key
+      ansible.builtin.assert:
         that:
           - _result_revoke is not failed
           - _result_revoke.response.message is match("Resource created successfully")
@@ -126,7 +135,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_reactivate
 
-    - assert:
+    - name: Verify reactivate Key
+      ansible.builtin.assert:
         that:
           - _result_reactivate is not failed
           - _result_reactivate.response.message is match("Resource created successfully")
@@ -138,7 +148,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_destroy
 
-    - assert:
+    - name: Verify destroy Key
+      ansible.builtin.assert:
         that:
           - _result_destroy is not failed
           - _result_destroy.response.message is match("Resource created successfully")
@@ -150,7 +161,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete
 
-    - assert:
+    - name: Verify delete Key
+      ansible.builtin.assert:
         that:
           - _result_delete is not failed
           - _result_delete.response.message is match("Resource deletion succesful")

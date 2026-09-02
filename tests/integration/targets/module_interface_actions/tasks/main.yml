@@ -19,8 +19,10 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - csr_cn is defined
@@ -32,20 +34,22 @@
           - mode is defined
           - new_port is defined
 
-## Validate the create interface module
-- block:
+# # Validate the create interface module
+- name: Create Interface
+  block:
     - name: "Create Interface"
       thalesgroup.ciphertrust.interface_save:
         localNode: "{{ this_node_connection_string }}"
         op_type: create
-        port: "{{ port }}"
+        port: "{{ interface_port }}"
         auto_registration: false
         interface_type: "{{ type }}"
         mode: "{{ mode }}"
         network_interface: all
       register: _result_create
 
-    - assert:
+    - name: Verify create Interface
+      ansible.builtin.assert:
         that:
           - _result_create is not failed
           - _result_create.response.id is string
@@ -62,12 +66,13 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify patch Interface
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")
 
-    ## Validate the interface actions
+    # # Validate the interface actions
     - name: "Add Cert to Interface"
       thalesgroup.ciphertrust.interface_actions:
         localNode: "{{ this_node_connection_string }}"
@@ -78,7 +83,8 @@
         format: "{{ cert_format }}"
       register: _result_add_cert
 
-    - assert:
+    - name: Verify add Cert to Interface
+      ansible.builtin.assert:
         that:
           - _result_add_cert is not failed
           - _result_add_cert.response.message is match("Resource updated successfully")
@@ -90,7 +96,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_enable
 
-    - assert:
+    - name: Verify enable Interface
+      ansible.builtin.assert:
         that:
           - _result_enable is not failed
           - _result_enable.response.message is match("Resource created successfully")
@@ -102,7 +109,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_disable
 
-    - assert:
+    - name: Verify disable Interface
+      ansible.builtin.assert:
         that:
           - _result_disable is not failed
           - _result_disable.response.message is match("Resource created successfully")
@@ -114,7 +122,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_restore
 
-    - assert:
+    - name: Verify restore default TLS Ciphers
+      ansible.builtin.assert:
         that:
           - _result_restore is not failed
           - _result_restore.response.message is match("Resource created successfully")
@@ -127,7 +136,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create_csr
 
-    - assert:
+    - name: Verify create CSR
+      ansible.builtin.assert:
         that:
           - _result_create_csr is not failed
           - _result_create_csr.response.csr is match("Resource created successfully")
@@ -152,7 +162,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_use_cert
 
-    - assert:
+    - name: Verify use Certificate
+      ansible.builtin.assert:
         that:
           - _result_use_cert is not failed
           - _result_use_cert.response.message is match("Resource created successfully")

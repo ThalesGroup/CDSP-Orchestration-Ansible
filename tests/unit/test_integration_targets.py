@@ -13,6 +13,7 @@ suite cannot drift away from the collection again without something failing.
 
 import glob
 import importlib
+import re
 import pathlib
 
 import pytest
@@ -114,3 +115,64 @@ def test_every_target_has_an_aliases_file():
         assert (target_dir / "aliases").exists(), (
             "%s has no aliases file, so ansible-test will not run it" % target_dir.name
         )
+
+
+def _defined_names(target_dir, tasks):
+    """Every name a target can resolve: config, vars, defaults, set_fact, register."""
+    import yaml as _yaml
+
+    names = set()
+    config = REPO_ROOT / "tests" / "integration" / "integration_config.yml"
+    names |= set(_yaml.safe_load(config.read_text()) or {})
+    for rel in ("vars/main.yml", "defaults/main.yml"):
+        path = target_dir / rel
+        if path.exists():
+            names |= set(_yaml.safe_load(path.read_text()) or {})
+
+    stack = [tasks]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, list):
+            stack.extend(node)
+        elif isinstance(node, dict):
+            for key, value in node.items():
+                if key in ("block", "always", "rescue"):
+                    stack.append(value)
+                elif key == "register" and isinstance(value, str):
+                    names.add(value)
+                elif key == "vars" and isinstance(value, dict):
+                    names |= set(value)
+                elif key in ("set_fact", "ansible.builtin.set_fact") and isinstance(value, dict):
+                    names |= {k for k in value if k != "cacheable"}
+    return names
+
+
+# Loop variables and facts that Ansible provides rather than the target.
+_AMBIENT = {
+    "item", "omit", "lookup", "ansible_check_mode", "ansible_date_time",
+    "inventory_hostname", "playbook_dir", "ansible_facts",
+}
+
+
+@pytest.mark.parametrize("path", TARGETS, ids=[_target_id(p) for p in TARGETS])
+def test_target_defines_every_variable_it_uses(path):
+    """A target that references an undefined variable fails only on a live run.
+
+    Eight targets referenced this_node_connection_string without defining it,
+    which no structural check caught until this one existed.
+    """
+    target_dir = pathlib.Path(path).parents[1]
+    tasks = yaml.safe_load(pathlib.Path(path).read_text()) or []
+    defined = _defined_names(target_dir, tasks) | _AMBIENT
+
+    # commented-out tasks are not executed, so they are not checked
+    body = "\n".join(
+        line for line in pathlib.Path(path).read_text().split("\n")
+        if not line.lstrip().startswith("#")
+    )
+    used = set(re.findall(r"\{\{\s*([a-zA-Z_]\w*)", body))
+    undefined = sorted(name for name in used - defined if not name.startswith("_"))
+
+    assert not undefined, (
+        "target uses variables nothing defines: %s" % undefined
+    )

@@ -19,15 +19,18 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - admins is defined
           - domain_name is defined
 
-## Validate the create domain module
-- block:
+# # Validate the create domain module
+- name: Create Domain
+  block:
     - name: "Create Domain"
       thalesgroup.ciphertrust.domain_save:
         op_type: create
@@ -38,7 +41,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create
 
-    - assert:
+    - name: Verify create Domain
+      ansible.builtin.assert:
         that:
           - _result_create is not failed
           - _result_create.response.id is string
@@ -49,7 +53,8 @@
         domain_id: "{{ _result_create.response.id }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify patch Domain
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")

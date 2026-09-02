@@ -19,8 +19,10 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - user_set1_name is defined
@@ -32,7 +34,8 @@
           - ap_name is defined
           - ap_name_upd is defined
 
-- block:
+- name: Create UserSet1
+  block:
     - name: "Create UserSet1"
       thalesgroup.ciphertrust.dpg_user_set_save:
         op_type: create
@@ -42,7 +45,8 @@
         users: "{{ user_set1_users }}"
       register: _result_create_user_set1
 
-    - assert:
+    - name: Verify create UserSet1
+      ansible.builtin.assert:
         that:
           - _result_create_user_set1 is not failed
           - _result_create_user_set1.response.id is string
@@ -60,7 +64,8 @@
         users: "{{ user_set2_users }}"
       register: _result_create_user_set2
 
-    - assert:
+    - name: Verify create UserSet2
+      ansible.builtin.assert:
         that:
           - _result_create_user_set2 is not failed
           - _result_create_user_set2.response.id is string
@@ -80,7 +85,8 @@
             user_set_id: "{{ user_set1_id }}"
       register: _result_create_ap
 
-    - assert:
+    - name: Verify create Access Policy
+      ansible.builtin.assert:
         that:
           - _result_create_ap is not failed
           - _result_create_ap.response.id is string
@@ -99,7 +105,8 @@
         default_reveal_type: Plaintext
       register: _result_patch_ap
 
-    - assert:
+    - name: Verify patch Access Policy
+      ansible.builtin.assert:
         that:
           - _result_patch_ap is not failed
           - _result_patch_ap.response.message is match("Resource updated successfully")
@@ -113,7 +120,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_update_ap_add_user_set
 
-    - assert:
+    - name: Verify add UserSet to Access Policy
+      ansible.builtin.assert:
         that:
           - _result_update_ap_add_user_set is not failed
 
@@ -126,7 +134,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_update_ap_update_user_set
 
-    - assert:
+    - name: Verify update UserSet in Access Policy
+      ansible.builtin.assert:
         that:
           - _result_update_ap_update_user_set is not failed
 
@@ -149,7 +158,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_ap
 
-    - assert:
+    - name: Verify delete Access Policy
+      ansible.builtin.assert:
         that:
           - _result_delete_ap is not failed
 
@@ -160,7 +170,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_user_set
 
-    - assert:
+    - name: Verify delete UserSet 1
+      ansible.builtin.assert:
         that:
           - _result_delete_user_set is not failed
 
@@ -171,7 +182,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_user_set
 
-    - assert:
+    - name: Verify delete UserSet 2
+      ansible.builtin.assert:
         that:
           - _result_delete_user_set is not failed
 

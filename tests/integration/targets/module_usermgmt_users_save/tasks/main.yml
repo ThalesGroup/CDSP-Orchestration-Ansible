@@ -19,8 +19,10 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - username is defined
@@ -32,8 +34,9 @@
           - new_password is defined
           - new_self_name is defined
 
-## Validate the create user module
-- block:
+# # Validate the create user module
+- name: Create User
+  block:
     - name: "Create User"
       thalesgroup.ciphertrust.usermgmt_users_save:
         localNode: "{{ this_node_connection_string }}"
@@ -41,10 +44,11 @@
         username: "{{ username }}"
         password: "{{ password }}"
         email: "{{ email }}"
-        name: "{{ name }}"
+        name: "{{ firstname_lastname }}"
       register: _result_create
 
-    - assert:
+    - name: Verify create User
+      ansible.builtin.assert:
         that:
           - _result_create is not failed
           - _result_create.response.id is string
@@ -63,7 +67,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify patch User
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")
@@ -77,7 +82,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_changepw
 
-    - assert:
+    - name: Verify change Password
+      ansible.builtin.assert:
         that:
           - _result_changepw is not failed
           - _result_changepw.response.message is match("Resource updated successfully")
@@ -89,7 +95,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch_self
 
-    - assert:
+    - name: Verify update Self
+      ansible.builtin.assert:
         that:
           - _result_patch_self is not failed
           - _result_patch_self.response.message is match("Resource updated successfully")
@@ -101,7 +108,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_user
 
-    - assert:
+    - name: Verify delete User ID
+      ansible.builtin.assert:
         that:
           - _result_delete_user is not failed
           - _result_delete_user.response.message is match("Resource deletion succesful")

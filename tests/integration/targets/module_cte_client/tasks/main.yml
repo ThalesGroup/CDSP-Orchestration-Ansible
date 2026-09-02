@@ -19,13 +19,16 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
 
-## Validate the CTE Client module
-- block:
+# # Validate the CTE Client module
+- name: Get User ID from Name
+  block:
     - name: "Get User ID from Name"
       thalesgroup.ciphertrust.cm_resource_get_id_from_name:
         localNode: "{{ this_node_connection_string }}"
@@ -37,9 +40,9 @@
     - name: "Create Key"
       thalesgroup.ciphertrust.vault_keys2_save:
         op_type: create
-        name: "{{ keyName }}"
-        algorithm: "{{ keyAlgo }}"
-        size: "{{ keySize }}"
+        name: "{{ key_name }}"
+        algorithm: "{{ key_algo }}"
+        size: "{{ key_size }}"
         undeletable: false
         unexportable: false
         usageMask: 76
@@ -125,7 +128,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_client_create
 
-    - assert:
+    - name: Verify create CTE Client
+      ansible.builtin.assert:
         that:
           - _result_client_create is not failed
           - _result_client_create.response.id is string
@@ -140,7 +144,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify patch Client
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")
@@ -158,7 +163,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_add_gp
 
-    - assert:
+    - name: Verify add Guard Points to the CTE Client
+      ansible.builtin.assert:
         that:
           - _result_add_gp is not failed
           - _result_add_gp.response.message is match("Resource created successfully")
@@ -171,7 +177,8 @@
         guard_enabled: true
       register: _result_update_gp
 
-    - assert:
+    - name: Verify patch Guard Point in CTE Client
+      ansible.builtin.assert:
         that:
           - _result_update_gp is not failed
           - _result_update_gp.response.message is match("Resource updated successfully")
@@ -184,7 +191,8 @@
         early_access: true
       register: _result_update_gp_enable_early_access
 
-    - assert:
+    - name: Verify enable early access on GuardPoint
+      ansible.builtin.assert:
         that:
           - _result_update_gp_enable_early_access is not failed
           - _result_update_gp_enable_early_access.response.message is match("Resource updated successfully")
@@ -197,7 +205,8 @@
           - "{{ _result_add_gp['response']['id'] }}"
       register: _result_unguard
 
-    - assert:
+    - name: Verify unGuard the guard point
+      ansible.builtin.assert:
         that:
           - _result_unguard is not failed
           - _result_unguard.response.message is match("Resource updated successfully")
@@ -210,7 +219,8 @@
         paused: true
       register: _result_ldt_pause
 
-    - assert:
+    - name: Verify send LDT Suspend Request to CTE Client
+      ansible.builtin.assert:
         that:
           - _result_ldt_pause is not failed
 
@@ -221,7 +231,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_unenroll
 
-    - assert:
+    - name: Verify un-enroll CTE Client
+      ansible.builtin.assert:
         that:
           - _result_unenroll is not failed
           - _result_unenroll.response.message is match("Resource created successfully")
@@ -235,7 +246,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete
 
-    - assert:
+    - name: Verify delete a CTE Client with ID
+      ansible.builtin.assert:
         that:
           - _result_delete is not failed
           - _result_delete.response.message is match("Resource updated successfully")
@@ -247,7 +259,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_policy
 
-    - assert:
+    - name: Verify delete CTE Policy
+      ansible.builtin.assert:
         that:
           - _result_delete_policy is not failed
 
@@ -263,7 +276,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_resource_set
 
-    - assert:
+    - name: Verify delete Resource Set
+      ansible.builtin.assert:
         that:
           - _result_delete_resource_set is not failed
 
@@ -274,7 +288,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_key
 
-    - assert:
+    - name: Verify delete Key
+      ansible.builtin.assert:
         that:
           - _result_delete_key is not failed
 

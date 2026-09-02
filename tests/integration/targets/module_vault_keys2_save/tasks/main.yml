@@ -19,8 +19,10 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - key_name is defined
@@ -28,8 +30,9 @@
           - key_len is defined
           - usage_mask is defined
 
-## Validate the vault_keys2_save module - Create Operation
-- block:
+# # Validate the vault_keys2_save module - Create Operation
+- name: Create Key
+  block:
     - name: "Create Key"
       thalesgroup.ciphertrust.vault_keys2_save:
         op_type: create
@@ -40,7 +43,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create
 
-    - assert:
+    - name: Verify create Key
+      ansible.builtin.assert:
         that:
           - _result_create is not failed
           - _result_create.response.id is string
@@ -50,8 +54,9 @@
       set_fact:
         key_id: "{{ _result_create.response.id }}"
 
-## Validate the vault_keys2_save module - Patch Operation
-- block:
+# # Validate the vault_keys2_save module - Patch Operation
+- name: Patch Key
+  block:
     - name: "Patch Key"
       thalesgroup.ciphertrust.vault_keys2_save:
         op_type: "patch"
@@ -60,13 +65,15 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify patch Key
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")
 
-## Validate the vault_keys2_save module - Create Version Operation
-- block:
+# # Validate the vault_keys2_save module - Create Version Operation
+- name: Create Version
+  block:
     - name: "Create Version"
       thalesgroup.ciphertrust.vault_keys2_save:
         op_type: create_version
@@ -75,19 +82,22 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create_version
 
-    - assert:
+    - name: Verify create Version
+      ansible.builtin.assert:
         that:
           - _result_create_version is not failed
           - _result_create_version.response.message is match("Resource created successfully")
 
-## Cleanup - Delete the key
-- block:
+# # Cleanup - Delete the key
+- name: Delete Key
+  block:
     - name: "Delete Key"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ key_id }}"
       register: _result_delete
 
-    - assert:
+    - name: Verify delete Key
+      ansible.builtin.assert:
         that:
           - _result_delete is not failed
 

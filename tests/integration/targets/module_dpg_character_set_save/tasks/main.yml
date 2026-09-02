@@ -19,8 +19,10 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - char_set_name is defined
@@ -28,7 +30,8 @@
           - char_set_range is defined
           - updated_char_set_range is defined
 
-- block:
+- name: Create CharSet
+  block:
     - name: "Create CharSet"
       thalesgroup.ciphertrust.dpg_character_set_save:
         op_type: create
@@ -38,7 +41,8 @@
         encoding: "{{ char_set_encoding }}"
       register: _result_create
 
-    - assert:
+    - name: Verify create CharSet
+      ansible.builtin.assert:
         that:
           - _result_create is not failed
           - _result_create.response.id is string
@@ -55,7 +59,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify patch CharSet
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")
@@ -67,7 +72,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_charset
 
-    - assert:
+    - name: Verify delete charset by ID
+      ansible.builtin.assert:
         that:
           - _result_delete_charset is not failed
 

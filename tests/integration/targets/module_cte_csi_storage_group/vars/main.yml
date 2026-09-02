@@ -8,8 +8,8 @@ client_profile: DefaultClientProfile
 description: "Created via Ansible"
 
 username: admin
-keyName: AnsibleCTEKey
-keyAlgo: aes
-keySize: 256
+key_name: AnsibleCTEKey
+key_algo: aes
+key_size: 256
 resource_set_name: Ansible_RES_SET
 cte_policy_name: Ansible-CTE-Policy

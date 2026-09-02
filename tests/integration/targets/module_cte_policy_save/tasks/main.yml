@@ -7,12 +7,14 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
 
-## Validate the CTE Policy management module
+# # Validate the CTE Policy management module
 - name: "Get User ID from Name"
   thalesgroup.ciphertrust.cm_resource_get_id_from_name:
     localNode: "{{ this_node_connection_string }}"
@@ -24,9 +26,9 @@
 - name: "Create Key"
   thalesgroup.ciphertrust.vault_keys2_save:
     op_type: create
-    name: "{{ keyName }}"
-    algorithm: "{{ keyAlgo }}"
-    size: "{{ keySize }}"
+    name: "{{ key_name }}"
+    algorithm: "{{ key_algo }}"
+    size: "{{ key_size }}"
     undeletable: false
     unexportable: false
     usageMask: 76
@@ -73,7 +75,8 @@
     localNode: "{{ this_node_connection_string }}"
   register: _result_create_rs_1
 
-- assert:
+- name: Verify the previous step
+  ansible.builtin.assert:
     that:
       - _result_create_rs is not failed
       - _result_create_rs.response.id is string
@@ -105,7 +108,8 @@
         resource_set_id: "{{ _result_create_rs['response']['id'] }}"
   register: _result_create
 
-- assert:
+- name: Verify create CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_create is not failed
       - _result_create.response.id is string
@@ -118,7 +122,8 @@
     localNode: "{{ this_node_connection_string }}"
   register: _result_patch
 
-- assert:
+- name: Verify patch CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_patch is not failed
       - _result_patch.response.message is match("Resource updated successfully")
@@ -137,7 +142,8 @@
     localNode: "{{ this_node_connection_string }}"
   register: _result_create_rs_2
 
-- assert:
+- name: Verify create another CTE ResourceSet for updating CTE policy
+  ansible.builtin.assert:
     that:
       - _result_create_rs_2 is not failed
       - _result_create_rs_2.response.id is string
@@ -156,10 +162,11 @@
     localNode: "{{ this_node_connection_string }}"
   register: _result_create_rs_3
 
-- assert:
-  that:
-    - _result_create_rs_3 is not failed
-    - _result_create_rs_3.response.id is string
+- name: Verify create Resource Set 3
+  ansible.builtin.assert:
+    that:
+      - _result_create_rs_3 is not failed
+      - _result_create_rs_3.response.id is string
 
 - name: "Add data transformation rule to CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
@@ -169,7 +176,8 @@
     resource_set_id: "{{ _result_create_rs_2['response']['id'] }}"
   register: _result_patch_add_dtx_rule
 
-- assert:
+- name: Verify add data transformation rule to CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_patch_add_dtx_rule is not failed
       - _result_patch_add_dtx_rule.response.message is match("Resource updated successfully")
@@ -182,7 +190,8 @@
     resource_set_id: "{{ _result_create_rs_2['response']['id'] }}"
   register: _result_patch_add_key_rule
 
-- assert:
+- name: Verify add key rule to CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_patch_add_key_rule is not failed
       - _result_patch_add_key_rule.response.message is match("Resource updated successfully")
@@ -198,7 +207,8 @@
     effect: "permit,audit,applykey"
   register: _result_patch_add_sec_rule
 
-- assert:
+- name: Verify add security rule to CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_patch_add_sec_rule is not failed
       - _result_patch_add_sec_rule.response.message is match("Resource updated successfully")
@@ -212,7 +222,8 @@
     resource_set_id: "{{ _result_create_rs_3['response']['id'] }}"
   register: _result_patch_upd_dtx_rule
 
-- assert:
+- name: Verify patch data transformation rule to CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_patch_upd_dtx_rule is not failed
       - _result_patch_upd_dtx_rule.response.message is match("Resource updated successfully")
@@ -226,7 +237,8 @@
     resource_set_id: "{{ _result_create_rs_3['response']['id'] }}"
   register: _result_patch_upd_key_rule
 
-- assert:
+- name: Verify patch key rule to CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_patch_upd_key_rule is not failed
       - _result_patch_upd_key_rule.response.message is match("Resource updated successfully")
@@ -243,7 +255,8 @@
     effect: "permit,audit,applykey"
   register: _result_patch_upd_sec_rule
 
-- assert:
+- name: Verify patch security rule to CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_patch_upd_sec_rule is not failed
       - _result_patch_upd_sec_rule.response.message is match("Resource updated successfully")
@@ -255,7 +268,8 @@
     dataTxRuleId: "{{ _result_patch_add_dtx_rule['response']['id'] }}"
   register: _result_patch_del_dtx_rule
 
-- assert:
+- name: Verify remove data transformation rule from CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_patch_del_dtx_rule is not failed
 
@@ -266,7 +280,8 @@
     keyRuleId: "{{ _result_patch_add_key_rule['response']['id'] }}"
   register: _result_patch_del_key_rule
 
-- assert:
+- name: Verify remove key rule from CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_patch_del_key_rule is not failed
 
@@ -277,7 +292,8 @@
     securityRuleId: "{{ _result_patch_add_sec_rule['response']['id'] }}"
   register: _result_patch_del_sec_rule
 
-- assert:
+- name: Verify remove security rule from CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_patch_del_sec_rule is not failed
 
@@ -288,7 +304,8 @@
     localNode: "{{ this_node_connection_string }}"
   register: _result_delete_policy
 
-- assert:
+- name: Verify delete CTE Policy
+  ansible.builtin.assert:
     that:
       - _result_delete_policy is not failed
 
@@ -304,7 +321,8 @@
     localNode: "{{ this_node_connection_string }}"
   register: _result_delete_resource_set_1
 
-- assert:
+- name: Verify delete Resource Set 1
+  ansible.builtin.assert:
     that:
       - _result_delete_resource_set_1 is not failed
 
@@ -315,7 +333,8 @@
     localNode: "{{ this_node_connection_string }}"
   register: _result_delete_resource_set_2
 
-- assert:
+- name: Verify delete Resource Set 2
+  ansible.builtin.assert:
     that:
       - _result_delete_resource_set_2 is not failed
 
@@ -326,7 +345,8 @@
     localNode: "{{ this_node_connection_string }}"
   register: _result_delete_resource_set_3
 
-- assert:
+- name: Verify delete Resource Set 3
+  ansible.builtin.assert:
     that:
       - _result_delete_resource_set_3 is not failed
 
@@ -337,7 +357,8 @@
     localNode: "{{ this_node_connection_string }}"
   register: _result_delete_key
 
-- assert:
+- name: Verify delete Key
+  ansible.builtin.assert:
     that:
       - _result_delete_key is not failed
 

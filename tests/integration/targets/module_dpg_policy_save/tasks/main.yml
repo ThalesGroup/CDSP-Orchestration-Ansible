@@ -19,12 +19,15 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
 
-- block:
+- name: Create Key
+  block:
     # First we will create two protection policies for card type and one for SSN field
     # Next we will create an access policy for the SSN field
     # Then we will create the DPG policy to stitch everything together
@@ -39,7 +42,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create_key
 
-    - assert:
+    - name: Verify create Key
+      ansible.builtin.assert:
         that:
           - _result_create_key is not failed
           - _result_create_key.response.id is string
@@ -57,7 +61,8 @@
         encoding: "{{ char_set_encoding }}"
       register: _result_create_charset
 
-    - assert:
+    - name: Verify create CharSet
+      ansible.builtin.assert:
         that:
           - _result_create_charset is not failed
           - _result_create_charset.response.id is string
@@ -78,7 +83,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create_pp_cvv
 
-    - assert:
+    - name: Verify create Protection Policy CVV
+      ansible.builtin.assert:
         that:
           - _result_create_pp_cvv is not failed
           - _result_create_pp_cvv.response.id is string
@@ -98,7 +104,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create_pp_cc
 
-    - assert:
+    - name: Verify create Protection Policy CC
+      ansible.builtin.assert:
         that:
           - _result_create_pp_cc is not failed
           - _result_create_pp_cc.response.id is string
@@ -116,7 +123,8 @@
         users: "{{ user_set_users }}"
       register: _result_create_user_set
 
-    - assert:
+    - name: Verify create UserSet
+      ansible.builtin.assert:
         that:
           - _result_create_user_set is not failed
           - _result_create_user_set.response.id is string
@@ -137,7 +145,8 @@
             user_set_id: "{{ user_set_id }}"
       register: _result_create_ap
 
-    - assert:
+    - name: Verify create Access Policy
+      ansible.builtin.assert:
         that:
           - _result_create_ap is not failed
           - _result_create_ap.response.id is string
@@ -165,7 +174,8 @@
                 access_policy: "{{ ap_name }}"
       register: _result_create_policy
 
-    - assert:
+    - name: Verify create DPG Policy
+      ansible.builtin.assert:
         that:
           - _result_create_policy is not failed
           - _result_create_policy.response.id is string
@@ -183,7 +193,8 @@
         description: "Updated via Ansible"
       register: _result_update_policy
 
-    - assert:
+    - name: Verify patch DPG Policy
+      ansible.builtin.assert:
         that:
           - _result_update_policy is not failed
 
@@ -201,7 +212,8 @@
             protection_policy: "{{ pp_name_cvv }}"
       register: _result_update_policy_add_api_url
 
-    - assert:
+    - name: Verify add api_url to DPG Policy
+      ansible.builtin.assert:
         that:
           - _result_update_policy_add_api_url is not failed
           - _result_update_policy_add_api_url.response.id is string
@@ -220,7 +232,8 @@
         destination_url: "http://localhost:8081"
       register: _result_update_policy_upd_api_url
 
-    - assert:
+    - name: Verify update api_url in DPG Policy
+      ansible.builtin.assert:
         that:
           - _result_update_policy_upd_api_url is not failed
 
@@ -233,7 +246,8 @@
         api_url_id: "{{ api_url_id }}"
       register: _result_update_policy_del_api_url
 
-    - assert:
+    - name: Verify delete api_url from DPG Policy
+      ansible.builtin.assert:
         that:
           - _result_update_policy_del_api_url is not failed
 
@@ -245,12 +259,13 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_dpg_policy
 
-    - assert:
+    - name: Verify delete DPG Policy by ID
+      ansible.builtin.assert:
         that:
           - _result_delete_dpg_policy is not failed
 
     # Final cleanup
-    ## Delete Protection Policies
+    # # Delete Protection Policies
     - name: "Delete Protection Policy CVV by name"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ pp_name_cvv }}"
@@ -258,7 +273,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_pp_cvv
 
-    - assert:
+    - name: Verify delete Protection Policy CVV by name
+      ansible.builtin.assert:
         that:
           - _result_delete_pp_cvv is not failed
 
@@ -269,11 +285,12 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_pp_cc
 
-    - assert:
+    - name: Verify delete Protection Policy CC by name
+      ansible.builtin.assert:
         that:
           - _result_delete_pp_cc is not failed
 
-    ## Delete Access Policies
+    # # Delete Access Policies
     - name: "Delete Access Policy"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ ap_id }}"
@@ -281,11 +298,12 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_ap
 
-    - assert:
+    - name: Verify delete Access Policy
+      ansible.builtin.assert:
         that:
           - _result_delete_ap is not failed
 
-    ## Delete UserSet
+    # # Delete UserSet
     - name: "Delete UserSet"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ user_set_id }}"
@@ -293,11 +311,12 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_user_set
 
-    - assert:
+    - name: Verify delete UserSet
+      ansible.builtin.assert:
         that:
           - _result_delete_user_set is not failed
 
-    ## Delete CharacterSet
+    # # Delete CharacterSet
     - name: "Delete charset by ID"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ char_set_id }}"
@@ -305,11 +324,12 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_charset
 
-    - assert:
+    - name: Verify delete charset by ID
+      ansible.builtin.assert:
         that:
           - _result_delete_charset is not failed
 
-    ## Delete Key
+    # # Delete Key
     - name: "Delete Key"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ key_id }}"
@@ -317,7 +337,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_key
 
-    - assert:
+    - name: Verify delete Key
+      ansible.builtin.assert:
         that:
           - _result_delete_key is not failed
 

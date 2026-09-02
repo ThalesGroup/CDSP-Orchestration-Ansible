@@ -19,8 +19,10 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
-- block:
-    - assert:
+- name: Verify integration_config was supplied
+  block:
+    - name: Verify integration_config was supplied
+      ansible.builtin.assert:
         that:
           - this_node_connection_string is defined
           - pp_algorithm is defined
@@ -38,7 +40,8 @@
           - char_set_encoding is defined
           - char_set_range is defined
 
-- block:
+- name: Create Key
+  block:
     - name: "Create Key"
       thalesgroup.ciphertrust.vault_keys2_save:
         op_type: create
@@ -49,7 +52,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create_key
 
-    - assert:
+    - name: Verify create Key
+      ansible.builtin.assert:
         that:
           - _result_create_key is not failed
           - _result_create_key.response.id is string
@@ -67,7 +71,8 @@
         encoding: "{{ char_set_encoding }}"
       register: _result_create_charset
 
-    - assert:
+    - name: Verify create CharSet
+      ansible.builtin.assert:
         that:
           - _result_create_charset is not failed
           - _result_create_charset.response.id is string
@@ -90,7 +95,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_create
 
-    - assert:
+    - name: Verify create Protection Policy
+      ansible.builtin.assert:
         that:
           - _result_create is not failed
           - _result_create.response.id is string
@@ -108,7 +114,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch
 
-    - assert:
+    - name: Verify patch Protection Policy
+      ansible.builtin.assert:
         that:
           - _result_patch is not failed
           - _result_patch.response.message is match("Resource updated successfully")
@@ -120,7 +127,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_pp
 
-    - assert:
+    - name: Verify delete Protection Policy by name
+      ansible.builtin.assert:
         that:
           - _result_delete_pp is not failed
 
@@ -131,7 +139,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_key
 
-    - assert:
+    - name: Verify delete Key
+      ansible.builtin.assert:
         that:
           - _result_delete_key is not failed
 
@@ -142,7 +151,8 @@
         localNode: "{{ this_node_connection_string }}"
       register: _result_delete_charset
 
-    - assert:
+    - name: Verify delete charset by ID
+      ansible.builtin.assert:
         that:
           - _result_delete_charset is not failed
 

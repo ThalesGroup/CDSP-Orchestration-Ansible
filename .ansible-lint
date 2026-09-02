@@ -1,17 +1,16 @@
 ---
 profile: basic
 
-# plugins/, roles/ and playbooks/ are shipped content and are linted.
-# tests/ is excluded: integration targets are exercised by `ansible-test
-# integration`, which has its own conventions, and linting them for play
-# names adds churn without protecting users.
+# plugins/, roles/, playbooks/ and the integration targets are all linted.
+# The integration suite is the only place some of this collection's behaviour
+# is exercised end to end, so it is held to the same standard as the content
+# it tests.
 exclude_paths:
   - .ansible/
   - .git/
   - .venv/
   - changelogs/
   - mkdocs.yml
-  - tests/
 
 skip_list:
   # Renaming the crdp role's public variables to a crdp_ prefix would break
