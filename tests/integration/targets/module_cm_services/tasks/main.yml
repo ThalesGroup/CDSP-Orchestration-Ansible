@@ -1,39 +1,50 @@
 ---
-# Integration test for cm_services module
-# Tests service management operations
+# (c) 2023-2026 Thales Group. All rights reserved.
+#
+# Licensed under the MIT License
+#
+# cm_services only supports op_type: restart, which interrupts the CipherTrust
+# Manager under test and every task that follows. The restart is therefore
+# opt-in: set cm_allow_disruptive_tests to run it. By default this asserts the
+# check-mode contract, which exercises the module without touching the server.
 
-- name: Set connection parameters
-  ansible.builtin.set_fact:
-    connection_string: "{{ lookup('env', 'CIPHERTRUST_CONNECTION_STRING') | default('localhost:8200', true) }}"
-    username: "{{ lookup('env', 'CIPHERTRUST_USERNAME') | default('admin', true) }}"
-    password: "{{ lookup('env', 'CIPHERTRUST_PASSWORD') | default('Thales123', true) }}"
-    api_key: "{{ lookup('env', 'CIPHERTRUST_API_KEY') | default('', true) }}"
-    domain: "{{ lookup('env', 'CIPHERTRUST_DOMAIN') | default('', true) }}"
-    verify_ssl: "{{ lookup('env', 'CIPHERTRUST_VERIFY_SSL') | default('false', true) }}"
-
-- name: Get service information
-  thalesgroup.ciphertrust.cm_services:
-    connection_string: "{{ connection_string }}"
-    username: "{{ username }}"
-    password: "{{ password }}"
-    api_key: "{{ api_key }}"
-    domain: "{{ domain }}"
-    verify_ssl: "{{ verify_ssl }}"
-    op_type: "get"
-  register: services_result
-
-- name: Verify service information
+- name: Verify integration_config was supplied
   ansible.builtin.assert:
     that:
-      - services_result is succeeded
-      - services_result is not failed
-      - services_result.response is defined
-    fail_msg: "Failed to get service information"
-    success_msg: "Successfully retrieved service information"
+      - cm_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
 
-- name: Display service information
-  ansible.builtin.debug:
-    var: services_result.response
+- name: Predict a service restart without performing it
+  thalesgroup.ciphertrust.cm_services:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: restart
+  check_mode: true
+  register: _restart_check
+
+- name: Check mode reports the change it would make
+  ansible.builtin.assert:
+    that:
+      - _restart_check is not failed
+      - _restart_check is changed
+    fail_msg: "Expected check mode to predict changed=true for a restart"
+    success_msg: "Restart predicted in check mode without contacting the server"
+
+- name: Restart services
+  thalesgroup.ciphertrust.cm_services:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: restart
+    delay: 5
+  register: _restart
+  when: cm_allow_disruptive_tests | default(false) | bool
+
+- name: The restart was accepted
+  ansible.builtin.assert:
+    that:
+      - _restart is not failed
+      - _restart is changed
+    fail_msg: "Service restart failed"
+    success_msg: "Service restart accepted"
+  when: cm_allow_disruptive_tests | default(false) | bool
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
@@ -45,23 +56,10 @@
   ansible.builtin.assert:
     that:
       - _negative_required_params_result is failed
-    fail_msg: "Expected module to fail when required parameters are missing"
-    success_msg: "Negative path validated for missing required parameters"
-
-# Negative test - API error handling
-- name: Negative test - API error should fail for unreachable CM
-  thalesgroup.ciphertrust.cm_services:
-    connection_string: "127.0.0.1:1"
-    username: "admin"
-    password: "invalid-password"
-    verify_ssl: false
-    op_type: "get"
-  register: _negative_api_error_result
-  ignore_errors: true
-
-- name: Assert API error negative test failed as expected
-  ansible.builtin.assert:
-    that:
-      - _negative_api_error_result is failed
-    fail_msg: "Expected API request to fail when CipherTrust Manager is unreachable"
-    success_msg: "Negative API error path validated"
+      - >-
+        "missing required arguments" in
+        (_negative_required_params_result.msg | default(""))
+    fail_msg: >-
+      Expected the module to reject a task with no parameters and name the
+      missing arguments, got: {{ _negative_required_params_result.msg | default("no message") }}
+    success_msg: "Module rejects a task with no parameters"

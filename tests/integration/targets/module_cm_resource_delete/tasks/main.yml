@@ -1,53 +1,79 @@
 ---
-# Integration test for cm_resource_delete module
-# Tests resource deletion operations
+# (c) 2023-2026 Thales Group. All rights reserved.
+#
+# Licensed under the MIT License
+#
+# Deletes a resource by key. The module targets <collection>/<key>; a bug that
+# sent the request to the bare collection endpoint instead went unnoticed from
+# 1.0.2, so this asserts the resource is really gone afterwards.
 
-- name: Set connection parameters
-  ansible.builtin.set_fact:
-    connection_string: "{{ lookup('env', 'CIPHERTRUST_CONNECTION_STRING') | default('localhost:8200', true) }}"
-    username: "{{ lookup('env', 'CIPHERTRUST_USERNAME') | default('admin', true) }}"
-    password: "{{ lookup('env', 'CIPHERTRUST_PASSWORD') | default('Thales123', true) }}"
-    api_key: "{{ lookup('env', 'CIPHERTRUST_API_KEY') | default('', true) }}"
-    domain: "{{ lookup('env', 'CIPHERTRUST_DOMAIN') | default('', true) }}"
-    verify_ssl: "{{ lookup('env', 'CIPHERTRUST_VERIFY_SSL') | default('false', true) }}"
-
-- name: Get resource ID for deletion test
-  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
-    connection_string: "{{ connection_string }}"
-    username: "{{ username }}"
-    password: "{{ password }}"
-    api_key: "{{ api_key }}"
-    domain: "{{ domain }}"
-    verify_ssl: "{{ verify_ssl }}"
-    resource_type: "keys"
-    resource_name: "test_key_for_deletion"
-  register: resource_id_result
-  ignore_errors: true
-
-- name: Delete resource if ID is available
-  thalesgroup.ciphertrust.cm_resource_delete:
-    connection_string: "{{ connection_string }}"
-    username: "{{ username }}"
-    password: "{{ password }}"
-    api_key: "{{ api_key }}"
-    domain: "{{ domain }}"
-    verify_ssl: "{{ verify_ssl }}"
-    resource_id: "{{ resource_id_result.response.id if resource_id_result is succeeded else 'test_resource_id' }}"
-    resource_type: "keys"
-  register: delete_result
-  when: resource_id_result is succeeded or resource_id_result is failed
-  ignore_errors: true
-
-- name: Verify resource deletion
+- name: Verify integration_config was supplied
   ansible.builtin.assert:
     that:
-      - delete_result is succeeded or delete_result is failed
-    fail_msg: "Failed to test resource deletion"
-    success_msg: "Successfully tested resource deletion"
+      - cm_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
 
-- name: Display deletion result
-  ansible.builtin.debug:
-    var: delete_result.response
+- name: Name this run's resources
+  ansible.builtin.set_fact:
+    run_suffix: "{{ 99999999 | random }}"
+
+- name: Create a key to delete
+  thalesgroup.ciphertrust.vault_keys2_save:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    name: "AnsibleIntegrationTest_Delete_{{ run_suffix }}"
+    algorithm: aes
+    size: 256
+    usageMask: 3145740
+  register: _key
+
+- name: Delete the key by id
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ this_node_connection_string }}"
+    resource_type: keys
+    key: "{{ _key.response.id }}"
+  register: _delete
+
+- name: The delete succeeded and reported a change
+  ansible.builtin.assert:
+    that:
+      - _delete is not failed
+      - _delete is changed
+    fail_msg: "Failed to delete the key"
+    success_msg: "Key deleted"
+
+- name: Look the deleted key up again
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ this_node_connection_string }}"
+    resource_type: keys
+    query_param: name
+    query_param_value: "AnsibleIntegrationTest_Delete_{{ run_suffix }}"
+  register: _after_delete
+  ignore_errors: true
+
+- name: The key is really gone
+  ansible.builtin.assert:
+    that:
+      - _after_delete is failed
+    fail_msg: >-
+      The key still resolves after deletion, so the delete did not target the
+      resource it was asked to remove.
+    success_msg: "Deleted resource no longer resolves"
+
+- name: Delete without supplying a key
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ this_node_connection_string }}"
+    resource_type: keys
+  register: _no_key
+  ignore_errors: true
+
+- name: A delete without a key is refused
+  ansible.builtin.assert:
+    that:
+      - _no_key is failed
+      - "'key' in _no_key.msg"
+    fail_msg: "Expected cm_resource_delete to refuse a missing key"
+    success_msg: "Missing key refused before any request was sent"
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
@@ -59,23 +85,10 @@
   ansible.builtin.assert:
     that:
       - _negative_required_params_result is failed
-    fail_msg: "Expected module to fail when required parameters are missing"
-    success_msg: "Negative path validated for missing required parameters"
-
-# Negative test - API error handling
-- name: Negative test - API error should fail for unreachable CM
-  thalesgroup.ciphertrust.cm_services:
-    connection_string: "127.0.0.1:1"
-    username: "admin"
-    password: "invalid-password"
-    verify_ssl: false
-    op_type: "get"
-  register: _negative_api_error_result
-  ignore_errors: true
-
-- name: Assert API error negative test failed as expected
-  ansible.builtin.assert:
-    that:
-      - _negative_api_error_result is failed
-    fail_msg: "Expected API request to fail when CipherTrust Manager is unreachable"
-    success_msg: "Negative API error path validated"
+      - >-
+        "missing required arguments" in
+        (_negative_required_params_result.msg | default(""))
+    fail_msg: >-
+      Expected the module to reject a task with no parameters and name the
+      missing arguments, got: {{ _negative_required_params_result.msg | default("no message") }}
+    success_msg: "Module rejects a task with no parameters"

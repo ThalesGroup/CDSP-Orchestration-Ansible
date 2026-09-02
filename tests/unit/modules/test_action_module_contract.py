@@ -201,6 +201,26 @@ class TestResourceDeleteTargetsTheResource:
             "must delete one resource, not the %s collection" % endpoint
         )
 
+    def test_cluster_deletes_the_singleton_without_a_key(self):
+        """resource_type: cluster has no per-resource id -- DELETE /cluster."""
+        client = make_client()
+        result = run_main("cm_resource_delete", {"resource_type": "cluster"},
+                          client=client)
+
+        assert not result.failed, result.msg
+        urls = [call[0][0] for call in client.delete.call_args_list if call[0]]
+        assert urls == ["cluster"]
+
+    def test_missing_key_fails_in_check_mode_too(self):
+        """--check must predict the failure a real run would hit."""
+        client = make_client()
+        result = run_main("cm_resource_delete", {"resource_type": "keys"},
+                          client=client, check_mode=True)
+
+        assert result.failed, "check mode reported success for a task that cannot run"
+        assert "key" in result.msg
+        assert not client.delete.called
+
     def test_missing_key_is_reported(self):
         client = make_client()
         result = run_main("cm_resource_delete",

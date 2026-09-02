@@ -21,6 +21,10 @@ minor_changes:
 
 bugfixes:
   - >-
+    ``cm_resource_delete`` now reports a missing ``key`` in check mode as well
+    as during a real run. Check mode short-circuited before the parameter was
+    validated, so ``--check`` reported success for a task that could not run.
+  - >-
     ``license_trial_get`` now reports a clear error when CipherTrust Manager
     has no trial licences, instead of raising ``IndexError``, and when a trial
     record is missing the fields it needs.

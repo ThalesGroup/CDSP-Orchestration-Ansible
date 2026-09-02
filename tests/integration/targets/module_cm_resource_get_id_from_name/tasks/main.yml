@@ -1,41 +1,77 @@
 ---
-# Integration test for cm_resource_get_id_from_name module
-# Tests getting resource ID from name
+# (c) 2023-2026 Thales Group. All rights reserved.
+#
+# Licensed under the MIT License
+#
+# Resolves a resource name to its id. A key is created so there is something
+# real to resolve, and removed again afterwards.
 
-- name: Set connection parameters
-  ansible.builtin.set_fact:
-    connection_string: "{{ lookup('env', 'CIPHERTRUST_CONNECTION_STRING') | default('localhost:8200', true) }}"
-    username: "{{ lookup('env', 'CIPHERTRUST_USERNAME') | default('admin', true) }}"
-    password: "{{ lookup('env', 'CIPHERTRUST_PASSWORD') | default('Thales123', true) }}"
-    api_key: "{{ lookup('env', 'CIPHERTRUST_API_KEY') | default('', true) }}"
-    domain: "{{ lookup('env', 'CIPHERTRUST_DOMAIN') | default('', true) }}"
-    verify_ssl: "{{ lookup('env', 'CIPHERTRUST_VERIFY_SSL') | default('false', true) }}"
-
-- name: Get resource ID from name
-  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
-    connection_string: "{{ connection_string }}"
-    username: "{{ username }}"
-    password: "{{ password }}"
-    api_key: "{{ api_key }}"
-    domain: "{{ domain }}"
-    verify_ssl: "{{ verify_ssl }}"
-    resource_type: "keys"
-    resource_name: "test_key"
-  register: resource_id_result
-
-- name: Verify resource ID retrieval
+- name: Verify integration_config was supplied
   ansible.builtin.assert:
     that:
-      - resource_id_result is succeeded
-      - resource_id_result is not failed
-      - resource_id_result.response is defined
-      - resource_id_result.response.id is defined
-    fail_msg: "Failed to get resource ID from name"
-    success_msg: "Successfully retrieved resource ID from name"
+      - cm_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
 
-- name: Display resource ID
-  ansible.builtin.debug:
-    var: resource_id_result.response
+- name: Name this run's resources
+  ansible.builtin.set_fact:
+    run_suffix: "{{ 99999999 | random }}"
+
+- name: Resolve a name to an id
+  block:
+    - name: Create a key to look up
+      thalesgroup.ciphertrust.vault_keys2_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "AnsibleIntegrationTest_Lookup_{{ run_suffix }}"
+        algorithm: aes
+        size: 256
+        usageMask: 3145740
+      register: _key
+
+    - name: Resolve the key's name to its id
+      thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+        localNode: "{{ this_node_connection_string }}"
+        resource_type: keys
+        query_param: name
+        query_param_value: "AnsibleIntegrationTest_Lookup_{{ run_suffix }}"
+      register: _lookup
+
+    - name: The lookup returns the id of the key that was created
+      ansible.builtin.assert:
+        that:
+          - _lookup is not failed
+          - _lookup is not changed
+          - _lookup.response.id == _key.response.id
+        fail_msg: >-
+          Expected the lookup to return {{ _key.response.id }},
+          got {{ _lookup.response | default("nothing") }}
+        success_msg: "Name resolved to the correct resource id"
+
+    - name: Resolve a name that does not exist
+      thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+        localNode: "{{ this_node_connection_string }}"
+        resource_type: keys
+        query_param: name
+        query_param_value: "AnsibleIntegrationTest_NoSuchKey_{{ run_suffix }}"
+      register: _absent
+      ignore_errors: true
+
+    - name: An unmatched name fails cleanly
+      ansible.builtin.assert:
+        that:
+          - _absent is failed
+          - "'Traceback' not in (_absent.msg | default(''))"
+        fail_msg: "Expected a clean failure for an unmatched name"
+        success_msg: "Unmatched name reported cleanly"
+
+  always:
+    - name: Remove the key
+      thalesgroup.ciphertrust.cm_resource_delete:
+        localNode: "{{ this_node_connection_string }}"
+        resource_type: keys
+        key: "{{ _key.response.id }}"
+      when: _key.response.id is defined
+      failed_when: false
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
@@ -47,23 +83,10 @@
   ansible.builtin.assert:
     that:
       - _negative_required_params_result is failed
-    fail_msg: "Expected module to fail when required parameters are missing"
-    success_msg: "Negative path validated for missing required parameters"
-
-# Negative test - API error handling
-- name: Negative test - API error should fail for unreachable CM
-  thalesgroup.ciphertrust.cm_services:
-    connection_string: "127.0.0.1:1"
-    username: "admin"
-    password: "invalid-password"
-    verify_ssl: false
-    op_type: "get"
-  register: _negative_api_error_result
-  ignore_errors: true
-
-- name: Assert API error negative test failed as expected
-  ansible.builtin.assert:
-    that:
-      - _negative_api_error_result is failed
-    fail_msg: "Expected API request to fail when CipherTrust Manager is unreachable"
-    success_msg: "Negative API error path validated"
+      - >-
+        "missing required arguments" in
+        (_negative_required_params_result.msg | default(""))
+    fail_msg: >-
+      Expected the module to reject a task with no parameters and name the
+      missing arguments, got: {{ _negative_required_params_result.msg | default("no message") }}
+    success_msg: "Module rejects a task with no parameters"

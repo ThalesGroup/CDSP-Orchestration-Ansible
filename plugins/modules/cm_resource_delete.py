@@ -200,22 +200,27 @@ def main():
         module.fail_json(msg="resource_type not supported yet")
 
     with ciphertrust_operation(module):
+        # Validate before the check-mode short circuit: --check must predict
+        # the failure a real run would hit, not report success.
+        is_cluster = resource_type == "cluster"
+        if not is_cluster and not module.params.get("key"):
+            raise AnsibleCMParameterException(
+                message="key is required to delete a resource of type "
+                        "'{0}'".format(resource_type),
+                parameter="key",
+                expected_format="name or id of the resource to delete",
+                example='key: "507a05f7-6883-41f6-961a-0e41847d887d"',
+            )
+
         check_mode_action(module)
-        if resource_type == "cluster":
+
+        if is_cluster:
             # "cluster" is a singleton resource: DELETE /cluster, no id.
             response = DeleteWithoutData(
                 cm_node=module.params.get("localNode"),
                 cm_api_endpoint=endpoint,
             )
         else:
-            if not module.params.get("key"):
-                raise AnsibleCMParameterException(
-                    message="key is required to delete a resource of type "
-                            "'{0}'".format(resource_type),
-                    parameter="key",
-                    expected_format="name or id of the resource to delete",
-                    example='key: "507a05f7-6883-41f6-961a-0e41847d887d"',
-                )
             response = DELETEByNameOrId(
                 key=module.params.get("key"),
                 cm_node=module.params.get("localNode"),

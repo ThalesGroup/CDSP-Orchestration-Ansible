@@ -1,39 +1,62 @@
 ---
-# Integration test for cm_certificate_authority module
-# Tests certificate authority operations
+# (c) 2023-2026 Thales Group. All rights reserved.
+#
+# Licensed under the MIT License
+#
+# Exercises the local certificate authority module.
+#
+# The collection has no delete path for a local CA, so this deliberately does
+# not create one: a real create would leave a certificate authority behind on
+# the test system with no supported way to remove it. What is asserted here is
+# the check-mode contract and the module's parameter validation, both of which
+# reach the module's real code without changing the server.
+#
+# When a CA lifecycle test is added, add a delete path for local CAs first.
 
-- name: Set connection parameters
-  ansible.builtin.set_fact:
-    connection_string: "{{ lookup('env', 'CIPHERTRUST_CONNECTION_STRING') | default('localhost:8200', true) }}"
-    username: "{{ lookup('env', 'CIPHERTRUST_USERNAME') | default('admin', true) }}"
-    password: "{{ lookup('env', 'CIPHERTRUST_PASSWORD') | default('Thales123', true) }}"
-    api_key: "{{ lookup('env', 'CIPHERTRUST_API_KEY') | default('', true) }}"
-    domain: "{{ lookup('env', 'CIPHERTRUST_DOMAIN') | default('', true) }}"
-    verify_ssl: "{{ lookup('env', 'CIPHERTRUST_VERIFY_SSL') | default('false', true) }}"
-
-- name: Get certificate authority information
-  thalesgroup.ciphertrust.cm_certificate_authority:
-    connection_string: "{{ connection_string }}"
-    username: "{{ username }}"
-    password: "{{ password }}"
-    api_key: "{{ api_key }}"
-    domain: "{{ domain }}"
-    verify_ssl: "{{ verify_ssl }}"
-    op_type: "get"
-  register: ca_result
-
-- name: Verify certificate authority information
+- name: Verify integration_config was supplied
   ansible.builtin.assert:
     that:
-      - ca_result is succeeded
-      - ca_result is not failed
-      - ca_result.response is defined
-    fail_msg: "Failed to get certificate authority information"
-    success_msg: "Successfully retrieved certificate authority information"
+      - cm_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
 
-- name: Display certificate authority information
-  ansible.builtin.debug:
-    var: ca_result.response
+- name: Name this run's resources
+  ansible.builtin.set_fact:
+    run_suffix: "{{ 99999999 | random }}"
+
+- name: Predict creating a certificate authority without creating one
+  thalesgroup.ciphertrust.cm_certificate_authority:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    cn: "AnsibleIntegrationTest_{{ run_suffix }}"
+  check_mode: true
+  register: _ca_check
+
+- name: Check mode reports the change it would make
+  ansible.builtin.assert:
+    that:
+      - _ca_check is not failed
+      - _ca_check is changed
+    fail_msg: "Expected check mode to predict changed=true for a CA create"
+    success_msg: "CA creation predicted in check mode without creating one"
+
+- name: Issue a certificate without supplying the CSR it needs
+  thalesgroup.ciphertrust.cm_certificate_authority:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: issue-cert
+    id: "00000000-0000-0000-0000-000000000000"
+  register: _missing_csr
+  ignore_errors: true
+
+- name: The missing parameters are named
+  ansible.builtin.assert:
+    that:
+      - _missing_csr is failed
+      - "'csr' in _missing_csr.msg or 'purpose' in _missing_csr.msg"
+      - "'Traceback' not in _missing_csr.msg"
+    fail_msg: >-
+      Expected the module to name the missing parameters, got:
+      {{ _missing_csr.msg | default("no message") }}
+    success_msg: "Missing operation parameters reported cleanly"
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
@@ -45,23 +68,10 @@
   ansible.builtin.assert:
     that:
       - _negative_required_params_result is failed
-    fail_msg: "Expected module to fail when required parameters are missing"
-    success_msg: "Negative path validated for missing required parameters"
-
-# Negative test - API error handling
-- name: Negative test - API error should fail for unreachable CM
-  thalesgroup.ciphertrust.cm_services:
-    connection_string: "127.0.0.1:1"
-    username: "admin"
-    password: "invalid-password"
-    verify_ssl: false
-    op_type: "get"
-  register: _negative_api_error_result
-  ignore_errors: true
-
-- name: Assert API error negative test failed as expected
-  ansible.builtin.assert:
-    that:
-      - _negative_api_error_result is failed
-    fail_msg: "Expected API request to fail when CipherTrust Manager is unreachable"
-    success_msg: "Negative API error path validated"
+      - >-
+        "missing required arguments" in
+        (_negative_required_params_result.msg | default(""))
+    fail_msg: >-
+      Expected the module to reject a task with no parameters and name the
+      missing arguments, got: {{ _negative_required_params_result.msg | default("no message") }}
+    success_msg: "Module rejects a task with no parameters"

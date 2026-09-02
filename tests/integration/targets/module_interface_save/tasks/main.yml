@@ -1,117 +1,107 @@
 ---
-- name: Get current interfaces to avoid conflicts
-  thalesgroup.ciphertrust.interface_save:
-    localNode:
-      host: "{{ connection_string }}"
-      port: 8443
-      secure: true
-      skip: true
-    op_type: get
-  register: existing_interfaces
-  ignore_errors: true
+# (c) 2023-2026 Thales Group. All rights reserved.
+#
+# Licensed under the MIT License
+#
+# Creates a NAE interface, proves the create is idempotent, patches it, and
+# removes it again. The port comes from integration_config so a test system
+# can choose one that is free; the interface is deleted in an always: block so
+# a failure part way through does not leave the port bound.
 
-- name: Create test interface
-  thalesgroup.ciphertrust.interface_save:
-    localNode:
-      host: "{{ connection_string }}"
-      port: 8443
-      secure: true
-      skip: true
-    op_type: create
-    name: "ansible_test_interface_{{ timestamp }}"
-    description: "Test interface created by Ansible integration test"
-    ip_address: "192.168.1.100"
-    netmask: "255.255.255.0"
-    gateway: "192.168.1.1"
-    mtu: 1500
-    vlan_id: 100
-  register: create_interface_result
-  tags:
-    - interface_create
-
-- name: Verify interface creation
-  assert:
+- name: Verify integration_config was supplied
+  ansible.builtin.assert:
     that:
-      - create_interface_result is changed
-      - create_interface_result.id is defined
-      - create_interface_result.name == "ansible_test_interface_{{ timestamp }}"
-    fail_msg: "Interface creation failed"
-    success_msg: "Interface created successfully"
-  tags:
-    - interface_create
+      - cm_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
 
-- name: Patch test interface
-  thalesgroup.ciphertrust.interface_save:
-    localNode:
-      host: "{{ connection_string }}"
-      port: 8443
-      secure: true
-      skip: true
-    op_type: patch
-    id: "{{ create_interface_result.id }}"
-    description: "Updated description for test interface"
-    mtu: 1400
-  register: patch_interface_result
-  tags:
-    - interface_patch
+- name: Name this run's resources
+  ansible.builtin.set_fact:
+    run_suffix: "{{ 99999999 | random }}"
+    test_interface_port: "{{ nae_interface_port_number | default(9005) }}"
 
-- name: Verify interface patch
-  assert:
-    that:
-      - patch_interface_result is changed
-      - patch_interface_result.description == "Updated description for test interface"
-      - patch_interface_result.mtu == 1400
-    fail_msg: "Interface patch failed"
-    success_msg: "Interface patched successfully"
-  tags:
-    - interface_patch
+- name: Interface lifecycle
+  block:
+    - name: Create a NAE interface
+      thalesgroup.ciphertrust.interface_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "AnsibleIntegrationTest_Iface_{{ run_suffix }}"
+        interface_type: nae
+        port: "{{ test_interface_port | int }}"
+        mode: "no-tls-pw-opt"
+      register: _iface_create
 
-- name: Get interface by ID
-  thalesgroup.ciphertrust.interface_save:
-    localNode:
-      host: "{{ connection_string }}"
-      port: 8443
-      secure: true
-      skip: true
-    op_type: get
-    id: "{{ create_interface_result.id }}"
-  register: get_interface_result
-  tags:
-    - interface_get
-
-- name: Verify interface retrieval
-  assert:
-    that:
-      - get_interface_result is not changed
-      - get_interface_result.id == create_interface_result.id
-      - get_interface_result.name == "ansible_test_interface_{{ timestamp }}"
-    fail_msg: "Interface retrieval failed"
-    success_msg: "Interface retrieved successfully"
-  tags:
-    - interface_get
-
-- name: Cleanup - Delete test interface
-  thalesgroup.ciphertrust.interface_save:
-    localNode:
-      host: "{{ connection_string }}"
-      port: 8443
-      secure: true
-      skip: true
-    op_type: delete
-    id: "{{ create_interface_result.id }}"
-  register: delete_interface_result
-  tags:
-    - interface_cleanup
-  when: create_interface_result is defined and create_interface_result.id is defined
-  always:
-    - name: Verify interface deletion
-      assert:
+    - name: The interface was created
+      ansible.builtin.assert:
         that:
-          - delete_interface_result is changed
-        fail_msg: "Interface deletion failed"
-        success_msg: "Interface deleted successfully"
-      tags:
-        - interface_cleanup
+          - _iface_create is not failed
+          - _iface_create is changed
+          - _iface_create.response.id is defined
+        fail_msg: "Failed to create the NAE interface"
+        success_msg: "NAE interface created"
+
+    - name: Save the interface id
+      ansible.builtin.set_fact:
+        test_interface_id: "{{ _iface_create.response.id }}"
+
+    - name: Create the same interface again
+      thalesgroup.ciphertrust.interface_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "AnsibleIntegrationTest_Iface_{{ run_suffix }}"
+        interface_type: nae
+        port: "{{ test_interface_port | int }}"
+        mode: "no-tls-pw-opt"
+      register: _iface_again
+
+    - name: The second run makes no change
+      ansible.builtin.assert:
+        that:
+          - _iface_again is not changed
+        fail_msg: >-
+          interface_save reported changed for an interface that already
+          exists; the GET-before-write lookup did not match it back.
+
+    - name: Patch the interface
+      thalesgroup.ciphertrust.interface_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: patch
+        interface_id: "{{ test_interface_id }}"
+        auto_registration: true
+      register: _iface_patch
+
+    - name: The patch reported a change
+      ansible.builtin.assert:
+        that:
+          - _iface_patch is not failed
+          - _iface_patch is changed
+        fail_msg: "Expected the interface patch to be applied"
+        success_msg: "Interface patched"
+
+    - name: Patch the interface with the value it now has
+      thalesgroup.ciphertrust.interface_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: patch
+        interface_id: "{{ test_interface_id }}"
+        auto_registration: true
+      register: _iface_patch_noop
+
+    - name: Re-applying the same value makes no change
+      ansible.builtin.assert:
+        that:
+          - _iface_patch_noop is not changed
+        fail_msg: >-
+          patch reported changed while sending the current state; the resource
+          identifier is probably being compared as though it were a field.
+
+  always:
+    - name: Remove the interface
+      thalesgroup.ciphertrust.cm_resource_delete:
+        localNode: "{{ this_node_connection_string }}"
+        resource_type: interfaces
+        key: "{{ test_interface_id }}"
+      when: test_interface_id is defined
+      failed_when: false
 
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
@@ -123,23 +113,10 @@
   ansible.builtin.assert:
     that:
       - _negative_required_params_result is failed
-    fail_msg: "Expected module to fail when required parameters are missing"
-    success_msg: "Negative path validated for missing required parameters"
-
-# Negative test - API error handling
-- name: Negative test - API error should fail for unreachable CM
-  thalesgroup.ciphertrust.cm_services:
-    connection_string: "127.0.0.1:1"
-    username: "admin"
-    password: "invalid-password"
-    verify_ssl: false
-    op_type: "get"
-  register: _negative_api_error_result
-  ignore_errors: true
-
-- name: Assert API error negative test failed as expected
-  ansible.builtin.assert:
-    that:
-      - _negative_api_error_result is failed
-    fail_msg: "Expected API request to fail when CipherTrust Manager is unreachable"
-    success_msg: "Negative API error path validated"
+      - >-
+        "missing required arguments" in
+        (_negative_required_params_result.msg | default(""))
+    fail_msg: >-
+      Expected the module to reject a task with no parameters and name the
+      missing arguments, got: {{ _negative_required_params_result.msg | default("no message") }}
+    success_msg: "Module rejects a task with no parameters"
