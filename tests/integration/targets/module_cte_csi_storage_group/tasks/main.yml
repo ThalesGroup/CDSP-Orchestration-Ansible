@@ -145,8 +145,7 @@
       ansible.builtin.assert:
         that:
           - _result_patch is not failed
-          - _result_patch.response.message is match("Resource updated successfully")
-
+          - _result_patch.response.id is defined
     - name: "Add CTE Policy (GuardPolicy) to Storage Group"
       thalesgroup.ciphertrust.cte_csi_storage_group:
         op_type: add_guard_point

@@ -613,3 +613,58 @@ class TestIdempotentRemove:
 
         assert changed is True
         remove.assert_not_called()
+
+
+class TestLookupOnlyAcceptsAVerifiableMatch:
+    """CipherTrust Manager ignores a query parameter it does not support and
+    returns the first resource in the collection rather than an empty result.
+
+    ``ca/local-cas?cn=...`` behaves exactly this way, and the resource it
+    returns carries no ``cn`` field at all. Believing that answer made
+    ``cm_certificate_authority`` decide the CA already existed and silently
+    create nothing -- a no-op reported as success on a security-critical
+    module. A match is only accepted when the resource confirms it.
+    """
+
+    def test_rejects_a_resource_that_does_not_carry_the_filtered_field(self):
+        client = MagicMock()
+        client.get.return_value = {"resources": [
+            {"id": "unrelated", "name": "some-other-ca"}       # no 'cn'
+        ]}
+
+        assert find_resource_by_query(client, "ca/local-cas", "cn", "wanted") is None
+
+    def test_rejects_a_resource_whose_field_does_not_match(self):
+        client = MagicMock()
+        client.get.return_value = {"resources": [{"id": "r1", "name": "other"}]}
+
+        assert find_resource_by_query(client, "vault/keys2", "name", "wanted") is None
+
+    def test_accepts_a_confirmed_match(self):
+        client = MagicMock()
+        resource = {"id": "r1", "name": "wanted"}
+        client.get.return_value = {"resources": [resource]}
+
+        assert find_resource_by_query(client, "vault/keys2", "name", "wanted") == resource
+
+    def test_a_create_is_attempted_when_the_lookup_cannot_be_confirmed(self):
+        """Better to attempt the write and be told it is a duplicate than to
+        report success having done nothing."""
+        module = MagicMock()
+        module.check_mode = False
+        module._diff = False
+        client = MagicMock()
+        client.get.return_value = {"resources": [{"id": "unrelated"}]}
+        create_fn = MagicMock(return_value={"id": "new"})
+
+        changed, response, _diff = idempotent_create(
+            module, client,
+            endpoint="ca/local-cas",
+            lookup_param="cn",
+            lookup_value="wanted",
+            create_fn=create_fn,
+            create_kwargs={"node": {}, "cn": "wanted"},
+        )
+
+        assert changed is True
+        create_fn.assert_called_once()

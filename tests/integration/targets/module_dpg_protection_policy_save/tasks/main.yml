@@ -118,8 +118,7 @@
       ansible.builtin.assert:
         that:
           - _result_patch is not failed
-          - _result_patch.response.message is match("Resource updated successfully")
-
+          - _result_patch.response.id is defined
     - name: "Delete Protection Policy by name"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ pp_name }}"

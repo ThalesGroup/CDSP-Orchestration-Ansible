@@ -25,6 +25,12 @@ extends_documentation_fragment:
   - thalesgroup.ciphertrust.attributes.partial_diff
 notes:
   - >-
+    Creating a local certificate authority is not idempotent. CipherTrust
+    Manager's local-CA listing does not support filtering by C(cn), so the
+    module cannot tell whether a CA with that subject already exists and will
+    attempt the creation on every run. Guard the task with C(when:) or
+    C(creates:) semantics of your own if you need to run it repeatedly.
+  - >-
     Depending on the operation requested, the C(response) returned by this
     module can contain secret material such as key bytes, a private key or a
     registration token.

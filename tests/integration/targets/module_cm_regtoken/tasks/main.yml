@@ -25,7 +25,6 @@
     localNode: "{{ this_node_connection_string }}"
     op_type: create
     name_prefix: "AnsibleIntegrationTest_{{ run_suffix }}"
-    label: "AnsibleIntegrationTest_{{ run_suffix }}"
     lifetime: "30d"
     max_clients: 5
   register: _token

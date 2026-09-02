@@ -41,6 +41,7 @@ options:
         type: list
         elements: str
         default: password
+        choices: [password, certificate, sso, mfa, api_key]
     app_metadata:
         description:
             - A schema-less object, which can be used by applications to store information about the resource
@@ -344,7 +345,11 @@ argument_spec = dict(
     ),
     cm_user_id=dict(type="str"),
     allowed_auth_methods=dict(
-        type="list", elements="str", required=False, default=["password"]
+        type="list",
+        elements="str",
+        required=False,
+        default=["password"],
+        choices=["password", "certificate", "sso", "mfa", "api_key"],
     ),
     app_metadata=dict(type="dict", options=_metadata, required=False),
     certificate_subject_dn=dict(type="str", required=False),
@@ -639,24 +644,6 @@ def validate_parameters(user_module):
                     "max_length": 255,
                 }
             },
-            documentation_link=DOCUMENTATION_LINKS.get(
-                "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            )
-        )
-
-    if allowed_auth_methods is not None:
-        # Validate allowed_auth_methods choices
-        valid_auth_methods = [
-            "password",
-            "certificate",
-            "sso",
-            "mfa",
-            "api_key",
-        ]
-        validate_choice(
-            value=allowed_auth_methods,
-            parameter_name="allowed_auth_methods",
-            choices=valid_auth_methods,
             documentation_link=DOCUMENTATION_LINKS.get(
                 "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
             )

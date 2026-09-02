@@ -128,9 +128,18 @@ def run_main(module_name, params, client=None, check_mode=False, diff=False):
     module.check_mode = check_mode
     module._diff = diff
     module._name = module_name
+    # AnsibleModule fills in every default from the argument_spec before a
+    # module body runs. Reproduce that here: a rule that only a defaulted
+    # value trips is invisible otherwise, which is how two unusable
+    # operations in vault_keys2_save went unnoticed.
     full_params = {"localNode": TEST_NODE.copy()}
+    for name, spec in getattr(mod, "argument_spec", {}).items():
+        if isinstance(spec, dict) and spec.get("default") is not None:
+            full_params[name] = spec["default"]
     full_params.update(params)
     module.params = full_params
+    # the idempotency helper reads defaults from here, as it does in production
+    module.argument_spec = getattr(mod, "argument_spec", {})
 
     def fail_json(**kwargs):
         raise MockFailJsonException(**kwargs)

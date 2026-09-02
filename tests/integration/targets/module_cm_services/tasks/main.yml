@@ -18,6 +18,8 @@
   thalesgroup.ciphertrust.cm_services:
     localNode: "{{ this_node_connection_string }}"
     op_type: restart
+    services:
+      - nae
   check_mode: true
   register: _restart_check
 
@@ -33,6 +35,8 @@
   thalesgroup.ciphertrust.cm_services:
     localNode: "{{ this_node_connection_string }}"
     op_type: restart
+    services:
+      - nae
     delay: 5
   register: _restart
   when: cm_allow_disruptive_tests | default(false) | bool

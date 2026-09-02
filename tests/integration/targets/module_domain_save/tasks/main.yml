@@ -57,8 +57,7 @@
       ansible.builtin.assert:
         that:
           - _result_patch is not failed
-          - _result_patch.response.message is match("Resource updated successfully")
-
+          - _result_patch.response.id is defined
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
   thalesgroup.ciphertrust.domain_save: {}

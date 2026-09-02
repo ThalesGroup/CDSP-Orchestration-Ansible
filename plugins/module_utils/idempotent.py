@@ -64,31 +64,54 @@ def find_resource_by_query(client, endpoint, param, value):
             return None
         raise
 
-    if (
-        isinstance(response, dict)
-        and response.get("resources")
-        and len(response["resources"]) > 0
-    ):
-        return response["resources"][0]
-    return None
+    if not (isinstance(response, dict) and response.get("resources")):
+        return None
+
+    resource = response["resources"][0]
+
+    # CipherTrust Manager silently ignores a query parameter it does not
+    # support and returns the first resource in the collection instead of an
+    # empty result -- ca/local-cas?cn=... does exactly this, and the resource
+    # it returns does not carry a cn field at all. Taking that at face value
+    # makes a create decide the resource already exists and silently do
+    # nothing, which is worse than attempting the write and being told it is a
+    # duplicate. Only accept a match this function can actually confirm.
+    if resource.get(param) != value:
+        return None
+
+    return resource
 
 
 # ---------------------------------------------------------------------------
 # State comparison
 # ---------------------------------------------------------------------------
 
-def resource_needs_update(current, desired, compare_fields=None):
+def resource_needs_update(current, desired, compare_fields=None, defaults=None):
     """Return ``True`` if any *desired* field differs from *current* state.
 
     *compare_fields* limits comparison to an explicit list.  If omitted,
     every key in *desired* whose value is not ``None`` is compared.
+
+    *defaults* maps parameter names to the value the argument spec supplies
+    when a playbook does not. CipherTrust Manager omits many fields from a GET
+    (``allVersions`` among them), and a defaulted value the user never asked
+    for must not be read as a pending change -- otherwise every patch reports
+    ``changed`` for ever and re-sends the same request. A field the user did
+    ask for is still applied even when CM does not echo it back.
     """
     if compare_fields is None:
         compare_fields = [k for k in desired if desired[k] is not None]
+    defaults = defaults if isinstance(defaults, dict) else {}
+
     for field in compare_fields:
-        if field in desired and desired[field] is not None:
-            if current.get(field) != desired[field]:
-                return True
+        if field not in desired or desired[field] is None:
+            continue
+        if field not in current:
+            if field in defaults and desired[field] == defaults[field]:
+                continue
+            return True
+        if current[field] != desired[field]:
+            return True
     return False
 
 
@@ -158,7 +181,19 @@ def idempotent_patch(module, client, endpoint, resource_id,
         if k not in ignored and v is not None
     }
 
-    if not resource_needs_update(current, desired, compare_fields):
+    # The spec AnsibleModule holds is the normalised one, so its keys are
+    # snake_case while module bodies still read the legacy camelCase names.
+    # Record the default under every name the parameter answers to.
+    spec = getattr(module, "argument_spec", None)
+    defaults = {}
+    for name, entry in (spec if isinstance(spec, dict) else {}).items():
+        if not isinstance(entry, dict) or entry.get("default") is None:
+            continue
+        defaults[name] = entry["default"]
+        for alias in entry.get("aliases") or []:
+            defaults[alias] = entry["default"]
+
+    if not resource_needs_update(current, desired, compare_fields, defaults):
         return False, current, None
 
     if module.check_mode:

@@ -275,6 +275,11 @@ class ThalesCipherTrustModule:
     def params(self):
         return self._module.params
 
+    @property
+    def argument_spec(self):
+        """The spec AnsibleModule validated against, defaults included."""
+        return getattr(self._module, "argument_spec", {})
+
     def exit_json(self, *args, **kwargs):
         return self._module.exit_json(*args, **kwargs)
 

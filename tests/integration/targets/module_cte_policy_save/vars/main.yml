@@ -3,7 +3,7 @@ this_node_connection_string: "{{ cm_connection_string }}"
 
 username: admin
 key_name: AnsibleCTEKey
-key_algo: AES
+key_algo: aes
 key_size: 256
 resource_set_1: Ansible_RES_SET_1
 resource_set_2: Ansible_RES_SET_2

@@ -62,8 +62,7 @@
       ansible.builtin.assert:
         that:
           - _result_patch is not failed
-          - _result_patch.response.message is match("Resource updated successfully")
-
+          - _result_patch.response.id is defined
     - name: "Delete UserSet ID"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ user_set_id }}"

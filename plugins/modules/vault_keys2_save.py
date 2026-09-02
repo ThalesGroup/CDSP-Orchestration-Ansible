@@ -1200,15 +1200,16 @@ def validate_parameters(user_module):
         },
         "patch": {
             "required": ["cm_key_id"],
+            # algorithm carries default="aes" in the argument spec, so
+            # AnsibleModule always supplies it. Forbidding it here rejected
+            # every patch. The patch path never sends algorithm anyway.
             "conditional_not_allowed": {
-                "algorithm": ["patch"],  # algorithm not allowed for patch
                 "curveid": ["patch"],
             }
         },
         "create_version": {
             "required": ["cm_key_id"],
             "conditional_not_allowed": {
-                "algorithm": ["create_version"],
                 "curveid": ["create_version"],
             }
         }

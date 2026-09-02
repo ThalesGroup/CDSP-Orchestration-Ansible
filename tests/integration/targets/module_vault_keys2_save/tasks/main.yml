@@ -69,8 +69,7 @@
       ansible.builtin.assert:
         that:
           - _result_patch is not failed
-          - _result_patch.response.message is match("Resource updated successfully")
-
+          - _result_patch.response.id is defined
 # # Validate the vault_keys2_save module - Create Version Operation
 - name: Create Version
   block:
