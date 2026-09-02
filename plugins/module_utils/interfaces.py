@@ -21,78 +21,78 @@ def _iface_url(interface_id, suffix=""):
     return "configs/interfaces/" + quote_segment(interface_id) + suffix
 
 
-def create(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def create(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "configs/interfaces",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )
 
 
-def patch(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def patch(node, interface_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        _iface_url(quote_segment(kwargs["interface_id"])),
+        _iface_url(quote_segment(interface_id)),
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
+            fields
         ),
     )
 
 
-def addCertificateToInterface(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def addCertificateToInterface(node, interface_id, **fields):
+    client = CipherTrustClient(node)
     return client.put(
-        _iface_url(quote_segment(kwargs["interface_id"]), "/certificate"),
+        _iface_url(quote_segment(interface_id), "/certificate"),
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
+            fields
         ),
     )
 
 
-def getCertificateFromInterface(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
-    return client.get(_iface_url(quote_segment(kwargs["interface_id"]), "/certificate"))
+def getCertificateFromInterface(node, interface_id, **fields):
+    client = CipherTrustClient(node)
+    return client.get(_iface_url(quote_segment(interface_id), "/certificate"))
 
 
-def enableInterface(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
-    return client.post(_iface_url(quote_segment(kwargs["interface_id"]), "/enable"))
+def enableInterface(node, interface_id, **fields):
+    client = CipherTrustClient(node)
+    return client.post(_iface_url(quote_segment(interface_id), "/enable"))
 
 
-def disableInterface(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
-    return client.post(_iface_url(quote_segment(kwargs["interface_id"]), "/disable"))
+def disableInterface(node, interface_id, **fields):
+    client = CipherTrustClient(node)
+    return client.post(_iface_url(quote_segment(interface_id), "/disable"))
 
 
-def restoreDefaultTlsCiphers(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def restoreDefaultTlsCiphers(node, interface_id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        _iface_url(quote_segment(kwargs["interface_id"]), "/restore-default-tls-ciphers")
+        _iface_url(quote_segment(interface_id), "/restore-default-tls-ciphers")
     )
 
 
-def createCsr(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createCsr(node, interface_id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        _iface_url(quote_segment(kwargs["interface_id"]), "/csr"),
+        _iface_url(quote_segment(interface_id), "/csr"),
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
+            fields
         ),
     )
 
 
-def autogenServerCert(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def autogenServerCert(node, interface_id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        _iface_url(quote_segment(kwargs["interface_id"]), "/auto-gen-server-cert")
+        _iface_url(quote_segment(interface_id), "/auto-gen-server-cert")
     )
 
 
-def useCertificate(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def useCertificate(node, interface_id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        _iface_url(quote_segment(kwargs["interface_id"]), "/use-certificate"),
+        _iface_url(quote_segment(interface_id), "/use-certificate"),
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "interface_id")}
+            fields
         ),
     )

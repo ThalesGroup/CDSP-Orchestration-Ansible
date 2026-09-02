@@ -17,31 +17,31 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
 )
 
 
-def create(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def create(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "domains",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )
 
 
-def patch(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def patch(node, domain_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "domains/" + quote_segment(kwargs["domain_id"]),
+        "domains/" + quote_segment(domain_id),
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "domain_id")}
+            fields
         ),
     )
 
 
-def enableSyslogRedirection(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def enableSyslogRedirection(node, **fields):
+    client = CipherTrustClient(node)
     return client.post("domain-syslog-redirection/enable")
 
 
-def disableSyslogRedirection(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def disableSyslogRedirection(node, **fields):
+    client = CipherTrustClient(node)
     return client.post("domain-syslog-redirection/disable")
 
 

@@ -33,84 +33,78 @@ def _key_op_url(cm_key_id, action, key_version=None, id_type=None, includeMateri
 
 # -- CRUD -------------------------------------------------------------------
 
-def create(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def create(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "vault/keys2",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )
 
 
-def patch(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def patch(node, cm_key_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "vault/keys2/" + quote_segment(kwargs["cm_key_id"]),
+        "vault/keys2/" + quote_segment(cm_key_id),
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "cm_key_id")}
+            fields
         ),
     )
 
 
-def version_create(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def version_create(node, cm_key_id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "vault/keys2/" + quote_segment(kwargs["cm_key_id"]) + "/versions",
+        "vault/keys2/" + quote_segment(cm_key_id) + "/versions",
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "cm_key_id")}
+            fields
         ),
     )
 
 
 # -- Key lifecycle operations -----------------------------------------------
 
-_OP_EXCLUDE = frozenset(["node", "cm_key_id", "key_version", "id_type"])
 
-
-def destroy(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
-    url = _key_op_url(kwargs["cm_key_id"], "destroy", kwargs.get("key_version"), kwargs.get("id_type"))
+def destroy(node, cm_key_id, key_version=None, id_type=None, **fields):
+    client = CipherTrustClient(node)
+    url = _key_op_url(cm_key_id, "destroy", key_version, id_type)
     return client.post(url)
 
 
-def archive(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
-    url = _key_op_url(kwargs["cm_key_id"], "archive", kwargs.get("key_version"), kwargs.get("id_type"))
+def archive(node, cm_key_id, key_version=None, id_type=None, **fields):
+    client = CipherTrustClient(node)
+    url = _key_op_url(cm_key_id, "archive", key_version, id_type)
     return client.post(url)
 
 
-def recover(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
-    url = _key_op_url(kwargs["cm_key_id"], "recover", kwargs.get("key_version"), kwargs.get("id_type"))
+def recover(node, cm_key_id, key_version=None, id_type=None, **fields):
+    client = CipherTrustClient(node)
+    url = _key_op_url(cm_key_id, "recover", key_version, id_type)
     return client.post(url)
 
 
-def revoke(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
-    url = _key_op_url(kwargs["cm_key_id"], "revoke", kwargs.get("key_version"), kwargs.get("id_type"))
-    payload_dict = {k: v for k, v in kwargs.items() if k not in _OP_EXCLUDE}
+def revoke(node, cm_key_id, key_version=None, id_type=None, **fields):
+    client = CipherTrustClient(node)
+    url = _key_op_url(cm_key_id, "revoke", key_version, id_type)
+    payload_dict = fields
     return client.post(url, data=build_request_payload(payload_dict, remap={"messageStr": "message"}))
 
 
-def reactivate(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
-    url = _key_op_url(kwargs["cm_key_id"], "reactivate", kwargs.get("key_version"), kwargs.get("id_type"))
-    payload_dict = {k: v for k, v in kwargs.items() if k not in _OP_EXCLUDE}
+def reactivate(node, cm_key_id, key_version=None, id_type=None, **fields):
+    client = CipherTrustClient(node)
+    url = _key_op_url(cm_key_id, "reactivate", key_version, id_type)
+    payload_dict = fields
     return client.post(url, data=build_request_payload(payload_dict, remap={"messageStr": "message"}))
 
 
-def export(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
-    url = _key_op_url(kwargs["cm_key_id"], "export", kwargs.get("key_version"), kwargs.get("id_type"))
-    payload_dict = {k: v for k, v in kwargs.items() if k not in _OP_EXCLUDE}
+def export(node, cm_key_id, key_version=None, id_type=None, **fields):
+    client = CipherTrustClient(node)
+    url = _key_op_url(cm_key_id, "export", key_version, id_type)
+    payload_dict = fields
     return client.post(url, data=build_request_payload(payload_dict, remap={"keyFormat": "format"}))
 
 
-def clone(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
-    url = _key_op_url(
-        kwargs["cm_key_id"], "clone",
-        kwargs.get("key_version"), kwargs.get("id_type"), kwargs.get("includeMaterial"),
-    )
-    exclude = _OP_EXCLUDE | {"includeMaterial"}
-    payload_dict = {k: v for k, v in kwargs.items() if k not in exclude}
-    return client.post(url, data=build_request_payload(payload_dict))
+def clone(node, cm_key_id, key_version=None, id_type=None,
+          includeMaterial=None, **fields):
+    client = CipherTrustClient(node)
+    url = _key_op_url(cm_key_id, "clone", key_version, id_type, includeMaterial)
+    return client.post(url, data=build_request_payload(fields))

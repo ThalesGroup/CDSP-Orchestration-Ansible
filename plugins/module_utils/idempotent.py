@@ -170,6 +170,60 @@ def idempotent_patch(module, client, endpoint, resource_id,
     return True, response, diff
 
 
+# ---------------------------------------------------------------------------
+# Action helpers
+#
+# Action-style operations (add a member, delete a resource) have no desired
+# state to converge on, but they do have an observable one: whether the thing
+# exists at the URL the write would target. Where that can be established the
+# operation becomes idempotent; where it cannot, the action is performed, which
+# is the behaviour these modules have always had.
+# ---------------------------------------------------------------------------
+
+def resource_exists(client, path):
+    """Does a resource exist at *path*?
+
+    Returns ``True``, ``False``, or ``None`` when CipherTrust Manager will not
+    say -- for example when it rejects a GET on that path. ``None`` means the
+    caller must not draw a conclusion and should perform the action.
+    """
+    try:
+        client.get(path)
+        return True
+    except (CMApiException, HTTPError) as exc:
+        if _is_not_found(exc):
+            return False
+        return None
+
+
+def idempotent_add(module, client, path, add_fn, add_kwargs):
+    """Perform an add unless the resource already exists at *path*.
+
+    Returns ``(changed, response)``.
+    """
+    if resource_exists(client, path) is True:
+        return False, {}
+
+    if module.check_mode:
+        return True, {}
+
+    return True, add_fn(**add_kwargs)
+
+
+def idempotent_remove(module, client, path, remove_fn, remove_kwargs):
+    """Perform a removal unless the resource is already absent from *path*.
+
+    Returns ``(changed, response)``.
+    """
+    if resource_exists(client, path) is False:
+        return False, {}
+
+    if module.check_mode:
+        return True, {}
+
+    return True, remove_fn(**remove_kwargs)
+
+
 def check_mode_action(module):
     """Guard for action-oriented (non-idempotent) modules.
 

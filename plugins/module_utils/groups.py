@@ -17,47 +17,47 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
 )
 
 
-def create(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def create(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "usermgmt/groups",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )
 
 
-def patch(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def patch(node, old_name, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "usermgmt/groups/" + quote_segment(kwargs["old_name"]),
+        "usermgmt/groups/" + quote_segment(old_name),
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "old_name")}
+            fields
         ),
     )
 
 
-def addUserToGroup(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def addUserToGroup(node, object_id, name, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "usermgmt/groups/" + quote_segment(kwargs["name"]) + "/users/" + quote_segment(kwargs["object_id"]),
+        "usermgmt/groups/" + quote_segment(name) + "/users/" + quote_segment(object_id),
     )
 
 
-def addClientToGroup(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def addClientToGroup(node, object_id, name, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "client-management/groups/" + quote_segment(kwargs["name"]) + "/clients/" + quote_segment(kwargs["object_id"]),
+        "client-management/groups/" + quote_segment(name) + "/clients/" + quote_segment(object_id),
     )
 
 
-def deleteUserFromGroup(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def deleteUserFromGroup(node, object_id, name, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
-        "usermgmt/groups/" + quote_segment(kwargs["name"]) + "/users/" + quote_segment(kwargs["object_id"]),
+        "usermgmt/groups/" + quote_segment(name) + "/users/" + quote_segment(object_id),
     )
 
 
-def deleteClientFromGroup(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def deleteClientFromGroup(node, object_id, name, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
-        "client-management/groups/" + quote_segment(kwargs["name"]) + "/clients/" + quote_segment(kwargs["object_id"]),
+        "client-management/groups/" + quote_segment(name) + "/clients/" + quote_segment(object_id),
     )

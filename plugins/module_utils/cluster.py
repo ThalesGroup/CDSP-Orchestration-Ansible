@@ -17,8 +17,8 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
 )
 
 
-def new(**kwargs):
-    cm = kwargs["node"]
+def new(node, **fields):
+    cm = node
     client = CipherTrustClient(cm)
     payload = json.dumps({
         "localNodeHost": cm["server_private_ip"],
@@ -29,44 +29,38 @@ def new(**kwargs):
     return "Cluster creation initiated successfully!"
 
 
-def csr(**kwargs):
-    master_cm = kwargs["master"]
-    node = kwargs["node"]
+def csr(node, master, **fields):
     client = CipherTrustClient(node)
     payload = json.dumps({
         "localNodeHost": node["server_private_ip"],
-        "publicAddress": master_cm["server_ip"],
+        "publicAddress": master["server_ip"],
     })
     response = client.post("cluster/csr", data=payload)
     return response.get("csr", response)
 
 
-def sign(**kwargs):
-    master_cm = kwargs["master"]
-    node = kwargs["node"]
-    client = CipherTrustClient(master_cm)
+def sign(node, master, csr, **fields):
+    client = CipherTrustClient(master)
     payload = json.dumps({
-        "csr": kwargs["csr"],
+        "csr": csr,
         "shared_hsm_partition": False,
         "newNodeHost": node["server_private_ip"],
-        "publicAddress": master_cm["server_ip"],
+        "publicAddress": master["server_ip"],
     })
     return client.post("nodes", data=payload)
 
 
-def join(**kwargs):
-    master_cm = kwargs["master"]
-    node = kwargs["node"]
+def join(node, master, cert, caChain, mkek_blob, **fields):
     client = CipherTrustClient(node)
     payload = json.dumps({
-        "cert": kwargs["cert"],
-        "cachain": kwargs["caChain"],
+        "cert": cert,
+        "cachain": caChain,
         "localNodeHost": node["server_private_ip"],
         "localNodePort": 5432,
         "localNodePublicAddress": node["server_ip"],
-        "memberNodeHost": master_cm["server_private_ip"],
+        "memberNodeHost": master["server_private_ip"],
         "memberNodePort": 5432,
-        "mkek_blob": kwargs["mkek_blob"],
+        "mkek_blob": mkek_blob,
         "blocking": False,
     })
     return client.post("cluster/join", data=payload)

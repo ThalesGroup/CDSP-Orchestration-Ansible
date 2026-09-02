@@ -93,3 +93,44 @@ class TestOptionalFiltersAreOptional:
             "transparent-encryption/signaturesets/sigset-1"
             "/signatures?skip=0&limit=1&file_name=app.exe"
         ]
+
+
+class TestDpgPolicyTokenValidation:
+    """dpg_policy_save's token validation called a helper that does not exist
+    with that signature, so supplying any *_tokens parameter -- the module's
+    central use case -- raised TypeError before it reached the API."""
+
+    TOKEN_PARAMS = [
+        "json_request_get_tokens",
+        "json_request_post_tokens",
+        "json_request_put_tokens",
+        "json_response_get_tokens",
+    ]
+
+    @pytest.mark.parametrize("token_param", TOKEN_PARAMS)
+    def test_a_valid_token_is_accepted(self, token_param):
+        client = make_client(get={"resources": []})
+        result = run_main(
+            "dpg_policy_save",
+            {"op_type": "create", "name": "policy-1",
+             token_param: [{"name": "card", "operation": "protect",
+                            "protection_policy": "pp"}]},
+            client=client,
+        )
+
+        assert not result.failed, result.msg
+        assert result.changed is True
+
+    @pytest.mark.parametrize("token_param", TOKEN_PARAMS)
+    def test_a_token_missing_required_keys_is_reported(self, token_param):
+        client = make_client(get={"resources": []})
+        result = run_main(
+            "dpg_policy_save",
+            {"op_type": "create", "name": "policy-1",
+             token_param: [{"name": "card"}]},
+            client=client,
+        )
+
+        assert result.failed
+        assert token_param in result.msg
+        assert "Traceback" not in result.msg

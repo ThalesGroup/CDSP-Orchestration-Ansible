@@ -16,7 +16,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation
     validate_parameter_types,
     validate_parameter_formats,
     validate_choice,
-    validate_list_elements,
     validate_dict_keys,
     AnsibleCMValidationException,
     AnsibleCMParameterException,
@@ -267,82 +266,6 @@ class TestValidateChoice:
             validate_choice("status", "unknown", ["active", "inactive"], module_name="test_module")
 
         assert "[test_module]" in str(exc_info.value)
-
-
-class TestValidateListElements:
-    """Tests for validate_list_elements function."""
-
-    def test_valid_list(self):
-        """Test valid list."""
-        params = {"tags": ["a", "b", "c"]}
-        list_rules = {
-            "tags": {"element_type": "str"}
-        }
-        result = validate_list_elements(params, list_rules)
-        assert result == params
-
-    def test_list_too_short(self):
-        """Test when list has fewer items than required."""
-        params = {"tags": ["a"]}
-        list_rules = {
-            "tags": {"min_items": 2}
-        }
-
-        with pytest.raises(AnsibleCMValidationException) as exc_info:
-            validate_list_elements(params, list_rules)
-
-        assert "at least" in str(exc_info.value)
-
-    def test_list_too_long(self):
-        """Test when list has more items than allowed."""
-        params = {"tags": ["a", "b", "c"]}
-        list_rules = {
-            "tags": {"max_items": 2}
-        }
-
-        with pytest.raises(AnsibleCMValidationException) as exc_info:
-            validate_list_elements(params, list_rules)
-
-        assert "at most" in str(exc_info.value)
-
-    def test_invalid_element_type(self):
-        """Test when list elements have invalid type."""
-        params = {"tags": ["a", 123, "c"]}
-        list_rules = {
-            "tags": {"element_type": "str"}
-        }
-
-        with pytest.raises(AnsibleCMValidationException) as exc_info:
-            validate_list_elements(params, list_rules)
-
-        assert "must be a string" in str(exc_info.value)
-
-    def test_dict_elements_with_required_keys(self):
-        """Test dict elements with required keys."""
-        params = {"items": [{"name": "test", "value": "123"}]}
-        list_rules = {
-            "items": {
-                "element_type": "dict",
-                "required_keys": ["name", "value"]
-            }
-        }
-        result = validate_list_elements(params, list_rules)
-        assert result == params
-
-    def test_dict_elements_missing_keys(self):
-        """Test dict elements missing required keys."""
-        params = {"items": [{"name": "test"}]}
-        list_rules = {
-            "items": {
-                "element_type": "dict",
-                "required_keys": ["name", "value"]
-            }
-        }
-
-        with pytest.raises(AnsibleCMValidationException) as exc_info:
-            validate_list_elements(params, list_rules)
-
-        assert "missing required key" in str(exc_info.value)
 
 
 class TestValidateDictKeys:

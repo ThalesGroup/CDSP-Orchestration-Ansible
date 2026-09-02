@@ -17,193 +17,189 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
 )
 
 
-def _exclude(kwargs, *keys):
-    return {k: v for k, v in kwargs.items() if k not in keys}
-
-
 # -- Access Policy ----------------------------------------------------------
 
-def createAccessPolicy(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createAccessPolicy(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "data-protection/access-policies",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateAccessPolicy(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateAccessPolicy(node, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "data-protection/access-policies/" + quote_segment(kwargs["policy_id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
+        "data-protection/access-policies/" + quote_segment(policy_id),
+        data=build_request_payload(fields),
     )
 
 
-def accessPolicyAddUserSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def accessPolicyAddUserSet(node, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "data-protection/access-policies/" + quote_segment(kwargs["policy_id"]) + "/user-set",
-        data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
+        "data-protection/access-policies/" + quote_segment(policy_id) + "/user-set",
+        data=build_request_payload(fields),
     )
 
 
-def accessPolicyUpdateUserSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def accessPolicyUpdateUserSet(node, policy_user_set_id, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "data-protection/access-policies/"
-        + quote_segment(kwargs["policy_id"])
+        + quote_segment(policy_id)
         + "/user-set/"
-        + quote_segment(kwargs["policy_user_set_id"]),
+        + quote_segment(policy_user_set_id),
         data=build_request_payload(
-            _exclude(kwargs, "node", "policy_id", "policy_user_set_id")
+            fields
         ),
     )
 
 
-def accessPolicyDeleteUserSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def accessPolicyDeleteUserSet(node, policy_user_set_id, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
         "data-protection/access-policies/"
-        + quote_segment(kwargs["policy_id"])
+        + quote_segment(policy_id)
         + "/user-set/"
-        + quote_segment(kwargs["policy_user_set_id"]),
+        + quote_segment(policy_user_set_id),
     )
 
 
 # -- Protection Policy ------------------------------------------------------
 
-def createProtectionPolicy(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createProtectionPolicy(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "data-protection/protection-policies",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateProtectionPolicy(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateProtectionPolicy(node, policy_name, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "data-protection/protection-policies/" + quote_segment(kwargs["policy_name"]),
-        data=build_request_payload(_exclude(kwargs, "node", "policy_name")),
+        "data-protection/protection-policies/" + quote_segment(policy_name),
+        data=build_request_payload(fields),
     )
 
 
 # -- UserSet ----------------------------------------------------------------
 
-def createUserSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createUserSet(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "data-protection/user-sets",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateUserSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateUserSet(node, user_set_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "data-protection/user-sets/" + quote_segment(kwargs["user_set_id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "user_set_id")),
+        "data-protection/user-sets/" + quote_segment(user_set_id),
+        data=build_request_payload(fields),
     )
 
 
 # -- Character Set ----------------------------------------------------------
 
-def createCharacterSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createCharacterSet(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "data-protection/character-sets",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateCharacterSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateCharacterSet(node, char_set_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "data-protection/character-sets/" + quote_segment(kwargs["char_set_id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "char_set_id")),
+        "data-protection/character-sets/" + quote_segment(char_set_id),
+        data=build_request_payload(fields),
     )
 
 
 # -- Masking Format ---------------------------------------------------------
 
-def createMaskingFormat(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createMaskingFormat(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "data-protection/masking-formats",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateMaskingFormat(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateMaskingFormat(node, masking_format_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "data-protection/masking-formats/" + quote_segment(kwargs["masking_format_id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "masking_format_id")),
+        "data-protection/masking-formats/" + quote_segment(masking_format_id),
+        data=build_request_payload(fields),
     )
 
 
 # -- Client Profile ---------------------------------------------------------
 
-def createClientProfile(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createClientProfile(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "data-protection/client-profiles",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateClientProfile(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateClientProfile(node, profile_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "data-protection/client-profiles/" + quote_segment(kwargs["profile_id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "profile_id")),
+        "data-protection/client-profiles/" + quote_segment(profile_id),
+        data=build_request_payload(fields),
     )
 
 
 # -- DPG Policy -------------------------------------------------------------
 
-def createDPGPolicy(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createDPGPolicy(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "data-protection/dpg-policies",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateDPGPolicy(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateDPGPolicy(node, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "data-protection/dpg-policies/" + quote_segment(kwargs["policy_id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
+        "data-protection/dpg-policies/" + quote_segment(policy_id),
+        data=build_request_payload(fields),
     )
 
 
-def dpgPolicyAddAPIUrl(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def dpgPolicyAddAPIUrl(node, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "data-protection/dpg-policies/" + quote_segment(kwargs["policy_id"]) + "/api-urls",
-        data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
+        "data-protection/dpg-policies/" + quote_segment(policy_id) + "/api-urls",
+        data=build_request_payload(fields),
     )
 
 
-def dpgPolicyUpdateAPIUrl(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def dpgPolicyUpdateAPIUrl(node, api_url_id, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "data-protection/dpg-policies/"
-        + quote_segment(kwargs["policy_id"])
+        + quote_segment(policy_id)
         + "/api-urls/"
-        + quote_segment(kwargs["api_url_id"]),
+        + quote_segment(api_url_id),
         data=build_request_payload(
-            _exclude(kwargs, "node", "policy_id", "api_url_id")
+            fields
         ),
     )
 
 
-def dpgPolicyDeleteAPIUrl(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def dpgPolicyDeleteAPIUrl(node, api_url_id, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
         "data-protection/dpg-policies/"
-        + quote_segment(kwargs["policy_id"])
+        + quote_segment(policy_id)
         + "/api-urls/"
-        + quote_segment(kwargs["api_url_id"]),
+        + quote_segment(api_url_id),
     )

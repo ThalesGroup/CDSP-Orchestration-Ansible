@@ -1271,12 +1271,13 @@ def validate_parameters(dpg_policy_module):
                     # Validate required keys in token
                     required_token_keys = ["name", "operation", "protection_policy"]
                     try:
+                        label = f"{token_param}[{idx}]"
                         validate_dict_keys(
-                            data=token,
-                            required_keys=required_token_keys,
-                            optional_keys=["access_policy", "external_version_header"],
-                            parameter_name=f"{token_param}[{idx}]",
-                            module_name="dpg_policy_save"
+                            params={label: token},
+                            dict_rules={
+                                label: {"required_keys": required_token_keys}
+                            },
+                            module_name="dpg_policy_save",
                         )
                     except AnsibleCMParameterException as e:
                         raise AnsibleCMParameterException(

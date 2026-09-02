@@ -43,11 +43,15 @@ ACTIONS = [
     Action("group_add_remove_object",
            {"op_type": "add", "object_type": "user",
             "name": "grp-1", "object_id": "usr-1"},
-           "post", "usermgmt/groups/grp-1/users/usr-1"),
+           "post", "usermgmt/groups/grp-1/users/usr-1",
+           get_response=CMApiException(message="not a member", api_error_code=404),
+           label="group_add_remove_object:add-user"),
     Action("group_add_remove_object",
            {"op_type": "add", "object_type": "client",
             "name": "grp-1", "object_id": "cli-1"},
-           "post", "client-management/groups/grp-1/clients/cli-1"),
+           "post", "client-management/groups/grp-1/clients/cli-1",
+           get_response=CMApiException(message="not a member", api_error_code=404),
+           label="group_add_remove_object:add-client"),
     Action("group_add_remove_object",
            {"op_type": "remove", "object_type": "user",
             "name": "grp-1", "object_id": "usr-1"},
@@ -229,3 +233,115 @@ class TestResourceDeleteTargetsTheResource:
         assert result.failed
         assert "key" in result.msg
         assert not client.delete.called, "no request may be sent without a key"
+
+
+class TestGroupMembershipIsIdempotent:
+    """Membership is addressable, so add and remove can report changed
+    honestly instead of always claiming one."""
+
+    MEMBER = {"op_type": "add", "object_type": "user",
+              "name": "grp-1", "object_id": "usr-1"}
+    NON_MEMBER = {"op_type": "remove", "object_type": "user",
+                  "name": "grp-1", "object_id": "usr-1"}
+    ABSENT = CMApiException(message="not a member", api_error_code=404)
+
+    def test_adding_an_existing_member_makes_no_change(self):
+        client = make_client(get={"id": "usr-1"})
+        result = run_main("group_add_remove_object", self.MEMBER, client=client)
+
+        assert not result.failed, result.msg
+        assert result.changed is False
+        assert not client.post.called, "re-added a user who is already a member"
+
+    def test_adding_a_new_member_reports_changed(self):
+        client = make_client(get=self.ABSENT)
+        result = run_main("group_add_remove_object", self.MEMBER, client=client)
+
+        assert result.changed is True
+        assert client.post.called
+
+    def test_removing_an_absent_member_makes_no_change(self):
+        client = make_client(get=self.ABSENT)
+        result = run_main("group_add_remove_object", self.NON_MEMBER, client=client)
+
+        assert not result.failed, result.msg
+        assert result.changed is False
+        assert not client.delete.called, "deleted a membership that does not exist"
+
+    def test_removing_an_existing_member_reports_changed(self):
+        client = make_client(get={"id": "usr-1"})
+        result = run_main("group_add_remove_object", self.NON_MEMBER, client=client)
+
+        assert result.changed is True
+        assert client.delete.called
+
+    def test_acts_when_membership_cannot_be_determined(self):
+        """A CM that will not answer must not cause the operation to be skipped."""
+        client = make_client(
+            get=CMApiException(message="method not allowed", api_error_code=405)
+        )
+        result = run_main("group_add_remove_object", self.MEMBER, client=client)
+
+        assert result.changed is True
+        assert client.post.called
+
+
+class TestDeleteIsIdempotent:
+    """Deleting something that is already gone is not a change, and must not
+    fail the play. The resource is addressable at the URL the DELETE targets,
+    so that is what decides."""
+
+    PARAMS = {"resource_type": "keys", "key": "key-1"}
+    ABSENT = CMApiException(message="not found", api_error_code=404)
+
+    def test_deleting_an_existing_resource_reports_changed(self):
+        client = make_client(get={"id": "key-1"})
+        result = run_main("cm_resource_delete", self.PARAMS, client=client)
+
+        assert not result.failed, result.msg
+        assert result.changed is True
+        assert client.delete.called
+
+    def test_deleting_an_absent_resource_makes_no_change(self):
+        client = make_client(get=self.ABSENT)
+        result = run_main("cm_resource_delete", self.PARAMS, client=client)
+
+        assert not result.failed, (
+            "deleting an absent resource must not fail the play: %s" % result.msg
+        )
+        assert result.changed is False
+        assert not client.delete.called
+
+    def test_check_mode_does_not_delete(self):
+        client = make_client(get={"id": "key-1"})
+        result = run_main("cm_resource_delete", self.PARAMS,
+                          client=client, check_mode=True)
+
+        assert result.changed is True
+        assert not client.delete.called
+
+    def test_check_mode_predicts_no_change_for_an_absent_resource(self):
+        client = make_client(get=self.ABSENT)
+        result = run_main("cm_resource_delete", self.PARAMS,
+                          client=client, check_mode=True)
+
+        assert result.changed is False
+        assert not client.delete.called
+
+    def test_acts_when_existence_cannot_be_determined(self):
+        client = make_client(
+            get=CMApiException(message="forbidden", api_error_code=403)
+        )
+        result = run_main("cm_resource_delete", self.PARAMS, client=client)
+
+        assert result.changed is True
+        assert client.delete.called
+
+    def test_cluster_delete_is_still_performed(self):
+        """The cluster singleton has no addressable resource to test."""
+        client = make_client()
+        result = run_main("cm_resource_delete", {"resource_type": "cluster"},
+                          client=client)
+
+        assert result.changed is True
+        assert client.delete.call_args[0][0] == "cluster"

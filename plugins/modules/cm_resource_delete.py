@@ -23,6 +23,12 @@ author:
 extends_documentation_fragment:
   - thalesgroup.ciphertrust.ciphertrust
   - thalesgroup.ciphertrust.attributes.no_diff
+notes:
+  - >-
+    The operation is idempotent where CipherTrust Manager can say whether the
+    resource is already in the requested state. When it can, repeating the task
+    reports C(changed=false) and sends no request; when it cannot, the
+    operation is performed as before.
 options:
     key:
         description:
@@ -92,11 +98,14 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules im
     ciphertrust_operation,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+    quote_segment,
     DELETEByNameOrId,
     DeleteWithoutData,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
     check_mode_action,
+    idempotent_remove,
 )
 
 _arr_resource_type_choices = [
@@ -148,6 +157,8 @@ def main():
     result = dict(
         changed=False,
     )
+
+    client = CipherTrustClient(module.params.get("localNode"))
 
     endpoint = ""
     resource_type = module.params.get("resource_type")
@@ -212,22 +223,34 @@ def main():
                 example='key: "507a05f7-6883-41f6-961a-0e41847d887d"',
             )
 
-        check_mode_action(module)
-
         if is_cluster:
-            # "cluster" is a singleton resource: DELETE /cluster, no id.
+            # "cluster" is a singleton resource: DELETE /cluster, no id. There
+            # is no addressable resource to test for, so the action is always
+            # performed.
+            check_mode_action(module)
             response = DeleteWithoutData(
                 cm_node=module.params.get("localNode"),
                 cm_api_endpoint=endpoint,
             )
+            result["response"] = response
+            result["changed"] = True
         else:
-            response = DELETEByNameOrId(
-                key=module.params.get("key"),
-                cm_node=module.params.get("localNode"),
-                cm_api_endpoint=endpoint,
+            # Deleting something already gone is not a change. The resource is
+            # addressable at the URL the DELETE targets, so that is the check.
+            key = module.params.get("key")
+            changed, response = idempotent_remove(
+                module,
+                client,
+                endpoint + "/" + quote_segment(key),
+                DELETEByNameOrId,
+                dict(
+                    key=key,
+                    cm_node=module.params.get("localNode"),
+                    cm_api_endpoint=endpoint,
+                ),
             )
-        result["response"] = response
-        result["changed"] = True
+            result["changed"] = changed
+            result["response"] = response
 
     module.exit_json(**result)
 

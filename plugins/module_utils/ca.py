@@ -13,72 +13,72 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
 )
 
 
-def createLocalCA(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createLocalCA(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "ca/local-cas",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )
 
 
-def updateLocalCA(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateLocalCA(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "ca/local-cas/" + quote_segment(kwargs["id"]),
+        "ca/local-cas/" + quote_segment(id),
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "id")}
+            fields
         ),
     )
 
 
-def selfSign(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def selfSign(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "ca/local-cas/" + quote_segment(kwargs["id"]) + "/self-sign",
+        "ca/local-cas/" + quote_segment(id) + "/self-sign",
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "id")}
+            fields
         ),
     )
 
 
-def issueCertificate(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def issueCertificate(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "ca/local-cas/" + quote_segment(kwargs["id"]) + "/certs",
+        "ca/local-cas/" + quote_segment(id) + "/certs",
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "id")}
+            fields
         ),
     )
 
 
-def revokeCert(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def revokeCert(node, cert_id, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "ca/local-cas/" + quote_segment(kwargs["id"]) + "/certs/" + quote_segment(kwargs["cert_id"]) + "/revoke",
+        "ca/local-cas/" + quote_segment(id) + "/certs/" + quote_segment(cert_id) + "/revoke",
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "id", "cert_id")}
+            fields
         ),
     )
 
 
-def resumeCert(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def resumeCert(node, cert_id, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "ca/local-cas/" + quote_segment(kwargs["id"]) + "/certs/" + quote_segment(kwargs["cert_id"]) + "/resume",
+        "ca/local-cas/" + quote_segment(id) + "/certs/" + quote_segment(cert_id) + "/resume",
     )
 
 
-def createCSR(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createCSR(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "vault/csr",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )
 
 
-def createCSRAndKey(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createCSRAndKey(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "ca/csr",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )

@@ -23,6 +23,12 @@ author:
 extends_documentation_fragment:
   - thalesgroup.ciphertrust.ciphertrust
   - thalesgroup.ciphertrust.attributes.no_diff
+notes:
+  - >-
+    The operation is idempotent where CipherTrust Manager can say whether the
+    resource is already in the requested state. When it can, repeating the task
+    reports C(changed=false) and sends no request; when it cannot, the
+    operation is performed as before.
 options:
     op_type:
         description:
@@ -120,6 +126,10 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules im
     ThalesCipherTrustModule,
     ciphertrust_operation,
 )
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+    quote_segment,
+)
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.groups import (
     addUserToGroup,
     addClientToGroup,
@@ -127,7 +137,8 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.groups imp
     deleteClientFromGroup,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
-    check_mode_action,
+    idempotent_add,
+    idempotent_remove,
 )
 
 argument_spec = dict(
@@ -156,48 +167,47 @@ def main():
         changed=False,
     )
 
+    client = CipherTrustClient(module.params.get("localNode"))
+
     with ciphertrust_operation(module):
-        if module.params.get("op_type") == "add":
-            if module.params.get("object_type") == "user":
-                check_mode_action(module)
-                response = addUserToGroup(
-                    node=module.params.get("localNode"),
-                    name=module.params.get("name"),
-                    object_id=module.params.get("object_id"),
-                )
-                result["response"] = response
-                result["changed"] = True
+        object_type = module.params.get("object_type")
+        name = module.params.get("name")
+        object_id = module.params.get("object_id")
 
-            else:
-                check_mode_action(module)
-                response = addClientToGroup(
-                    node=module.params.get("localNode"),
-                    name=module.params.get("name"),
-                    object_id=module.params.get("object_id"),
-                )
-                result["response"] = response
-                result["changed"] = True
-
+        # Membership is addressable: the URL the write targets is also the URL
+        # that says whether the member is already there, so add and remove can
+        # report changed honestly. If CM will not answer, the operation is
+        # performed as before.
+        if object_type == "user":
+            membership = (
+                "usermgmt/groups/" + quote_segment(name)
+                + "/users/" + quote_segment(object_id)
+            )
+            add_fn, remove_fn = addUserToGroup, deleteUserFromGroup
         else:
-            if module.params.get("object_type") == "user":
-                check_mode_action(module)
-                response = deleteUserFromGroup(
-                    node=module.params.get("localNode"),
-                    name=module.params.get("name"),
-                    object_id=module.params.get("object_id"),
-                )
-                result["response"] = response
-                result["changed"] = True
+            membership = (
+                "client-management/groups/" + quote_segment(name)
+                + "/clients/" + quote_segment(object_id)
+            )
+            add_fn, remove_fn = addClientToGroup, deleteClientFromGroup
 
-            else:
-                check_mode_action(module)
-                response = deleteClientFromGroup(
-                    node=module.params.get("localNode"),
-                    name=module.params.get("name"),
-                    object_id=module.params.get("object_id"),
-                )
-                result["response"] = response
-                result["changed"] = True
+        action_kwargs = dict(
+            node=module.params.get("localNode"),
+            name=name,
+            object_id=object_id,
+        )
+
+        if module.params.get("op_type") == "add":
+            changed, response = idempotent_add(
+                module, client, membership, add_fn, action_kwargs
+            )
+        else:
+            changed, response = idempotent_remove(
+                module, client, membership, remove_fn, action_kwargs
+            )
+
+        result["changed"] = changed
+        result["response"] = response
 
     module.exit_json(**result)
 

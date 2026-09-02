@@ -913,10 +913,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
     AnsibleCMParameterException,
     AnsibleCMFormatException,
 )
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation import (
-    validate_list_elements,
-    validate_dict_keys,
-)
 
 _alias = dict(
     alias=dict(type="str"),
@@ -1353,54 +1349,7 @@ def validate_parameters(user_module):
                 )
 
     # Validate dict keys for nested parameters
-    dict_validations = [
-        {"param": "meta", "allowed_keys": ["ownerId", "permissions", "cte", "versionedKey"], "optional": True},
-        {
-            "param": "publicKeyParameters",
-            "allowed_keys": [
-                "activationDate", "aliases", "archiveDate", "deactivationDate", "meta", "name", "state", "undeletable", "unexportable", "usageMask",
-            ],
-            "optional": True,
-        },
-        {"param": "wrapHKDF", "allowed_keys": ["hashAlgorithm", "ikmKeyName", "info", "salt"], "optional": True},
-        {
-            "param": "wrapPBE",
-            "allowed_keys": ["hashAlgorithm", "dklen", "iteration", "password", "passwordIdentifier", "passwordIdentifierType", "purpose", "salt"],
-            "optional": True,
-        },
-        {"param": "wrapRSAAES", "allowed_keys": ["aesKeySize", "padding"], "optional": True},
-        {"param": "hkdfCreateParameters", "allowed_keys": ["hashAlgorithm", "ikmKeyName", "info", "salt"], "optional": True},
-    ]
-
-    for validation in dict_validations:
-        param = validation["param"]
-        if params.get(param) is not None:
-            validate_dict_keys(
-                parameters=user_module,
-                parameter=param,
-                value=params.get(param),
-                allowed_keys=validation["allowed_keys"],
-                optional=validation.get("optional", False)
-            )
-
     # Validate list elements for list parameters
-    list_validations = [
-        {"param": "aliases", "optional": True},
-        {"param": "labels", "optional": True},
-        {"param": "usageMask", "optional": True},  # usageMask is int but can be thought of as bit flags
-    ]
-
-    for validation in list_validations:
-        param = validation["param"]
-        if params.get(param) is not None:
-            validate_list_elements(
-                parameters=user_module,
-                parameter=param,
-                value=params.get(param),
-                element_type="dict" if param == "aliases" else "str",
-                optional=validation.get("optional", False)
-            )
-
     return True
 
 

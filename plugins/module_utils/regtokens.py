@@ -17,19 +17,19 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
 )
 
 
-def create(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def create(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "client-management/regtokens",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )
 
 
-def patch(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def patch(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "client-management/regtokens/" + quote_segment(kwargs["id"]),
+        "client-management/regtokens/" + quote_segment(id),
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "id")}
+            fields
         ),
     )

@@ -17,35 +17,35 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
 )
 
 
-def create(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def create(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "usermgmt/users",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )
 
 
-def patch(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def patch(node, cm_user_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "usermgmt/users/" + quote_segment(kwargs["cm_user_id"]),
+        "usermgmt/users/" + quote_segment(cm_user_id),
         data=build_request_payload(
-            {k: v for k, v in kwargs.items() if k not in ("node", "cm_user_id")}
+            fields
         ),
     )
 
 
-def changepw(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def changepw(node, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "auth/changepw",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )
 
 
-def patch_self(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def patch_self(node, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "auth/self/user",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )

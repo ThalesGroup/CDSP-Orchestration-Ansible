@@ -15,522 +15,518 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
 )
 
 
-def _exclude(kwargs, *keys):
-    return {k: v for k, v in kwargs.items() if k not in keys}
-
-
 # -- CTE Policy -------------------------------------------------------------
 
-def createCTEPolicy(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createCTEPolicy(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "transparent-encryption/policies",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateCTEPolicy(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateCTEPolicy(node, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/policies/" + quote_segment(kwargs["policy_id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "policy_id")),
+        "transparent-encryption/policies/" + quote_segment(policy_id),
+        data=build_request_payload(fields),
     )
 
 
-def ctePolicyAddRule(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def ctePolicyAddRule(node, rule_name, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "transparent-encryption/policies/"
-        + quote_segment(kwargs["policy_id"])
+        + quote_segment(policy_id)
         + "/"
-        + quote_segment(kwargs["rule_name"]),
+        + quote_segment(rule_name),
         data=build_request_payload(
-            _exclude(kwargs, "node", "policy_id", "rule_name")
+            fields
         ),
     )
 
 
-def ctePolicyPatchRule(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def ctePolicyPatchRule(node, rule_id, rule_name, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "transparent-encryption/policies/"
-        + quote_segment(kwargs["policy_id"])
+        + quote_segment(policy_id)
         + "/"
-        + quote_segment(kwargs["rule_name"])
+        + quote_segment(rule_name)
         + "/"
-        + quote_segment(kwargs["rule_id"]),
+        + quote_segment(rule_id),
         data=build_request_payload(
-            _exclude(kwargs, "node", "policy_id", "rule_name", "rule_id")
+            fields
         ),
     )
 
 
-def ctePolicyDeleteRule(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def ctePolicyDeleteRule(node, rule_id, rule_name, policy_id, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
         "transparent-encryption/policies/"
-        + quote_segment(kwargs["policy_id"])
+        + quote_segment(policy_id)
         + "/"
-        + quote_segment(kwargs["rule_name"])
+        + quote_segment(rule_name)
         + "/"
-        + quote_segment(kwargs["rule_id"]),
+        + quote_segment(rule_id),
     )
 
 
 # -- ProcessSet --------------------------------------------------------------
 
-def createProcessSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createProcessSet(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "transparent-encryption/processsets",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateProcessSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateProcessSet(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/processsets/" + quote_segment(kwargs["id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/processsets/" + quote_segment(id),
+        data=build_request_payload(fields),
     )
 
 
-def addProcessToSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def addProcessToSet(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/processsets/" + quote_segment(kwargs["id"]) + "/addprocesses",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/processsets/" + quote_segment(id) + "/addprocesses",
+        data=build_request_payload(fields),
     )
 
 
-def updateProcessInSetByIndex(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateProcessInSetByIndex(node, processIndex, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "transparent-encryption/processsets/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/updateprocess/"
-        + quote_segment(kwargs["processIndex"]),
-        data=build_request_payload(_exclude(kwargs, "node", "id", "processIndex")),
+        + quote_segment(processIndex),
+        data=build_request_payload(fields),
     )
 
 
-def deleteProcessInSetByIndex(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def deleteProcessInSetByIndex(node, processIndex, id, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
         "transparent-encryption/processsets/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/delprocesses?processIndexList="
-        + quote_query_value(kwargs["processIndex"]),
+        + quote_query_value(processIndex),
     )
 
 
 # -- ResourceSet -------------------------------------------------------------
 
-def createResourceSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createResourceSet(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "transparent-encryption/resourcesets",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateResourceSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateResourceSet(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/resourcesets/" + quote_segment(kwargs["id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/resourcesets/" + quote_segment(id),
+        data=build_request_payload(fields),
     )
 
 
-def addResourceToSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def addResourceToSet(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/resourcesets/" + quote_segment(kwargs["id"]) + "/addresources",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/resourcesets/" + quote_segment(id) + "/addresources",
+        data=build_request_payload(fields),
     )
 
 
-def updateResourceInSetByIndex(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateResourceInSetByIndex(node, resourceIndex, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "transparent-encryption/resourcesets/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/updateresource/"
-        + quote_segment(kwargs["resourceIndex"]),
-        data=build_request_payload(_exclude(kwargs, "node", "id", "resourceIndex")),
+        + quote_segment(resourceIndex),
+        data=build_request_payload(fields),
     )
 
 
-def deleteResourceInSetByIndex(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def deleteResourceInSetByIndex(node, resourceIndex, id, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
         "transparent-encryption/resourcesets/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/delresources?resourceIndexList="
-        + quote_query_value(kwargs["resourceIndex"]),
+        + quote_query_value(resourceIndex),
     )
 
 
 # -- SignatureSet ------------------------------------------------------------
 
-def createSignatureSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createSignatureSet(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "transparent-encryption/signaturesets",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateSignatureSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateSignatureSet(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/signaturesets/" + quote_segment(kwargs["id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/signaturesets/" + quote_segment(id),
+        data=build_request_payload(fields),
     )
 
 
-def addSignatureToSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def addSignatureToSet(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/signaturesets/" + quote_segment(kwargs["id"]) + "/addsignatures",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/signaturesets/" + quote_segment(id) + "/addsignatures",
+        data=build_request_payload(fields),
     )
 
 
-def getSignatureFromSetByFilter(**kwargs):
+def getSignatureFromSetByFilter(node, id, file_name=None, **fields):
     """Look up a signature in a set, optionally filtered by file name.
 
     ``file_name`` is optional in the module's ``required_if`` rules, so it is
     built into the query only when supplied. Concatenating it unconditionally
     raised ``TypeError`` for a task that passed only ``id``.
     """
-    client = CipherTrustClient(kwargs["node"])
+    client = CipherTrustClient(node)
     query = _build_query_string({
         "skip": 0,
         "limit": 1,
-        "file_name": kwargs.get("file_name"),
+        "file_name": file_name,
     })
     return client.get(
         "transparent-encryption/signaturesets/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/signatures"
         + query,
     )
 
 
-def deleteSignatureInSetById(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def deleteSignatureInSetById(node, signature_id, id, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
         "transparent-encryption/signaturesets/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/signatures/"
-        + quote_segment(kwargs["signature_id"]),
+        + quote_segment(signature_id),
     )
 
 
-def sendSignAppRequest(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def sendSignAppRequest(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "transparent-encryption/signaturesets/" + quote_segment(kwargs["id"]) + "/signapp",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/signaturesets/" + quote_segment(id) + "/signapp",
+        data=build_request_payload(fields),
     )
 
 
-def querySignAppRequest(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def querySignAppRequest(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "transparent-encryption/signaturesets/" + quote_segment(kwargs["id"]) + "/querysignapp",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/signaturesets/" + quote_segment(id) + "/querysignapp",
+        data=build_request_payload(fields),
     )
 
 
-def cancelSignAppRequest(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def cancelSignAppRequest(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "transparent-encryption/signaturesets/" + quote_segment(kwargs["id"]) + "/cancelsignapp",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/signaturesets/" + quote_segment(id) + "/cancelsignapp",
+        data=build_request_payload(fields),
     )
 
 
 # -- CTE UserSet -------------------------------------------------------------
 
-def createUserSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createUserSet(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "transparent-encryption/usersets",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateUserSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateUserSet(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/usersets/" + quote_segment(kwargs["id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/usersets/" + quote_segment(id),
+        data=build_request_payload(fields),
     )
 
 
-def addUserToSet(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def addUserToSet(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/usersets/" + quote_segment(kwargs["id"]) + "/addusers",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/usersets/" + quote_segment(id) + "/addusers",
+        data=build_request_payload(fields),
     )
 
 
-def updateUserInSetByIndex(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateUserInSetByIndex(node, userIndex, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "transparent-encryption/usersets/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/updateuser/"
-        + quote_segment(kwargs["userIndex"]),
-        data=build_request_payload(_exclude(kwargs, "node", "id", "userIndex")),
+        + quote_segment(userIndex),
+        data=build_request_payload(fields),
     )
 
 
-def deleteUserInSetByIndex(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def deleteUserInSetByIndex(node, userIndex, id, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
         "transparent-encryption/usersets/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/delusers?userIndexList="
-        + quote_query_value(kwargs["userIndex"]),
+        + quote_query_value(userIndex),
     )
 
 
 # -- CSI Storage Group -------------------------------------------------------
 
-def createCSIStorageGroup(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createCSIStorageGroup(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "transparent-encryption/csigroups",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateCSIStorageGroup(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateCSIStorageGroup(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/csigroups/" + quote_segment(kwargs["id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/csigroups/" + quote_segment(id),
+        data=build_request_payload(fields),
     )
 
 
-def csiGroupAddClient(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def csiGroupAddClient(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "transparent-encryption/csigroups/" + quote_segment(kwargs["id"]) + "/clients",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/csigroups/" + quote_segment(id) + "/clients",
+        data=build_request_payload(fields),
     )
 
 
-def csiGroupRemoveClient(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def csiGroupRemoveClient(node, client_id, id, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
         "transparent-encryption/csigroups/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/clients/"
-        + quote_segment(kwargs["client_id"]),
+        + quote_segment(client_id),
     )
 
 
-def csiGroupAddGuardPoint(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def csiGroupAddGuardPoint(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "transparent-encryption/csigroups/" + quote_segment(kwargs["id"]) + "/guardpoints",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/csigroups/" + quote_segment(id) + "/guardpoints",
+        data=build_request_payload(fields),
     )
 
 
-def csiGroupUpdateGuardPoint(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def csiGroupUpdateGuardPoint(node, gp_id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/csigroups/guardpoints/" + quote_segment(kwargs["gp_id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "gp_id")),
+        "transparent-encryption/csigroups/guardpoints/" + quote_segment(gp_id),
+        data=build_request_payload(fields),
     )
 
 
-def csiGroupRemoveGuardPoint(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def csiGroupRemoveGuardPoint(node, gp_id, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
-        "transparent-encryption/csigroups/guardpoints/" + quote_segment(kwargs["gp_id"]),
+        "transparent-encryption/csigroups/guardpoints/" + quote_segment(gp_id),
     )
 
 
 # -- CTE Client Group --------------------------------------------------------
 
-def createClientGroup(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createClientGroup(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "transparent-encryption/clientgroups",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def updateClientGroup(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateClientGroup(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/clientgroups/" + quote_segment(kwargs["id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clientgroups/" + quote_segment(id),
+        data=build_request_payload(fields),
     )
 
 
-def clientGroupAddClients(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def clientGroupAddClients(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "transparent-encryption/clientgroups/" + quote_segment(kwargs["id"]) + "/clients",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clientgroups/" + quote_segment(id) + "/clients",
+        data=build_request_payload(fields),
     )
 
 
-def clientGroupAddGuardPoint(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def clientGroupAddGuardPoint(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "transparent-encryption/clientgroups/" + quote_segment(kwargs["id"]) + "/guardpoints",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clientgroups/" + quote_segment(id) + "/guardpoints",
+        data=build_request_payload(fields),
     )
 
 
-def clientGroupUpdateGuardPoint(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def clientGroupUpdateGuardPoint(node, guardpoint_id, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "transparent-encryption/clientgroups/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/guardpoints/"
-        + quote_segment(kwargs["guardpoint_id"]),
+        + quote_segment(guardpoint_id),
         data=build_request_payload(
-            _exclude(kwargs, "node", "id", "guardpoint_id")
+            fields
         ),
     )
 
 
-def clientGroupUnguardGuardPoint(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def clientGroupUnguardGuardPoint(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/clientgroups/" + quote_segment(kwargs["id"]) + "/guardpoints/unguard",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clientgroups/" + quote_segment(id) + "/guardpoints/unguard",
+        data=build_request_payload(fields),
     )
 
 
-def clientGroupAuthBinaries(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def clientGroupAuthBinaries(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/clientgroups/" + quote_segment(kwargs["id"]) + "/auth-binaries",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clientgroups/" + quote_segment(id) + "/auth-binaries",
+        data=build_request_payload(fields),
     )
 
 
-def clientGroupDeleteClient(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def clientGroupDeleteClient(node, client_id, id, **fields):
+    client = CipherTrustClient(node)
     return client.delete(
         "transparent-encryption/clientgroups/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/clients/"
-        + quote_segment(kwargs["client_id"]),
+        + quote_segment(client_id),
     )
 
 
-def clientGroupLDTPause(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def clientGroupLDTPause(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "transparent-encryption/clientgroups/" + quote_segment(kwargs["id"]) + "/ldtpause",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clientgroups/" + quote_segment(id) + "/ldtpause",
+        data=build_request_payload(fields),
     )
 
 
 # -- CTE Client --------------------------------------------------------------
 
-def createClient(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def createClient(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "transparent-encryption/clients",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def patchClient(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def patchClient(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/clients/" + quote_segment(kwargs["id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clients/" + quote_segment(id),
+        data=build_request_payload(fields),
     )
 
 
-def clientAddGuardPoint(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def clientAddGuardPoint(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "transparent-encryption/clients/" + quote_segment(kwargs["id"]) + "/guardpoints",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clients/" + quote_segment(id) + "/guardpoints",
+        data=build_request_payload(fields),
     )
 
 
-def unEnrollClient(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def unEnrollClient(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "transparent-encryption/unenroll",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def deleteClients(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def deleteClients(node, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "transparent-encryption/clients/delete",
-        data=build_request_payload(_exclude(kwargs, "node")),
+        data=build_request_payload(fields),
     )
 
 
-def deleteClientById(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def deleteClientById(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/clients/" + quote_segment(kwargs["id"]) + "/delete",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clients/" + quote_segment(id) + "/delete",
+        data=build_request_payload(fields),
     )
 
 
-def updateClientAuthBinaries(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateClientAuthBinaries(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/clients/" + quote_segment(kwargs["id"]) + "/auth-binaries",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clients/" + quote_segment(id) + "/auth-binaries",
+        data=build_request_payload(fields),
     )
 
 
-def sendLDTPauseCmd(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def sendLDTPauseCmd(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "transparent-encryption/clients/" + quote_segment(kwargs["id"]) + "/ldtpause",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clients/" + quote_segment(id) + "/ldtpause",
+        data=build_request_payload(fields),
     )
 
 
-def patchGuardPointCTEClient(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def patchGuardPointCTEClient(node, gp_id, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "transparent-encryption/clients/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/guardpoints/"
-        + quote_segment(kwargs["gp_id"]),
-        data=build_request_payload(_exclude(kwargs, "node", "id", "gp_id")),
+        + quote_segment(gp_id),
+        data=build_request_payload(fields),
     )
 
 
-def unGuardPoints(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def unGuardPoints(node, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
-        "transparent-encryption/clients/" + quote_segment(kwargs["id"]) + "/guardpoints/unguard",
-        data=build_request_payload(_exclude(kwargs, "node", "id")),
+        "transparent-encryption/clients/" + quote_segment(id) + "/guardpoints/unguard",
+        data=build_request_payload(fields),
     )
 
 
-def updateGPEarlyAccess(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def updateGPEarlyAccess(node, gp_id, id, **fields):
+    client = CipherTrustClient(node)
     return client.patch(
         "transparent-encryption/clients/"
-        + quote_segment(kwargs["id"])
+        + quote_segment(id)
         + "/guardpoints/"
-        + quote_segment(kwargs["gp_id"])
+        + quote_segment(gp_id)
         + "/early-access",
-        data=build_request_payload(_exclude(kwargs, "node", "id", "gp_id")),
+        data=build_request_payload(fields),
     )

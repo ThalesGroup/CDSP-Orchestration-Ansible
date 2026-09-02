@@ -10,9 +10,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api imp
 )
 
 
-def restartCMServices(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def restartCMServices(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "system/services/restart",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )

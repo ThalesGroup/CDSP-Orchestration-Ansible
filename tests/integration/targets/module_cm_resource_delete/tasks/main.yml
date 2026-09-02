@@ -60,6 +60,24 @@
       resource it was asked to remove.
     success_msg: "Deleted resource no longer resolves"
 
+- name: Delete the same key again
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ this_node_connection_string }}"
+    resource_type: keys
+    key: "{{ _key.response.id }}"
+  register: _delete_again
+
+- name: Deleting something already gone is not a change
+  ansible.builtin.assert:
+    that:
+      - _delete_again is not failed
+      - _delete_again is not changed
+    fail_msg: >-
+      A repeated delete should report changed=false rather than failing or
+      claiming a change; got changed={{ _delete_again.changed | default('?') }}
+      {{ _delete_again.msg | default('') }}
+    success_msg: "Repeated delete is a no-op"
+
 - name: Delete without supplying a key
   thalesgroup.ciphertrust.cm_resource_delete:
     localNode: "{{ this_node_connection_string }}"

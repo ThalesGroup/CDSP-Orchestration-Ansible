@@ -6,7 +6,6 @@ import json
 from unittest.mock import patch
 
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import (
-    _exclude,
     createAccessPolicy,
     updateAccessPolicy,
     accessPolicyAddUserSet,
@@ -38,16 +37,6 @@ TEST_NODE = {
 }
 
 MODULE_PATH = "ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg.CipherTrustClient"
-
-
-class TestExclude:
-    def test_excludes_keys(self):
-        data = {"a": 1, "b": 2, "c": 3}
-        assert _exclude(data, "a", "c") == {"b": 2}
-
-    def test_excludes_nothing(self):
-        data = {"a": 1, "b": 2}
-        assert _exclude(data) == {"a": 1, "b": 2}
 
 
 class TestAccessPolicy:

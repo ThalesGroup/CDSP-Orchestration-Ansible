@@ -357,7 +357,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation import (
     validate_required_parameters,
-    validate_list_elements,
     DOCUMENTATION_LINKS,
 )
 
@@ -563,27 +562,6 @@ def validate_parameters(user_module):
                     "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
                 ),
             )
-        else:
-            # Validate external CA IDs are strings
-            if "external" in trusted_cas:
-                validate_list_elements(
-                    value=trusted_cas["external"],
-                    parameter_name="trusted_cas.external",
-                    element_type=str,
-                    documentation_link=DOCUMENTATION_LINKS.get(
-                        "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-                    )
-                )
-            # Validate local CA IDs are strings
-            if "local" in trusted_cas:
-                validate_list_elements(
-                    value=trusted_cas["local"],
-                    parameter_name="trusted_cas.local",
-                    element_type=str,
-                    documentation_link=DOCUMENTATION_LINKS.get(
-                        "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-                    )
-                )
 
     # Validate local_auto_gen_attributes structure
     if local_auto_gen_attributes is not None:

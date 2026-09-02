@@ -35,6 +35,11 @@ notes:
   - >-
     Registering the result keeps the secret in memory for the rest of the
     play; scope those variables as tightly as the deployment allows.
+  - >-
+    This module performs an operation rather than converging on a desired
+    state. C(changed) reports that the operation was carried out, not that
+    CipherTrust Manager was necessarily altered by it; a task that repeats the
+    operation reports C(changed) again.
 options:
   op_type:
       description: Operation to be performed

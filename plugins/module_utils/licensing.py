@@ -31,13 +31,13 @@ def getLockdata(node):
     return {"data": client.get("licensing/lockdata")}
 
 
-def getTrialLicenseId(**kwargs):
+def getTrialLicenseId(node, **fields):
     """Return the id and status of the first trial licence.
 
     A CipherTrust Manager with no trials returns an empty resource list; that
     is reported as an error rather than raising ``IndexError``.
     """
-    client = CipherTrustClient(kwargs["node"])
+    client = CipherTrustClient(node)
     response = client.get("licensing/trials")
 
     resources = response.get("resources") if isinstance(response, dict) else None
@@ -60,23 +60,23 @@ def getTrialLicenseId(**kwargs):
     return {"id": trial["id"], "status": trial["status"]}
 
 
-def addLicense(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def addLicense(node, **fields):
+    client = CipherTrustClient(node)
     return client.post(
         "licensing/licenses",
-        data=build_request_payload({k: v for k, v in kwargs.items() if k != "node"}),
+        data=build_request_payload(fields),
     )
 
 
-def activateTrial(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def activateTrial(node, trialId, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "licensing/trials/" + quote_segment(kwargs["trialId"]) + "/activate",
+        "licensing/trials/" + quote_segment(trialId) + "/activate",
     )
 
 
-def deactivateTrial(**kwargs):
-    client = CipherTrustClient(kwargs["node"])
+def deactivateTrial(node, trialId, **fields):
+    client = CipherTrustClient(node)
     return client.post(
-        "licensing/trials/" + quote_segment(kwargs["trialId"]) + "/deactivate",
+        "licensing/trials/" + quote_segment(trialId) + "/deactivate",
     )

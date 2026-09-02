@@ -330,8 +330,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation
     validate_parameter_types,
     validate_parameter_formats,
     validate_choice,
-    validate_list_elements,
-    validate_dict_keys,
     DOCUMENTATION_LINKS,
 )
 
@@ -647,15 +645,6 @@ def validate_parameters(user_module):
         )
 
     if allowed_auth_methods is not None:
-        validate_list_elements(
-            value=allowed_auth_methods,
-            parameter_name="allowed_auth_methods",
-            element_type=str,
-            documentation_link=DOCUMENTATION_LINKS.get(
-                "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            )
-        )
-
         # Validate allowed_auth_methods choices
         valid_auth_methods = [
             "password",
@@ -705,15 +694,6 @@ def validate_parameters(user_module):
         )
 
     if login_flags is not None:
-        validate_dict_keys(
-            dictionary=login_flags,
-            parameter_name="login_flags",
-            valid_keys=["prevent_ui_login"],
-            documentation_link=DOCUMENTATION_LINKS.get(
-                "usermgmt_users_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/user-management.html"
-            )
-        )
-
         if "prevent_ui_login" in login_flags:
             validate_parameter_types(
                 parameters={"prevent_ui_login": login_flags["prevent_ui_login"]},

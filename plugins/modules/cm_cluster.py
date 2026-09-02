@@ -23,6 +23,12 @@ author:
 extends_documentation_fragment:
   - thalesgroup.ciphertrust.ciphertrust
   - thalesgroup.ciphertrust.attributes.no_diff
+notes:
+  - >-
+    This module performs an operation rather than converging on a desired
+    state. Except where noted, C(changed) reports that the operation was
+    carried out, not that CipherTrust Manager was necessarily altered by it;
+    a task that repeats the operation reports C(changed) again.
 options:
     op_type:
         description: Operation to be performed

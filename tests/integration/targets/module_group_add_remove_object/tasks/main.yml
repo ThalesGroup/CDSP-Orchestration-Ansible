@@ -76,6 +76,25 @@
           - _result_add_user_to_group is not failed
           - _result_add_user_to_group.response.id is string
 
+    - name: "Add the same User to the Group again"
+      thalesgroup.ciphertrust.group_add_remove_object:
+        op_type: add
+        object_type: user
+        object_id: "{{ _result_create_user.response.id }}"
+        name: "{{ group1_name }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_add_again
+
+    - name: Re-adding an existing member is not a change
+      ansible.builtin.assert:
+        that:
+          - _result_add_again is not failed
+          - _result_add_again is not changed
+        fail_msg: >-
+          Adding a user who is already a member should report changed=false;
+          got changed={{ _result_add_again.changed | default('?') }}
+        success_msg: "Re-adding an existing member is a no-op"
+
     - name: "Remove User from Group"
       thalesgroup.ciphertrust.group_add_remove_object:
         op_type: remove

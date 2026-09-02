@@ -14,6 +14,9 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent
     resource_needs_update,
     idempotent_create,
     idempotent_patch,
+    idempotent_add,
+    idempotent_remove,
+    resource_exists,
     check_mode_action,
 )
 
@@ -482,3 +485,131 @@ class TestCheckModeAction:
         check_mode_action(module)
 
         module.exit_json.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# Action helpers
+# ---------------------------------------------------------------------------
+
+class TestResourceExists:
+    """Three answers, not two: CM may decline to say."""
+
+    def test_present(self):
+        client = MagicMock()
+        client.get.return_value = {"id": "r1"}
+        assert resource_exists(client, "usermgmt/groups/g/users/u") is True
+
+    def test_absent(self):
+        client = MagicMock()
+        client.get.side_effect = CMApiException(message="gone", api_error_code=404)
+        assert resource_exists(client, "usermgmt/groups/g/users/u") is False
+
+    def test_absent_via_http_error(self):
+        client = MagicMock()
+        client.get.side_effect = HTTPError(url="", code=404, msg="", hdrs={}, fp=None)
+        assert resource_exists(client, "x") is False
+
+    @pytest.mark.parametrize("code", [403, 405, 500])
+    def test_undeterminable(self, code):
+        """Anything other than 'not found' means we must not conclude."""
+        client = MagicMock()
+        client.get.side_effect = CMApiException(message="nope", api_error_code=code)
+        assert resource_exists(client, "x") is None
+
+
+class TestIdempotentAdd:
+
+    @staticmethod
+    def _module(check_mode=False):
+        module = MagicMock()
+        module.check_mode = check_mode
+        return module
+
+    def test_adds_when_absent(self):
+        client = MagicMock()
+        client.get.side_effect = CMApiException(message="gone", api_error_code=404)
+        add = MagicMock(return_value={"ok": True})
+
+        changed, response = idempotent_add(self._module(), client, "p", add, {"a": 1})
+
+        assert changed is True and response == {"ok": True}
+        add.assert_called_once_with(a=1)
+
+    def test_no_change_when_already_present(self):
+        client = MagicMock()
+        client.get.return_value = {"id": "r1"}
+        add = MagicMock()
+
+        changed, _unused = idempotent_add(self._module(), client, "p", add, {})
+
+        assert changed is False
+        add.assert_not_called()
+
+    def test_acts_when_state_cannot_be_determined(self):
+        """Never silently skip the operation on an inconclusive answer."""
+        client = MagicMock()
+        client.get.side_effect = CMApiException(message="nope", api_error_code=405)
+        add = MagicMock(return_value={})
+
+        changed, _unused = idempotent_add(self._module(), client, "p", add, {})
+
+        assert changed is True
+        add.assert_called_once()
+
+    def test_check_mode_does_not_add(self):
+        client = MagicMock()
+        client.get.side_effect = CMApiException(message="gone", api_error_code=404)
+        add = MagicMock()
+
+        changed, _unused = idempotent_add(self._module(check_mode=True), client, "p", add, {})
+
+        assert changed is True
+        add.assert_not_called()
+
+
+class TestIdempotentRemove:
+
+    @staticmethod
+    def _module(check_mode=False):
+        module = MagicMock()
+        module.check_mode = check_mode
+        return module
+
+    def test_removes_when_present(self):
+        client = MagicMock()
+        client.get.return_value = {"id": "r1"}
+        remove = MagicMock(return_value={"ok": True})
+
+        changed, response = idempotent_remove(self._module(), client, "p", remove, {"a": 1})
+
+        assert changed is True and response == {"ok": True}
+        remove.assert_called_once_with(a=1)
+
+    def test_no_change_when_already_gone(self):
+        client = MagicMock()
+        client.get.side_effect = CMApiException(message="gone", api_error_code=404)
+        remove = MagicMock()
+
+        changed, _unused = idempotent_remove(self._module(), client, "p", remove, {})
+
+        assert changed is False
+        remove.assert_not_called()
+
+    def test_acts_when_state_cannot_be_determined(self):
+        client = MagicMock()
+        client.get.side_effect = CMApiException(message="nope", api_error_code=500)
+        remove = MagicMock(return_value={})
+
+        changed, _unused = idempotent_remove(self._module(), client, "p", remove, {})
+
+        assert changed is True
+
+    def test_check_mode_does_not_remove(self):
+        client = MagicMock()
+        client.get.return_value = {"id": "r1"}
+        remove = MagicMock()
+
+        changed, _unused = idempotent_remove(self._module(check_mode=True), client, "p", remove, {})
+
+        assert changed is True
+        remove.assert_not_called()
