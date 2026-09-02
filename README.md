@@ -151,7 +151,33 @@ This collection is tested for the following -
 We welcome community contributions to this collection. If you find problems, please open an issue or create a PR against the this repository.
 
 ## Support
-You can use GitHub issues page and [Thales Community Forum](https://supportportal.thalesgroup.com/community) for getting support on the community.
+
+> [!IMPORTANT]
+> **This is a community-supported collection. It is not covered by Thales Customer Support.**
+
+This collection is maintained by the Thales Developer Advocacy team and the open-source community. It is **not** a Thales product, is not part of any Thales product entitlement, and is **not** covered by any Thales support contract, SLA, or maintenance agreement.
+Support requests raised through official Thales Customer Support channels or the Thales Support Portal regarding this collection will not be actioned.
+
+For help, please use the community channels:
+
+- [GitHub Issues](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/issues) — bug reports, feature requests, and questions about this collection
+- [Thales Community Forum](https://supportportal.thalesgroup.com/community) — general discussion with other users
+
+Issues relating to the underlying **CipherTrust Manager** or **CDSP** products themselves (as opposed to this collection) should continue to go through your normal Thales support channels.
+
+Community support is provided on a best-effort basis by volunteers. There is no guaranteed response time or commitment to fix any issue.
+
+### Warranty and liability
+
+This collection is distributed under the [MIT License](LICENSE) and is provided
+**"AS IS", WITHOUT WARRANTY OF ANY KIND**, express or implied, including but not limited
+to the warranties of merchantability, fitness for a particular purpose, and
+non-infringement. As set out in the licence, in no event shall the authors or copyright
+holders be liable for any claim, damages, or other liability arising from, out of, or in
+connection with the collection or its use.
+
+You are responsible for evaluating and testing this collection before using it in any
+production or security-sensitive environment.
 
 ## Release Notes and Roadmap
 
