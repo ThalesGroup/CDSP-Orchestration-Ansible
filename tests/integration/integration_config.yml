@@ -1,25 +1,18 @@
 ---
 cm_connection_string:
-  server_ip: 192.168.2.100
+  server_ip: 10.0.0.28
   user: admin
   password: ChangeIt01!
   verify: false
   auth_domain_path:
-local_ca_id: "146b5095-8f9b-47c6-a43c-a6ee4b58b23b"
 nae_interface_port_number: 9005
-# Unlike localNode, cm_cluster's `nodes` suboptions genuinely require
-# server_private_ip and server_port -- they describe the joining node to the
-# cluster API rather than the connection this collection makes.
 cluster_nodes:
-  - server_ip: 192.168.2.101
-    server_private_ip: 10.10.10.10
+  - server_ip: 10.0.0.28
+    server_private_ip: 10.0.0.28
     server_port: 5432
     user: admin
     password: ChangeIt01!
     verify: false
     auth_domain_path:
-
-# cm_services can only restart CipherTrust Manager, which interrupts every
-# task that follows. Set this to run that test for real; by default the
-# module is exercised in check mode only.
 cm_allow_disruptive_tests: false
+cm_allow_uncleanable_tests: false

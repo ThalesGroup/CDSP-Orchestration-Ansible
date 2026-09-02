@@ -25,7 +25,6 @@
       thalesgroup.ciphertrust.interface_save:
         localNode: "{{ this_node_connection_string }}"
         op_type: create
-        name: "AnsibleIntegrationTest_Iface_{{ run_suffix }}"
         interface_type: nae
         port: "{{ test_interface_port | int }}"
         mode: "no-tls-pw-opt"
@@ -48,7 +47,6 @@
       thalesgroup.ciphertrust.interface_save:
         localNode: "{{ this_node_connection_string }}"
         op_type: create
-        name: "AnsibleIntegrationTest_Iface_{{ run_suffix }}"
         interface_type: nae
         port: "{{ test_interface_port | int }}"
         mode: "no-tls-pw-opt"
@@ -99,7 +97,7 @@
       thalesgroup.ciphertrust.cm_resource_delete:
         localNode: "{{ this_node_connection_string }}"
         resource_type: interfaces
-        key: "{{ test_interface_id }}"
+        key: "{{ _iface_create.response.name | default(test_interface_id) }}"
       when: test_interface_id is defined
       failed_when: false
 

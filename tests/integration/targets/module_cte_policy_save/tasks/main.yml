@@ -179,8 +179,8 @@
   ansible.builtin.assert:
     that:
       - _result_patch_add_dtx_rule is not failed
-      - _result_patch_add_dtx_rule.response.message is match("Resource updated successfully")
-
+      - _result_patch_add_dtx_rule is not failed
+      - _result_patch_add_dtx_rule.response.id is defined
 - name: "Add key rule to CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     op_type: add_key_rule
@@ -193,8 +193,8 @@
   ansible.builtin.assert:
     that:
       - _result_patch_add_key_rule is not failed
-      - _result_patch_add_key_rule.response.message is match("Resource updated successfully")
-
+      - _result_patch_add_key_rule is not failed
+      - _result_patch_add_key_rule.response.id is defined
 - name: "Add security rule to CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     op_type: add_security_rule
@@ -210,8 +210,8 @@
   ansible.builtin.assert:
     that:
       - _result_patch_add_sec_rule is not failed
-      - _result_patch_add_sec_rule.response.message is match("Resource updated successfully")
-
+      - _result_patch_add_sec_rule is not failed
+      - _result_patch_add_sec_rule.response.id is defined
 - name: "Patch data transformation rule to CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     op_type: patch_data_transfer_rule
@@ -225,8 +225,8 @@
   ansible.builtin.assert:
     that:
       - _result_patch_upd_dtx_rule is not failed
-      - _result_patch_upd_dtx_rule.response.message is match("Resource updated successfully")
-
+      - _result_patch_upd_dtx_rule is not failed
+      - _result_patch_upd_dtx_rule.response.id is defined
 - name: "Patch key rule to CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     op_type: patch_key_rule
@@ -240,8 +240,8 @@
   ansible.builtin.assert:
     that:
       - _result_patch_upd_key_rule is not failed
-      - _result_patch_upd_key_rule.response.message is match("Resource updated successfully")
-
+      - _result_patch_upd_key_rule is not failed
+      - _result_patch_upd_key_rule.response.id is defined
 - name: "Patch security rule to CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     op_type: patch_security_rule
@@ -258,8 +258,8 @@
   ansible.builtin.assert:
     that:
       - _result_patch_upd_sec_rule is not failed
-      - _result_patch_upd_sec_rule.response.message is match("Resource updated successfully")
-
+      - _result_patch_upd_sec_rule is not failed
+      - _result_patch_upd_sec_rule.response.id is defined
 - name: "Remove data transformation rule from CTE Policy"
   thalesgroup.ciphertrust.cte_policy_save:
     op_type: remove_data_transfer_rule

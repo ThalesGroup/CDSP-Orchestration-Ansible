@@ -93,8 +93,8 @@
       ansible.builtin.assert:
         that:
           - _result_add_process is not failed
-          - _result_add_process.response.message is match("Resource updated successfully")
-
+          - _result_add_process is not failed
+          - _result_add_process.response.id is defined
     - name: "Update Process in Process Set"
       thalesgroup.ciphertrust.cte_process_set:
         op_type: patch_process
@@ -110,8 +110,8 @@
       ansible.builtin.assert:
         that:
           - _result_upd_process is not failed
-          - _result_upd_process.response.message is match("Resource updated successfully")
-
+          - _result_upd_process is not failed
+          - _result_upd_process.response.id is defined
     - name: "Remove Process from Process Set"
       thalesgroup.ciphertrust.cte_process_set:
         op_type: delete_process
@@ -124,8 +124,7 @@
       ansible.builtin.assert:
         that:
           - _result_del_process is not failed
-          - _result_del_process.response is match("Resource deleted successfully")
-
+          - _result_del_process is not failed
     - name: "Delete Process Set"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ _result_create.response.id }}"

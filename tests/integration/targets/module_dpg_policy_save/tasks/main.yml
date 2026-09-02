@@ -74,6 +74,7 @@
     - name: "Create Protection Policy CVV"
       thalesgroup.ciphertrust.dpg_protection_policy_save:
         op_type: create
+        access_policy_name: "{{ ap_name }}"
         algorithm: "{{ pp_algorithm_cvv }}"
         key: "{{ key_id }}"
         name: "{{ pp_name_cvv }}"
@@ -96,6 +97,7 @@
     - name: "Create Protection Policy CC"
       thalesgroup.ciphertrust.dpg_protection_policy_save:
         op_type: create
+        access_policy_name: "{{ ap_name }}"
         algorithm: "{{ pp_algorithm_cc }}"
         key: "{{ key_id }}"
         name: "{{ pp_name_cc }}"

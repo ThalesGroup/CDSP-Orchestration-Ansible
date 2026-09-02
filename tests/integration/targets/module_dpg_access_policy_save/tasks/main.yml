@@ -109,8 +109,8 @@
       ansible.builtin.assert:
         that:
           - _result_patch_ap is not failed
-          - _result_patch_ap.response.message is match("Resource updated successfully")
-
+          - _result_patch_ap is not failed
+          - _result_patch_ap.response.id is defined
     - name: "Add UserSet to Access Policy"
       thalesgroup.ciphertrust.dpg_access_policy_save:
         op_type: add-user-set

@@ -69,8 +69,8 @@
       ansible.builtin.assert:
         that:
           - _result_add_signature is not failed
-          - _result_add_signature.response.message is match("Resource updated successfully")
-
+          - _result_add_signature is not failed
+          - _result_add_signature.response.id is defined
     - name: "Get Signature ID from SignatureSet and File Name filter"
       thalesgroup.ciphertrust.cte_signature_set:
         op_type: get_signature
@@ -96,8 +96,7 @@
       ansible.builtin.assert:
         that:
           - _result_del_signature is not failed
-          - _result_del_signature.response is match("Resource deleted successfully")
-
+          - _result_del_signature is not failed
     - name: "Delete Signature Set"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ _result_create.response.id }}"

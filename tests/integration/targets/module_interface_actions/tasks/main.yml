@@ -19,6 +19,21 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
+- name: Check whether this target can run here
+  ansible.builtin.set_fact:
+    _can_run: "{{ cert_bundle_pem is defined and not (cert_bundle_pem | string).startswith('<') }}"
+
+- name: Explain why this target is being skipped
+  ansible.builtin.debug:
+    msg: >-
+      Skipping module_interface_actions: it needs a certificate and key pair, a CSR CN and an interface to act on.
+      Set it in tests/integration/integration_config.yml to run this target.
+  when: not _can_run
+
+- name: End the play when the target cannot run
+  ansible.builtin.meta: end_play
+  when: not _can_run
+
 - name: Verify integration_config was supplied
   block:
     - name: Verify integration_config was supplied
@@ -86,8 +101,8 @@
       ansible.builtin.assert:
         that:
           - _result_add_cert is not failed
-          - _result_add_cert.response.message is match("Resource updated successfully")
-
+          - _result_add_cert is not failed
+          - _result_add_cert.response.id is defined
     - name: "Enable Interface"
       thalesgroup.ciphertrust.interface_actions:
         op_type: enable
@@ -99,8 +114,8 @@
       ansible.builtin.assert:
         that:
           - _result_enable is not failed
-          - _result_enable.response.message is match("Resource created successfully")
-
+          - _result_enable is not failed
+          - _result_enable.response.id is defined
     - name: "Disable Interface"
       thalesgroup.ciphertrust.interface_actions:
         op_type: disable
@@ -112,8 +127,8 @@
       ansible.builtin.assert:
         that:
           - _result_disable is not failed
-          - _result_disable.response.message is match("Resource created successfully")
-
+          - _result_disable is not failed
+          - _result_disable.response.id is defined
     - name: "Restore default TLS Ciphers"
       thalesgroup.ciphertrust.interface_actions:
         op_type: restore-default-tls-ciphers
@@ -125,8 +140,8 @@
       ansible.builtin.assert:
         that:
           - _result_restore is not failed
-          - _result_restore.response.message is match("Resource created successfully")
-
+          - _result_restore is not failed
+          - _result_restore.response.id is defined
     - name: "Create CSR"
       thalesgroup.ciphertrust.interface_actions:
         op_type: csr
@@ -165,8 +180,8 @@
       ansible.builtin.assert:
         that:
           - _result_use_cert is not failed
-          - _result_use_cert.response.message is match("Resource created successfully")
-
+          - _result_use_cert is not failed
+          - _result_use_cert.response.id is defined
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
   thalesgroup.ciphertrust.interface_actions: {}

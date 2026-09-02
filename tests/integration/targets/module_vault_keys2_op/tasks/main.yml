@@ -82,8 +82,8 @@
       ansible.builtin.assert:
         that:
           - _result_create_version is not failed
-          - _result_create_version.response.message is match("Resource created successfully")
-
+          - _result_create_version is not failed
+          - _result_create_version.response.id is defined
     - name: "Archive Key"
       thalesgroup.ciphertrust.vault_keys2_op:
         op_type: archive
@@ -95,8 +95,8 @@
       ansible.builtin.assert:
         that:
           - _result_archive is not failed
-          - _result_archive.response.message is match("Resource created successfully")
-
+          - _result_archive is not failed
+          - _result_archive.response.id is defined
     - name: "Recover Key"
       thalesgroup.ciphertrust.vault_keys2_op:
         op_type: recover
@@ -108,8 +108,8 @@
       ansible.builtin.assert:
         that:
           - _result_recover is not failed
-          - _result_recover.response.message is match("Resource created successfully")
-
+          - _result_recover is not failed
+          - _result_recover.response.id is defined
     - name: "Revoke Key"
       thalesgroup.ciphertrust.vault_keys2_op:
         op_type: revoke
@@ -123,8 +123,8 @@
       ansible.builtin.assert:
         that:
           - _result_revoke is not failed
-          - _result_revoke.response.message is match("Resource created successfully")
-
+          - _result_revoke is not failed
+          - _result_revoke.response.id is defined
     - name: "Reactivate Key"
       thalesgroup.ciphertrust.vault_keys2_op:
         op_type: reactivate
@@ -138,8 +138,8 @@
       ansible.builtin.assert:
         that:
           - _result_reactivate is not failed
-          - _result_reactivate.response.message is match("Resource created successfully")
-
+          - _result_reactivate is not failed
+          - _result_reactivate.response.id is defined
     - name: "Destroy Key"
       thalesgroup.ciphertrust.vault_keys2_op:
         op_type: destroy
@@ -151,8 +151,8 @@
       ansible.builtin.assert:
         that:
           - _result_destroy is not failed
-          - _result_destroy.response.message is match("Resource created successfully")
-
+          - _result_destroy is not failed
+          - _result_destroy.response.id is defined
     - name: "Delete Key"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ key_id }}"
@@ -164,8 +164,8 @@
       ansible.builtin.assert:
         that:
           - _result_delete is not failed
-          - _result_delete.response.message is match("Resource deletion succesful")
-
+          - _result_delete is not failed
+          - _result_delete.response.id is defined
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
   thalesgroup.ciphertrust.vault_keys2_op: {}

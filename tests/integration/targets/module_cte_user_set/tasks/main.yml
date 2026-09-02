@@ -60,8 +60,8 @@
       ansible.builtin.assert:
         that:
           - _result_add_user is not failed
-          - _result_add_user.response.message is match("Resource updated successfully")
-
+          - _result_add_user is not failed
+          - _result_add_user.response.id is defined
     - name: "Update user in UserSet"
       thalesgroup.ciphertrust.cte_user_set:
         op_type: patch_user

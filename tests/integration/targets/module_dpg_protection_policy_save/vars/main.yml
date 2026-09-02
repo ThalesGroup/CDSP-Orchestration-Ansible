@@ -19,3 +19,4 @@ char_set_range:
   - "0030-0039"
   - "0041-005A"
   - "0061-007A"
+ap_name: AnsibleIntegrationTest_PP_AccessPolicy

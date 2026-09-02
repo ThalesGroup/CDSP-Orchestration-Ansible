@@ -85,8 +85,8 @@
       ansible.builtin.assert:
         that:
           - _result_create_version is not failed
-          - _result_create_version.response.message is match("Resource created successfully")
-
+          - _result_create_version is not failed
+          - _result_create_version.response.id is defined
 # # Cleanup - Delete the key
 - name: Delete Key
   block:

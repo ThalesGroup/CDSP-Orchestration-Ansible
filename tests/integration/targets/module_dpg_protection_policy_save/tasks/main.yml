@@ -81,9 +81,23 @@
       set_fact:
         char_set_id: "{{ _result_create_charset.response.id }}"
 
+    - name: "Create Access Policy for the protection policy"
+      thalesgroup.ciphertrust.dpg_access_policy_save:
+        op_type: create
+        name: "{{ ap_name }}"
+        default_reveal_type: "Ciphertext"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_create_ap
+
+    - name: Verify create Access Policy for the protection policy
+      ansible.builtin.assert:
+        that:
+          - _result_create_ap is not failed
+
     - name: "Create Protection Policy"
       thalesgroup.ciphertrust.dpg_protection_policy_save:
         op_type: create
+        access_policy_name: "{{ ap_name }}"
         algorithm: "{{ pp_algorithm }}"
         key: "{{ key_id }}"
         name: "{{ pp_name }}"

@@ -19,6 +19,21 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
+- name: Check whether this target can run here
+  ansible.builtin.set_fact:
+    _can_run: "{{ cm_allow_uncleanable_tests | default(false) | bool }}"
+
+- name: Explain why this target is being skipped
+  ansible.builtin.debug:
+    msg: >-
+      Skipping module_domain_save: it needs explicit opt-in: this collection cannot delete a domain, so the test leaves one behind permanently.
+      Set it in tests/integration/integration_config.yml to run this target.
+  when: not _can_run
+
+- name: End the play when the target cannot run
+  ansible.builtin.meta: end_play
+  when: not _can_run
+
 - name: Verify integration_config was supplied
   block:
     - name: Verify integration_config was supplied

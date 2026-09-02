@@ -55,8 +55,8 @@
       ansible.builtin.assert:
         that:
           - _result_activate is not failed
-          - _result_activate.response.message is match("Resource created successfully")
-
+          - _result_activate is not failed
+          - _result_activate.response.id is defined
     - name: "Deactivate Trial License"
       thalesgroup.ciphertrust.license_trial_action:
         action_type: deactivate
@@ -68,8 +68,8 @@
       ansible.builtin.assert:
         that:
           - _result_deactivate is not failed
-          - _result_deactivate.response.message is match("Resource created successfully")
-
+          - _result_deactivate is not failed
+          - _result_deactivate.response.id is defined
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
   thalesgroup.ciphertrust.license_trial_action: {}

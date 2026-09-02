@@ -63,8 +63,8 @@
       ansible.builtin.assert:
         that:
           - _result_join is not failed
-          - _result_join.response.message is match("Resource created successfully")
-
+          - _result_join is not failed
+          - _result_join.response.id is defined
 - name: Pause for 2 minutes to let node join cluster
   block:
     - name: Pause for 2 minutes to let node join cluster

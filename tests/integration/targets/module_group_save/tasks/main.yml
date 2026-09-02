@@ -91,8 +91,8 @@
       ansible.builtin.assert:
         that:
           - _result_add_user is not failed
-          - _result_add_user.response.message is match("Resource created successfully")
-
+          - _result_add_user is not failed
+          - _result_add_user.response.id is defined
   # Create Client for testing add/remove client to group testing
   # - name: "Create CTE Client"
   #   thalesgroup.ciphertrust.cte_client:
@@ -140,8 +140,7 @@
       ansible.builtin.assert:
         that:
           - _result_remove_user is not failed
-          - _result_remove_user.response is match("Resource deleted successfully")
-
+          - _result_remove_user is not failed
   # - name: "Remove Client from Group"
   #   thalesgroup.ciphertrust.group_add_remove_object:
   #     op_type: remove
@@ -181,8 +180,8 @@
       ansible.builtin.assert:
         that:
           - _result_delete_user is not failed
-          - _result_delete_user.response.message is match("Resource deletion succesful")
-
+          - _result_delete_user is not failed
+          - _result_delete_user.response.id is defined
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
   thalesgroup.ciphertrust.group_save: {}

@@ -61,8 +61,8 @@
       ansible.builtin.assert:
         that:
           - _result_add_resource is not failed
-          - _result_add_resource.response.message is match("Resource updated successfully")
-
+          - _result_add_resource is not failed
+          - _result_add_resource.response.id is defined
     - name: "Update Resource in ResourceSet"
       thalesgroup.ciphertrust.cte_resource_set:
         op_type: patch_resource
@@ -79,8 +79,8 @@
       ansible.builtin.assert:
         that:
           - _result_upd_resource is not failed
-          - _result_upd_resource.response.message is match("Resource updated successfully")
-
+          - _result_upd_resource is not failed
+          - _result_upd_resource.response.id is defined
     - name: "Remove Resource from ResourceSet"
       thalesgroup.ciphertrust.cte_resource_set:
         op_type: delete_resource

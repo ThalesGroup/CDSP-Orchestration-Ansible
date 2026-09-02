@@ -28,7 +28,7 @@
           - username is defined
           - password is defined
           - email is defined
-          - name is defined
+          - firstname_lastname is defined
           - new_email is defined
           - new_name is defined
           - new_password is defined
@@ -85,8 +85,8 @@
       ansible.builtin.assert:
         that:
           - _result_changepw is not failed
-          - _result_changepw.response.message is match("Resource updated successfully")
-
+          - _result_changepw is not failed
+          - _result_changepw.response.id is defined
     - name: "Update Self"
       thalesgroup.ciphertrust.usermgmt_users_save:
         op_type: "patch_self"
@@ -98,8 +98,8 @@
       ansible.builtin.assert:
         that:
           - _result_patch_self is not failed
-          - _result_patch_self.response.message is match("Resource updated successfully")
-
+          - _result_patch_self is not failed
+          - _result_patch_self.response.id is defined
     - name: "Delete User ID"
       thalesgroup.ciphertrust.cm_resource_delete:
         key: "{{ user_id }}"
@@ -111,8 +111,8 @@
       ansible.builtin.assert:
         that:
           - _result_delete_user is not failed
-          - _result_delete_user.response.message is match("Resource deletion succesful")
-
+          - _result_delete_user is not failed
+          - _result_delete_user.response.id is defined
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
   thalesgroup.ciphertrust.usermgmt_users_save: {}
