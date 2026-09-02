@@ -14,7 +14,6 @@ module as shown below.
       validate_required_parameters,
       validate_parameter_types,
       validate_parameter_formats,
-      validate_api_response,
   )
 """
 
@@ -28,7 +27,6 @@ from .exceptions import (
     AnsibleCMValidationException,
     AnsibleCMFormatException,
     AnsibleCMParameterException,
-    AnsibleCMResponseException,
 )
 
 # Documentation links for common parameters
@@ -259,64 +257,6 @@ def validate_format_type(value, format_type, param, module_prefix=""):
 
     except (ValueError, TypeError):
         return False
-
-
-def validate_api_response(response, expected_fields=None, module_name=None):
-    """
-    Validate API response structure and content.
-
-    Args:
-        response (dict): The API response to validate
-        expected_fields (list, optional): List of expected field names
-        module_name (str, optional): Name of the module for error messages
-
-    Returns:
-        dict: Validated response dictionary
-
-    Raises:
-        AnsibleCMResponseException: If response validation fails
-    """
-    module_prefix = f"[{module_name}] " if module_name else ""
-
-    # Check if response is a dictionary
-    if not isinstance(response, dict):
-        error_msg = f"{module_prefix}API response is not a valid JSON object"
-        raise AnsibleCMResponseException(
-            message=error_msg,
-            response=str(response)[:200],
-            expected_fields="dict",
-            actual_fields=type(response).__name__,
-        )
-
-    # Check for error indicators in response
-    error_indicators = ["error", "Error", "ERROR", "codeDesc", "errorCode"]
-    for indicator in error_indicators:
-        if indicator in response:
-            error_msg = f"{module_prefix}API returned error response"
-            raise AnsibleCMResponseException(
-                message=error_msg,
-                response=str(response)[:200],
-                expected_fields=["success", "data", "message"],
-                actual_fields=list(response.keys()),
-            )
-
-    # Check for expected fields if provided
-    if expected_fields:
-        missing_fields = []
-        for field in expected_fields:
-            if field not in response:
-                missing_fields.append(field)
-
-        if missing_fields:
-            error_msg = f"{module_prefix}API response missing expected field(s)"
-            raise AnsibleCMResponseException(
-                message=error_msg,
-                response=str(response)[:200],
-                expected_fields=missing_fields,
-                actual_fields=list(response.keys()),
-            )
-
-    return response
 
 
 def validate_choice(parameter_name, value, choices, module_name=None,

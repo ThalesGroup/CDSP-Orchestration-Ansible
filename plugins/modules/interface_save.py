@@ -357,7 +357,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation import (
     validate_required_parameters,
-    validate_choice,
     validate_list_elements,
     DOCUMENTATION_LINKS,
 )
@@ -518,80 +517,16 @@ def validate_parameters(user_module):
             )
 
     # Validate cert_user_field choices
-    if cert_user_field is not None:
-        validate_choice(
-            value=cert_user_field,
-            parameter_name="cert_user_field",
-            choices=["CN", "SN", "E", "E_ND", "UID", "OU"],
-            documentation_link=DOCUMENTATION_LINKS.get(
-                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            )
-        )
 
     # Validate interface_type choices
-    if interface_type is not None:
-        validate_choice(
-            value=interface_type,
-            parameter_name="interface_type",
-            choices=["web", "kmip", "nae", "snmp"],
-            documentation_link=DOCUMENTATION_LINKS.get(
-                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            )
-        )
 
     # Validate kmip_enable_hard_delete choices
-    if kmip_enable_hard_delete is not None:
-        validate_choice(
-            value=kmip_enable_hard_delete,
-            parameter_name="kmip_enable_hard_delete",
-            choices=[0, 1],
-            documentation_link=DOCUMENTATION_LINKS.get(
-                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            )
-        )
 
     # Validate maximum_tls_version choices
-    if maximum_tls_version is not None:
-        validate_choice(
-            value=maximum_tls_version,
-            parameter_name="maximum_tls_version",
-            choices=["tls_1_0", "tls_1_1", "tls_1_2", "tls_1_3"],
-            documentation_link=DOCUMENTATION_LINKS.get(
-                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            )
-        )
 
     # Validate minimum_tls_version choices
-    if minimum_tls_version is not None:
-        validate_choice(
-            value=minimum_tls_version,
-            parameter_name="minimum_tls_version",
-            choices=["tls_1_0", "tls_1_1", "tls_1_2", "tls_1_3"],
-            documentation_link=DOCUMENTATION_LINKS.get(
-                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            )
-        )
 
     # Validate mode choices
-    if mode is not None:
-        validate_choice(
-            value=mode,
-            parameter_name="mode",
-            choices=[
-                "no-tls-pw-opt",
-                "no-tls-pw-req",
-                "unauth-tls-pw-opt",
-                "unauth-tls-pw-req",
-                "tls-cert-opt-pw-opt",
-                "tls-pw-opt",
-                "tls-pw-req",
-                "tls-cert-pw-opt",
-                "tls-cert-and-pw",
-            ],
-            documentation_link=DOCUMENTATION_LINKS.get(
-                "interface_save", "https://thalesdocs.com/ctp/con/cm/latest/admin/interface-management.html"
-            )
-        )
 
     # Validate network_interface format
     if network_interface is not None:

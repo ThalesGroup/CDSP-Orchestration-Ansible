@@ -19,8 +19,6 @@ To test individual module, first update the vars/sample.yml file, for example in
 | parameter | description |
 | --- | --- |
 | this_node_connection_string.server_ip | IP or FQDN of CipherTrust Manager (CM) |
-| this_node_connection_string.server_private_ip | Private IP of CM Instance |
-| this_node_connection_string.server_port | Port of CM |
 | this_node_connection_string.user | Admin username of CM |
 | this_node_connection_string.password | Admin password of CM |
 | this_node_connection_string.verify | If client has to verify CM connection |

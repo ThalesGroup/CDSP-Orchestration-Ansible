@@ -172,6 +172,7 @@ options:
         type: str
         required: false
         default: null
+        choices: [pkcs1, pkcs8, raw, x962, spki]
     generate_key_id:
         aliases: [generateKeyId]
         description: If specified as true, the key''s keyId identifier of type long is generated. Defaults to false.
@@ -554,6 +555,7 @@ options:
         type: str
         required: false
         default: null
+        choices: [Pre-Active, Active, Deactivated, Compromised, Destroyed]
     undeletable:
         description: Key is not deletable. Defaults to false.
         type: bool
@@ -790,6 +792,7 @@ options:
         type: str
         required: false
         default: null
+        choices: [sha1, sha224, sha256, sha384, sha512, sha512/224, sha512/256, sha3-224, sha3-256, sha3-384, sha3-512]
     wrapping_method:
         aliases: [wrappingMethod]
         description:
@@ -911,7 +914,6 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions
     AnsibleCMFormatException,
 )
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation import (
-    validate_choice,
     validate_list_elements,
     validate_dict_keys,
 )
@@ -1080,7 +1082,7 @@ argument_spec = dict(
     defaultIV=dict(type="str", required=False),
     destroyDate=dict(type="str", required=False),
     encoding=dict(type="str", required=False),
-    format=dict(type="str", required=False),
+    format=dict(type="str", required=False, choices=["pkcs1", "pkcs8", "raw", "x962", "spki"]),
     generateKeyId=dict(type="bool", required=False, default=False),
     hkdfCreateParameters=dict(type="dict", options=_hkdfParam, required=False),
     id=dict(type="str", required=False),
@@ -1132,7 +1134,11 @@ argument_spec = dict(
     secretDataLink=dict(type="str", required=False, no_log=False),
     signingAlgo=dict(type="str", choices=["RSA-PSS", "RSA"], required=False),
     size=dict(type="int", required=False),
-    state=dict(type="str", required=False),
+    state=dict(
+        type="str",
+        required=False,
+        choices=["Pre-Active", "Active", "Deactivated", "Compromised", "Destroyed"],
+    ),
     undeletable=dict(type="bool", required=False, default=False),
     unexportable=dict(type="bool", required=False, default=False),
     usageMask=dict(type="int", required=False),
@@ -1153,7 +1159,14 @@ argument_spec = dict(
         choices=["AES/AESKEYWRAP", "AES/AESKEYWRAPPADDING", "RSA/RSAAESKEYWRAPPADDING"],
         required=False,
     ),
-    wrappingHashAlgo=dict(type="str", required=False),
+    wrappingHashAlgo=dict(
+        type="str",
+        required=False,
+        choices=[
+            "sha1", "sha224", "sha256", "sha384", "sha512", "sha512/224",
+            "sha512/256", "sha3-224", "sha3-256", "sha3-384", "sha3-512",
+        ],
+    ),
     wrappingMethod=dict(
         type="str", choices=["encrypt", "mac/sign", "pbe"], required=False
     ),
@@ -1291,58 +1304,6 @@ def validate_parameters(user_module):
                         params.get(param)
                     )
                 )
-
-    # Validate choice parameters
-    choice_validations = [
-        {"param": "op_type", "choices": ["create", "patch", "create_version"]},
-        {"param": "algorithm", "choices": ["aes", "tdes", "rsa", "ec", "hmac-sha1", "hmac-sha256", "hmac-sha384", "hmac-sha512", "seed", "aria", "opaque"]},
-        {
-            "param": "curveid",
-            "choices": [
-                "secp224k1", "secp224r1", "secp256k1", "secp384r1", "secp521r1", "prime256v1", "brainpoolP224r1", "brainpoolP224t1", "brainpoolP256r1",
-                "brainpoolP256t1", "brainpoolP384r1", "brainpoolP384t1", "brainpoolP512r1", "brainpoolP512t1",
-            ],
-        },
-        {"param": "objectType", "choices": ["Symmetric Key", "Public Key", "Private Key", "Secret Data", "Opaque Object", "Certificate"]},
-        {"param": "certType", "choices": ["x509-pem", "x509-der"]},
-        {"param": "format", "choices": ["pkcs1", "pkcs8", "raw", "x962", "spki"]},
-        {"param": "wrappingMethod", "choices": ["encrypt", "mac/sign", "pbe"]},
-        {"param": "wrappingEncryptionAlgo", "choices": ["AES/AESKEYWRAP", "AES/AESKEYWRAPPADDING", "RSA/RSAAESKEYWRAPPADDING"]},
-        {
-            "param": "wrappingHashAlgo",
-            "choices": ["sha1", "sha224", "sha256", "sha384", "sha512", "sha512/224", "sha512/256", "sha3-224", "sha3-256", "sha3-384", "sha3-512"],
-            "optional": True,
-        },
-        {"param": "padding", "choices": ["oaep", "oaep256", "oaep384", "oaep512"], "optional": True},
-        {
-            "param": "hashAlgorithm",
-            "choices": [
-                "hmac-sha1", "hmac-sha224", "hmac-sha256", "hmac-sha384", "hmac-sha512", "hmac-sha512/224", "hmac-sha512/256", "sha1", "sha224", "sha256",
-                "sha384", "sha512", "sha512/224", "sha512/256", "sha3-224", "sha3-256", "sha3-384", "sha3-512",
-            ],
-            "optional": True,
-        },
-        {"param": "passwordIdentifierType", "choices": ["name", "id", "slug"], "optional": True},
-        {"param": "macSignKeyIdentifierType", "choices": ["name", "id", "alias"], "optional": True},
-        {"param": "wrapKeyIDType", "choices": ["name", "id", "alias"], "optional": True},
-        {"param": "signingAlgo", "choices": ["RSA", "RSA-PSS"], "optional": True},
-        {
-            "param": "revocationReason",
-            "choices": ["Unspecified", "KeyCompromise", "CACompromise", "AffiliationChanged", "Superseded", "CessationOfOperation", "PrivilegeWithdrawn"],
-            "optional": True,
-        },
-        {"param": "state", "choices": ["Pre-Active", "Active", "Deactivated", "Compromised", "Destroyed"], "optional": True},
-    ]
-
-    for validation in choice_validations:
-        param = validation["param"]
-        if params.get(param) is not None:
-            validate_choice(
-                parameter_name=param,
-                value=params.get(param),
-                choices=validation["choices"],
-                module_name="vault_keys2_save",
-            )
 
     # Validate string length constraints
     string_length_validations = [

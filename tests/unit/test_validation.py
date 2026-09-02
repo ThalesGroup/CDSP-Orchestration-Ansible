@@ -15,14 +15,12 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.validation
     validate_required_parameters,
     validate_parameter_types,
     validate_parameter_formats,
-    validate_api_response,
     validate_choice,
     validate_list_elements,
     validate_dict_keys,
     AnsibleCMValidationException,
     AnsibleCMParameterException,
     AnsibleCMFormatException,
-    AnsibleCMResponseException,
 )
 
 
@@ -238,53 +236,6 @@ class TestValidateParameterFormats:
 
         with pytest.raises(AnsibleCMFormatException) as exc_info:
             validate_parameter_formats(params, format_definitions, module_name="test_module")
-
-        assert "[test_module]" in str(exc_info.value)
-
-
-class TestValidateAPIResponse:
-    """Tests for validate_api_response function."""
-
-    def test_valid_response(self):
-        """Test valid API response."""
-        response = {"id": "123", "name": "test", "status": "active"}
-        result = validate_api_response(response)
-        assert result == response
-
-    def test_error_response(self):
-        """Test error response from API."""
-        response = {"error": "Something went wrong", "code": 500}
-
-        with pytest.raises(AnsibleCMResponseException) as exc_info:
-            validate_api_response(response)
-
-        assert "API returned error response" in str(exc_info.value)
-
-    def test_missing_expected_fields(self):
-        """Test when expected fields are missing."""
-        response = {"id": "123"}
-        expected_fields = ["id", "name", "status"]
-
-        with pytest.raises(AnsibleCMResponseException) as exc_info:
-            validate_api_response(response, expected_fields)
-
-        assert "missing expected field(s)" in str(exc_info.value)
-
-    def test_non_dict_response(self):
-        """Test when response is not a dictionary."""
-        response = "not a dict"
-
-        with pytest.raises(AnsibleCMResponseException) as exc_info:
-            validate_api_response(response)
-
-        assert "not a valid JSON object" in str(exc_info.value)
-
-    def test_with_module_name(self):
-        """Test with module name in error message."""
-        response = {"error": "Error occurred"}
-
-        with pytest.raises(AnsibleCMResponseException) as exc_info:
-            validate_api_response(response, module_name="test_module")
 
         assert "[test_module]" in str(exc_info.value)
 

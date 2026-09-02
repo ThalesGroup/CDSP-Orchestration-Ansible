@@ -65,58 +65,13 @@ ansible-test integration --python 3.9
 
 ## Test Targets
 
-All 33 modules have integration tests:
+The authoritative list is `tests/integration.yml`, and
+`tests/unit/test_integration_targets.py` fails if it falls out of step with
+the directories under `tests/integration/targets/`. To list them:
 
-### Key Management
-- `module_vault_keys2_save` - Key creation and management
-- `module_vault_keys2_op` - Key operations
-
-### Data Protection Gateway (DPG)
-- `module_dpg_policy_save` - DPG policy management
-- `module_dpg_access_policy_save` - Access policy management
-- `module_dpg_protection_policy_save` - Protection policy management
-- `module_dpg_character_set_save` - Character set management
-- `module_dpg_masking_format_save` - Masking format management
-- `module_dpg_client_profile_save` - Client profile management
-- `module_dpg_user_set_save` - User set management
-
-### CipherTrust Enterprise (CTE)
-- `module_cte_client` - CTE client management
-- `module_cte_client_group` - CTE client group management
-- `module_cte_csi_storage_group` - CSI storage group management
-- `module_cte_policy_save` - CTE policy management
-- `module_cte_process_set` - Process set management
-- `module_cte_resource_set` - Resource set management
-- `module_cte_signature_set` - Signature set management
-- `module_cte_user_set` - User set management
-
-### Group Management
-- `module_group_save` - Group creation and management
-- `module_group_add_remove_object` - Group membership management
-
-### Interface Management
-- `module_interface_save` - Interface configuration
-- `module_interface_actions` - Interface operations
-
-### Licensing
-- `module_license_create` - License creation
-- `module_license_trial_action` - Trial license actions
-- `module_license_trial_get` - Trial license information
-- `module_licensing_lockdata_get` - Licensing lock data
-
-### Certificate Management
-- `module_cm_certificate_authority` - Certificate authority management
-- `module_cm_cluster` - Cluster management
-- `module_cm_regtoken` - Registration token management
-- `module_cm_resource_delete` - Resource deletion
-- `module_cm_resource_get_id_from_name` - Resource ID lookup
-- `module_cm_services` - Service information
-
-### User Management
-- `module_usermgmt_users_save` - User management
-
-### Domain Management
-- `module_domain_save` - Domain management
+```bash
+ansible-test integration --list-targets
+```
 
 ## CI/CD Integration
 
