@@ -12,3 +12,6 @@ tests/output/
 # file. Copy integration_config.yml.template to it; never commit the copy.
 tests/integration/integration_config.yml
 .coverage
+
+# ansible-lint and ansible-galaxy install a copy of this collection here.
+.ansible/

@@ -1,9 +1,0 @@
----
-# Teardown logic for module_license_trial_get
-- name: Delete created resources
-  thalesgroup.ciphertrust.license_trial_get:
-    op_type: delete
-    localNode: "{{ localNode }}"
-    name: "{{ generated_name | default(omit) }}"
-    id: "{{ generated_id | default(omit) }}"
-  ignore_errors: true

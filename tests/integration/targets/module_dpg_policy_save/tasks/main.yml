@@ -18,26 +18,6 @@
 # and should not be used as examples of how to write Ansible roles #
 # ###################################################################
 
-# # Verify that integration_config was specified
-- name: Check whether DPG protection policies can be created here
-  ansible.builtin.set_fact:
-    _can_run: "{{ cm_dpg_protection_policy_contract_confirmed | default(false) | bool }}"
-
-- name: Explain why this target is being skipped
-  ansible.builtin.debug:
-    msg: >-
-      Skipping: dpg_protection_policy_save requires access_policy_name for
-      op_type=create, but CipherTrust Manager 2.22 rejects that field with
-      400 Bad HTTP request, and no payload variant tried was accepted (422).
-      The module's contract and the API disagree; confirm the correct request
-      against the CM API reference, then set
-      cm_dpg_protection_policy_contract_confirmed to run this target.
-  when: not _can_run
-
-- name: End the play when the target cannot run
-  ansible.builtin.meta: end_play
-  when: not _can_run
-
 - name: Verify integration_config was supplied
   block:
     - name: Verify integration_config was supplied
@@ -90,49 +70,8 @@
       ansible.builtin.set_fact:
         char_set_id: "{{ _result_create_charset.response.id }}"
 
-    - name: "Create Protection Policy CVV"
-      thalesgroup.ciphertrust.dpg_protection_policy_save:
-        op_type: create
-        algorithm: "{{ pp_algorithm_cvv }}"
-        key: "{{ key_id }}"
-        name: "{{ pp_name_cvv }}"
-        character_set_id: "{{ char_set_id }}"
-        tweak: "{{ pp_tweak_cvv }}"
-        tweak_algorithm: "{{ pp_tweak_algorithm_cvv }}"
-        localNode: "{{ this_node_connection_string }}"
-      register: _result_create_pp_cvv
-
-    - name: Verify create Protection Policy CVV
-      ansible.builtin.assert:
-        that:
-          - _result_create_pp_cvv is not failed
-          - _result_create_pp_cvv.response.id is string
-
-    - name: "Save protection policy ID"
-      ansible.builtin.set_fact:
-        pp_id: "{{ _result_create_pp_cvv.response.id }}"
-
-    - name: "Create Protection Policy CC"
-      thalesgroup.ciphertrust.dpg_protection_policy_save:
-        op_type: create
-        algorithm: "{{ pp_algorithm_cc }}"
-        key: "{{ key_id }}"
-        name: "{{ pp_name_cc }}"
-        tweak: "{{ pp_tweak_cc }}"
-        tweak_algorithm: "{{ pp_tweak_algorithm_cc }}"
-        localNode: "{{ this_node_connection_string }}"
-      register: _result_create_pp_cc
-
-    - name: Verify create Protection Policy CC
-      ansible.builtin.assert:
-        that:
-          - _result_create_pp_cc is not failed
-          - _result_create_pp_cc.response.id is string
-
-    - name: "Save protection policy ID"
-      ansible.builtin.set_fact:
-        pp_id: "{{ _result_create_pp_cc.response.id }}"
-
+    # A protection policy names an access policy that must already
+    # exist, so these fixtures are built before the policies below.
     - name: "Create UserSet"
       thalesgroup.ciphertrust.dpg_user_set_save:
         op_type: create
@@ -173,6 +112,53 @@
     - name: "Save access policy ID"
       ansible.builtin.set_fact:
         ap_id: "{{ _result_create_ap.response.id }}"
+
+    - name: "Create Protection Policy CVV"
+      thalesgroup.ciphertrust.dpg_protection_policy_save:
+        op_type: create
+        algorithm: "{{ pp_algorithm_cvv }}"
+        key: "{{ key_name }}"
+        name: "{{ pp_name_cvv }}"
+        access_policy_name: "{{ ap_name }}"
+        character_set_id: "{{ char_set_id }}"
+        tweak: "{{ pp_tweak_cvv }}"
+        tweak_algorithm: "{{ pp_tweak_algorithm_cvv }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_create_pp_cvv
+
+    - name: Verify create Protection Policy CVV
+      ansible.builtin.assert:
+        that:
+          - _result_create_pp_cvv is not failed
+          - _result_create_pp_cvv.response.id is string
+
+    - name: "Save protection policy ID"
+      ansible.builtin.set_fact:
+        pp_id: "{{ _result_create_pp_cvv.response.id }}"
+
+    - name: "Create Protection Policy CC"
+      thalesgroup.ciphertrust.dpg_protection_policy_save:
+        op_type: create
+        algorithm: "{{ pp_algorithm_cc }}"
+        key: "{{ key_name }}"
+        name: "{{ pp_name_cc }}"
+        access_policy_name: "{{ ap_name }}"
+        # The FPE algorithms require a character set.
+        character_set_id: "{{ char_set_id }}"
+        tweak: "{{ pp_tweak_cc }}"
+        tweak_algorithm: "{{ pp_tweak_algorithm_cc }}"
+        localNode: "{{ this_node_connection_string }}"
+      register: _result_create_pp_cc
+
+    - name: Verify create Protection Policy CC
+      ansible.builtin.assert:
+        that:
+          - _result_create_pp_cc is not failed
+          - _result_create_pp_cc.response.id is string
+
+    - name: "Save protection policy ID"
+      ansible.builtin.set_fact:
+        pp_id: "{{ _result_create_pp_cc.response.id }}"
 
     - name: "Create DPG Policy"
       thalesgroup.ciphertrust.dpg_policy_save:

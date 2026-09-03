@@ -16,9 +16,11 @@ minor_changes:
     Every integration task and block is now named, so a failure identifies the
     step that failed rather than printing the module arguments.
   - >-
-    ``tests/`` is no longer excluded from ``ansible-lint``. The whole
-    repository, including the integration suite, passes at the ``production``
-    profile.
+    ``tests/`` is no longer excluded from ``ansible-lint``. The repository is
+    clean at the configured ``basic`` profile. At the stricter ``production``
+    profile 60 findings remain, all of them ``ignore_errors`` on teardown and
+    sample-playbook tasks that are meant to tolerate a failure, plus missing
+    ``galaxy_tags`` on the placeholder roles.
   - >-
     Integration variables no longer shadow Ansible or Jinja names: the CSI
     target's ``namespace`` (a Jinja built-in) is now ``csi_namespace``, and

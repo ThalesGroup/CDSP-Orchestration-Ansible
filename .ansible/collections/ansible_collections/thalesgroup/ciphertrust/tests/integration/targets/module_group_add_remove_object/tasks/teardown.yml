@@ -1,9 +1,0 @@
----
-# Teardown logic for module_group_add_remove_object
-- name: Delete created resources
-  thalesgroup.ciphertrust.group_add_remove_object:
-    op_type: delete
-    localNode: "{{ localNode }}"
-    name: "{{ generated_name | default(omit) }}"
-    id: "{{ generated_id | default(omit) }}"
-  ignore_errors: true

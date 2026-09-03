@@ -2,21 +2,19 @@
 this_node_connection_string: "{{ cm_connection_string }}"
 
 # Vars for module_group_save
-pp_algorithm: "FPE/FF3/ASCII"
-pp_name: AnsibleIntegrationTest_PP
-# pp_allow_single_char_input:
-# pp_allow_single_char_input_upd:
-pp_iv: 16
+# FPE/FF3/ASCII is not an algorithm CipherTrust Manager accepts.
+pp_algorithm: "FPE/FF3/UNICODE"
+pp_name: "AnsibleIntegrationTest_PP_{{ run_suffix }}"
 pp_tweak: 1628462495815733
 pp_tweak_algorithm: SHA1
-key_name: AnsibleIntegrationTest_Key
+key_name: "AnsibleIntegrationTest_Key_{{ run_suffix }}"
 key_algo: aes
 key_len: 256
 usage_mask: 3145740
-char_set_name: AnsibleIntegrationTest_CharSet
+char_set_name: "AnsibleIntegrationTest_CharSet_{{ run_suffix }}"
 char_set_encoding: "UTF-8"
 char_set_range:
   - "0030-0039"
   - "0041-005A"
   - "0061-007A"
-ap_name: AnsibleIntegrationTest_PP_AccessPolicy
+ap_name: "AnsibleIntegrationTest_PP_AccessPolicy_{{ run_suffix }}"

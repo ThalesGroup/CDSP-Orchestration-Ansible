@@ -817,3 +817,76 @@ class TestRetryPolicy:
         writes = MockRequest.return_value.open.call_count
 
         assert reads == 3 and writes == 1
+
+
+class TestErrorDetailReportsFieldValidation:
+    """CipherTrust Manager splits an error across two fields.
+
+    ``codeDesc`` is a fixed label for the error class -- every rejected payload
+    carries "NCERRBadRequest: Bad HTTP request" -- while ``message`` names the
+    field and what it needs. Reporting only ``codeDesc`` leaves the user with
+    nothing to act on, so both must reach the failure message.
+    """
+
+    @staticmethod
+    def _err(body):
+        class _Err(object):
+            def read(self):
+                return json.dumps(body).encode()
+        return _Err()
+
+    def test_reports_both_label_and_field_detail(self):
+        from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+            _error_detail,
+        )
+        detail = _error_detail(self._err({
+            "code": 15,
+            "codeDesc": "NCERRBadRequest: Bad HTTP request",
+            "message": (
+                "Validation errors:\n"
+                "iv:  AES/CBC/PKCS5Padding algorithm requires a 16 byte IV"
+            ),
+        }))
+        assert "Bad HTTP request" in detail
+        assert "16 byte IV" in detail
+
+    def test_does_not_repeat_an_identical_message(self):
+        from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+            _error_detail,
+        )
+        assert _error_detail(
+            self._err({"codeDesc": "same", "message": "same"})
+        ) == "same"
+
+    def test_falls_back_to_message_when_no_code_desc(self):
+        from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+            _error_detail,
+        )
+        assert _error_detail(
+            self._err({"message": "access_policy_name is a required field"})
+        ) == "access_policy_name is a required field"
+
+
+def test_surfaced_api_detail_cannot_leak_a_no_log_value():
+    """Reporting CM's ``message`` must not become a way to leak a secret.
+
+    CipherTrust Manager echoes submitted values back inside its validation
+    text ("failed to find key with name <value>"), and this collection now
+    puts that text in the failure message. Ansible scrubs ``no_log`` values
+    out of everything ``fail_json`` returns, including ``msg``, so a secret
+    that reaches CM and comes back cannot reach the user's output.
+    """
+    try:
+        from ansible.module_utils.common.parameters import remove_values
+    except ImportError:  # older ansible-core
+        from ansible.module_utils.basic import remove_values
+
+    secret = "SuperSecret!23"
+    msg = (
+        "400: POST vault/keys2 failed: NCERRBadRequest: Bad HTTP request: "
+        "Validation errors:\npassword:  value %s is not acceptable" % secret
+    )
+    scrubbed = remove_values({"msg": msg}, set([secret]))["msg"]
+
+    assert secret not in scrubbed
+    assert "is not acceptable" in scrubbed

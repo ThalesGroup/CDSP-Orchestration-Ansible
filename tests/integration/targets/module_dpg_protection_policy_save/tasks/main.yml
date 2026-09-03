@@ -18,25 +18,9 @@
 # and should not be used as examples of how to write Ansible roles #
 # ###################################################################
 
-# # Verify that integration_config was specified
-- name: Check whether DPG protection policies can be created here
+- name: Give this run a unique suffix
   ansible.builtin.set_fact:
-    _can_run: "{{ cm_dpg_protection_policy_contract_confirmed | default(false) | bool }}"
-
-- name: Explain why this target is being skipped
-  ansible.builtin.debug:
-    msg: >-
-      Skipping: dpg_protection_policy_save requires access_policy_name for
-      op_type=create, but CipherTrust Manager 2.22 rejects that field with
-      400 Bad HTTP request, and no payload variant tried was accepted (422).
-      The module's contract and the API disagree; confirm the correct request
-      against the CM API reference, then set
-      cm_dpg_protection_policy_contract_confirmed to run this target.
-  when: not _can_run
-
-- name: End the play when the target cannot run
-  ansible.builtin.meta: end_play
-  when: not _can_run
+    run_suffix: "{{ 99999999 | random }}"
 
 - name: Verify integration_config was supplied
   block:
@@ -117,11 +101,14 @@
       thalesgroup.ciphertrust.dpg_protection_policy_save:
         op_type: create
         algorithm: "{{ pp_algorithm }}"
-        key: "{{ key_id }}"
+        # CipherTrust Manager resolves `key` by name, not by id: sending an id
+        # fails with "failed to find key with name <id>".
+        key: "{{ key_name }}"
         name: "{{ pp_name }}"
-        # allow_single_char_input: "{{ pp_allow_single_char_input }}"
+        # Required for a create; CM rejects the request without it.
+        access_policy_name: "{{ ap_name }}"
+        # The FPE algorithms require a character set rather than an IV.
         character_set_id: "{{ char_set_id }}"
-        # iv: "{{ pp_iv }}"
         tweak: 1628462495815733
         tweak_algorithm: "{{ pp_tweak_algorithm }}"
         localNode: "{{ this_node_connection_string }}"
@@ -141,7 +128,6 @@
       thalesgroup.ciphertrust.dpg_protection_policy_save:
         op_type: patch
         policy_name: "{{ pp_name }}"
-        # allow_single_char_input: "{{ pp_allow_single_char_input_upd }}"
         tweak_algorithm: SHA256
         localNode: "{{ this_node_connection_string }}"
       register: _result_patch

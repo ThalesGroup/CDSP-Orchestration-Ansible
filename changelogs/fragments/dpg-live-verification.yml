@@ -1,0 +1,27 @@
+bugfixes:
+  - >-
+    ``dpg_client_profile_save`` documents that the NAE interface named by
+    ``nae_iface_port`` must be in ``tls-cert-pw-opt`` mode. CipherTrust
+    Manager supports no other mode for DPG, and rejects every one of them with
+    "DPG is not supported with interface with mode <mode>". The requirement
+    was undocumented, so the only way to find it was to hit it.
+
+minor_changes:
+  - >-
+    ``module_dpg_client_profile_save`` builds its own NAE interface in the one
+    mode DPG accepts rather than binding to whatever happens to be listening
+    on the configured port, and clears any interface an earlier failed run
+    left behind before creating it -- the port is what makes an interface
+    unique, so a leftover made every later run fail with 409.
+  - >-
+    ``integration_config.yml.template`` documents that ``local_ca_id`` is
+    specific to one CipherTrust Manager and must be read from
+    ``GET /v1/ca/local-cas``, and that ``nae_interface_port_number`` must name
+    a free port.
+  - >-
+    ``module_vault_keys2_op`` asked for a 2048-bit AES key, which CipherTrust
+    Manager rejects -- 2048 is an RSA size, and AES accepts 128, 192 or 256.
+    The target had only ever passed because it reused a fixed key name and so
+    matched a key left behind by an earlier run, which turned the create into
+    a no-op. It now uses a per-run name and a valid size, so the create is
+    actually exercised.

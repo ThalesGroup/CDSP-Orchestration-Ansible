@@ -1,9 +1,13 @@
 ---
 this_node_connection_string: "{{ cm_connection_string }}"
 
-key_name: AnsibleIntegrationTest_Key
+# Per-run, so the target exercises a real create rather than matching a key
+# an earlier run left behind.
+key_name: "AnsibleIntegrationTest_Key_{{ run_suffix }}"
+# 2048 is an RSA size. CipherTrust Manager accepts only 128, 192 or 256
+# for AES.
 key_algo: aes
-key_len: 2048
+key_len: 256
 usage_mask: 12
 # A key revoked as KeyCompromise cannot be reactivated; use a reason that
 # deactivates it so the reactivate step below is a valid transition.

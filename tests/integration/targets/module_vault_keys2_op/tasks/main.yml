@@ -19,6 +19,10 @@
 # ###################################################################
 
 # # Verify that integration_config was specified
+- name: Give this run a unique suffix
+  ansible.builtin.set_fact:
+    run_suffix: "{{ 99999999 | random }}"
+
 - name: Verify integration_config was supplied
   block:
     - name: Verify integration_config was supplied

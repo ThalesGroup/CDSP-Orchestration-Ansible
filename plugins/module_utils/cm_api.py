@@ -107,8 +107,17 @@ def _error_detail(err):
         except (ValueError, TypeError):
             return body.strip()[:512]
         if isinstance(parsed, dict):
-            for key in ("codeDesc", "message", "error", "detail"):
-                value = parsed.get(key)
+            # ``codeDesc`` is a fixed label for the error class -- for a
+            # rejected payload it is always "NCERRBadRequest: Bad HTTP
+            # request", which tells the user nothing.  ``message`` carries the
+            # per-field detail ("iv: AES/CBC/PKCS5Padding algorithm requires a
+            # 16 byte IV").  Report both, so the message names the failure and
+            # says what to change.
+            code_desc = parsed.get("codeDesc")
+            detail = parsed.get("message") or parsed.get("error") or parsed.get("detail")
+            if code_desc and detail and str(detail) != str(code_desc):
+                return "{0}: {1}".format(code_desc, detail)[:512]
+            for value in (code_desc, detail):
                 if value:
                     return str(value)[:512]
         return str(parsed)[:512]

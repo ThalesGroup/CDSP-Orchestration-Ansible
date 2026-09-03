@@ -196,7 +196,12 @@ options:
       description: Number of clients that can register using a registration token
       type: int
     nae_iface_port:
-      description: Nae interface mapped with client profile
+      description:
+        - Port of the NAE interface this client profile binds to.
+        - The interface must already exist and must be in C(tls-cert-pw-opt)
+          mode. CipherTrust Manager supports no other mode for DPG and rejects
+          the profile with "DPG is not supported with interface with mode
+          <mode>".
       type: int
     policy_id:
       description: Policy mapped with client profile.

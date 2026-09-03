@@ -1,9 +1,0 @@
----
-# Teardown logic for module_cte_csi_storage_group
-- name: Delete created resources
-  thalesgroup.ciphertrust.cte_csi_storage_group:
-    op_type: delete
-    localNode: "{{ localNode }}"
-    name: "{{ generated_name | default(omit) }}"
-    id: "{{ generated_id | default(omit) }}"
-  ignore_errors: true

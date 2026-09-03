@@ -1,6 +1,0 @@
----
-- name: Test the crdp role
-  hosts: localhost
-  remote_user: root
-  roles:
-    - crdp

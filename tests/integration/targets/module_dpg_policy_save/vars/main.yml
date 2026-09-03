@@ -15,7 +15,8 @@ pp_algorithm_cvv: "FPE/FF1v2/UNICODE"
 pp_name_cvv: cvv_ProtectionPolicy
 pp_tweak_cvv: 1628462495815733
 pp_tweak_algorithm_cvv: SHA1
-pp_algorithm_cc: "FPE/AES/CARD10"
+# FPE/AES/CARD10 is not an algorithm CipherTrust Manager accepts.
+pp_algorithm_cc: "FPE/AES/UNICODE"
 pp_name_cc: CC_ProtectionPolicy
 pp_tweak_cc: 9828462495846783
 pp_tweak_algorithm_cc: SHA1

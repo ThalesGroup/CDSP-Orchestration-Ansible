@@ -5,7 +5,16 @@ cm_connection_string:
   password: ChangeIt01!
   verify: false
   auth_domain_path:
+# Id of a local CA on the target CipherTrust Manager, used to sign client
+# profile certificates. Every manager has its own -- read it from
+# GET /v1/ca/local-cas; the value below is an example and will not exist on
+# your manager.
 local_ca_id: "146b5095-8f9b-47c6-a43c-a6ee4b58b23b"
+
+# Port the DPG target creates its NAE interface on. It must be free: the
+# target builds the interface itself, because a DPG client profile requires
+# tls-cert-pw-opt mode and any interface already on the port is unlikely to
+# have it.
 nae_interface_port_number: 9005
 # Unlike localNode, cm_cluster's `nodes` suboptions genuinely require
 # server_private_ip and server_port -- they describe the joining node to the
@@ -27,8 +36,3 @@ cm_allow_disruptive_tests: false
 # Some targets create objects this collection cannot delete (a domain, for
 # example). They are skipped unless this is set.
 cm_allow_uncleanable_tests: false
-
-# dpg_protection_policy_save requires access_policy_name for op_type=create,
-# but CM 2.22 rejects that field. Set this once the correct request shape
-# is confirmed against the CM API reference.
-cm_dpg_protection_policy_contract_confirmed: false

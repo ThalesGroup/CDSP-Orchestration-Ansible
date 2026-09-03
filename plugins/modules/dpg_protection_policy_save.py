@@ -36,14 +36,34 @@ options:
       type: str
     access_policy_name:
       description:
-        - Name of access policy to be associated with the protection policy.
+        - Name of an existing access policy to associate with the protection
+          policy.
+        - Required when I(op_type=create); CipherTrust Manager rejects a
+          create without it.
       type: str
     masking_format_id:
       description:
         - ID of the Static Masking Format
       type: str
     algorithm:
-      description: Algorithm to be used during crypto operations
+      description:
+        - Algorithm to be used during crypto operations.
+        - CipherTrust Manager enforces requirements that depend on this value.
+          C(AES/CBC/NoPadding) and C(AES/CBC/PKCS5Padding) require a 16-byte
+          I(iv) unless I(random_nonce) is set; C(AES/GCM) requires a 1-16 byte
+          I(iv) and a I(tag_length); the C(FPE/*) algorithms and C(Random2)
+          require a I(character_set_id).
+      choices:
+        - AES/CBC/NoPadding
+        - AES/CBC/PKCS5Padding
+        - AES/ECB/NoPadding
+        - AES/ECB/PKCS5Padding
+        - AES/GCM
+        - Random2
+        - FPE/AES/UNICODE
+        - FPE/FF1v2/UNICODE
+        - FPE/FF3/UNICODE
+        - FPE/FF3-1/UNICODE
       type: str
     key:
       description: Name of the key
@@ -51,11 +71,38 @@ options:
     name:
       description: Unique name for the protection policy
       type: str
-    allow_single_char_input:
+    allow_small_input:
       description:
-      - If true, null or single-character inputs are passed untransformed. If false, row transformation fails
-      - Obsolete post CM v2.12
+        - If true, input shorter than the algorithm's minimum is passed through
+          untransformed instead of failing the row.
+        - Only supported for the FPE and Random2 algorithms.
+        - Named C(allow_single_char_input) before 1.0.4. That spelling is
+          accepted as an alias but is not the name CipherTrust Manager uses.
       type: bool
+      aliases: [allow_single_char_input]
+    description:
+      description: Description of the protection policy.
+      type: str
+    tag_length:
+      description:
+        - Tag length for the C(AES/GCM) algorithm, which requires it.
+        - Valid values are 32 to 128 in multiples of 8.
+      type: int
+    aad:
+      description: Additional authenticated data for the C(AES/GCM) algorithm.
+      type: str
+    random_nonce:
+      description:
+        - Enables a randomly generated nonce, so no I(iv) need be supplied for
+          C(AES/CBC/PKCS5Padding), C(AES/CBC/NoPadding) or C(AES/GCM).
+      type: str
+    prefix:
+      description: Static string prepended to tokens. Maximum length 7.
+      type: str
+    data_format:
+      description: Format in which the data to be protected is supplied.
+      choices: [luhn]
+      type: str
     character_set_id:
       description: ID of the Character Set
       required: false
@@ -99,12 +146,30 @@ EXAMPLES = """
       verify: false
       auth_domain_path:
     op_type: create
-    algorithm: "AES/CBC/PKCS5Padding"
-    key: <CM_KEY_ID>
     name: DemoProtectionPolicy
-    character_set_id: <CHAR_SET_ID>
-    iv: 16
-    tweak: 1628462495815733
+    # CipherTrust Manager requires all four of these for a create.
+    algorithm: "AES/CBC/PKCS5Padding"
+    key: "aes_key"
+    access_policy_name: "DemoAccessPolicy"
+    # AES/CBC needs a 16-byte IV, unless random_nonce is set instead.
+    iv: "0123456789abcdef"
+
+- name: "Create a tokenizing Protection Policy"
+  thalesgroup.ciphertrust.dpg_protection_policy_save:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
+    op_type: create
+    name: DemoTokenPolicy
+    algorithm: "FPE/FF3-1/UNICODE"
+    key: "fpe_key"
+    access_policy_name: "DemoAccessPolicy"
+    # The FPE algorithms and Random2 require a character set instead of an IV.
+    character_set_id: "<CHAR_SET_ID>"
+    tweak: "1628462495815733"
     tweak_algorithm: SHA1
 
 - name: "Patch Protection Policy"
@@ -201,10 +266,32 @@ from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.dpg import
 argument_spec = dict(
     op_type=dict(type="str", choices=["create", "patch"], required=True),
     policy_name=dict(type="str"),
-    algorithm=dict(type="str"),
+    algorithm=dict(
+        type="str",
+        choices=[
+            "AES/CBC/NoPadding",
+            "AES/CBC/PKCS5Padding",
+            "AES/ECB/NoPadding",
+            "AES/ECB/PKCS5Padding",
+            "AES/GCM",
+            "Random2",
+            "FPE/AES/UNICODE",
+            "FPE/FF1v2/UNICODE",
+            "FPE/FF3/UNICODE",
+            "FPE/FF3-1/UNICODE",
+        ],
+    ),
     key=dict(type="str", no_log=False),
     name=dict(type="str"),
-    allow_single_char_input=dict(type="bool"),
+    allow_small_input=dict(
+        type="bool", aliases=["allow_single_char_input"]
+    ),
+    description=dict(type="str"),
+    tag_length=dict(type="int"),
+    aad=dict(type="str"),
+    random_nonce=dict(type="str"),
+    prefix=dict(type="str"),
+    data_format=dict(type="str", choices=["luhn"]),
     character_set_id=dict(type="str"),
     iv=dict(type="str"),
     tweak=dict(type="str"),
@@ -254,9 +341,13 @@ def main():
                     algorithm=module.params.get("algorithm"),
                     key=module.params.get("key"),
                     name=module.params.get("name"),
-                    allow_single_char_input=module.params.get(
-                        "allow_single_char_input"
-                    ),  # Parameter not applicable with CM v2.12
+                    allow_small_input=module.params.get("allow_small_input"),
+                    description=module.params.get("description"),
+                    tag_length=module.params.get("tag_length"),
+                    aad=module.params.get("aad"),
+                    random_nonce=module.params.get("random_nonce"),
+                    prefix=module.params.get("prefix"),
+                    data_format=module.params.get("data_format"),
                     character_set_id=module.params.get("character_set_id"),
                     iv=module.params.get("iv"),
                     tweak=module.params.get("tweak"),
@@ -288,9 +379,13 @@ def main():
                     masking_format_id=module.params.get("masking_format_id"),
                     algorithm=module.params.get("algorithm"),
                     key=module.params.get("key"),
-                    allow_single_char_input=module.params.get(
-                        "allow_single_char_input"
-                    ),  # Parameter not applicable with CM v2.12
+                    allow_small_input=module.params.get("allow_small_input"),
+                    description=module.params.get("description"),
+                    tag_length=module.params.get("tag_length"),
+                    aad=module.params.get("aad"),
+                    random_nonce=module.params.get("random_nonce"),
+                    prefix=module.params.get("prefix"),
+                    data_format=module.params.get("data_format"),
                     character_set_id=module.params.get("character_set_id"),
                     iv=module.params.get("iv"),
                     tweak=module.params.get("tweak"),

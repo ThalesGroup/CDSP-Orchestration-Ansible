@@ -1,0 +1,43 @@
+bugfixes:
+  - >-
+    A failing request now reports what CipherTrust Manager actually objected
+    to. CM splits an error across two fields: ``codeDesc`` names the class and
+    is the same string for every rejected payload ("NCERRBadRequest: Bad HTTP
+    request"), while ``message`` names the field and what it needs ("iv:
+    AES/CBC/PKCS5Padding algorithm requires a 16 byte IV"). The client
+    returned whichever came first, which was always ``codeDesc``, so every
+    validation failure across all 33 modules arrived with the detail
+    discarded. Both are now reported.
+  - >-
+    ``dpg_protection_policy_save`` sent ``allow_single_char_input``, which is
+    not a field CipherTrust Manager defines; the parameter is
+    ``allow_small_input``. The old spelling is kept as an alias so existing
+    playbooks keep working.
+  - >-
+    ``dpg_protection_policy_save`` could not send seven fields the API
+    accepts. ``description``, ``tag_length``, ``aad``, ``random_nonce``,
+    ``prefix`` and ``data_format`` are now available; ``tag_length`` in
+    particular is mandatory for the ``AES/GCM`` algorithm, so that algorithm
+    could not be used at all.
+  - >-
+    The ``dpg_protection_policy_save`` create example omitted
+    ``access_policy_name``, which CipherTrust Manager requires, and passed
+    ``iv: 16`` where a 16-byte string is expected. It could not have worked as
+    written. The examples now show a working AES and a working FPE policy.
+
+minor_changes:
+  - >-
+    ``dpg_protection_policy_save`` declares ``choices`` for ``algorithm`` and
+    ``data_format``, and documents the requirements CipherTrust Manager
+    enforces per algorithm -- AES/CBC needs a 16-byte ``iv``, AES/GCM needs an
+    ``iv`` and a ``tag_length``, and the FPE algorithms and Random2 need a
+    ``character_set_id``. Two of the values the integration suite used,
+    ``FPE/FF3/ASCII`` and ``FPE/AES/CARD10``, are not algorithms CipherTrust
+    Manager accepts.
+  - >-
+    The three DPG integration targets that were skipped behind
+    ``cm_dpg_protection_policy_contract_confirmed`` now run. The contract was
+    never in doubt: the targets built their protection policies before the
+    access policy those policies reference, never passed
+    ``access_policy_name`` at all, and addressed the key by id where
+    CipherTrust Manager resolves it by name. The flag has been removed.
