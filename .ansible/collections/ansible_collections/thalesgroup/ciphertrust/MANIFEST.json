@@ -1,0 +1,41 @@
+{
+ "collection_info": {
+  "namespace": "thalesgroup",
+  "name": "ciphertrust",
+  "version": "1.0.4",
+  "authors": [
+   "ThalesGroup <oss@thalesgroup.com>",
+   "Anurag Jain (@anugram)"
+  ],
+  "readme": "README.md",
+  "tags": [
+   "security",
+   "ciphertrust",
+   "secret",
+   "data_protection",
+   "tokenization",
+   "rest_api_data_protection",
+   "ciphertrust_data_security_platform",
+   "thalesgroup",
+   "thales",
+   "transparent_encryption",
+   "kubernetes_persistent_volume_claim_protection"
+  ],
+  "description": "ThalesGroup CipherTrust Data Security Platform Ansible collection to configure various CipherTrust connectors as well as apply policy driven data protection at the time of application orchestration using Ansible.\n",
+  "license": [],
+  "license_file": "LICENSE",
+  "dependencies": {},
+  "repository": "https://github.com/ThalesGroup/CDSP-Orchestration-Ansible",
+  "documentation": "https://thalesgroup.github.io/CDSP-Orchestration-Ansible/branch/main",
+  "homepage": "https://www.thalesgroup.com",
+  "issues": "https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/issues"
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "f95e2f222249056ecfb46f9ed24ed548f87fa3f236d969560757d777064e1abb",
+  "format": 1
+ },
+ "format": 1
+}

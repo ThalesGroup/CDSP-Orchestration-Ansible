@@ -1,0 +1,46 @@
+---
+requires_ansible: ">=2.15.0"
+
+# Lets a play set the shared connection parameters once:
+#
+#   module_defaults:
+#     group/thalesgroup.ciphertrust.all:
+#       localNode: "{{ cm_connection }}"
+#
+# tests/unit/test_runtime_metadata.py keeps this list in step with
+# the modules on disk.
+action_groups:
+  all:
+    - cm_certificate_authority
+    - cm_cluster
+    - cm_regtoken
+    - cm_resource_delete
+    - cm_resource_get_id_from_name
+    - cm_services
+    - cte_client
+    - cte_client_group
+    - cte_csi_storage_group
+    - cte_policy_save
+    - cte_process_set
+    - cte_resource_set
+    - cte_signature_set
+    - cte_user_set
+    - domain_save
+    - dpg_access_policy_save
+    - dpg_character_set_save
+    - dpg_client_profile_save
+    - dpg_masking_format_save
+    - dpg_policy_save
+    - dpg_protection_policy_save
+    - dpg_user_set_save
+    - group_add_remove_object
+    - group_save
+    - interface_actions
+    - interface_save
+    - license_create
+    - license_trial_action
+    - license_trial_get
+    - licensing_lockdata_get
+    - usermgmt_users_save
+    - vault_keys2_op
+    - vault_keys2_save

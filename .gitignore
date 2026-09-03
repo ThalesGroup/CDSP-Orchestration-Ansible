@@ -7,3 +7,8 @@ __pycache__/
 .coverage
 coverage.xml
 tests/output/
+
+# The integration suite reads real CipherTrust Manager credentials from this
+# file. Copy integration_config.yml.template to it; never commit the copy.
+tests/integration/integration_config.yml
+.coverage

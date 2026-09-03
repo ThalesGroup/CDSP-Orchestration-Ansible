@@ -1,0 +1,5 @@
+---
+- name: Teardown status
+  ansible.builtin.debug:
+    msg: "Teardown entrypoint exists; resource cleanup is handled inline in tasks/main.yml."
+  changed_when: false

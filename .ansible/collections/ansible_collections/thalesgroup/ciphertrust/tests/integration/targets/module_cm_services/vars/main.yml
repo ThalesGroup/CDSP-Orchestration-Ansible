@@ -1,0 +1,20 @@
+---
+this_node_connection_string: "{{ cm_connection_string }}"
+# Variables for cm_services integration test
+
+# Connection parameters
+connection_string: "localhost:8200"
+username: "admin"
+password: "Thales123"
+api_key: ""
+domain: ""
+verify_ssl: "false"
+
+# Service parameters
+op_type: "get"
+
+# Expected response fields
+expected_response_fields:
+  - services
+  - service_count
+  - service_status

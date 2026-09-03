@@ -1,0 +1,9 @@
+---
+# Teardown logic for module_dpg_protection_policy_save
+- name: Delete created resources
+  thalesgroup.ciphertrust.dpg_protection_policy_save:
+    op_type: delete
+    localNode: "{{ localNode }}"
+    name: "{{ generated_name | default(omit) }}"
+    id: "{{ generated_id | default(omit) }}"
+  ignore_errors: true

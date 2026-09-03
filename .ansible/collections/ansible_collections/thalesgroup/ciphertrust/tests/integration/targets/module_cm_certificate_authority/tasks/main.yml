@@ -1,0 +1,77 @@
+---
+# (c) 2023-2026 Thales Group. All rights reserved.
+#
+# Licensed under the MIT License
+#
+# Exercises the local certificate authority module.
+#
+# The collection has no delete path for a local CA, so this deliberately does
+# not create one: a real create would leave a certificate authority behind on
+# the test system with no supported way to remove it. What is asserted here is
+# the check-mode contract and the module's parameter validation, both of which
+# reach the module's real code without changing the server.
+#
+# When a CA lifecycle test is added, add a delete path for local CAs first.
+
+- name: Verify integration_config was supplied
+  ansible.builtin.assert:
+    that:
+      - cm_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
+
+- name: Name this run's resources
+  ansible.builtin.set_fact:
+    run_suffix: "{{ 99999999 | random }}"
+
+- name: Predict creating a certificate authority without creating one
+  thalesgroup.ciphertrust.cm_certificate_authority:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    cn: "AnsibleIntegrationTest_{{ run_suffix }}"
+  check_mode: true
+  register: _ca_check
+
+- name: Check mode reports the change it would make
+  ansible.builtin.assert:
+    that:
+      - _ca_check is not failed
+      - _ca_check is changed
+    fail_msg: "Expected check mode to predict changed=true for a CA create"
+    success_msg: "CA creation predicted in check mode without creating one"
+
+- name: Issue a certificate without supplying the CSR it needs
+  thalesgroup.ciphertrust.cm_certificate_authority:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: issue-cert
+    id: "00000000-0000-0000-0000-000000000000"
+  register: _missing_csr
+  ignore_errors: true
+
+- name: The missing parameters are named
+  ansible.builtin.assert:
+    that:
+      - _missing_csr is failed
+      - "'csr' in _missing_csr.msg or 'purpose' in _missing_csr.msg"
+      - "'Traceback' not in _missing_csr.msg"
+    fail_msg: >-
+      Expected the module to name the missing parameters, got:
+      {{ _missing_csr.msg | default("no message") }}
+    success_msg: "Missing operation parameters reported cleanly"
+
+# Negative test - required params validation
+- name: Negative test - missing required parameters should fail
+  thalesgroup.ciphertrust.cm_certificate_authority: {}
+  register: _negative_required_params_result
+  ignore_errors: true
+
+- name: Assert negative test failed as expected
+  ansible.builtin.assert:
+    that:
+      - _negative_required_params_result is failed
+      - >-
+        "missing required arguments" in
+        (_negative_required_params_result.msg | default(""))
+    fail_msg: >-
+      Expected the module to reject a task with no parameters and name the
+      missing arguments, got: {{ _negative_required_params_result.msg | default("no message") }}
+    success_msg: "Module rejects a task with no parameters"

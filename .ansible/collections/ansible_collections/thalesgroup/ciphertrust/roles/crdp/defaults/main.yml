@@ -1,0 +1,11 @@
+---
+# defaults file for crdp
+this_node_address: "{{ CM_IP }}"
+this_node_username: "{{ CM_USERNAME }}"
+this_node_password: "{{ CM_PASSWORD }}"
+
+this_node_connection_string:
+  server_ip: "{{ this_node_address }}"
+  user: "{{ this_node_username }}"
+  password: "{{ this_node_password }}"
+  verify: false

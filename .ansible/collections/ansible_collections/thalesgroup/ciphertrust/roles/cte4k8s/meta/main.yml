@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  author: Anurag Jain (@anugram)
+  description: Configure CipherTrust Transparent Encryption for Kubernetes workloads.
+  company: Thales Group
+
+  license: MIT
+
+  min_ansible_version: "2.15"
+
+  galaxy_tags:
+    - cte
+    - transparent_encryption
+    - kubernetes
+    - ciphertrust
+
+dependencies: []

@@ -1,0 +1,6 @@
+---
+- name: Test the cte4u role
+  hosts: localhost
+  remote_user: root
+  roles:
+    - cte4u

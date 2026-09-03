@@ -1,0 +1,11 @@
+---
+this_node_connection_string: "{{ cm_connection_string }}"
+
+username: AnsibleIntegrationTest_User
+password: ChangeIt01!
+email: ansible.test.user@example.com
+firstname_lastname: "Ansible Test"
+new_password: UPDChangeIt01!
+new_name: "Ansible Test New"
+new_email: ansible.test.user.upd@example.com
+new_self_name: "New Self Name"

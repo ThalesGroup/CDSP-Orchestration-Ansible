@@ -1,0 +1,32 @@
+minor_changes:
+  - >-
+    Validation that the argument spec already expresses has been removed from
+    ``vault_keys2_save`` and ``interface_save``. Both re-checked ``choices``
+    lists in Python after ``AnsibleModule`` had already rejected an invalid
+    value, so the code could never run and was free to drift out of step with
+    the spec it duplicated. 116 lines removed.
+  - >-
+    ``vault_keys2_save`` now declares ``choices`` for ``format``,
+    ``wrapping_hash_algo`` and ``state`` in its argument spec and
+    documentation. These were previously validated only in Python, so
+    ``ansible-doc`` did not list the accepted values and the error arrived
+    later than it needed to.
+  - >-
+    ``plugins/README.md`` describes how a module in this collection is put
+    together and the conventions it follows, replacing the
+    ``ansible-galaxy init`` boilerplate.
+
+removed_features:
+  - >-
+    Removed ``run_tests.py``, a hand-rolled test runner that duplicated pytest,
+    was referenced by nothing and no longer ran.
+  - >-
+    Removed ``validate_api_response`` from ``module_utils/validation.py``. It
+    had no caller in the collection.
+  - >-
+    Removed the unused ``mock_client``, ``mock_api_response``, ``patch_client``
+    and ``run_module_main`` unit-test fixtures, superseded by
+    ``tests/unit/module_harness.py``.
+  - >-
+    Removed ``tests/INTEGRATION_TEST_SUMMARY.md``, a snapshot of the
+    integration suite that had already drifted from it.

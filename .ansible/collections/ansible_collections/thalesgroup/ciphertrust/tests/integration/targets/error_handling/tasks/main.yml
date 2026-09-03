@@ -1,0 +1,141 @@
+---
+# (c) 2023-2026 Thales Group. All rights reserved.
+#
+# Licensed under the MIT License
+#
+# Exercises the failure paths against a real CipherTrust Manager: a module
+# must always fail through fail_json with a message that says what went wrong.
+# A Python traceback reaching the user is a defect, and these assertions are
+# what catch it -- the unit suite can only simulate the transport.
+
+- name: Verify integration_config was supplied
+  ansible.builtin.assert:
+    that:
+      - cm_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
+
+- name: Build an unreachable connection
+  ansible.builtin.set_fact:
+    unreachable_node:
+      server_ip: "127.0.0.1:1"
+      user: "admin"
+      password: "not-the-real-password"
+      verify: false
+      auth_domain_path: ""
+
+- name: Build a reachable connection with bad credentials
+  ansible.builtin.set_fact:
+    bad_credentials_node: >-
+      {{ cm_connection_string | combine({'password': 'definitely-not-the-password'}) }}
+
+# --------------------------------------------------------------------------
+# Connection failure
+# --------------------------------------------------------------------------
+
+- name: Read lock data from an unreachable CipherTrust Manager
+  thalesgroup.ciphertrust.licensing_lockdata_get:
+    localNode: "{{ unreachable_node }}"
+  register: _unreachable
+  ignore_errors: true
+
+- name: An unreachable CM is reported as a connection failure
+  ansible.builtin.assert:
+    that:
+      - _unreachable is failed
+      - "'Could not connect to CipherTrust Manager' in _unreachable.msg"
+      - "'Traceback' not in _unreachable.msg"
+    fail_msg: >-
+      Expected a connection failure message, got:
+      {{ _unreachable.msg | default("no message") }}
+    success_msg: "Connection failure reported cleanly"
+
+- name: The failure never echoes the password
+  ansible.builtin.assert:
+    that:
+      - "'not-the-real-password' not in (_unreachable.msg | default(''))"
+    fail_msg: "The failure message leaked the password"
+    success_msg: "No credential material in the failure message"
+
+# --------------------------------------------------------------------------
+# Authentication failure
+# --------------------------------------------------------------------------
+
+- name: Read lock data with an invalid password
+  thalesgroup.ciphertrust.licensing_lockdata_get:
+    localNode: "{{ bad_credentials_node }}"
+  register: _bad_auth
+  ignore_errors: true
+
+- name: Bad credentials are reported as an authentication failure
+  ansible.builtin.assert:
+    that:
+      - _bad_auth is failed
+      - "'Authentication to CipherTrust Manager' in _bad_auth.msg"
+      - "'definitely-not-the-password' not in _bad_auth.msg"
+      - "'Traceback' not in _bad_auth.msg"
+    fail_msg: >-
+      Expected an authentication failure message, got:
+      {{ _bad_auth.msg | default("no message") }}
+    success_msg: "Authentication failure reported cleanly, without the credential"
+
+# --------------------------------------------------------------------------
+# Parameter validation reaches the user as a message
+# --------------------------------------------------------------------------
+
+- name: Patch a key without supplying its identifier
+  thalesgroup.ciphertrust.vault_keys2_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: patch
+  register: _missing_id
+  ignore_errors: true
+
+- name: A rejected parameter combination names the parameter
+  ansible.builtin.assert:
+    that:
+      - _missing_id is failed
+      - "'cm_key_id' in _missing_id.msg"
+      - "'Traceback' not in _missing_id.msg"
+    fail_msg: >-
+      Expected a validation message naming cm_key_id, got:
+      {{ _missing_id.msg | default("no message") }}
+    success_msg: "Parameter validation surfaces through fail_json"
+
+- name: Delete a resource without supplying its key
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ cm_connection_string }}"
+    resource_type: keys
+  register: _missing_key
+  ignore_errors: true
+
+- name: A delete without a key is refused before any request is sent
+  ansible.builtin.assert:
+    that:
+      - _missing_key is failed
+      - "'key' in _missing_key.msg"
+    fail_msg: >-
+      Expected cm_resource_delete to refuse a missing key, got:
+      {{ _missing_key.msg | default("no message") }}
+    success_msg: "cm_resource_delete refuses to build a request without a key"
+
+# --------------------------------------------------------------------------
+# Absent resources
+# --------------------------------------------------------------------------
+
+- name: Look up a name that does not exist
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ cm_connection_string }}"
+    resource_type: keys
+    query_param: name
+    query_param_value: "AnsibleIntegrationTest_NoSuchKey_9f3c1a"
+  register: _absent
+  ignore_errors: true
+
+- name: A missing resource is reported, not raised
+  ansible.builtin.assert:
+    that:
+      - _absent is failed
+      - "'Traceback' not in (_absent.msg | default(''))"
+    fail_msg: >-
+      Expected a clean 'no matching records' failure, got:
+      {{ _absent.msg | default("no message") }}
+    success_msg: "Absent resource reported cleanly"

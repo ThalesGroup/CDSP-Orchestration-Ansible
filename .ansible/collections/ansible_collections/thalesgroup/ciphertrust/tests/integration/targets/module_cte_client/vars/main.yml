@@ -1,0 +1,9 @@
+---
+this_node_connection_string: "{{ cm_connection_string }}"
+username: "admin"
+key_name: "ansible"
+key_algo: "aes"
+key_size: 256
+resource_set: "ansible-rset"
+resource_set_dir_path: "/opt/ansible"
+cte_policy_name: "ansible-cte-policy"

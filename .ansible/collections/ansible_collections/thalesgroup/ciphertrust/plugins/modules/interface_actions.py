@@ -1,0 +1,393 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# (c) 2023-2026 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+# Licensed under the MIT License
+#
+
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+DOCUMENTATION = """
+---
+module: interface_actions
+short_description: Perform operations on CipherTrust Manager interface
+description:
+    - This is a Thales CipherTrust Manager module for working with the CipherTrust Manager APIs, more specifically with interface actions API
+version_added: "1.0.0"
+author:
+  - Anurag Jain (@anugram)
+extends_documentation_fragment:
+  - thalesgroup.ciphertrust.ciphertrust
+  - thalesgroup.ciphertrust.attributes.no_diff
+notes:
+  - >-
+    Depending on the operation requested, the C(response) returned by this
+    module can contain secret material such as key bytes, a private key or a
+    registration token.
+  - >-
+    Ansible cannot redact part of a return value. Set C(no_log: true) on any
+    task that performs such an operation, or the secret is written to job
+    output, callback plugins and any configured log or fact cache.
+  - >-
+    Registering the result keeps the secret in memory for the rest of the
+    play; scope those variables as tightly as the deployment allows.
+  - >-
+    This module performs an operation rather than converging on a desired
+    state. C(changed) reports that the operation was carried out, not that
+    CipherTrust Manager was necessarily altered by it; a task that repeats the
+    operation reports C(changed) again.
+options:
+  op_type:
+      description: Operation to be performed
+      choices: ['put_certificate', 'get_certificate', 'enable', 'disable', 'restore-default-tls-ciphers', 'csr', 'auto-gen-server-cert', 'use-certificate']
+      required: true
+      type: str
+  interface_id:
+      description:
+          - Identifier of the interface to be updated
+      required: true
+      type: str
+  certificate:
+    description:
+      - The certificate and key data in PEM format or base64 encoded PKCS12 format.
+      - A chain chain of certs may be included - it must be in ascending order (server to root ca).
+      - required if op_type is put_certificate
+    type: str
+    required: false
+  format:
+    description:
+      - The format of the certificate data (PEM or PKCS12).
+      - required if op_type is put_certificate
+    type: str
+    choices: ['PEM', 'PKCS12']
+    required: false
+  generate:
+    description:
+      - Create a new self-signed certificate
+    type: bool
+    required: false
+  password:
+    description:
+      - Password to the encrypted key
+    type: str
+    required: false
+  cn:
+    description:
+      - Common name
+      - required if op_type is csr
+    type: str
+    required: false
+  dns_names:
+    description: Subject Alternative Names (SAN) DNS names
+    type: list
+    elements: str
+    required: false
+  email_addresses:
+    description: Subject Alternative Names (SAN) Email addresses
+    type: list
+    elements: str
+    required: false
+  ip_addresses:
+    description: Subject Alternative Names (SAN) IP addresses
+    type: list
+    elements: str
+    required: false
+  names:
+      description:
+        - Name fields are "O=organization, OU=organizational unit, L=location, ST=state/province, C=country".
+        - Fields can be duplicated if present in different objects.
+      type: list
+      elements: dict
+      suboptions:
+        c:
+          aliases: [C]
+          description:
+            - Country, for example "US"
+          type: str
+        l:
+          aliases: [L]
+          description:
+            - Location, for example "Belcamp"
+          type: str
+        o:
+          aliases: [O]
+          description:
+            - Organization, for example "Thales Group"
+          type: str
+        ou:
+          aliases: [OU]
+          description:
+            - Organizational Unit, for example "RnD"
+          type: str
+        st:
+          aliases: [ST]
+          description:
+            - State/province, for example "MD"
+          type: str
+  copy_from:
+    description:
+      - Source interface name
+      - required if op_type is use-certificate
+    type: str
+    required: false
+"""
+
+EXAMPLES = """
+- name: "Add Cert to Interface"
+  thalesgroup.ciphertrust.interface_actions:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+    op_type: put_certificate
+    interface_id: "interface_identifier"
+    certificate: "cert_key_data"
+    format: PEM
+
+- name: "Enable Interface"
+  thalesgroup.ciphertrust.interface_actions:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+    op_type: enable
+    interface_id: "interface_identifier"
+
+- name: "Disable Interface"
+  thalesgroup.ciphertrust.interface_actions:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+    op_type: disable
+    interface_id: "interface_identifier"
+
+- name: "Restore default TLS Ciphers"
+  thalesgroup.ciphertrust.interface_actions:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+    op_type: restore-default-tls-ciphers
+    interface_id: "interface_identifier"
+
+- name: "Create CSR"
+  thalesgroup.ciphertrust.interface_actions:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+    op_type: csr
+    interface_id: "interface_identifier"
+    cn: "csr_cn"
+
+- name: "Auto Generate Server Certificate"
+  thalesgroup.ciphertrust.interface_actions:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+    op_type: auto-gen-server-cert
+    interface_id: "interface_identifier"
+
+- name: "Use certificate"
+  thalesgroup.ciphertrust.interface_actions:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+    op_type: use-certificate
+    interface_id: "interface_identifier"
+    copy_from: "Name_Source_Interface"
+"""
+
+RETURN = r"""
+changed:
+    description: Always C(true) when the action is performed; C(false) in check mode.
+    returned: always
+    type: bool
+    sample: true
+response:
+    description: Raw response payload from the CipherTrust Manager API.
+    returned: on success
+    type: dict
+"""
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+    ciphertrust_operation,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.interfaces import (
+    addCertificateToInterface,
+    getCertificateFromInterface,
+    enableInterface,
+    disableInterface,
+    restoreDefaultTlsCiphers,
+    createCsr,
+    autogenServerCert,
+    useCertificate,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    check_mode_action,
+)
+
+_name = dict(
+    C=dict(type="str", required=False),
+    L=dict(type="str", required=False),
+    O=dict(type="str", required=False),
+    OU=dict(type="str", required=False),
+    ST=dict(type="str", required=False),
+)
+
+argument_spec = dict(
+    op_type=dict(
+        type="str",
+        choices=[
+            "put_certificate",
+            "get_certificate",
+            "enable",
+            "disable",
+            "restore-default-tls-ciphers",
+            "csr",
+            "auto-gen-server-cert",
+            "use-certificate",
+        ],
+        required=True,
+    ),
+    interface_id=dict(type="str", required=True),
+    certificate=dict(type="str"),
+    format=dict(type="str", choices=["PEM", "PKCS12"]),
+    generate=dict(type="bool", required=False),
+    password=dict(type="str", required=False, no_log=True),
+    cn=dict(type="str"),
+    dns_names=dict(type="list", elements="str", required=False),
+    email_addresses=dict(type="list", elements="str", required=False),
+    ip_addresses=dict(type="list", elements="str", required=False),
+    names=dict(type="list", elements="dict", options=_name, required=False),
+    copy_from=dict(type="str"),
+)
+
+
+def setup_module_object():
+    module = ThalesCipherTrustModule(
+        argument_spec=argument_spec,
+        required_if=(
+            ["op_type", "put_certificate", ["certificate", "format", "interface_id"]],
+            ["op_type", "get_certificate", ["interface_id"]],
+            ["op_type", "csr", ["cn"]],
+            ["op_type", "use-certificate", ["copy_from"]],
+        ),
+        mutually_exclusive=[],
+        supports_check_mode=True,
+    )
+    return module
+
+
+def main():
+
+    module = setup_module_object()
+
+    result = dict(
+        changed=False,
+    )
+
+    with ciphertrust_operation(module):
+        if module.params.get("op_type") == "put_certificate":
+            check_mode_action(module)
+            response = addCertificateToInterface(
+                node=module.params.get("localNode"),
+                interface_id=module.params.get("interface_id"),
+                certificate=module.params.get("certificate"),
+                format=module.params.get("format"),
+                generate=module.params.get("generate"),
+                password=module.params.get("password"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        elif module.params.get("op_type") == "get_certificate":
+            response = getCertificateFromInterface(
+                node=module.params.get("localNode"),
+                interface_id=module.params.get("interface_id"),
+            )
+            result["response"] = response
+
+        elif module.params.get("op_type") == "enable":
+            check_mode_action(module)
+            response = enableInterface(
+                node=module.params.get("localNode"),
+                interface_id=module.params.get("interface_id"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        elif module.params.get("op_type") == "disable":
+            check_mode_action(module)
+            response = disableInterface(
+                node=module.params.get("localNode"),
+                interface_id=module.params.get("interface_id"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        elif module.params.get("op_type") == "restore-default-tls-ciphers":
+            check_mode_action(module)
+            response = restoreDefaultTlsCiphers(
+                node=module.params.get("localNode"),
+                interface_id=module.params.get("interface_id"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        elif module.params.get("op_type") == "csr":
+            check_mode_action(module)
+            response = createCsr(
+                node=module.params.get("localNode"),
+                interface_id=module.params.get("interface_id"),
+                cn=module.params.get("cn"),
+                dns_names=module.params.get("dns_names"),
+                email_addresses=module.params.get("email_addresses"),
+                ip_addresses=module.params.get("ip_addresses"),
+                names=module.params.get("names"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        elif module.params.get("op_type") == "auto-gen-server-cert":
+            check_mode_action(module)
+            response = autogenServerCert(
+                node=module.params.get("localNode"),
+                interface_id=module.params.get("interface_id"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        elif module.params.get("op_type") == "use-certificate":
+            check_mode_action(module)
+            response = useCertificate(
+                node=module.params.get("localNode"),
+                interface_id=module.params.get("interface_id"),
+                copy_from=module.params.get("copy_from"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        else:
+            module.fail_json(msg="invalid op_type")
+
+    module.exit_json(**result)
+
+
+if __name__ == "__main__":
+    main()

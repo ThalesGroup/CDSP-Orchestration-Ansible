@@ -81,6 +81,12 @@ build_ignore:
   - tests/unit
   - tests/fixtures
   - tests/output
+  # The integration suite reads live credentials from a copy of
+  # integration_config.yml.template. Never ship either the copy or
+  # local coverage state.
+  - tests/integration/integration_config.yml
+  - .coverage
+  - .coveragerc
   - docs
   - mkdocs.yml
   - run_tests.py

@@ -1,0 +1,742 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# (c) 2023-2026 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+# Licensed under the MIT License
+#
+
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+DOCUMENTATION = """
+---
+module: cm_certificate_authority
+short_description: Create and manage CipherTrust Manager Local CA
+description:
+    - Create and edit local Certificate Authority on CipherTrust Manager
+version_added: "1.0.0"
+author:
+  - Anurag Jain (@anugram)
+extends_documentation_fragment:
+  - thalesgroup.ciphertrust.ciphertrust
+  - thalesgroup.ciphertrust.attributes.partial_diff
+notes:
+  - >-
+    Creating a local certificate authority is not idempotent. CipherTrust
+    Manager's local-CA listing does not support filtering by C(cn), so the
+    module cannot tell whether a CA with that subject already exists and will
+    attempt the creation on every run. Guard the task with C(when:) or
+    C(creates:) semantics of your own if you need to run it repeatedly.
+  - >-
+    Depending on the operation requested, the C(response) returned by this
+    module can contain secret material such as key bytes, a private key or a
+    registration token.
+  - >-
+    Ansible cannot redact part of a return value. Set C(no_log: true) on any
+    task that performs such an operation, or the secret is written to job
+    output, callback plugins and any configured log or fact cache.
+  - >-
+    Registering the result keeps the secret in memory for the rest of the
+    play; scope those variables as tightly as the deployment allows.
+options:
+    op_type:
+      description: Operation to be performed
+      choices: ['create', 'patch', 'issue-cert', 'self-sign', 'revoke-cert', 'resume-cert', 'create-csr', 'create-csr-key']
+      required: true
+      type: str
+    cn:
+      description: Common Name
+      type: str
+    algorithm:
+      description:
+        - RSA or ECDSA (default) algorithms are supported.
+        - Signature algorithm is selected based on the algorithm and size.
+      type: str
+      choices: ['RSA', 'ECDSA']
+    dns_names:
+      aliases: [dnsNames]
+      description: Subject Alternative Names (SAN) values
+      type: list
+      elements: str
+    email_addresses:
+      aliases: [emailAddresses]
+      description: E-mail addresses
+      type: list
+      elements: str
+    ip_addresses:
+      aliases: [ipAddresses]
+      description: IP addresses
+      type: list
+      elements: str
+    name:
+      description: A unique name of CA, if not provided, will be set to localca-<id>.
+      type: str
+    names:
+      description:
+        - Name fields are "O=organization, OU=organizational unit, L=location, ST=state/province, C=country".
+        - Fields can be duplicated if present in different objects.
+      type: list
+      elements: dict
+      suboptions:
+        c:
+          aliases: [C]
+          description:
+            - Country, for example "US"
+          type: str
+        l:
+          aliases: [L]
+          description:
+            - Location, for example "Belcamp"
+          type: str
+        o:
+          aliases: [O]
+          description:
+            - Organization, for example "Thales Group"
+          type: str
+        ou:
+          aliases: [OU]
+          description:
+            - Organizational Unit, for example "RnD"
+          type: str
+        st:
+          aliases: [ST]
+          description:
+            - State/province, for example "MD"
+          type: str
+    size:
+      description: Key size
+      type: int
+    allow_client_authentication:
+      description: If set to true, the certificates signed by the specified CA can be used for client authentication.
+      type: bool
+    allow_user_authentication:
+      description: If set to true, the certificates signed by the specified CA can be used for user authentication.
+      type: bool
+    csr:
+      description: CSR in PEM format
+      type: str
+    purpose:
+      description: server, client or ca
+      type: str
+      choices: ['server', 'client', 'ca']
+    duration:
+      description: Duration in days of certificate. Either duration or notAfter date must be specified.
+      type: int
+    not_after:
+      aliases: [notAfter]
+      description:
+        - End date of certificate
+        - Either notAfter or duration must be specified
+        - notAfter overrides duration if both are given.
+      type: str
+    not_before:
+      aliases: [notBefore]
+      description: Start date of certificate
+      type: str
+    reason:
+      description: Specify one of the reason.
+      choices:
+        - unspecified
+        - keyCompromise
+        - cACompromise
+        - affiliationChanged
+        - superseded
+        - cessationOfOperation
+        - certificateHold
+        - removeFromCRL
+        - privilegeWithdrawn
+        - aACompromise
+      type: str
+    csr_params:
+      aliases: [csrParams]
+      description:
+        - Parameters to be used during creating CSR like the subject, x509 extensions and signature algorithm used.
+      type: dict
+      suboptions:
+        cn:
+          description: Common Name
+          type: str
+        dns_names:
+          aliases: [dnsNames]
+          description: Subject Alternative Names (SAN) values
+          type: list
+          elements: str
+        email_addresses:
+          aliases: [emailAddresses]
+          description: E-mail addresses
+          type: list
+          elements: str
+        extended_key_usage:
+          aliases: [extendedKeyUsage]
+          description:
+            - List of names of the permitted extended key usages added as CSR extensions
+            - Valid values can be one or more of any
+            - serverAuth
+            - clientAuth
+            - codeSigning
+            - emailProtection
+            - ipsecEndSystem
+            - ipsecTunnel
+            - ipsecUser
+            - timeStamping
+            - ocspSigning
+            - microsoftServerGatedCrypto
+            - netscapeServerGatedCrypto
+            - microsoftCommercialCodeSigning
+            - microsoftKernelCodeSigning
+            - These keyUsage are allowed for CSR creation
+          type: list
+          elements: str
+        ip_addresses:
+          aliases: [ipAddresses]
+          description: IP addresses
+          type: list
+          elements: str
+        key_usage:
+          aliases: [keyUsage]
+          description:
+            - List of names of the permitted key usages added as CSR extensions.
+            - Valid values can be one or more of
+            - digitalSignature
+            - contentCommitment
+            - keyEncipherment
+            - dataEncipherment
+            - keyAgreement
+            - keyCertSign
+            - crlSign
+            - encipherOnly
+            - decipherOnly
+            - These keyUsage are allowed for CSR creation.
+          type: list
+          elements: str
+        is_ca:
+          aliases: [isCA]
+          description:
+            - If set, the value of the basic constraints extension value for CA is set to that boolean value and unset otherwise.
+          type: bool
+        max_path_len:
+          aliases: [maxPathLen]
+          description:
+            - This parameter is valid only when is CA parameter is set to true
+            - Specifies the maximum number of CAs that can appear below this one in a chain
+            - If maxPathLen is -1, pathlen is unset.
+          type: int
+        signature_algorithm:
+          aliases: [signatureAlgorithm]
+          description: Signature algorithm used for creating the CSR.
+          choices:
+            - sha512WithRSA
+            - sha384WithRSA
+            - sha256WithRSA
+            - sha1WithRSA
+            - ecdsaWithSHA512
+            - ecdsaWithSHA384
+            - ecdsaWithSHA256
+            - ecdsaWithSHA1
+          type: str
+        subject_key_identifier_hash:
+          aliases: [subjectKeyIdentifierHash]
+          description: If set to true, the Subject Key Identifier extension is set to the hash specified by RFC5280, else unset
+          type: bool
+        names:
+          description:
+            - Name fields are "O=organization, OU=organizational unit, L=location, ST=state/province, C=country".
+            - Fields can be duplicated if present in different objects.
+          type: list
+          elements: dict
+          suboptions:
+            c:
+              aliases: [C]
+              description:
+                - Country, for example "US"
+              type: str
+            l:
+              aliases: [L]
+              description:
+                - Location, for example "Belcamp"
+              type: str
+            o:
+              aliases: [O]
+              description:
+                - Organization, for example "Thales Group"
+              type: str
+            ou:
+              aliases: [OU]
+              description:
+                - Organizational Unit, for example "RnD"
+              type: str
+            st:
+              aliases: [ST]
+              description:
+                - State/province, for example "MD"
+              type: str
+    key_gen_params:
+      aliases: [keyGenParams]
+      description: Parameters to be used for creating an asymmetric key to be used for CSR creation.
+      type: dict
+      suboptions:
+        algorithm:
+          description:
+            - Algorithm of key to be generated for CSR creation.
+            - Permitted values are 'RSA' or 'EC' and defaults to 'RSA'
+          type: str
+          choices: ['RSA', 'EC']
+          default: RSA
+        curveid:
+          description: Cryptographic curve id for elliptic key
+          type: str
+          choices: ['secp224r1', 'secp384r1', 'secp521r1', 'prime256v1']
+        key_name:
+          aliases: [keyName]
+          description: Name of key to be generated for CSR creation
+          type: str
+        size:
+          description:
+            - Size of key to be generated for CSR creation
+            - Refer create key API for sizes for EC and RSA keys and their default values.
+          type: str
+    key_id:
+      aliases: [keyID]
+      description: Type of the identifier, keyID, for the private key to be used for creating CSR.
+      type: str
+    key_id_type:
+      aliases: [keyIDType]
+      description: Parameters to be used for creating an asymmetric key to be used for CSR creation.
+      type: str
+    key_version:
+      aliases: [keyVersion]
+      description: Version of the private key, keyID, to be used for creating CSR.
+      type: int
+    encryption_algo:
+      aliases: [encryptionAlgo]
+      description: Private key encryption algorithm.
+      choices: [AES256, AES192, AES128, TDES]
+      type: str
+    password:
+      description: Password to PEM-encrypt the private key. If not specified, the private key is not encrypted in return.
+      type: str
+    private_key_bytes:
+      aliases: [privateKeyBytes]
+      description:
+        - Private Key bytes of the key which is to be used while creating CSR(Algorithm and size should be according to this key).
+        - If not given will generate key internally as per algorithm and size.
+      type: str
+    cert_id:
+      description: Certificate ID
+      type: str
+    id:
+      description: ID
+      type: str
+"""
+
+EXAMPLES = """
+- name: "Create CM Local CA"
+  thalesgroup.ciphertrust.cm_certificate_authority:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
+    op_type: create
+    cn: local_ca_ansible
+    name: AnsibleLocalCA
+    algorithm: RSA
+    size: 4096
+    names:
+      - C: CA
+        ST: ontario
+        L: ottawa
+        O: ciphertrust
+        OU: test
+  register: ca
+
+- name: Self sign the CA
+  thalesgroup.ciphertrust.cm_certificate_authority:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
+    op_type: self-sign
+    id: "ca_id"
+    duration: 365
+
+- name: Create CSR
+  thalesgroup.ciphertrust.cm_certificate_authority:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
+    op_type: create-csr-key
+    cn: csr
+    name: AnsibleCSR
+    algorithm: RSA
+    size: 2048
+    ipAddresses:
+      - 10.1.1.10
+    names:
+      - C: CA
+        ST: ontario
+        L: ottawa
+        O: ciphertrust
+        OU: test
+    encryptionAlgo: AES256
+  register: csr
+
+- name: Issue Certificate
+  thalesgroup.ciphertrust.cm_certificate_authority:
+    localNode:
+      server_ip: "IP/FQDN of CipherTrust Manager"
+      user: "CipherTrust Manager Username"
+      password: "CipherTrust Manager Password"
+      verify: false
+      auth_domain_path:
+    op_type: issue-cert
+    id: "ca_id"
+    csr: "csr"
+    purpose: server
+    duration: 365
+    name: AnsibleServerCert
+  register: cert
+"""
+
+RETURN = r"""
+changed:
+    description: Whether any change was made to CipherTrust Manager state.
+    returned: always
+    type: bool
+    sample: true
+response:
+    description:
+      - The raw response dictionary from the CipherTrust Manager API, or the
+        existing resource when one was found during the GET-before-write
+        idempotency check.
+    returned: when a write was attempted or an existing resource matched
+    type: dict
+    contains:
+        id:
+            description: Unique identifier of the resource on CipherTrust Manager.
+            type: str
+            returned: when applicable
+        name:
+            description: Name of the resource.
+            type: str
+            returned: when applicable
+        uri:
+            description: Canonical resource URI.
+            type: str
+            returned: when applicable
+        createdAt:
+            description: RFC3339 timestamp of resource creation.
+            type: str
+            returned: when applicable
+        updatedAt:
+            description: RFC3339 timestamp of last modification.
+            type: str
+            returned: when applicable
+diff:
+    description: Present only in C(--diff) mode when a change occurred.
+    returned: when diff mode is enabled and the module made a change
+    type: dict
+"""
+
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.modules import (
+    ThalesCipherTrustModule,
+    ciphertrust_operation,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
+    CipherTrustClient,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.ca import (
+    createLocalCA,
+    updateLocalCA,
+    selfSign,
+    issueCertificate,
+    revokeCert,
+    resumeCert,
+    createCSR,
+    createCSRAndKey,
+)
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.idempotent import (
+    idempotent_create,
+    idempotent_patch,
+    check_mode_action,
+)
+
+_name = dict(
+    C=dict(type="str"),
+    L=dict(type="str"),
+    O=dict(type="str"),
+    OU=dict(type="str"),
+    ST=dict(type="str"),
+)
+
+_csr_params = dict(
+    cn=dict(type="str"),
+    dnsNames=dict(type="list", elements="str"),
+    emailAddresses=dict(type="list", elements="str"),
+    extendedKeyUsage=dict(type="list", elements="str", no_log=False),
+    ipAddresses=dict(type="list", elements="str"),
+    isCA=dict(type="bool"),
+    keyUsage=dict(type="list", elements="str", no_log=False),
+    maxPathLen=dict(type="int"),
+    names=dict(type="list", elements="dict", options=_name),
+    signatureAlgorithm=dict(
+        type="str",
+        choices=[
+            "sha512WithRSA",
+            "sha384WithRSA",
+            "sha256WithRSA",
+            "sha1WithRSA",
+            "ecdsaWithSHA512",
+            "ecdsaWithSHA384",
+            "ecdsaWithSHA256",
+            "ecdsaWithSHA1",
+        ],
+    ),
+    subjectKeyIdentifierHash=dict(type="bool"),
+)
+
+_keyGenParams = dict(
+    algorithm=dict(type="str", choices=["RSA", "EC"], default="RSA"),
+    curveid=dict(
+        type="str", choices=["secp224r1", "secp384r1", "secp521r1", "prime256v1"]
+    ),
+    keyName=dict(type="str", no_log=False),
+    size=dict(type="str"),
+)
+
+argument_spec = dict(
+    op_type=dict(
+        type="str",
+        choices=[
+            "create",
+            "patch",
+            "issue-cert",
+            "self-sign",
+            "revoke-cert",
+            "resume-cert",
+            "create-csr",
+            "create-csr-key",
+        ],
+        required=True,
+    ),
+    id=dict(type="str"),
+    cert_id=dict(type="str"),
+    # Add local CA
+    cn=dict(type="str"),
+    algorithm=dict(type="str", choices=["RSA", "ECDSA"]),
+    dnsNames=dict(type="list", elements="str"),
+    emailAddresses=dict(type="list", elements="str"),
+    ipAddresses=dict(type="list", elements="str"),
+    name=dict(type="str"),
+    names=dict(type="list", elements="dict", options=_name),
+    size=dict(type="int"),
+    # Update local CA
+    allow_client_authentication=dict(type="bool"),
+    allow_user_authentication=dict(type="bool"),
+    # Issue cert from Local CA
+    csr=dict(type="str"),
+    purpose=dict(type="str", choices=["server", "client", "ca"]),
+    duration=dict(type="int"),
+    notAfter=dict(type="str"),
+    notBefore=dict(type="str"),
+    # Revoke Cert
+    reason=dict(
+        type="str",
+        choices=[
+            "unspecified",
+            "keyCompromise",
+            "cACompromise",
+            "affiliationChanged",
+            "superseded",
+            "cessationOfOperation",
+            "certificateHold",
+            "removeFromCRL",
+            "privilegeWithdrawn",
+            "aACompromise",
+        ],
+    ),
+    # Create CSR
+    csrParams=dict(type="dict", options=_csr_params),
+    keyGenParams=dict(type="dict", options=_keyGenParams, no_log=False),
+    keyID=dict(type="str", no_log=False),
+    keyIDType=dict(type="str", no_log=False),
+    keyVersion=dict(type="int", no_log=False),
+    # create CSR with Key
+    encryptionAlgo=dict(type="str", choices=["AES256", "AES192", "AES128", "TDES"]),
+    password=dict(type="str", no_log=True),
+    privateKeyBytes=dict(type="str", no_log=True),
+)
+
+
+def setup_module_object():
+    module = ThalesCipherTrustModule(
+        argument_spec=argument_spec,
+        required_if=(
+            ["op_type", "create", ["cn"]],
+            ["op_type", "patch", ["id"]],
+            ["op_type", "self-sign", ["id"]],
+            ["op_type", "issue-cert", ["id", "csr", "purpose"]],
+            ["op_type", "revoke-cert", ["id", "cert_id", "reason"]],
+            ["op_type", "resume-cert", ["id", "cert_id"]],
+            ["op_type", "create-csr-key", ["cn"]],
+        ),
+        mutually_exclusive=[],
+        supports_check_mode=True,
+    )
+    return module
+
+
+def main():
+
+    module = setup_module_object()
+
+    result = dict(
+        changed=False,
+    )
+
+    client = CipherTrustClient(module.params.get("localNode"))
+
+    with ciphertrust_operation(module):
+        if module.params.get("op_type") == "create":
+            changed, response, diff = idempotent_create(
+                module, client,
+                endpoint="ca/local-cas",
+                lookup_param="cn",
+                lookup_value=module.params.get("cn"),
+                create_fn=createLocalCA,
+                create_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    cn=module.params.get("cn"),
+                    algorithm=module.params.get("algorithm"),
+                    dnsNames=module.params.get("dnsNames"),
+                    emailAddresses=module.params.get("emailAddresses"),
+                    ipAddresses=module.params.get("ipAddresses"),
+                    name=module.params.get("name"),
+                    names=module.params.get("names"),
+                    size=module.params.get("size"),
+                ),
+            )
+            result["changed"] = changed
+            result["response"] = response
+            if diff:
+                result["diff"] = diff
+
+        elif module.params.get("op_type") == "patch":
+            changed, response, diff = idempotent_patch(
+                module, client,
+                endpoint="ca/local-cas",
+                resource_id=module.params.get("id"),
+                ignore_fields=("id",),
+                patch_fn=updateLocalCA,
+                patch_kwargs=dict(
+                    node=module.params.get("localNode"),
+                    id=module.params.get("id"),
+                    allow_client_authentication=module.params.get(
+                        "allow_client_authentication"
+                    ),
+                    allow_user_authentication=module.params.get(
+                        "allow_user_authentication"
+                    ),
+                ),
+            )
+            result["changed"] = changed
+            result["response"] = response
+            if diff:
+                result["diff"] = diff
+
+        elif module.params.get("op_type") == "self-sign":
+            check_mode_action(module)
+            response = selfSign(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                duration=module.params.get("duration"),
+                notAfter=module.params.get("notAfter"),
+                notBefore=module.params.get("notBefore"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        elif module.params.get("op_type") == "issue-cert":
+            check_mode_action(module)
+            response = issueCertificate(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                csr=module.params.get("csr"),
+                purpose=module.params.get("purpose"),
+                duration=module.params.get("duration"),
+                name=module.params.get("name"),
+                notAfter=module.params.get("notAfter"),
+                notBefore=module.params.get("notBefore"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        elif module.params.get("op_type") == "revoke-cert":
+            check_mode_action(module)
+            response = revokeCert(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                cert_id=module.params.get("cert_id"),
+                reason=module.params.get("reason"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        elif module.params.get("op_type") == "resume-cert":
+            check_mode_action(module)
+            response = resumeCert(
+                node=module.params.get("localNode"),
+                id=module.params.get("id"),
+                cert_id=module.params.get("cert_id"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        elif module.params.get("op_type") == "create-csr":
+            check_mode_action(module)
+            response = createCSR(
+                node=module.params.get("localNode"),
+                csrParams=module.params.get("csrParams"),
+                keyGenParams=module.params.get("keyGenParams"),
+                keyID=module.params.get("keyID"),
+                keyIDType=module.params.get("keyIDType"),
+                keyVersion=module.params.get("keyVersion"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        elif module.params.get("op_type") == "create-csr-key":
+            check_mode_action(module)
+            response = createCSRAndKey(
+                node=module.params.get("localNode"),
+                cn=module.params.get("cn"),
+                algorithm=module.params.get("algorithm"),
+                dnsNames=module.params.get("dnsNames"),
+                emailAddresses=module.params.get("emailAddresses"),
+                ipAddresses=module.params.get("ipAddresses"),
+                name=module.params.get("name"),
+                names=module.params.get("names"),
+                size=module.params.get("size"),
+                encryptionAlgo=module.params.get("encryptionAlgo"),
+                privateKeyBytes=module.params.get("privateKeyBytes"),
+            )
+            result["response"] = response
+            result["changed"] = True
+
+        else:
+            module.fail_json(msg="invalid op_type")
+
+    module.exit_json(**result)
+
+
+if __name__ == "__main__":
+    main()

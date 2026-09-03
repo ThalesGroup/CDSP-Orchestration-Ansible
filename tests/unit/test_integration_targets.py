@@ -122,8 +122,16 @@ def _defined_names(target_dir, tasks):
     import yaml as _yaml
 
     names = set()
-    config = REPO_ROOT / "tests" / "integration" / "integration_config.yml"
-    names |= set(_yaml.safe_load(config.read_text()) or {})
+    # The committed template is the contract: it names every variable a target
+    # may rely on. A developer's own integration_config.yml is git-ignored and
+    # may add more, so read it too when it is there -- but the template alone
+    # must be enough, or the suite does not run on a clean checkout.
+    integration = REPO_ROOT / "tests" / "integration"
+    names |= set(_yaml.safe_load(
+        (integration / "integration_config.yml.template").read_text()) or {})
+    local = integration / "integration_config.yml"
+    if local.exists():
+        names |= set(_yaml.safe_load(local.read_text()) or {})
     for rel in ("vars/main.yml", "defaults/main.yml"):
         path = target_dir / rel
         if path.exists():

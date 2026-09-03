@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Anurag Jain (@anugram)
+  description: Configure CipherTrust Data Protection Gateway resources.
+  company: Thales Group
+
+  license: MIT
+
+  min_ansible_version: "2.15"
+
+  galaxy_tags:
+    - dpg
+    - data_protection
+    - ciphertrust
+
+dependencies: []
