@@ -36,7 +36,15 @@ ENDPOINTS = {
     "azure-key": "cckm/azure/keys",
 }
 
-DELETE_ONLY = {"protection-policies": "data-protection/protection-policies"}
+DELETE_ONLY = {
+    "protection-policies": "data-protection/protection-policies",
+    # Cloud connections are deletable but are not resolvable by name through
+    # cm_resource_get_id_from_name, so they belong here rather than above.
+    "aws-connection": "connectionmgmt/services/aws/connections",
+    "azure-connection": "connectionmgmt/services/azure/connections",
+    "gcp-connection": "connectionmgmt/services/gcp/connections",
+    "oci-connection": "connectionmgmt/services/oci/connections",
+}
 GET_ONLY = {"cte-client": "transparent-encryption/clients"}
 
 DELETE_ENDPOINTS = dict(ENDPOINTS, **DELETE_ONLY)

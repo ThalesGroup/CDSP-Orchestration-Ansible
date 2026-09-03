@@ -55,7 +55,7 @@ This guide covers common issues and their solutions when using the ThalesGroup C
 
 ### Token Expiration
 
-Since 1.0.4 there is nothing to do here. A JWT is cached per session, and a
+Since 1.1.0 there is nothing to do here. A JWT is cached per session, and a
 `401` triggers one re-authentication and a single retry, so a session that
 expires sooner than the cached lifetime is renewed without failing the task.
 
@@ -88,7 +88,7 @@ password changed, or the auth domain moved. Check those rather than the token.
 
 **Solutions:**
 
-1. Read the failure message first. Since 1.0.4 the message carries CipherTrust
+1. Read the failure message first. Since 1.1.0 the message carries CipherTrust
    Manager's own field-level explanation, not just the error class, so it
    usually names the parameter and what it needs:
 

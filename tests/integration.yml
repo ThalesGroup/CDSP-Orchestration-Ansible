@@ -12,6 +12,7 @@ targets:
   - module_cm_resource_delete
   - module_cm_resource_get_id_from_name
   - module_cm_services
+  - module_connection_manager
   - module_cte_client
   - module_cte_client_group
   - module_cte_csi_storage_group

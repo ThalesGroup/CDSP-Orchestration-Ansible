@@ -4,6 +4,15 @@ plugins/modules/cm_regtoken.py validate-modules:missing-gplv3-license
 plugins/modules/cm_resource_delete.py validate-modules:missing-gplv3-license
 plugins/modules/cm_resource_get_id_from_name.py validate-modules:missing-gplv3-license
 plugins/modules/cm_services.py validate-modules:missing-gplv3-license
+plugins/modules/connection_aws_save.py validate-modules:missing-gplv3-license
+plugins/modules/connection_aws_test.py validate-modules:missing-gplv3-license
+plugins/modules/connection_azure_save.py validate-modules:missing-gplv3-license
+plugins/modules/connection_azure_test.py validate-modules:missing-gplv3-license
+plugins/modules/connection_gcp_save.py validate-modules:missing-gplv3-license
+plugins/modules/connection_gcp_test.py validate-modules:missing-gplv3-license
+plugins/modules/connection_oci_save.py validate-modules:missing-gplv3-license
+plugins/modules/connection_oci_test.py validate-modules:missing-gplv3-license
+plugins/modules/connection_test.py validate-modules:missing-gplv3-license
 plugins/modules/cte_client.py validate-modules:missing-gplv3-license
 plugins/modules/cte_client_group.py validate-modules:missing-gplv3-license
 plugins/modules/cte_csi_storage_group.py validate-modules:missing-gplv3-license

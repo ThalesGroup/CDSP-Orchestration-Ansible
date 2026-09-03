@@ -36,3 +36,8 @@ cm_allow_disruptive_tests: false
 # Some targets create objects this collection cannot delete (a domain, for
 # example). They are skipped unless this is set.
 cm_allow_uncleanable_tests: false
+
+# The pre-create credential tests (connection_<cloud>_test) reach the cloud
+# provider from the CipherTrust Manager itself. Set this only when the manager
+# has egress to the public internet, or those tasks will hang rather than fail.
+cm_allow_cloud_egress_tests: false

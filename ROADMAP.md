@@ -7,7 +7,7 @@
 
 ## Current State Summary
 
-> Updated for 1.0.4. The audit that produced this roadmap described the
+> Updated for 1.1.0. The audit that produced this roadmap described the
 > collection as it stood at 1.0.2; the table below is the current state, so
 > the two are not confused.
 
@@ -81,7 +81,7 @@ Eliminate technical debt that makes new endpoints hard to add.
 
 ## Success Criteria
 
-Verified for 1.0.4:
+Verified for 1.1.0:
 
 - [x] Every module has populated `RETURN` documentation
 - [x] `no_log: true` set on all password/secret parameters

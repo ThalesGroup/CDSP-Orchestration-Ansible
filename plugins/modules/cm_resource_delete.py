@@ -62,6 +62,10 @@ options:
           - azure-certificate
           - azure-key
           - cluster
+          - aws-connection
+          - azure-connection
+          - gcp-connection
+          - oci-connection
         type: str
 """
 
@@ -132,6 +136,10 @@ _arr_resource_type_choices = [
     "azure-certificate",
     "azure-key",
     "cluster",
+    "aws-connection",
+    "azure-connection",
+    "gcp-connection",
+    "oci-connection",
 ]
 
 argument_spec = dict(
@@ -207,6 +215,14 @@ def main():
         endpoint = "cckm/azure/keys"
     elif resource_type == "cluster":
         endpoint = "cluster"
+    elif resource_type.endswith("-connection"):
+        # Cloud connections live under a per-provider service path, and the
+        # provider is the part of resource_type before "-connection".
+        endpoint = (
+            "connectionmgmt/services/"
+            + resource_type[: -len("-connection")]
+            + "/connections"
+        )
     else:
         module.fail_json(msg="resource_type not supported yet")
 

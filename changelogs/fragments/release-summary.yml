@@ -1,0 +1,11 @@
+release_summary: >-
+  This release hardens the collection and adds cloud connection management.
+  Every module is now idempotent, honours check and diff mode, marks its
+  secrets ``no_log`` and documents its return value; a failing request reports
+  what CipherTrust Manager actually objected to rather than a generic error
+  class; URL path and query values are percent-encoded; and the unit suite
+  grew from 467 tests to over 1,250 while the integration suite was rewritten
+  against a live CipherTrust Manager 2.22. New modules manage connection
+  manager connections for AWS, Azure, Google Cloud and Oracle Cloud
+  Infrastructure. The version is 1.1.0 rather than 1.0.4 because adding
+  modules is a feature, not a patch.

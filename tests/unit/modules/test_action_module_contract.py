@@ -77,6 +77,22 @@ ACTIONS = [
            {"op_type": "auto-gen-server-cert", "interface_id": "iface-1"},
            "post", IFACE + "/auto-gen-server-cert"),
 
+    # Testing a stored connection is a read of the cloud provider's state:
+    # it changes nothing in CipherTrust Manager, so it is not exempted from
+    # running under --check.
+    Action("connection_test", {"cloud": "aws", "connection_id": "conn-1"},
+           "post", "connectionmgmt/services/aws/connections/conn-1/test",
+           writes=False, label="connection_test:aws"),
+    Action("connection_test", {"cloud": "azure", "connection_id": "conn-1"},
+           "post", "connectionmgmt/services/azure/connections/conn-1/test",
+           writes=False, label="connection_test:azure"),
+    Action("connection_test", {"cloud": "gcp", "connection_id": "conn-1"},
+           "post", "connectionmgmt/services/gcp/connections/conn-1/test",
+           writes=False, label="connection_test:gcp"),
+    Action("connection_test", {"cloud": "oci", "connection_id": "conn-1"},
+           "post", "connectionmgmt/services/oci/connections/conn-1/test",
+           writes=False, label="connection_test:oci"),
+
     Action("license_create", {"license_string": "LICENSE-BLOB"},
            "post", "licensing/licenses"),
     Action("license_trial_action",

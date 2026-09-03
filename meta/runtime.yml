@@ -17,6 +17,15 @@ action_groups:
     - cm_resource_delete
     - cm_resource_get_id_from_name
     - cm_services
+    - connection_aws_save
+    - connection_aws_test
+    - connection_azure_save
+    - connection_azure_test
+    - connection_gcp_save
+    - connection_gcp_test
+    - connection_oci_save
+    - connection_oci_test
+    - connection_test
     - cte_client
     - cte_client_group
     - cte_csi_storage_group

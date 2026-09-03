@@ -1,0 +1,377 @@
+---
+# (c) 2023-2026 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ###################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+# ###################################################################
+
+- name: Give this run a unique suffix
+  ansible.builtin.set_fact:
+    run_suffix: "{{ 99999999 | random }}"
+
+- name: Verify integration_config was supplied
+  ansible.builtin.assert:
+    that:
+      - this_node_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
+
+- name: Exercise every cloud connection module
+  block:
+    # ------------------------------------------------------------------ AWS
+    - name: "Create AWS connection"
+      thalesgroup.ciphertrust.connection_aws_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "ansible-aws-{{ run_suffix }}"
+        description: "created by the integration suite"
+        products:
+          - cckm
+        access_key_id: "{{ aws_access_key_id }}"
+        secret_access_key: "{{ aws_secret_access_key }}"
+        cloud_name: aws
+      register: _aws_create
+
+    - name: Verify create AWS connection
+      ansible.builtin.assert:
+        that:
+          - _aws_create is not failed
+          - _aws_create is changed
+          - _aws_create.response.id is string
+
+    - name: "Save the AWS connection id"
+      ansible.builtin.set_fact:
+        aws_id: "{{ _aws_create.response.id }}"
+
+    - name: "Create the same AWS connection again"
+      thalesgroup.ciphertrust.connection_aws_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "ansible-aws-{{ run_suffix }}"
+        access_key_id: "{{ aws_access_key_id }}"
+        secret_access_key: "{{ aws_secret_access_key }}"
+      register: _aws_recreate
+
+    - name: Verify the second create reported no change
+      ansible.builtin.assert:
+        that:
+          - _aws_recreate is not failed
+          - _aws_recreate is not changed
+        fail_msg: >-
+          A create for an existing connection must report changed=false;
+          got changed={{ _aws_recreate.changed }}
+
+    - name: "Patch the AWS connection"
+      thalesgroup.ciphertrust.connection_aws_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: patch
+        connection_id: "{{ aws_id }}"
+        description: "patched by the integration suite"
+      register: _aws_patch
+
+    - name: Verify patch AWS connection
+      ansible.builtin.assert:
+        that:
+          - _aws_patch is not failed
+          - _aws_patch is changed
+
+    - name: "Patch the AWS connection to the value it already has"
+      thalesgroup.ciphertrust.connection_aws_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: patch
+        connection_id: "{{ aws_id }}"
+        description: "patched by the integration suite"
+      register: _aws_repatch
+
+    - name: Verify the no-op patch reported no change
+      ansible.builtin.assert:
+        that:
+          - _aws_repatch is not failed
+          - _aws_repatch is not changed
+        fail_msg: >-
+          A patch that sends the current state must report changed=false;
+          got changed={{ _aws_repatch.changed }}
+
+    # ---------------------------------------------------------------- Azure
+    - name: "Create Azure connection"
+      thalesgroup.ciphertrust.connection_azure_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "ansible-azure-{{ run_suffix }}"
+        description: "created by the integration suite"
+        client_id: "{{ azure_client_id }}"
+        tenant_id: "{{ azure_tenant_id }}"
+        client_secret: "{{ azure_client_secret }}"
+        cloud_name: AzureCloud
+      register: _azure_create
+
+    - name: Verify create Azure connection
+      ansible.builtin.assert:
+        that:
+          - _azure_create is not failed
+          - _azure_create.response.id is string
+
+    - name: "Save the Azure connection id"
+      ansible.builtin.set_fact:
+        azure_id: "{{ _azure_create.response.id }}"
+
+    # ------------------------------------------------------------------ GCP
+    - name: "Create GCP connection"
+      thalesgroup.ciphertrust.connection_gcp_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "ansible-gcp-{{ run_suffix }}"
+        description: "created by the integration suite"
+        key_file: "{{ gcp_key_file }}"
+      register: _gcp_create
+
+    - name: Verify create GCP connection
+      ansible.builtin.assert:
+        that:
+          - _gcp_create is not failed
+          - _gcp_create.response.id is string
+
+    - name: "Save the GCP connection id"
+      ansible.builtin.set_fact:
+        gcp_id: "{{ _gcp_create.response.id }}"
+
+    # ------------------------------------------------------------------ OCI
+    - name: "Create OCI connection"
+      thalesgroup.ciphertrust.connection_oci_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "ansible-oci-{{ run_suffix }}"
+        description: "created by the integration suite"
+        user_ocid: "{{ oci_user_ocid }}"
+        tenancy_ocid: "{{ oci_tenancy_ocid }}"
+        fingerprint: "{{ oci_fingerprint }}"
+        region: "{{ oci_region }}"
+        credentials:
+          key_file: "{{ oci_key_file }}"
+      register: _oci_create
+
+    - name: Verify create OCI connection
+      ansible.builtin.assert:
+        that:
+          - _oci_create is not failed
+          - _oci_create.response.id is string
+
+    - name: "Save the OCI connection id"
+      ansible.builtin.set_fact:
+        oci_id: "{{ _oci_create.response.id }}"
+
+    # ----------------------------------------------------------------- test
+    # These credentials are placeholders, so the provider rejects them. That is
+    # the point: connection_test must fail the task rather than pass, because
+    # CipherTrust Manager reports a failed test as HTTP 200 with
+    # connection_ok=false.
+    - name: "Test the AWS connection, which has placeholder credentials"
+      thalesgroup.ciphertrust.connection_test:
+        localNode: "{{ this_node_connection_string }}"
+        cloud: aws
+        connection_id: "{{ aws_id }}"
+      register: _aws_test
+      ignore_errors: true
+
+    - name: Verify a failed connection test fails the task
+      ansible.builtin.assert:
+        that:
+          - _aws_test is failed
+          - _aws_test.connection_ok is false
+        fail_msg: >-
+          connection_test reported success for credentials the provider
+          rejected. CipherTrust Manager answers a failed test with HTTP 200
+          and connection_ok=false, so the module must inspect the body.
+        success_msg: "connection_test fails the task when the provider refuses"
+
+    - name: "Test a connection that does not exist"
+      thalesgroup.ciphertrust.connection_test:
+        localNode: "{{ this_node_connection_string }}"
+        cloud: aws
+        connection_id: "ansible-absent-{{ run_suffix }}"
+      register: _absent_test
+      ignore_errors: true
+
+    - name: Verify testing an absent connection fails cleanly
+      ansible.builtin.assert:
+        that:
+          - _absent_test is failed
+          - "'Traceback' not in (_absent_test.msg | default(''))"
+
+    # ------------------------------------------- pre-create credential tests
+    # These reach the cloud provider from the CipherTrust Manager itself, so
+    # they need egress from the manager to the public internet. A manager
+    # without it would make them hang rather than fail, so they are opt-in.
+    # Nothing is stored either way: the endpoint validates credentials and
+    # returns a verdict.
+    - name: "Test AWS credentials before storing them"
+      thalesgroup.ciphertrust.connection_aws_test:
+        localNode: "{{ this_node_connection_string }}"
+        access_key_id: "{{ aws_access_key_id }}"
+        secret_access_key: "{{ aws_secret_access_key }}"
+      register: _aws_precheck
+      ignore_errors: true
+      when: cm_allow_cloud_egress_tests | default(false) | bool
+
+    - name: Verify placeholder credentials are rejected, not reported as working
+      ansible.builtin.assert:
+        that:
+          - _aws_precheck is failed
+          - _aws_precheck.connection_ok is false
+        fail_msg: >-
+          connection_aws_test reported success for credentials AWS refuses.
+          A failed test arrives as HTTP 200 with connection_ok=false, so the
+          module must read the body.
+      when:
+        - cm_allow_cloud_egress_tests | default(false) | bool
+        - _aws_precheck is not skipped
+
+    - name: "Confirm the credential test stored no connection"
+      thalesgroup.ciphertrust.connection_test:
+        localNode: "{{ this_node_connection_string }}"
+        cloud: aws
+        connection_id: "ansible-aws-{{ run_suffix }}-precheck"
+      register: _precheck_stored
+      ignore_errors: true
+      when: cm_allow_cloud_egress_tests | default(false) | bool
+
+    - name: Verify nothing was created by the credential test
+      ansible.builtin.assert:
+        that:
+          - _precheck_stored is failed
+        fail_msg: "the pre-create credential test stored a connection"
+      when:
+        - cm_allow_cloud_egress_tests | default(false) | bool
+        - _precheck_stored is not skipped
+
+    # ------------------------------------------------------------ check mode
+    - name: "Create a connection in check mode"
+      thalesgroup.ciphertrust.connection_aws_save:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "ansible-aws-check-{{ run_suffix }}"
+        access_key_id: "{{ aws_access_key_id }}"
+        secret_access_key: "{{ aws_secret_access_key }}"
+      check_mode: true
+      register: _check_create
+
+    - name: Verify check mode reported a change
+      ansible.builtin.assert:
+        that:
+          - _check_create is not failed
+          - _check_create is changed
+
+    - name: "Look for the connection check mode claimed it would create"
+      thalesgroup.ciphertrust.connection_test:
+        localNode: "{{ this_node_connection_string }}"
+        cloud: aws
+        connection_id: "ansible-aws-check-{{ run_suffix }}"
+      register: _check_absent
+      ignore_errors: true
+
+    - name: Verify check mode wrote nothing
+      ansible.builtin.assert:
+        that:
+          - _check_absent is failed
+        fail_msg: "check mode created the connection it only predicted"
+
+  always:
+    - name: "Delete the AWS connection"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        localNode: "{{ this_node_connection_string }}"
+        key: "{{ aws_id }}"
+        resource_type: aws-connection
+      when: aws_id is defined
+      failed_when: false
+
+    - name: "Delete the Azure connection"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        localNode: "{{ this_node_connection_string }}"
+        key: "{{ azure_id }}"
+        resource_type: azure-connection
+      when: azure_id is defined
+      failed_when: false
+
+    - name: "Delete the GCP connection"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        localNode: "{{ this_node_connection_string }}"
+        key: "{{ gcp_id }}"
+        resource_type: gcp-connection
+      when: gcp_id is defined
+      failed_when: false
+
+    - name: "Delete the OCI connection"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        localNode: "{{ this_node_connection_string }}"
+        key: "{{ oci_id }}"
+        resource_type: oci-connection
+      when: oci_id is defined
+      failed_when: false
+
+# Negative test - required params validation
+- name: Negative test - missing required parameters should fail
+  thalesgroup.ciphertrust.connection_aws_save: {}
+  register: _negative_required_params_result
+  ignore_errors: true
+
+- name: Assert negative test failed as expected
+  ansible.builtin.assert:
+    that:
+      - _negative_required_params_result is failed
+      - >-
+        "missing required arguments" in
+        (_negative_required_params_result.msg | default(""))
+    fail_msg: >-
+      Expected the module to reject a task with no parameters and name the
+      missing arguments, got:
+      {{ _negative_required_params_result.msg | default("no message") }}
+    success_msg: "Module rejects a task with no parameters"
+
+- name: Negative test - an unsupported cloud must be rejected
+  thalesgroup.ciphertrust.connection_test:
+    localNode: "{{ this_node_connection_string }}"
+    cloud: digitalocean
+    connection_id: whatever
+  register: _negative_cloud
+  ignore_errors: true
+
+- name: Assert an unsupported cloud is rejected by the argument spec
+  ansible.builtin.assert:
+    that:
+      - _negative_cloud is failed
+      - >-
+        "value of cloud must be one of" in (_negative_cloud.msg | default(""))
+    fail_msg: >-
+      Expected the module to reject an unsupported cloud, got:
+      {{ _negative_cloud.msg | default("no message") }}
+    success_msg: "Module rejects a cloud the connection manager does not serve"
+
+- name: Negative test - a credential test without credentials must fail
+  thalesgroup.ciphertrust.connection_gcp_test:
+    localNode: "{{ this_node_connection_string }}"
+  register: _negative_precheck
+  ignore_errors: true
+
+- name: Assert the credential test names the argument it needs
+  ansible.builtin.assert:
+    that:
+      - _negative_precheck is failed
+      - >-
+        "missing required arguments" in
+        (_negative_precheck.msg | default(""))
+    fail_msg: >-
+      Expected connection_gcp_test to require key_file, got:
+      {{ _negative_precheck.msg | default("no message") }}
+    success_msg: "Credential tests require the credentials they test"

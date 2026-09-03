@@ -1,6 +1,6 @@
 # Modules Documentation
 
-This collection ships 33 modules for CipherTrust Manager. The catalogue below
+This collection ships 42 modules for CipherTrust Manager. The catalogue below
 groups them by area.
 
 ## Where the reference documentation lives
@@ -60,6 +60,25 @@ ansible-doc thalesgroup.ciphertrust.vault_keys2_save
 - `cte_resource_set` - CTE resource set management
 - `cte_signature_set` - CTE signature set management
 - `cte_user_set` - CTE user set management
+
+### Cloud Connection Modules
+
+Connections in CipherTrust Manager's connection manager hold the credentials
+CipherTrust Manager uses to reach a cloud provider, and are referenced by
+products such as CCKM.
+
+- `connection_aws_save` - AWS connections (access key, assumed role, or IAM Roles Anywhere)
+- `connection_azure_save` - Azure connections (client secret or certificate)
+- `connection_gcp_save` - Google Cloud connections (service account key)
+- `connection_oci_save` - Oracle Cloud Infrastructure connections (API signing key)
+- `connection_test` - Test a stored connection's credentials against the provider
+- `connection_aws_test` - Check AWS credentials before storing them
+- `connection_azure_test` - Check Azure credentials before storing them
+- `connection_gcp_test` - Check a GCP service account key before storing it
+- `connection_oci_test` - Check OCI credentials before storing them
+
+Delete a connection with `cm_resource_delete` using `resource_type` of
+`aws-connection`, `azure-connection`, `gcp-connection` or `oci-connection`.
 
 ### Interface and License Modules
 

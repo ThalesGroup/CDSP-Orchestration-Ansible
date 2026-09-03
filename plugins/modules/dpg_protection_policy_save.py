@@ -76,7 +76,7 @@ options:
         - If true, input shorter than the algorithm's minimum is passed through
           untransformed instead of failing the row.
         - Only supported for the FPE and Random2 algorithms.
-        - Named C(allow_single_char_input) before 1.0.4. That spelling is
+        - Named C(allow_single_char_input) before 1.1.0. That spelling is
           accepted as an alias but is not the name CipherTrust Manager uses.
       type: bool
       aliases: [allow_single_char_input]

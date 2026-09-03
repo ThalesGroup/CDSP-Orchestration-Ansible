@@ -1,0 +1,53 @@
+major_changes:
+  - >-
+    Added modules for CipherTrust Manager's connection manager, covering all
+    four cloud providers it serves: ``connection_aws_save``,
+    ``connection_azure_save``, ``connection_gcp_save`` and
+    ``connection_oci_save`` create and update connections, and
+    ``connection_test`` verifies a stored connection's credentials against the
+    provider. A connection holds the credentials CipherTrust Manager uses to
+    reach a cloud account and is referenced by products such as CCKM.
+    Connections are deleted through ``cm_resource_delete`` with the new
+    ``aws-connection``, ``azure-connection``, ``gcp-connection`` and
+    ``oci-connection`` resource types.
+  - >-
+    Added ``connection_aws_test``, ``connection_azure_test``,
+    ``connection_gcp_test`` and ``connection_oci_test``, which ask CipherTrust
+    Manager to verify a set of cloud credentials without storing a connection.
+    Use them to fail early on credentials that do not work, or to check a
+    replacement credential before rotating the one a connection already uses.
+    ``connection_test`` remains the module for testing a connection that is
+    already stored.
+
+minor_changes:
+  - >-
+    The cloud connection modules cover every field the API accepts for each
+    provider, including the authentication methods that are easy to miss: an
+    AWS connection may use an access key pair, an assumed role, or IAM Roles
+    Anywhere; an Azure connection may use a client secret or a certificate,
+    against any of the four Azure clouds including Azure Stack. Secrets are
+    marked ``no_log``, and each is documented as making a patch report
+    ``changed`` on every run, because CipherTrust Manager never returns a
+    secret for comparison.
+  - >-
+    ``connection_test`` fails the task when a test fails. CipherTrust Manager
+    answers a failed connection test with HTTP 200 and
+    ``connection_ok: false`` rather than an error status, so a module that
+    checked only the HTTP status would report success for a connection whose
+    credentials have expired -- the one thing the module exists to detect. Pass
+    ``failed_when: false`` to survey connections without failing the play.
+  - >-
+    Added the ``module_connection_manager`` integration target. CipherTrust
+    Manager stores cloud credentials without contacting the provider and only
+    reaches out when a connection is tested, so the target exercises create,
+    the idempotency contract for both create and patch, check mode and delete
+    against a live manager using placeholder credentials, and asserts that a
+    test against those placeholders fails the task.
+  - >-
+    ``plugins/module_utils/connections.py`` takes the provider as an argument
+    rather than repeating the same six operations four times, because the
+    connection-manager API is symmetric across providers. The provider name is
+    interpolated into the URL, so it is validated against the supported set;
+    the connection manager also serves LDAP, SMB, Luna HSM, Hadoop and others,
+    which have different field sets and are deliberately not reachable through
+    these modules.
