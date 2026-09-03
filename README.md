@@ -188,7 +188,7 @@ This collection is tested for the following -
 |---|---|---|---|---|
 | Changelog | Enforces changelog fragments and validates changelog config | 3.12 | N/A | |
 | Lint | Runs ansible-lint checks | 3.12 | 2.18 | |
-| Sanity | Runs curated `ansible-test sanity` checks in matrix | 3.9 - 3.12 | 2.15 - 2.18 | |
+| Sanity | Runs the full default `ansible-test sanity` test set in matrix | 3.9 - 3.12 | 2.15 - 2.18 | |
 | Unit Tests | Runs `ansible-test units` matrix and coverage gates | 3.9 - 3.12 | 2.15 - 2.18 | |
 | Build Validation | Verifies `ansible-galaxy collection build` output | 3.12 | 2.18 | |
 | Integration | Runs scheduled/manual live CM integration tests | 3.12 | 2.18 | 2.17+ |

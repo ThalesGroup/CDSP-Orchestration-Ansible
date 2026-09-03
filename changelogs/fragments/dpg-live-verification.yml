@@ -25,3 +25,13 @@ minor_changes:
     matched a key left behind by an earlier run, which turned the create into
     a no-op. It now uses a per-run name and a valid size, so the create is
     actually exercised.
+  - >-
+    Removed 66 dead ``teardown.yml`` files from the integration targets --
+    a root copy and a ``tasks/`` copy for each. ``ansible-test`` runs a
+    target's ``tasks/main.yml`` and has no teardown hook, and nothing in the
+    repository included them, so none had ever run. The ``tasks/`` copies were
+    stale scaffolding that referenced variables the targets do not define, and
+    the root copies were an identical placeholder announcing that cleanup
+    happens inline. Cleanup does happen inline, in the targets themselves.
+    This also clears all 33 of the ``ignore-errors`` findings ansible-lint
+    reported at its ``production`` profile.

@@ -1,0 +1,69 @@
+bugfixes:
+  - >-
+    Every GitHub link on the documentation site pointed at
+    ``thalesgroup/ciphertrust-ansible-collection``, a repository that does not
+    exist. The clone instructions, the issue and pull-request links, the
+    MkDocs ``site_url`` and ``repo_url``, and the magiclink shorthand all
+    resolved to a 404. They now point at
+    ``ThalesGroup/CDSP-Orchestration-Ansible``.
+
+removed_features:
+  - >-
+    Removed ``docs/performance-best-practices.md``'s account of features the
+    collection does not have. It documented a resource-ID LRU cache with a
+    configurable TTL and maximum size, batched API calls for user creation and
+    group membership, and per-module performance metrics. None of them existed
+    -- there is no cache module, no batch endpoint anywhere in ``plugins/``,
+    and the collection emits no metrics -- and the page told readers to set
+    ``cache_timeout``, ``cache_plugin`` and ``cache_connection`` in
+    ``ansible.cfg``, which are Ansible fact-caching settings that have no
+    effect on this collection. The page now describes the real behaviour: the
+    per-session JWT, the GET-only retry policy, the extra GET that idempotency
+    costs, and the ``all`` action group. The same three claims are corrected
+    on the documentation home page.
+  - >-
+    Removed ``docs/api-reference.md`` and its navigation entry. It
+    hand-maintained a copy of CipherTrust Manager's own REST contract --
+    endpoints, request bodies and response shapes for auth, cluster, key,
+    user, group, interface, license and DPG management. Nothing in the
+    collection referenced it, it documented no error bodies, and it was the
+    same hand-copied-external-contract pattern that had already caused the
+    per-module reference pages to drift. Thales documents the API at
+    https://thalesdocs.com and every manager serves its own current
+    definition; a stale second copy in this repository could only mislead.
+  - >-
+    Removed ``docs/DOCUMENTATION_SUMMARY.md``. It described a documentation
+    tree that no longer exists, including 33 per-module pages that were
+    removed in favour of generated reference documentation, and it was not in
+    the MkDocs navigation, so it was never published.
+
+minor_changes:
+  - >-
+    ``ROADMAP.md`` recorded the collection as it stood at 1.0.2 -- no
+    idempotency, no ``check_mode``, no ``no_log``, empty ``RETURN`` blocks,
+    JWTs fetched per call, two unit test files, no lint or sanity on pull
+    requests -- and presented all twelve of its success criteria as
+    outstanding. Nine are now met and ticked, each verified rather than
+    assumed. The three that are not are annotated with the reason: two
+    describe the same ``missing-gplv3-license`` waiver, which cannot be
+    cleared without relicensing away from MIT, and the third is the decision
+    to keep three roles as documented placeholders.
+  - >-
+    ``docs/contributing.md`` duplicated ``CONTRIBUTING.md`` and had drifted --
+    the test commands it listed did not work, because ``ansible-test`` must
+    run from a path ending in ``ansible_collections/thalesgroup/ciphertrust``
+    and the integration suite needs a config file copied from the template. It
+    now points at ``CONTRIBUTING.md`` as the single source and keeps only what
+    is specific to the documentation site.
+  - >-
+    ``docs/troubleshooting.md`` no longer tells readers to refresh an expired
+    token by hand, which the client has done for itself since the 401 retry
+    was added. It explains that a parameter error now carries CipherTrust
+    Manager's own field-level detail, and that
+    ``NCERRInsufficientPermissions`` often means an unlicensed feature rather
+    than a permissions problem -- the wording CipherTrust Manager uses for
+    both.
+  - >-
+    ``README.md`` described the sanity job as running a curated subset of
+    ``ansible-test sanity``. It has run the full default test set since the CI
+    hardening in this release.

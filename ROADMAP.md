@@ -7,16 +7,20 @@
 
 ## Current State Summary
 
-| Area | Status | Key Findings |
+> Updated for 1.0.4. The audit that produced this roadmap described the
+> collection as it stood at 1.0.2; the table below is the current state, so
+> the two are not confused.
+
+| Area | Status | Notes |
 |---|---|---|
-| **Modules** | 33 modules across CM, CTE, DPG, and Vault domains | Functional but missing idempotency, `check_mode` behavior, `no_log`, and `RETURN` documentation |
-| **Module Utils** | 22 utility files | Massive code duplication in `cm_api.py`; JWT tokens fetched on every API call (no caching); inconsistent naming |
-| **Roles** | 4 scaffolded roles (`crdp`, `cte4k8s`, `cte4u`, `dpg`) | Empty — tasks/defaults/meta are all placeholder stubs |
-| **Tests** | 2 unit test files, 33 integration targets | Unit tests only cover `validation.py` and `cache.py`; no module-level unit tests; integration tests require live CM |
-| **CI/CD** | 3 GitHub Actions workflows | No `ansible-lint`, no sanity test CI job on PR; integration tests rely on secrets |
-| **Documentation** | `DOCUMENTATION` and `EXAMPLES` blocks present | `RETURN` blocks empty on all modules; `localNode` docs duplicated 33 times; role docs placeholder |
-| **Security** | MIT-licensed but sanity-ignored | `no_log` never used for password fields; passwords visible in logs; 66 sanity ignore entries |
-| **Sanity** | 5 ignore files (2.15–2.19) | Every module suppresses `missing-gplv3-license` and `no-log-needed` |
+| **Modules** | 33 modules across CM, CTE, DPG and Vault domains | Idempotent via GET-before-write; all 33 declare `supports_check_mode`; `no_log` on every secret parameter; `RETURN` documented |
+| **Module Utils** | 17 utility files | `CipherTrustClient` is the single HTTP path, JWT cached per session, every function declares real arguments instead of `**kwargs`. Six unused utils removed |
+| **Roles** | 4 scaffolded roles (`crdp`, `cte4k8s`, `cte4u`, `dpg`) | `crdp` is implemented. The other three remain placeholders, documented as such by decision rather than oversight |
+| **Tests** | 30 unit test files (1,152 tests, 91.6% coverage), 35 integration targets | 33 of 35 integration targets pass against a live CipherTrust Manager 2.22; the two that fail need a TransparentEncryption licence |
+| **CI/CD** | 9 GitHub Actions workflows | `ansible-lint`, full `ansible-test sanity`, and unit tests run on every pull request; CodeQL weekly; integration on schedule and dispatch |
+| **Documentation** | `DOCUMENTATION`, `EXAMPLES` and `RETURN` blocks populated | `localNode` comes from a shared doc fragment rather than being repeated 33 times; per-module reference is generated, not hand-maintained |
+| **Security** | MIT-licensed | `no_log` on all secret parameters; URL path and query values percent-encoded; credentials never placed in an error message |
+| **Sanity** | 6 ignore files (2.15–2.20), one rule | Clean under all 24 default sanity tests. The only waiver is `validate-modules:missing-gplv3-license`, which cannot be resolved without relicensing away from MIT |
 
 ---
 
@@ -77,18 +81,35 @@ Eliminate technical debt that makes new endpoints hard to add.
 
 ## Success Criteria
 
+Verified for 1.0.4:
+
+- [x] Every module has populated `RETURN` documentation
+- [x] `no_log: true` set on all password/secret parameters
+- [x] Every module correctly reports `changed: true/false` based on actual state changes
+- [x] `--check` mode works correctly for all modules (no API writes) — all 33 declare `supports_check_mode`
+- [x] Unit test coverage >= 80% for `module_utils` and >= 60% per module — module_utils 82-100%, total 91.6%
+- [x] CI pipeline runs `ansible-lint`, sanity tests, and unit tests on every PR
+- [x] JWT tokens are cached per-session (not fetched per API call)
+- [x] No `global module` statements in any module
+- [x] `meta/main.yml` and `meta/runtime.yml` agree on `requires_ansible` version — both 2.15
+
+Not met, each for a stated reason rather than an omission:
+
 - [ ] Zero sanity ignore entries (`tests/sanity/ignore-*.txt` files empty or removed)
 - [ ] All modules pass `ansible-test sanity` without suppression
-- [ ] Every module has populated `RETURN` documentation
-- [ ] `no_log: true` set on all password/secret parameters
-- [ ] Every module correctly reports `changed: true/false` based on actual state changes
-- [ ] `--check` mode works correctly for all modules (no API writes)
-- [ ] Unit test coverage ≥ 80% for `module_utils` and ≥ 60% per module
-- [ ] CI pipeline runs `ansible-lint`, sanity tests, and unit tests on every PR
-- [ ] JWT tokens are cached per-session (not fetched per API call)
-- [ ] No `global module` statements in any module
+
+  Both describe the same waiver. `validate-modules` expects a GPLv3-compatible
+  module header; this collection is MIT licensed, so all 33 entries in each
+  ignore file are `validate-modules:missing-gplv3-license`. Meeting these two
+  criteria would mean relicensing. The `no-log-needed` suppressions the
+  original audit found are gone.
+
 - [ ] All roles either have real tasks or are removed from collection
-- [ ] `meta/main.yml` and `meta/runtime.yml` agree on `requires_ansible` version
+
+  `crdp` is implemented. `cte4k8s`, `cte4u` and `dpg` are retained as
+  documented placeholders — a deliberate call, so that removing them from the
+  collection does not break a playbook that already references them. They are
+  marked as unimplemented in their own documentation and `meta/main.yml`.
 
 ---
 

@@ -1,9 +1,0 @@
----
-# Teardown logic for module_cte_user_set
-- name: Delete created resources
-  thalesgroup.ciphertrust.cte_user_set:
-    op_type: delete
-    localNode: "{{ localNode }}"
-    name: "{{ generated_name | default(omit) }}"
-    id: "{{ generated_id | default(omit) }}"
-  ignore_errors: true

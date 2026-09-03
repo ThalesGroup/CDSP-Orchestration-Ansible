@@ -29,8 +29,8 @@ ansible-galaxy collection install thalesgroup.ciphertrust
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/thalesgroup/ciphertrust-ansible-collection.git
-cd ciphertrust-ansible-collection
+git clone https://github.com/ThalesGroup/CDSP-Orchestration-Ansible.git
+cd CDSP-Orchestration-Ansible
 ```
 
 2. Build the collection:
@@ -48,7 +48,7 @@ ansible-galaxy collection install thalesgroup-ciphertrust-1.0.3.tar.gz
 ### Method 3: Install from Local Path
 
 ```bash
-ansible-galaxy collection install -p ~/.ansible/collections -f path/to/ciphertrust-ansible-collection
+ansible-galaxy collection install -p ~/.ansible/collections -f path/to/CDSP-Orchestration-Ansible
 ```
 
 ## Directory Structure

@@ -1,9 +1,9 @@
 site_name: ThalesGroup CipherTrust Ansible Collection
 site_description: Documentation for the ThalesGroup CipherTrust Ansible Collection
-site_url: https://thalesgroup.github.io/ciphertrust-ansible-collection/
+site_url: https://thalesgroup.github.io/CDSP-Orchestration-Ansible/
 
-repo_name: thalesgroup/ciphertrust-ansible-collection
-repo_url: https://github.com/thalesgroup/ciphertrust-ansible-collection
+repo_name: ThalesGroup/CDSP-Orchestration-Ansible
+repo_url: https://github.com/ThalesGroup/CDSP-Orchestration-Ansible
 
 theme:
   name: material
@@ -47,7 +47,6 @@ nav:
   - Examples: examples/index.md
   - Best Practices: best-practices.md
   - Performance: performance-best-practices.md
-  - API Reference: api-reference.md
   - Troubleshooting: troubleshooting.md
   - Contributing: contributing.md
 
@@ -70,8 +69,8 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.magiclink:
       repo_url_shorthand: true
-      user: thalesgroup
-      repo: ciphertrust-ansible-collection
+      user: ThalesGroup
+      repo: CDSP-Orchestration-Ansible
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.superfences

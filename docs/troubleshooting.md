@@ -55,14 +55,13 @@ This guide covers common issues and their solutions when using the ThalesGroup C
 
 ### Token Expiration
 
-**Symptoms:**
-- "Token expired" errors
-- "Invalid token" messages
+Since 1.0.4 there is nothing to do here. A JWT is cached per session, and a
+`401` triggers one re-authentication and a single retry, so a session that
+expires sooner than the cached lifetime is renewed without failing the task.
 
-**Solutions:**
-1. Refresh the token
-2. Re-authenticate with username/password
-3. Check token expiration time
+If you still see an authentication failure after a long-running play, the
+credentials themselves have stopped working — the account was disabled, its
+password changed, or the auth domain moved. Check those rather than the token.
 
 ## Module-Specific Issues
 
@@ -88,9 +87,26 @@ This guide covers common issues and their solutions when using the ThalesGroup C
 - "Missing required parameter" messages
 
 **Solutions:**
-1. Check module documentation for required parameters
-2. Verify parameter names and values
-3. Use `-vvv` flag for detailed error messages
+
+1. Read the failure message first. Since 1.0.4 the message carries CipherTrust
+   Manager's own field-level explanation, not just the error class, so it
+   usually names the parameter and what it needs:
+
+   ```
+   400: POST data-protection/protection-policies failed:
+   NCERRBadRequest: Bad HTTP request: Validation errors:
+   iv:  AES/CBC/PKCS5Padding algorithm requires a 16 byte IV
+   ```
+
+   Earlier versions reported only `NCERRBadRequest: Bad HTTP request`, which is
+   the same string for every rejected payload. If that is all you see, you are
+   on an older release.
+
+2. Check the module documentation for required parameters and accepted
+   `choices`. Some requirements are conditional on another value — the
+   protection-policy algorithm decides whether `iv`, `tag_length` or
+   `character_set_id` is mandatory.
+3. Use `-vvv` to see the request the module built.
 
 ## Role-Specific Issues
 
@@ -171,14 +187,27 @@ ansible-playbook playbook.yml --log-path=/tmp/ansible.log
 
 **Solution:** Verify resource name and existence
 
-### "Permission denied"
+### "Permission denied" / `NCERRInsufficientPermissions`
 
-**Cause:** Insufficient user permissions
+**Cause:** Either the account lacks permission, or — despite the wording — the
+feature is not licensed on that CipherTrust Manager. CipherTrust Manager
+reports an unlicensed feature as a permissions error.
 
-**Solution:** Use admin credentials or grant required permissions
+**Solution:** Read the detail after the error code. A licence problem says so:
+
+```
+403: POST transparent-encryption/clients failed:
+NCERRInsufficientPermissions: License not installed yet for feature
+TransparentEncryption
+```
+
+That cannot be fixed with credentials. Install or activate the licence for the
+feature — `license_create` and `license_trial_action` manage this. If the
+detail names no feature, treat it as a genuine permissions problem and use an
+account with the required role.
 
 ## Getting Help
 
-- [GitHub Issues](https://github.com/thalesgroup/ciphertrust-ansible-collection/issues)
-- [Documentation](https://thalesgroup.github.io/ciphertrust-ansible-collection/)
+- [GitHub Issues](https://github.com/ThalesGroup/CDSP-Orchestration-Ansible/issues)
+- [Documentation](https://thalesgroup.github.io/CDSP-Orchestration-Ansible/)
 - [Support Portal](https://support.thalesgroup.com/)
