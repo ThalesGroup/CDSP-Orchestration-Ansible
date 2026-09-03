@@ -11,6 +11,24 @@ requires_ansible: ">=2.15.0"
 # the modules on disk.
 action_groups:
   all:
+    - cckm_aws_account_info
+    - cckm_aws_alias_info
+    - cckm_aws_bulkjob
+    - cckm_aws_bulkjob_info
+    - cckm_aws_cloudhsm_cluster_info
+    - cckm_aws_custom_key_store
+    - cckm_aws_custom_key_store_info
+    - cckm_aws_key
+    - cckm_aws_key_info
+    - cckm_aws_kms
+    - cckm_aws_kms_info
+    - cckm_aws_policy_template
+    - cckm_aws_policy_template_info
+    - cckm_aws_report
+    - cckm_aws_report_info
+    - cckm_aws_synchronization_job
+    - cckm_aws_synchronization_job_info
+    - cckm_aws_xks_proxy
     - cm_certificate_authority
     - cm_cluster
     - cm_regtoken

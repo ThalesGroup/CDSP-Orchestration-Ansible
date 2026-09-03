@@ -32,14 +32,24 @@ def _module_parameters(module_name):
     return set(spec) | {"localNode", "local_node"}
 
 
-def _collection_tasks(path):
-    """Yield (module_name, params) for every collection task in a target."""
+def _collection_tasks(path, include_negative=True):
+    """Yield (module_name, params) for every collection task in a target.
+
+    A target may deliberately pass something a module must reject -- an
+    unsupported cloud, an op_type that does not exist -- to prove the argument
+    spec rejects it rather than reaching the API. Such a task carries
+    ``ignore_errors``, and the assertion that follows is the real check. Pass
+    ``include_negative=False`` to skip them, for the checks that would
+    otherwise flag the invalid value as target drift.
+    """
     stack = [yaml.safe_load(pathlib.Path(path).read_text()) or []]
     while stack:
         node = stack.pop()
         if isinstance(node, list):
             stack.extend(node)
         elif isinstance(node, dict):
+            if not include_negative and node.get("ignore_errors"):
+                continue
             for key, value in node.items():
                 if key in ("block", "always", "rescue"):
                     stack.append(value)
@@ -86,7 +96,7 @@ def test_target_uses_real_parameters(path):
 @pytest.mark.parametrize("path", TARGETS, ids=[_target_id(p) for p in TARGETS])
 def test_target_uses_valid_op_types(path):
     invalid = []
-    for module_name, params in _collection_tasks(path):
+    for module_name, params in _collection_tasks(path, include_negative=False):
         if not isinstance(params, dict) or "op_type" not in params:
             continue
         op_type = params["op_type"]

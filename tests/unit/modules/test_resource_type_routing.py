@@ -44,6 +44,15 @@ DELETE_ONLY = {
     "azure-connection": "connectionmgmt/services/azure/connections",
     "gcp-connection": "connectionmgmt/services/gcp/connections",
     "oci-connection": "connectionmgmt/services/oci/connections",
+    # CCKM's AWS resources. Deleting an aws-key removes CCKM's record of it;
+    # the AWS key itself is destroyed through cckm_aws_key's
+    # schedule_deletion, which is a different thing entirely -- so a wrong
+    # entry here is not merely a failed request.
+    "aws-kms": "cckm/aws/kms",
+    "aws-key": "cckm/aws/keys",
+    "aws-policy-template": "cckm/aws/templates",
+    "aws-custom-key-store": "cckm/aws/custom-key-stores",
+    "aws-report": "cckm/aws/reports",
 }
 GET_ONLY = {"cte-client": "transparent-encryption/clients"}
 

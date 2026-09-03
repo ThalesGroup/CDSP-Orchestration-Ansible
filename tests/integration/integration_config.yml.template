@@ -41,3 +41,24 @@ cm_allow_uncleanable_tests: false
 # provider from the CipherTrust Manager itself. Set this only when the manager
 # has egress to the public internet, or those tasks will hang rather than fail.
 cm_allow_cloud_egress_tests: false
+
+# CCKM's AWS service reaches AWS for nearly everything it does, and creating a
+# KMS key creates a billable resource in a real account. The module_cckm_aws
+# target therefore runs only its reads, argument validation and check-mode
+# tasks unless these are set.
+#
+# cckm_aws_run_live needs a CipherTrust Manager with the CCKM licence, network
+# egress, and an AWS connection that already works -- create it with
+# connection_aws_save and verify it with connection_test first.
+cckm_aws_run_live: false
+cckm_aws_connection_name: "aws-connection"
+cckm_aws_account_id: "123456789012"
+cckm_aws_region: "us-east-1"
+# IAM users to name as key administrators in the policy template test. Leave
+# empty to skip the template patch check.
+cckm_aws_key_admins: []
+
+# Creating and then scheduling deletion of a real AWS KMS key. AWS bills for
+# the key until its waiting period elapses, and the shortest AWS allows is
+# seven days, so this stays off unless the account is a test account.
+cckm_aws_run_key_lifecycle: false

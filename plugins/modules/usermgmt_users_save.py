@@ -40,7 +40,7 @@ options:
           - If both enable_cert_auth and allowed_auth_methods are provided in the request, enable_cert_auth is ignored.
         type: list
         elements: str
-        default: password
+        default: [password]
         choices: [password, certificate, sso, mfa, api_key]
     app_metadata:
         description:

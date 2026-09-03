@@ -13,6 +13,7 @@ conversation with CipherTrust Manager.
 """
 
 import importlib
+import types
 from unittest.mock import MagicMock, patch
 
 from test_helpers import (
@@ -69,14 +70,25 @@ class Result(object):
 
 
 def _client_targets(mod, module_path):
-    """Every import site of CipherTrustClient this module's run can reach."""
+    """Every import site of CipherTrustClient this module's run can reach.
+
+    A module reaches module_utils in one of two ways: by importing the
+    functions it needs (``from ...connections import create``) or by importing
+    the namespace (``from ...module_utils import cckm_aws``) and calling
+    through it. Both put the helper's own ``CipherTrustClient`` on the path a
+    run takes, so both have to be patched -- a namespace import left unpatched
+    lets the module build a real client and try to reach the network.
+    """
     targets = []
     if hasattr(mod, "CipherTrustClient"):
         targets.append(module_path + ".CipherTrustClient")
     seen = set()
     for attr_name in dir(mod):
         attr = getattr(mod, attr_name, None)
-        origin = getattr(attr, "__module__", None) or ""
+        if isinstance(attr, types.ModuleType):
+            origin = getattr(attr, "__name__", "") or ""
+        else:
+            origin = getattr(attr, "__module__", None) or ""
         if "module_utils" not in origin:
             continue
         leaf = origin.rsplit(".", 1)[-1]

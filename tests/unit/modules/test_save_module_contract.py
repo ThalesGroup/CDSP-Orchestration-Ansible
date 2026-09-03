@@ -58,6 +58,15 @@ class Spec(object):
 
 
 SPECS = [
+    Spec("cckm_aws_kms", "name", "kms_id", "connection", "conn-a", "conn-b",
+         create_extra={"account_id": "123456789012", "connection": "conn-a",
+                       "regions": ["us-east-1"]}),
+    Spec("cckm_aws_policy_template", "name", "template_id",
+         "key_users", ["alice"], ["bob"]),
+    Spec("cckm_aws_custom_key_store", "name", "custom_key_store_id",
+         "enable_success_audit_event", True, False,
+         create_extra={"kms": "aws-prod", "region": "us-east-1",
+                       "aws_param": {"xks_proxy_uri_endpoint": "https://x"}}),
     Spec("cm_certificate_authority", "cn", "id",
          "allow_client_authentication", True, False),
     Spec("cm_regtoken", "name_prefix", "id", "lifetime", "30d", "60d",

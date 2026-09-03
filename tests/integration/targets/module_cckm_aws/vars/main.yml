@@ -1,0 +1,13 @@
+---
+this_node_connection_string: "{{ cm_connection_string }}"
+
+# CCKM's AWS service reaches AWS for almost everything it does: adding an
+# account container validates the account against the connection, and creating
+# a key creates it in AWS and bills for it. That makes most of this target
+# conditional on cckm_aws_run_live, which is off by default.
+#
+# What runs unconditionally is everything that can be checked without an AWS
+# account: argument validation, op_type routing, check mode, and the read-only
+# modules against a manager that has no CCKM AWS resources -- which must
+# return an empty list rather than fail.
+cckm_aws_policy_template_name: "ansible-cckm-tpl"

@@ -1,6 +1,6 @@
 # Modules Documentation
 
-This collection ships 42 modules for CipherTrust Manager. The catalogue below
+This collection ships 60 modules for CipherTrust Manager. The catalogue below
 groups them by area.
 
 ## Where the reference documentation lives
@@ -79,6 +79,45 @@ products such as CCKM.
 
 Delete a connection with `cm_resource_delete` using `resource_type` of
 `aws-connection`, `azure-connection`, `gcp-connection` or `oci-connection`.
+
+### CCKM AWS Modules
+
+CipherTrust Cloud Key Manager (CCKM) manages AWS KMS keys from CipherTrust
+Manager. Everything is scoped to an *account container* -- CCKM's record of one
+AWS account, the connection it is reached with, and the regions managed within
+it -- so `cckm_aws_kms` comes first and the rest hang off it. The connection
+itself is created with `connection_aws_save`.
+
+- `cckm_aws_kms` - AWS account containers (add, update, archive, recover, ACLs)
+- `cckm_aws_key` - AWS KMS keys: create, upload (BYOK), rotate, enable/disable,
+  alias and tag maintenance, policy updates, replication, scheduled deletion
+- `cckm_aws_policy_template` - Reusable key policy templates
+- `cckm_aws_custom_key_store` - CloudHSM-backed and external (XKS) key stores
+- `cckm_aws_synchronization_job` - Make keys and key stores created outside
+  CCKM visible to it
+- `cckm_aws_bulkjob` - Apply one operation across many keys in one request
+- `cckm_aws_report` - Key usage reports built from CloudWatch logs
+- `cckm_aws_xks_proxy` - Exercise the XKS proxy endpoints AWS KMS will call
+
+Read-only counterparts:
+
+- `cckm_aws_key_info` - Keys, their versions and rotation history
+- `cckm_aws_kms_info` - Account containers
+- `cckm_aws_policy_template_info` - Policy templates
+- `cckm_aws_custom_key_store_info` - Key stores, their health and credentials
+- `cckm_aws_synchronization_job_info` - Synchronization job status
+- `cckm_aws_bulkjob_info` - Bulk job status and per-key results
+- `cckm_aws_report_info` - Report status, contents and CSV download
+- `cckm_aws_account_info` - What CipherTrust Manager can see in AWS: accounts,
+  regions, IAM users and roles, CloudWatch log groups
+- `cckm_aws_alias_info` - Whether a key alias is already in use
+- `cckm_aws_cloudhsm_cluster_info` - CloudHSM clusters free to back a key store
+
+Delete a CCKM AWS resource with `cm_resource_delete` using `resource_type` of
+`aws-kms`, `aws-key`, `aws-policy-template`, `aws-custom-key-store` or
+`aws-report`. Note that deleting an `aws-key` removes CCKM's record of it and
+leaves the key in AWS; to destroy the AWS key, use `cckm_aws_key` with
+`op_type: schedule_deletion`.
 
 ### Interface and License Modules
 

@@ -82,11 +82,83 @@ def find_resource_by_query(client, endpoint, param, value):
     return resource
 
 
+def find_resource_by_filters(client, endpoint, filters, confirm_fields=None):
+    """Look up a single resource by several query-string filters.
+
+    The single-field :func:`find_resource_by_query` is enough where a name is
+    unique across the collection. It is not for CCKM's AWS keys: an alias is
+    unique only within one region of one account, so a create has to ask "is
+    there a key with this alias, in this region, under this KMS?" -- and
+    getting that wrong means either creating a duplicate key or silently
+    adopting a same-named key from another region.
+
+    *filters* are sent as query parameters. *confirm_fields* names the subset
+    the returned resource must actually echo back, for the same reason
+    :func:`find_resource_by_query` re-checks its one parameter: CipherTrust
+    Manager answers an unsupported filter by ignoring it, not by erroring.
+    Filters that name a field the response does not carry under the same name
+    -- ``alias``, which the response nests inside ``aws_param`` -- are simply
+    left out of *confirm_fields* by the caller.
+
+    Returns the first matching resource dict, or ``None``.
+    """
+    filters = {k: v for k, v in (filters or {}).items() if v is not None}
+    if not filters:
+        return None
+
+    query = dict(filters)
+    query.update({"skip": 0, "limit": 1})
+    try:
+        response = client.get(endpoint + _build_query_string(query))
+    except (CMApiException, HTTPError) as exc:
+        if _is_not_found(exc):
+            return None
+        raise
+
+    if not (isinstance(response, dict) and response.get("resources")):
+        return None
+
+    resource = response["resources"][0]
+    for field in (confirm_fields or ()):
+        if resource.get(field) != filters.get(field):
+            return None
+    return resource
+
+
 # ---------------------------------------------------------------------------
 # State comparison
 # ---------------------------------------------------------------------------
 
-def resource_needs_update(current, desired, compare_fields=None, defaults=None):
+def _differs_as_subset(current_value, desired_value):
+    """Compare a nested structure the way a PATCH applies it.
+
+    A PATCH merges: sending ``{"aws_param": {"xks_proxy_uri_endpoint": U}}``
+    changes that one field and leaves the rest of ``aws_param`` alone. A plain
+    ``!=`` against the GET response therefore reports a change on every run,
+    because CipherTrust Manager returns the whole sub-object -- read-only
+    fields such as ``connection_state`` included -- and the desired dict holds
+    only what the playbook set.
+
+    So a desired dict differs only when one of *its own* keys differs, applied
+    recursively. Lists and scalars compare whole: a list is replaced by a
+    PATCH, not merged into.
+    """
+    if isinstance(desired_value, dict):
+        if not isinstance(current_value, dict):
+            return True
+        for key, value in desired_value.items():
+            if value is None:
+                continue
+            if key not in current_value:
+                return True
+            if _differs_as_subset(current_value[key], value):
+                return True
+        return False
+    return current_value != desired_value
+
+
+def resource_needs_update(current, desired, compare_fields=None, defaults=None,
+                          response_aliases=None, subset_fields=None):
     """Return ``True`` if any *desired* field differs from *current* state.
 
     *compare_fields* limits comparison to an explicit list.  If omitted,
@@ -98,19 +170,37 @@ def resource_needs_update(current, desired, compare_fields=None, defaults=None):
     for must not be read as a pending change -- otherwise every patch reports
     ``changed`` for ever and re-sends the same request. A field the user did
     ask for is still applied even when CM does not echo it back.
+
+    *response_aliases* maps a desired field to the name CipherTrust Manager
+    reports it under, for the handful of endpoints that accept a field under
+    one spelling and return it under another -- CCKM's AWS policy templates
+    take ``key_admins`` and answer with ``key-admins``. Without the mapping
+    the field looks absent from every GET, so the patch reports ``changed``
+    for ever.
+
+    *subset_fields* names fields to compare with PATCH-merge semantics rather
+    than for equality; see :func:`_differs_as_subset`.
     """
     if compare_fields is None:
         compare_fields = [k for k in desired if desired[k] is not None]
     defaults = defaults if isinstance(defaults, dict) else {}
+    response_aliases = response_aliases if isinstance(response_aliases, dict) else {}
+    subset_fields = frozenset(subset_fields or ())
 
     for field in compare_fields:
         if field not in desired or desired[field] is None:
             continue
-        if field not in current:
+
+        name = field if field in current else response_aliases.get(field, field)
+        if name not in current:
             if field in defaults and desired[field] == defaults[field]:
                 continue
             return True
-        if current[field] != desired[field]:
+
+        if field in subset_fields:
+            if _differs_as_subset(current[name], desired[field]):
+                return True
+        elif current[name] != desired[field]:
             return True
     return False
 
@@ -131,7 +221,19 @@ def idempotent_create(module, client, endpoint, lookup_param, lookup_value,
     Returns ``(changed, response, diff_or_None)``.
     """
     existing = find_resource_by_query(client, endpoint, lookup_param, lookup_value)
+    return create_if_absent(module, existing, create_fn, create_kwargs)
 
+
+def create_if_absent(module, existing, create_fn, create_kwargs):
+    """The create half of :func:`idempotent_create`, given a resolved lookup.
+
+    Callers that cannot express "does it already exist?" as one query
+    parameter -- CCKM's AWS keys need an alias, a region and a KMS -- do the
+    lookup with :func:`find_resource_by_filters` and hand the result here, so
+    the create, check-mode and diff behaviour stays in one place.
+
+    Returns ``(changed, response, diff_or_None)``.
+    """
     if existing:
         return False, existing, None
 
@@ -146,7 +248,8 @@ def idempotent_create(module, client, endpoint, lookup_param, lookup_value,
 
 def idempotent_patch(module, client, endpoint, resource_id,
                      patch_fn, patch_kwargs, compare_fields=None,
-                     ignore_fields=None):
+                     ignore_fields=None, response_aliases=None,
+                     subset_fields=None):
     """Idempotent resource update.
 
     1. GET current state by *resource_id*.
@@ -162,6 +265,9 @@ def idempotent_patch(module, client, endpoint, resource_id,
     and issue a redundant write.  Callers must pass their routing key.
 
     *compare_fields* optionally restricts the comparison to an explicit list.
+
+    *response_aliases* and *subset_fields* are passed to
+    :func:`resource_needs_update`; see there for what they are for.
 
     Returns ``(changed, response, diff_or_None)``.
     """
@@ -193,7 +299,8 @@ def idempotent_patch(module, client, endpoint, resource_id,
         for alias in entry.get("aliases") or []:
             defaults[alias] = entry["default"]
 
-    if not resource_needs_update(current, desired, compare_fields, defaults):
+    if not resource_needs_update(current, desired, compare_fields, defaults,
+                                 response_aliases, subset_fields):
         return False, current, None
 
     if module.check_mode:

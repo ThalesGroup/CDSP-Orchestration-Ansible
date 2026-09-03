@@ -1,0 +1,93 @@
+major_changes:
+  - >-
+    Added modules for CipherTrust Cloud Key Manager's AWS service, covering
+    every operation its API serves. ``cckm_aws_kms`` manages the AWS account
+    containers everything else hangs off; ``cckm_aws_key`` creates AWS KMS
+    keys, uploads key material (BYOK), and performs the full key lifecycle --
+    enable, disable, rotate, schedule and cancel deletion, alias and tag
+    maintenance, policy updates and multi-region replication;
+    ``cckm_aws_policy_template`` manages reusable key policies; and
+    ``cckm_aws_custom_key_store`` manages CloudHSM-backed and external key
+    stores, including the XKS stores CipherTrust Manager itself backs.
+  - >-
+    Added ``cckm_aws_synchronization_job``, ``cckm_aws_bulkjob`` and
+    ``cckm_aws_report``, which drive CCKM's asynchronous AWS jobs.
+    Synchronization is what makes a key created outside CCKM visible to it, a
+    bulk job applies one operation across many keys in a single request, and
+    reports summarise key usage from CloudWatch logs. Each has a matching
+    ``_info`` module for polling status and reading results.
+  - >-
+    Added the read-only modules ``cckm_aws_key_info``, ``cckm_aws_kms_info``,
+    ``cckm_aws_policy_template_info``,
+    ``cckm_aws_custom_key_store_info``, ``cckm_aws_account_info``,
+    ``cckm_aws_alias_info`` and ``cckm_aws_cloudhsm_cluster_info``.
+    ``cckm_aws_account_info`` answers what CipherTrust Manager can see in AWS
+    -- accounts, regions, IAM users and roles, CloudWatch log groups -- which
+    is what a playbook needs before it can name any of them.
+  - >-
+    Added ``cckm_aws_xks_proxy``, which calls the AWS External Key Store proxy
+    endpoints CipherTrust Manager serves for a locally-hosted custom key
+    store. AWS KMS is the intended caller; the module exists so an operator can
+    confirm the endpoint is reachable and the backing key usable before
+    pointing AWS at it.
+
+minor_changes:
+  - >-
+    ``cm_resource_delete`` gained the ``aws-kms``, ``aws-key``,
+    ``aws-policy-template``, ``aws-custom-key-store`` and ``aws-report``
+    resource types. Deleting an ``aws-key`` removes CCKM's record of the key
+    and leaves the key itself in AWS; destroying the AWS key is
+    ``cckm_aws_key``'s ``schedule_deletion``, which starts the waiting period
+    after which AWS destroys it and everything encrypted under it.
+  - >-
+    Creating an AWS key is idempotent on the alias, scoped to the region and
+    the account container. An AWS alias is unique only within one region of one
+    account, and an AWS key has no other user-chosen name, so a lookup on the
+    alias alone would either adopt a same-named key from another region or
+    create a duplicate billable key. Where no alias is given there is nothing
+    to match on and the create proceeds, which is what AWS itself does.
+  - >-
+    ``plugins/module_utils/idempotent.py`` gained ``find_resource_by_filters``
+    for resources whose identity is more than one field, and
+    ``resource_needs_update`` gained two options. ``response_aliases`` covers
+    endpoints that accept a field under one name and report it under another
+    -- CCKM takes ``key_admins`` and answers with ``key-admins``, so without it
+    a patch reports ``changed`` for ever. ``subset_fields`` compares a nested
+    object the way a PATCH applies it, merging rather than replacing, so the
+    read-only fields CipherTrust Manager returns inside ``aws_param`` are not
+    read as pending changes.
+  - >-
+    CCKM's list endpoints declare their multi-valued filters as
+    ``collectionFormat: multi``, so ``cckm_aws.py`` builds those as a repeated
+    query parameter rather than a comma-joined value, which the API would read
+    as a single filter that matches nothing. Request payloads are pruned
+    recursively before being sent: ``AnsibleModule`` fills every suboption a
+    playbook did not set with ``None``, and AWS reads an explicit
+    ``Description: null`` as a request to clear the description.
+  - >-
+    Added ``tests/unit/test_documentation_matches_spec.py`` and
+    ``tests/unit/test_argument_spec_validity.py``, which check every module in
+    the collection rather than only the new ones. The first parses each
+    DOCUMENTATION, EXAMPLES and RETURN block and compares the documented
+    options, types, choices, defaults and suboptions against the argument spec
+    as a user meets it. The second constructs each module's real
+    ``AnsibleModule`` and rejects a ``required_if`` that names a parameter
+    which does not exist or a value the parameter cannot take -- rules that are
+    silently dead rather than loudly wrong.
+  - >-
+    ``tests/unit/module_utils/test_cckm_aws_endpoints.py`` checks every request
+    helper against a written-out list of the paths CCKM's AWS API serves, so a
+    typo in an endpoint is caught here rather than as a 404 on a live manager.
+  - >-
+    Added the ``module_cckm_aws`` integration target. CCKM reaches AWS for
+    nearly everything it does, and creating a KMS key creates a billable
+    resource, so the target runs its reads, argument validation and check-mode
+    tasks against any CCKM-licensed manager, and gates create, patch and the
+    key lifecycle behind ``cckm_aws_run_live`` and
+    ``cckm_aws_run_key_lifecycle``.
+
+bugfixes:
+  - >-
+    ``usermgmt_users_save`` documented the default of ``allowed_auth_methods``
+    as the string ``password`` when the option is a list and the spec defaults
+    it to ``[password]``.

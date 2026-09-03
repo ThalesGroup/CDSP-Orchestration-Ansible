@@ -1,0 +1,592 @@
+---
+# (c) 2023-2026 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ###################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+# ###################################################################
+#
+# CCKM's AWS service reaches AWS for nearly everything it does, and creating a
+# KMS key creates a billable resource in a real account. So this target is in
+# two halves:
+#
+#   * Unconditional -- the read-only modules, argument validation, op_type
+#     routing and check mode. These need a CipherTrust Manager with the CCKM
+#     licence but no AWS account, and they are what catches a module that
+#     cannot reach its own endpoint.
+#   * Guarded by cckm_aws_run_live -- create, patch, key lifecycle and delete
+#     against a real AWS account. Off by default.
+
+- name: Give this run a unique suffix
+  ansible.builtin.set_fact:
+    run_suffix: "{{ 99999999 | random }}"
+
+- name: Verify integration_config was supplied
+  ansible.builtin.assert:
+    that:
+      - this_node_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
+
+# ---------------------------------------------------------------------------
+# Reads. A manager with no CCKM AWS resources must answer with an empty
+# collection, not an error -- a module whose endpoint is wrong fails here.
+# ---------------------------------------------------------------------------
+
+- name: "List AWS account containers"
+  thalesgroup.ciphertrust.cckm_aws_kms_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _kms_list
+
+- name: Verify the KMS list is a well-formed collection
+  ansible.builtin.assert:
+    that:
+      - _kms_list is not failed
+      - _kms_list is not changed
+      - _kms_list.response is defined
+    fail_msg: >-
+      Listing AWS account containers failed: {{ _kms_list.msg | default('') }}
+
+- name: "List AWS keys"
+  thalesgroup.ciphertrust.cckm_aws_key_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+    limit: 5
+  register: _key_list
+
+- name: "List AWS keys with a multi-valued filter"
+  thalesgroup.ciphertrust.cckm_aws_key_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+    region:
+      - us-east-1
+      - eu-west-1
+    limit: 5
+  register: _key_list_filtered
+
+- name: Verify both key listings succeeded
+  ansible.builtin.assert:
+    that:
+      - _key_list is not failed
+      - _key_list is not changed
+      - _key_list_filtered is not failed
+    fail_msg: >-
+      Listing AWS keys failed. A repeated query parameter may not have been
+      accepted: {{ _key_list_filtered.msg | default('') }}
+
+- name: "List policy templates, custom key stores, jobs and reports"
+  thalesgroup.ciphertrust.cckm_aws_policy_template_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _template_list
+
+- name: "List custom key stores"
+  thalesgroup.ciphertrust.cckm_aws_custom_key_store_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _cks_list
+
+- name: "List key synchronization jobs"
+  thalesgroup.ciphertrust.cckm_aws_synchronization_job_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+    scope: keys
+  register: _sync_list
+
+- name: "List custom key store synchronization jobs"
+  thalesgroup.ciphertrust.cckm_aws_synchronization_job_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+    scope: custom-key-stores
+  register: _cks_sync_list
+
+- name: "List bulk jobs"
+  thalesgroup.ciphertrust.cckm_aws_bulkjob_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _bulk_list
+
+- name: "List reports"
+  thalesgroup.ciphertrust.cckm_aws_report_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _report_list
+
+- name: Verify every read-only module reached its endpoint
+  ansible.builtin.assert:
+    that:
+      - _template_list is not failed
+      - _cks_list is not failed
+      - _sync_list is not failed
+      - _cks_sync_list is not failed
+      - _bulk_list is not failed
+      - _report_list is not failed
+    fail_msg: >-
+      A CCKM AWS read failed, which usually means a wrong endpoint path.
+      templates={{ _template_list.msg | default('ok') }}
+      custom-key-stores={{ _cks_list.msg | default('ok') }}
+      sync={{ _sync_list.msg | default('ok') }}
+      cks-sync={{ _cks_sync_list.msg | default('ok') }}
+      bulkjob={{ _bulk_list.msg | default('ok') }}
+      reports={{ _report_list.msg | default('ok') }}
+
+- name: Verify the two synchronization scopes are separate services
+  ansible.builtin.assert:
+    that:
+      - _sync_list.response is defined
+      - _cks_sync_list.response is defined
+    success_msg: "Both synchronization scopes are reachable"
+
+# ---------------------------------------------------------------------------
+# Argument validation. These must be rejected by the module, before any
+# request is made, so they are safe to run anywhere.
+# ---------------------------------------------------------------------------
+
+- name: Negative test - creating a key needs a KMS and a region
+  thalesgroup.ciphertrust.cckm_aws_key:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+  register: _negative_key_create
+  ignore_errors: true
+
+- name: Assert the key module names the arguments it needs
+  ansible.builtin.assert:
+    that:
+      - _negative_key_create is failed
+      - >-
+        "missing required arguments" in
+        (_negative_key_create.msg | default(""))
+    fail_msg: >-
+      Expected cckm_aws_key to require kms and region, got:
+      {{ _negative_key_create.msg | default("no message") }}
+    success_msg: "cckm_aws_key requires the arguments it cannot work without"
+
+- name: Negative test - scheduling deletion needs a waiting period
+  thalesgroup.ciphertrust.cckm_aws_key:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: schedule_deletion
+    key_id: "does-not-exist"
+  register: _negative_schedule
+  ignore_errors: true
+
+- name: Assert schedule_deletion will not run without days
+  ansible.builtin.assert:
+    that:
+      - _negative_schedule is failed
+      - '"missing required arguments" in (_negative_schedule.msg | default(""))'
+    fail_msg: >-
+      schedule_deletion destroys a key after a waiting period; it must not
+      run without one. Got: {{ _negative_schedule.msg | default("no message") }}
+    success_msg: "schedule_deletion requires an explicit waiting period"
+
+- name: Negative test - an unknown op_type must be rejected
+  thalesgroup.ciphertrust.cckm_aws_key:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: obliterate
+    key_id: "does-not-exist"
+  register: _negative_op_type
+  ignore_errors: true
+
+- name: Assert the argument spec rejects an unknown operation
+  ansible.builtin.assert:
+    that:
+      - _negative_op_type is failed
+      - '"value of op_type must be one of" in (_negative_op_type.msg | default(""))'
+    fail_msg: >-
+      Expected an unknown op_type to be rejected, got:
+      {{ _negative_op_type.msg | default("no message") }}
+    success_msg: "Unknown operations are rejected before any request is made"
+
+- name: Negative test - mutually exclusive rotation options
+  thalesgroup.ciphertrust.cckm_aws_key:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: rotate
+    key_id: "does-not-exist"
+    disable_encrypt: true
+    disable_encrypt_on_all_accounts: true
+  register: _negative_exclusive
+  ignore_errors: true
+
+- name: Assert mutually exclusive options are rejected
+  ansible.builtin.assert:
+    that:
+      - _negative_exclusive is failed
+      - >-
+        "mutually exclusive" in (_negative_exclusive.msg | default(""))
+    fail_msg: >-
+      Expected the two disable-encrypt options to be mutually exclusive, got:
+      {{ _negative_exclusive.msg | default("no message") }}
+    success_msg: "Contradictory rotation options are rejected"
+
+- name: Negative test - synchronize_all cannot be combined with kms
+  thalesgroup.ciphertrust.cckm_aws_synchronization_job:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    synchronize_all: true
+    kms:
+      - somewhere
+  register: _negative_sync
+  ignore_errors: true
+
+- name: Assert the synchronization scope options are mutually exclusive
+  ansible.builtin.assert:
+    that:
+      - _negative_sync is failed
+      - '"mutually exclusive" in (_negative_sync.msg | default(""))'
+    fail_msg: >-
+      Expected synchronize_all and kms to be mutually exclusive, got:
+      {{ _negative_sync.msg | default("no message") }}
+    success_msg: "Synchronization scope options cannot contradict each other"
+
+- name: Negative test - a bulk deletion needs a waiting period
+  thalesgroup.ciphertrust.cckm_aws_bulkjob:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    operation: schedulekeydeletion
+    keys:
+      - does-not-exist
+  register: _negative_bulk
+  ignore_errors: true
+
+- name: Assert a bulk deletion will not run without days
+  ansible.builtin.assert:
+    that:
+      - _negative_bulk is failed
+      - '"missing required arguments" in (_negative_bulk.msg | default(""))'
+    fail_msg: >-
+      A bulk schedulekeydeletion destroys every key in the list; it must not
+      run without an explicit waiting period. Got:
+      {{ _negative_bulk.msg | default("no message") }}
+    success_msg: "Bulk deletion requires an explicit waiting period"
+
+# ---------------------------------------------------------------------------
+# Check mode. Nothing may be written, and CCKM has nothing to reach AWS about,
+# so these are safe without an AWS account.
+# ---------------------------------------------------------------------------
+
+- name: "Create an account container in check mode"
+  thalesgroup.ciphertrust.cckm_aws_kms:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    name: "ansible-cckm-{{ run_suffix }}"
+    account_id: "123456789012"
+    connection: "does-not-exist"
+    regions:
+      - us-east-1
+  check_mode: true
+  register: _check_create
+
+- name: Verify check mode predicted a change
+  ansible.builtin.assert:
+    that:
+      - _check_create is not failed
+      - _check_create is changed
+    fail_msg: >-
+      Check mode must predict the change without making it, got:
+      {{ _check_create.msg | default('') }}
+
+- name: "Confirm check mode created nothing"
+  thalesgroup.ciphertrust.cckm_aws_kms_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+    name: "ansible-cckm-{{ run_suffix }}"
+  register: _check_confirm
+
+- name: Verify no container was actually created
+  ansible.builtin.assert:
+    that:
+      - _check_confirm is not failed
+      - (_check_confirm.response.resources | default([]) | length) == 0
+    fail_msg: >-
+      Check mode created a container. This is the failure check mode exists
+      to prevent.
+    success_msg: "Check mode wrote nothing"
+
+# ---------------------------------------------------------------------------
+# Live tests. These need a real AWS account reachable from the manager, and
+# the key lifecycle creates billable AWS resources.
+# ---------------------------------------------------------------------------
+
+- name: Live CCKM AWS tests
+  when: cckm_aws_run_live | default(false) | bool
+  block:
+    - name: Verify the live test configuration is complete
+      ansible.builtin.assert:
+        that:
+          - cckm_aws_connection_name is defined
+          - cckm_aws_account_id is defined
+          - cckm_aws_region is defined
+        fail_msg: >-
+          cckm_aws_run_live needs cckm_aws_connection_name, cckm_aws_account_id
+          and cckm_aws_region in integration_config.yml
+
+    - name: "Discover the regions the connection can reach"
+      thalesgroup.ciphertrust.cckm_aws_account_info:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: regions
+        connection: "{{ cckm_aws_connection_name }}"
+      register: _regions
+
+    - name: Verify discovery reached AWS
+      ansible.builtin.assert:
+        that:
+          - _regions is not failed
+          - _regions is not changed
+        fail_msg: >-
+          Region discovery failed: {{ _regions.msg | default('') }}
+
+    - name: "Add the AWS account container"
+      thalesgroup.ciphertrust.cckm_aws_kms:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "ansible-cckm-{{ run_suffix }}"
+        account_id: "{{ cckm_aws_account_id }}"
+        connection: "{{ cckm_aws_connection_name }}"
+        regions:
+          - "{{ cckm_aws_region }}"
+      register: _kms_create
+
+    - name: Verify the container was created
+      ansible.builtin.assert:
+        that:
+          - _kms_create is not failed
+          - _kms_create is changed
+          - _kms_create.response.id is string
+
+    - name: "Save the container id"
+      ansible.builtin.set_fact:
+        kms_id: "{{ _kms_create.response.id }}"
+
+    - name: "Create the same container again"
+      thalesgroup.ciphertrust.cckm_aws_kms:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "ansible-cckm-{{ run_suffix }}"
+        account_id: "{{ cckm_aws_account_id }}"
+        connection: "{{ cckm_aws_connection_name }}"
+        regions:
+          - "{{ cckm_aws_region }}"
+      register: _kms_recreate
+
+    - name: Verify the second create reported no change
+      ansible.builtin.assert:
+        that:
+          - _kms_recreate is not failed
+          - _kms_recreate is not changed
+        fail_msg: >-
+          A create for an existing container must report changed=false;
+          got changed={{ _kms_recreate.changed }}
+
+    - name: "Patch the container with the regions it already has"
+      thalesgroup.ciphertrust.cckm_aws_kms:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: patch
+        kms_id: "{{ kms_id }}"
+        regions:
+          - "{{ cckm_aws_region }}"
+      register: _kms_nochange
+
+    - name: Verify a patch to the current state is not a change
+      ansible.builtin.assert:
+        that:
+          - _kms_nochange is not failed
+          - _kms_nochange is not changed
+        fail_msg: >-
+          Patching to the state already in place must report changed=false;
+          got changed={{ _kms_nochange.changed }}
+
+    - name: "Create a policy template"
+      thalesgroup.ciphertrust.cckm_aws_policy_template:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "{{ cckm_aws_policy_template_name }}-{{ run_suffix }}"
+        kms: "{{ kms_id }}"
+        key_admins: "{{ cckm_aws_key_admins | default([]) }}"
+      register: _template_create
+
+    - name: Verify the template was created
+      ansible.builtin.assert:
+        that:
+          - _template_create is not failed
+          - _template_create is changed
+
+    - name: "Create the same template again"
+      thalesgroup.ciphertrust.cckm_aws_policy_template:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: create
+        name: "{{ cckm_aws_policy_template_name }}-{{ run_suffix }}"
+        kms: "{{ kms_id }}"
+        key_admins: "{{ cckm_aws_key_admins | default([]) }}"
+      register: _template_recreate
+
+    - name: Verify the template create is idempotent
+      ansible.builtin.assert:
+        that:
+          - _template_recreate is not failed
+          - _template_recreate is not changed
+        fail_msg: >-
+          A create for an existing template must report changed=false;
+          got changed={{ _template_recreate.changed }}
+
+    - name: "Patch the template with the admins it already has"
+      thalesgroup.ciphertrust.cckm_aws_policy_template:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: patch
+        template_id: "{{ _template_create.response.id }}"
+        key_admins: "{{ cckm_aws_key_admins | default([]) }}"
+      register: _template_nochange
+      when: (cckm_aws_key_admins | default([]) | length) > 0
+
+    - name: Verify the template patch is idempotent
+      ansible.builtin.assert:
+        that:
+          - _template_nochange is not failed
+          - _template_nochange is not changed
+        fail_msg: >-
+          CCKM reports key_admins as "key-admins"; a patch that does not
+          account for that reports changed on every run.
+          Got changed={{ _template_nochange.changed | default('skipped') }}
+      when: (cckm_aws_key_admins | default([]) | length) > 0
+
+    # -- key lifecycle: creates a billable AWS KMS key ---------------------
+    - name: AWS key lifecycle
+      when: cckm_aws_run_key_lifecycle | default(false) | bool
+      block:
+        - name: "Create an AWS KMS key"
+          thalesgroup.ciphertrust.cckm_aws_key:
+            localNode: "{{ this_node_connection_string }}"
+            op_type: create
+            kms: "{{ kms_id }}"
+            region: "{{ cckm_aws_region }}"
+            aws_param:
+              alias: "ansible-cckm-{{ run_suffix }}"
+              description: "created by the Ansible integration suite"
+              tags:
+                - tag_key: created-by
+                  tag_value: ansible-integration
+          register: _key_create
+
+        - name: Verify the key was created
+          ansible.builtin.assert:
+            that:
+              - _key_create is not failed
+              - _key_create is changed
+              - _key_create.response.id is string
+
+        - name: "Save the key id"
+          ansible.builtin.set_fact:
+            aws_key_id: "{{ _key_create.response.id }}"
+
+        - name: "Create a key with the same alias, region and account again"
+          thalesgroup.ciphertrust.cckm_aws_key:
+            localNode: "{{ this_node_connection_string }}"
+            op_type: create
+            kms: "{{ kms_id }}"
+            region: "{{ cckm_aws_region }}"
+            aws_param:
+              alias: "ansible-cckm-{{ run_suffix }}"
+          register: _key_recreate
+
+        - name: Verify the alias-scoped lookup prevented a duplicate key
+          ansible.builtin.assert:
+            that:
+              - _key_recreate is not failed
+              - _key_recreate is not changed
+            fail_msg: >-
+              A second create for the same alias in the same region and account
+              must report changed=false rather than creating another billable
+              AWS key. Got changed={{ _key_recreate.changed }}
+
+        - name: "Read the key back"
+          thalesgroup.ciphertrust.cckm_aws_key_info:
+            localNode: "{{ this_node_connection_string }}"
+            op_type: get
+            key_id: "{{ aws_key_id }}"
+          register: _key_get
+
+        - name: Verify the key parameters were sent in AWS's casing
+          ansible.builtin.assert:
+            that:
+              - _key_get is not failed
+              - _key_get.response.aws_param is defined
+              - _key_get.response.aws_param.Description is defined
+            fail_msg: >-
+              The key's description did not reach AWS, which means aws_param
+              was not translated into the casing AWS requires.
+
+        - name: "Add a tag"
+          thalesgroup.ciphertrust.cckm_aws_key:
+            localNode: "{{ this_node_connection_string }}"
+            op_type: add_tags
+            key_id: "{{ aws_key_id }}"
+            tags:
+              - tag_key: purpose
+                tag_value: integration-test
+          register: _key_tag
+
+        - name: "Disable the key"
+          thalesgroup.ciphertrust.cckm_aws_key:
+            localNode: "{{ this_node_connection_string }}"
+            op_type: disable
+            key_id: "{{ aws_key_id }}"
+          register: _key_disable
+
+        - name: "Enable it again"
+          thalesgroup.ciphertrust.cckm_aws_key:
+            localNode: "{{ this_node_connection_string }}"
+            op_type: enable
+            key_id: "{{ aws_key_id }}"
+          register: _key_enable
+
+        - name: Verify the key actions reached AWS
+          ansible.builtin.assert:
+            that:
+              - _key_tag is not failed
+              - _key_disable is not failed
+              - _key_enable is not failed
+            fail_msg: >-
+              A key action failed.
+              add_tags={{ _key_tag.msg | default('ok') }}
+              disable={{ _key_disable.msg | default('ok') }}
+              enable={{ _key_enable.msg | default('ok') }}
+
+      always:
+        - name: "Schedule the key for deletion"
+          thalesgroup.ciphertrust.cckm_aws_key:
+            localNode: "{{ this_node_connection_string }}"
+            op_type: schedule_deletion
+            key_id: "{{ aws_key_id }}"
+            days: 7
+          when: aws_key_id is defined
+          ignore_errors: true
+
+  always:
+    - name: "Delete the policy template"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        localNode: "{{ this_node_connection_string }}"
+        key: "{{ _template_create.response.id }}"
+        resource_type: aws-policy-template
+      when:
+        - _template_create is defined
+        - _template_create.response.id is defined
+      ignore_errors: true
+
+    - name: "Delete the account container"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        localNode: "{{ this_node_connection_string }}"
+        key: "{{ kms_id }}"
+        resource_type: aws-kms
+      when: kms_id is defined
+      ignore_errors: true

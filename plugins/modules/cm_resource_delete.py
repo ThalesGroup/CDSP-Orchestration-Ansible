@@ -61,6 +61,11 @@ options:
           - azure-secret
           - azure-certificate
           - azure-key
+          - aws-kms
+          - aws-key
+          - aws-policy-template
+          - aws-custom-key-store
+          - aws-report
           - cluster
           - aws-connection
           - azure-connection
@@ -135,6 +140,11 @@ _arr_resource_type_choices = [
     "azure-secret",
     "azure-certificate",
     "azure-key",
+    "aws-kms",
+    "aws-key",
+    "aws-policy-template",
+    "aws-custom-key-store",
+    "aws-report",
     "cluster",
     "aws-connection",
     "azure-connection",
@@ -213,6 +223,18 @@ def main():
         endpoint = "cckm/azure/certificates"
     elif resource_type == "azure-key":
         endpoint = "cckm/azure/keys"
+    elif resource_type == "aws-kms":
+        endpoint = "cckm/aws/kms"
+    elif resource_type == "aws-key":
+        # Removes CCKM's record of the key. The key itself stays in AWS; to
+        # destroy that, schedule its deletion with cckm_aws_key.
+        endpoint = "cckm/aws/keys"
+    elif resource_type == "aws-policy-template":
+        endpoint = "cckm/aws/templates"
+    elif resource_type == "aws-custom-key-store":
+        endpoint = "cckm/aws/custom-key-stores"
+    elif resource_type == "aws-report":
+        endpoint = "cckm/aws/reports"
     elif resource_type == "cluster":
         endpoint = "cluster"
     elif resource_type.endswith("-connection"):

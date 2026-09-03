@@ -6,6 +6,7 @@
 targets:
   - error_handling
   - idempotency
+  - module_cckm_aws
   - module_cm_certificate_authority
   - module_cm_cluster
   - module_cm_regtoken

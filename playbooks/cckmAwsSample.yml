@@ -1,0 +1,125 @@
+#
+# (c) 2023-2026 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+---
+- name: "Sample playbook for managing AWS KMS keys through CCKM"
+  hosts: localhost
+  connection: local
+
+  vars_files:
+    - vars/cckmAws.yml
+
+  # Every module in this collection takes the same localNode, so set it once.
+  module_defaults:
+    group/thalesgroup.ciphertrust.all:
+      localNode: "{{ this_node_connection_string }}"
+
+  tasks:
+    # ----------------------------------------------------------------- setup
+    # CCKM reaches AWS through a connection in the connection manager, so that
+    # comes first. Everything after it is scoped to an account container.
+    - name: "Store the AWS credentials"
+      thalesgroup.ciphertrust.connection_aws_save:
+        op_type: create
+        name: "{{ aws_connection_name }}"
+        products:
+          - cckm
+        access_key_id: "{{ aws_access_key_id }}"
+        secret_access_key: "{{ aws_secret_access_key }}"
+
+    - name: "Check the credentials actually work before relying on them"
+      thalesgroup.ciphertrust.connection_test:
+        cloud: aws
+        connection_id: "{{ aws_connection_name }}"
+
+    - name: "Find the AWS account the connection reaches"
+      thalesgroup.ciphertrust.cckm_aws_account_info:
+        op_type: accounts
+        connection: "{{ aws_connection_name }}"
+      register: aws_accounts
+
+    - name: "Add the AWS account container"
+      thalesgroup.ciphertrust.cckm_aws_kms:
+        op_type: create
+        name: "{{ aws_kms_name }}"
+        account_id: "{{ aws_accounts.response.accounts[0] }}"
+        connection: "{{ aws_connection_name }}"
+        regions:
+          - "{{ aws_region }}"
+      register: aws_kms
+
+    # ------------------------------------------------------------- discovery
+    # CCKM only knows about keys it created or has been told about. Synchronise
+    # to pick up keys created in the AWS console.
+    - name: "Synchronize the keys already in the account"
+      thalesgroup.ciphertrust.cckm_aws_synchronization_job:
+        op_type: create
+        kms:
+          - "{{ aws_kms.response.id }}"
+      register: aws_sync
+
+    - name: "Wait for synchronization to finish"
+      thalesgroup.ciphertrust.cckm_aws_synchronization_job_info:
+        op_type: get
+        job_id: "{{ aws_sync.response.id }}"
+      register: aws_sync_status
+      until: aws_sync_status.response.overall_status != "in_progress"
+      retries: 30
+      delay: 10
+
+    # ------------------------------------------------------------------ keys
+    - name: "Create a reusable key policy"
+      thalesgroup.ciphertrust.cckm_aws_policy_template:
+        op_type: create
+        name: "{{ aws_policy_template_name }}"
+        kms: "{{ aws_kms.response.id }}"
+        key_admins: "{{ aws_key_admins }}"
+        key_users: "{{ aws_key_users }}"
+      register: aws_template
+
+    - name: "Create an AWS KMS key using that policy"
+      thalesgroup.ciphertrust.cckm_aws_key:
+        op_type: create
+        kms: "{{ aws_kms.response.id }}"
+        region: "{{ aws_region }}"
+        policytemplate: "{{ aws_template.response.id }}"
+        aws_param:
+          alias: "{{ aws_key_alias }}"
+          description: "Created by Ansible"
+          tags:
+            - tag_key: managed-by
+              tag_value: ansible
+      register: aws_key
+
+    - name: "Have AWS rotate the key every 180 days"
+      thalesgroup.ciphertrust.cckm_aws_key:
+        op_type: enable_auto_rotation
+        key_id: "{{ aws_key.response.id }}"
+        rotation_period_in_days: 180
+
+    - name: "Read the key back"
+      thalesgroup.ciphertrust.cckm_aws_key_info:
+        op_type: get
+        key_id: "{{ aws_key.response.id }}"
+      register: aws_key_detail
+
+    - name: "Show the key as AWS reports it"
+      ansible.builtin.debug:
+        var: aws_key_detail.response.aws_param
+
+    # ---------------------------------------------------------------- review
+    - name: "List every enabled key in the region"
+      thalesgroup.ciphertrust.cckm_aws_key_info:
+        op_type: list
+        kms:
+          - "{{ aws_kms_name }}"
+        region:
+          - "{{ aws_region }}"
+        enabled: true
+      register: aws_enabled_keys
+
+    - name: "Show how many keys CCKM manages here"
+      ansible.builtin.debug:
+        msg: >-
+          {{ aws_enabled_keys.response.total | default(0) }} enabled key(s)
+          in {{ aws_region }}
