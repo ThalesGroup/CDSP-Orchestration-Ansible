@@ -70,3 +70,11 @@ cckm_aws_run_key_lifecycle: false
 cckm_azure_run_live: false
 cckm_azure_connection_name: "azure-connection"
 cckm_azure_subscription_id: "00000000-0000-0000-0000-000000000000"
+
+# cckm_gcp_run_live needs a CipherTrust Manager with the CCKM licence and a
+# Google Cloud connection that already works -- create one with
+# connection_gcp_save. Off by default.
+cckm_gcp_run_live: false
+cckm_gcp_connection_name: "gcp-connection"
+cckm_gcp_project_id: "my-gcp-project"
+

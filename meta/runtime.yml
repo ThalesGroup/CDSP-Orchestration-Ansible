@@ -45,6 +45,18 @@ action_groups:
     - cckm_azure_synchronization_job_info
     - cckm_azure_vault
     - cckm_azure_vault_info
+    - cckm_gcp_key
+    - cckm_gcp_key_info
+    - cckm_gcp_key_ring
+    - cckm_gcp_key_ring_info
+    - cckm_gcp_project
+    - cckm_gcp_project_info
+    - cckm_gcp_report
+    - cckm_gcp_report_info
+    - cckm_gcp_synchronization_job
+    - cckm_gcp_synchronization_job_info
+    - cckm_gcp_update_all_versions_job
+    - cckm_gcp_update_all_versions_job_info
     - cm_certificate_authority
     - cm_cluster
     - cm_regtoken

@@ -1,6 +1,6 @@
 # Modules Documentation
 
-This collection ships 76 modules for CipherTrust Manager. The catalogue below
+This collection ships 88 modules for CipherTrust Manager. The catalogue below
 groups them by area.
 
 ## Where the reference documentation lives
@@ -78,6 +78,24 @@ added to CCKM rather than created, so the usual first step is discovery with
 
 Azure deletion is two-stage: `soft_delete` moves an object to the vault's
 recycle bin, `recover` restores it, and `hard_delete` purges it.
+
+### CCKM Google Cloud Modules
+
+CCKM manages Cloud KMS keys from CipherTrust Manager. A key ring is added to
+CCKM rather than created, so the usual first step is discovery with
+`cckm_gcp_project_info` and `cckm_gcp_key_ring_info`.
+
+- `cckm_gcp_project` / `cckm_gcp_project_info` - projects, and discovery of projects, locations and IAM roles
+- `cckm_gcp_key_ring` / `cckm_gcp_key_ring_info` - Cloud KMS key rings
+- `cckm_gcp_key` / `cckm_gcp_key_info` - keys, their versions and their IAM policy
+- `cckm_gcp_report` / `cckm_gcp_report_info` - reports
+- `cckm_gcp_synchronization_job` / `cckm_gcp_synchronization_job_info` - synchronising keys into CCKM
+- `cckm_gcp_update_all_versions_job` / `cckm_gcp_update_all_versions_job_info` - acting on every version of a key
+
+Google Cloud puts key material in *versions*, so enabling, disabling and
+destroying act on a version rather than on the key. Cloud KMS never deletes a
+key or a key ring, only destroys versions, so these modules remove CCKM's
+record rather than the cloud resource.
 
 ### Cloud Connection Modules
 

@@ -8,6 +8,7 @@ targets:
   - idempotency
   - module_cckm_aws
   - module_cckm_azure
+  - module_cckm_gcp
   - module_cm_certificate_authority
   - module_cm_cluster
   - module_cm_regtoken

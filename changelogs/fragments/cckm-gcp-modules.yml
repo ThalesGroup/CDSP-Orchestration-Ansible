@@ -1,0 +1,43 @@
+major_changes:
+  - >-
+    Added twelve modules for CCKM's Google Cloud service, covering the whole
+    of the API CipherTrust Manager publishes for it. ``cckm_gcp_project``,
+    ``cckm_gcp_key_ring``, ``cckm_gcp_key``, ``cckm_gcp_report``,
+    ``cckm_gcp_synchronization_job`` and
+    ``cckm_gcp_update_all_versions_job`` act, and each has an ``_info``
+    counterpart that reads. With these the collection manages CCKM for all
+    three clouds through the same shapes.
+
+minor_changes:
+  - >-
+    ``cckm_gcp_key`` follows Google Cloud's model rather than flattening it.
+    Key material lives in versions, so enabling, disabling, scheduling
+    destruction, cancelling it, refreshing and re-importing all act on a
+    version; ``cckm_gcp_update_all_versions_job`` applies one of those to every
+    version at once. Cloud KMS never deletes a key or a key ring, so the
+    modules remove CCKM's record instead and say so.
+  - >-
+    ``cckm_gcp_key_info`` reads a key's IAM policy and its versions, and
+    ``cckm_gcp_project_info`` discovers the projects, Cloud KMS locations and
+    grantable IAM roles a connection can reach -- the three reads a playbook
+    needs before it can add anything.
+  - >-
+    Added ``tests/unit/module_utils/test_cckm_gcp_endpoints.py``, which pins
+    every path the Google Cloud helpers can build against the set CCKM
+    publishes, checks that no public helper and no whitelisted action escapes
+    coverage, and asserts that an identifier containing ``/`` stays inside its
+    own path segment.
+  - >-
+    Added the ``module_cckm_gcp`` integration target, in the same two halves as
+    the AWS and Azure ones -- a read-only half that needs only a licensed
+    CipherTrust Manager, and a discovery half guarded by ``cckm_gcp_run_live``.
+
+bugfixes:
+  - >-
+    Two details of the Google Cloud API would each have produced modules that
+    cannot create a key. CCKM serves the service under ``cckm/google``, not
+    ``cckm/gcp``, so a service root that followed the module names would 404 on
+    every call; a unit test pins it. And the API definition writes one
+    algorithm as ``EC_SIGN_SECP256K1_SHA256 (Only for protection level = HSM)``,
+    so the accepted values are spelled out rather than copied -- the same trap
+    Azure's ``kty`` enum sets.

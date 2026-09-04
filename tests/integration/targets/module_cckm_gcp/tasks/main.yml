@@ -1,0 +1,281 @@
+---
+# (c) 2023-2026 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ###################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+# ###################################################################
+#
+# Two halves, as the AWS and Azure targets have:
+#
+#   * Unconditional -- the read-only modules, argument validation and check
+#     mode. These need a licensed CipherTrust Manager but no Google Cloud
+#     project, and they are what catches a module that cannot reach its own
+#     endpoint. That matters more here than for the other clouds: CCKM serves
+#     Google Cloud under cckm/google, not cckm/gcp, so a wrong root would 404
+#     on every call.
+#   * Guarded by cckm_gcp_run_live -- discovery against a real Google Cloud
+#     project. Off by default.
+
+- name: Give this run a unique suffix
+  ansible.builtin.set_fact:
+    run_suffix: "{{ 99999999 | random }}"
+
+- name: Verify integration_config was supplied
+  ansible.builtin.assert:
+    that:
+      - this_node_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
+
+# The licence gate is per endpoint, not per service: an unlicensed manager
+# still answers the projects and key-rings collections but refuses the keys
+# collection with 403. Probe the gated one, or the probe passes and the target
+# fails later.
+- name: "Probe whether CCKM is licensed on this manager"
+  thalesgroup.ciphertrust.cckm_gcp_key_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _cckm_probe
+  ignore_errors: true
+
+- name: Decide whether this target can run here
+  ansible.builtin.set_fact:
+    _can_run: >-
+      {{ _cckm_probe is not failed
+         or 'License' not in (_cckm_probe.msg | default('')) }}
+
+- name: Explain why this target is being skipped
+  ansible.builtin.debug:
+    msg: >-
+      Skipping module_cckm_gcp: CipherTrust Manager reports the CCKM licence
+      is not installed, so every CCKM endpoint answers 403. Install the CCKM
+      licence to run this target.
+  when: not _can_run
+
+- name: End the play when CCKM is not licensed
+  ansible.builtin.meta: end_play
+  when: not _can_run
+
+# ---------------------------------------------------------------------------
+# Reads. A manager with no CCKM Google Cloud resources must answer with an
+# empty collection, not an error.
+# ---------------------------------------------------------------------------
+
+- name: "List projects"
+  thalesgroup.ciphertrust.cckm_gcp_project_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_project
+
+- name: Verify listing projects answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_project is not failed
+      - _list_project is not changed
+      - _list_project.response is defined
+    fail_msg: >-
+      Listing projects failed -- {{ _list_project.msg | default('') }}
+
+- name: "List key rings"
+  thalesgroup.ciphertrust.cckm_gcp_key_ring_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_key_ring
+
+- name: Verify listing key rings answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_key_ring is not failed
+      - _list_key_ring is not changed
+      - _list_key_ring.response is defined
+    fail_msg: >-
+      Listing key rings failed -- {{ _list_key_ring.msg | default('') }}
+
+- name: "List keys"
+  thalesgroup.ciphertrust.cckm_gcp_key_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_key
+
+- name: Verify listing keys answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_key is not failed
+      - _list_key is not changed
+      - _list_key.response is defined
+    fail_msg: >-
+      Listing keys failed -- {{ _list_key.msg | default('') }}
+
+- name: "List reports"
+  thalesgroup.ciphertrust.cckm_gcp_report_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_report
+
+- name: Verify listing reports answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_report is not failed
+      - _list_report is not changed
+      - _list_report.response is defined
+    fail_msg: >-
+      Listing reports failed -- {{ _list_report.msg | default('') }}
+
+- name: "List synchronisation jobs"
+  thalesgroup.ciphertrust.cckm_gcp_synchronization_job_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_sync
+
+- name: Verify listing synchronisation jobs answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_sync is not failed
+      - _list_sync is not changed
+      - _list_sync.response is defined
+    fail_msg: >-
+      Listing synchronisation jobs failed -- {{ _list_sync.msg | default('') }}
+
+# ---------------------------------------------------------------------------
+# Argument validation. These need no Google Cloud project.
+# ---------------------------------------------------------------------------
+
+- name: Negative test - a key create with no parameters must be rejected
+  thalesgroup.ciphertrust.cckm_gcp_key: {}
+  register: _negative_key
+  ignore_errors: true
+
+- name: Assert the key module names its missing arguments
+  ansible.builtin.assert:
+    that:
+      - _negative_key is failed
+      - >-
+        "missing required arguments" in (_negative_key.msg | default(""))
+    fail_msg: >-
+      Expected cckm_gcp_key to reject an empty task, got --
+      {{ _negative_key.msg | default("no message") }}
+
+- name: Negative test - an unknown Cloud KMS algorithm must be rejected
+  thalesgroup.ciphertrust.cckm_gcp_key:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    key_ring: "ansible-absent-{{ run_suffix }}"
+    gcp_key_params:
+      key_name: "ansible-{{ run_suffix }}"
+      algorithm: AES_256_GCM
+      purpose: ENCRYPT_DECRYPT
+      protection_level: SOFTWARE
+  register: _negative_algo
+  ignore_errors: true
+
+- name: Assert the algorithm is rejected by the argument spec
+  ansible.builtin.assert:
+    that:
+      - _negative_algo is failed
+      - >-
+        "must be one of" in (_negative_algo.msg | default(""))
+    fail_msg: >-
+      Expected an unsupported algorithm to be rejected, got --
+      {{ _negative_algo.msg | default("no message") }}
+
+- name: Negative test - an unknown bulk version operation must be rejected
+  thalesgroup.ciphertrust.cckm_gcp_update_all_versions_job:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: start
+    key_id: "ansible-absent-{{ run_suffix }}"
+    operation: purge
+  register: _negative_bulk
+  ignore_errors: true
+
+- name: Assert the bulk operation is rejected by the argument spec
+  ansible.builtin.assert:
+    that:
+      - _negative_bulk is failed
+      - >-
+        "must be one of" in (_negative_bulk.msg | default(""))
+    fail_msg: >-
+      Expected an unsupported operation to be rejected, got --
+      {{ _negative_bulk.msg | default("no message") }}
+
+- name: "Create a key in check mode against a key ring that does not exist"
+  thalesgroup.ciphertrust.cckm_gcp_key:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    key_ring: "ansible-absent-{{ run_suffix }}"
+    gcp_key_params:
+      key_name: "ansible-check-{{ run_suffix }}"
+      algorithm: GOOGLE_SYMMETRIC_ENCRYPTION
+      purpose: ENCRYPT_DECRYPT
+      protection_level: SOFTWARE
+  check_mode: true
+  register: _check_key
+
+- name: Verify check mode predicted a change
+  ansible.builtin.assert:
+    that:
+      - _check_key is not failed
+      - _check_key is changed
+    fail_msg: >-
+      Check mode should report the create it would perform. Result --
+      changed={{ _check_key.changed | default('?') }},
+      msg={{ _check_key.msg | default('') }}
+
+- name: "Look for the key check mode claimed it would create"
+  thalesgroup.ciphertrust.cckm_gcp_key_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+    name: "ansible-check-{{ run_suffix }}"
+  register: _check_absent
+
+- name: Verify check mode wrote nothing
+  ansible.builtin.assert:
+    that:
+      - _check_absent is not failed
+      - (_check_absent.response.resources | default([])) | length == 0
+    fail_msg: "check mode created the key it only predicted"
+
+# ---------------------------------------------------------------------------
+# Live half. Needs a Google Cloud project reachable through a connection.
+# ---------------------------------------------------------------------------
+
+- name: "Exercise the live Google Cloud path"
+  when: cckm_gcp_run_live | default(false) | bool
+  block:
+    - name: "Discover the projects the connection can reach"
+      thalesgroup.ciphertrust.cckm_gcp_project_info:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: available
+        connection: "{{ cckm_gcp_connection_name }}"
+      register: _projects
+
+    - name: Verify projects were discovered
+      ansible.builtin.assert:
+        that:
+          - _projects is not failed
+          - _projects is not changed
+
+    - name: "List the Cloud KMS locations in the project"
+      thalesgroup.ciphertrust.cckm_gcp_project_info:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: locations
+        project_id: "{{ cckm_gcp_project_id }}"
+        connection: "{{ cckm_gcp_connection_name }}"
+      register: _locations
+
+    - name: Verify locations were discovered
+      ansible.builtin.assert:
+        that:
+          - _locations is not failed
+          - _locations is not changed
