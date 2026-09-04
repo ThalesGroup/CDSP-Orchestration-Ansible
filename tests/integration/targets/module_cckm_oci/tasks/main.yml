@@ -1,0 +1,299 @@
+---
+# (c) 2023-2026 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ###################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+# ###################################################################
+#
+# Two halves, as the AWS, Azure and Google Cloud targets have. The read-only
+# half needs a licensed CipherTrust Manager but no OCI tenancy, and is what
+# catches a module that cannot reach its own endpoint -- including the one
+# OCI path CCKM serves with a trailing slash.
+
+- name: Give this run a unique suffix
+  ansible.builtin.set_fact:
+    run_suffix: "{{ 99999999 | random }}"
+
+- name: Verify integration_config was supplied
+  ansible.builtin.assert:
+    that:
+      - this_node_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
+
+# The CCKM licence gate is per endpoint, and which endpoints it covers differs
+# per cloud: for OCI it is the tenancy collection that is refused on an
+# unlicensed manager, while listing keys is not -- the opposite of the Google
+# Cloud service. Probe the gated one, or the probe passes and the target fails
+# later.
+- name: "Probe whether CCKM is licensed on this manager"
+  thalesgroup.ciphertrust.cckm_oci_tenancy_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _cckm_probe
+  ignore_errors: true
+
+- name: Decide whether this target can run here
+  ansible.builtin.set_fact:
+    _can_run: >-
+      {{ _cckm_probe is not failed
+         or 'License' not in (_cckm_probe.msg | default('')) }}
+
+- name: Explain why this target is being skipped
+  ansible.builtin.debug:
+    msg: >-
+      Skipping module_cckm_oci: CipherTrust Manager reports the CCKM licence
+      is not installed, so every CCKM endpoint answers 403. Install the CCKM
+      licence to run this target.
+  when: not _can_run
+
+- name: End the play when CCKM is not licensed
+  ansible.builtin.meta: end_play
+  when: not _can_run
+
+# ---------------------------------------------------------------------------
+# Reads.
+# ---------------------------------------------------------------------------
+
+- name: "List tenancies"
+  thalesgroup.ciphertrust.cckm_oci_tenancy_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_tenancy
+
+- name: Verify listing tenancies answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_tenancy is not failed
+      - _list_tenancy is not changed
+      - _list_tenancy.response is defined
+    fail_msg: >-
+      Listing tenancies failed -- {{ _list_tenancy.msg | default('') }}
+
+- name: "List compartments"
+  thalesgroup.ciphertrust.cckm_oci_compartment_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_compartment
+
+- name: Verify listing compartments answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_compartment is not failed
+      - _list_compartment is not changed
+      - _list_compartment.response is defined
+    fail_msg: >-
+      Listing compartments failed -- {{ _list_compartment.msg | default('') }}
+
+- name: "List vaults"
+  thalesgroup.ciphertrust.cckm_oci_vault_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_vault
+
+- name: Verify listing vaults answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_vault is not failed
+      - _list_vault is not changed
+      - _list_vault.response is defined
+    fail_msg: >-
+      Listing vaults failed -- {{ _list_vault.msg | default('') }}
+
+- name: "List issuers"
+  thalesgroup.ciphertrust.cckm_oci_issuer_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_issuer
+
+- name: Verify listing issuers answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_issuer is not failed
+      - _list_issuer is not changed
+      - _list_issuer.response is defined
+    fail_msg: >-
+      Listing issuers failed -- {{ _list_issuer.msg | default('') }}
+
+- name: "List keys"
+  thalesgroup.ciphertrust.cckm_oci_key_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_key
+
+- name: Verify listing keys answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_key is not failed
+      - _list_key is not changed
+      - _list_key.response is defined
+    fail_msg: >-
+      Listing keys failed -- {{ _list_key.msg | default('') }}
+
+- name: "List reports"
+  thalesgroup.ciphertrust.cckm_oci_report_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_report
+
+- name: Verify listing reports answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_report is not failed
+      - _list_report is not changed
+      - _list_report.response is defined
+    fail_msg: >-
+      Listing reports failed -- {{ _list_report.msg | default('') }}
+
+- name: "List synchronisation jobs"
+  thalesgroup.ciphertrust.cckm_oci_synchronization_job_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_sync
+
+- name: Verify listing synchronisation jobs answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_sync is not failed
+      - _list_sync is not changed
+      - _list_sync.response is defined
+    fail_msg: >-
+      Listing synchronisation jobs failed -- {{ _list_sync.msg | default('') }}
+
+# ---------------------------------------------------------------------------
+# Argument validation. These need no OCI tenancy.
+# ---------------------------------------------------------------------------
+
+- name: Negative test - a key create with no parameters must be rejected
+  thalesgroup.ciphertrust.cckm_oci_key: {}
+  register: _negative_key
+  ignore_errors: true
+
+- name: Assert the key module names its missing arguments
+  ansible.builtin.assert:
+    that:
+      - _negative_key is failed
+      - >-
+        "missing required arguments" in (_negative_key.msg | default(""))
+    fail_msg: >-
+      Expected cckm_oci_key to reject an empty task, got --
+      {{ _negative_key.msg | default("no message") }}
+
+- name: Negative test - an unknown OCI key algorithm must be rejected
+  thalesgroup.ciphertrust.cckm_oci_key:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    vault: "ansible-absent-{{ run_suffix }}"
+    name: "ansible-{{ run_suffix }}"
+    algorithm: BLOWFISH
+    length: 32
+    protection_mode: HSM
+    compartment_id: "ocid1.compartment.oc1..absent"
+  register: _negative_algo
+  ignore_errors: true
+
+- name: Assert the algorithm is rejected by the argument spec
+  ansible.builtin.assert:
+    that:
+      - _negative_algo is failed
+      - >-
+        "must be one of" in (_negative_algo.msg | default(""))
+    fail_msg: >-
+      Expected an unsupported algorithm to be rejected, got --
+      {{ _negative_algo.msg | default("no message") }}
+
+- name: Negative test - scheduling a deletion without days must be rejected
+  thalesgroup.ciphertrust.cckm_oci_key:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: schedule_deletion
+    key_id: "ansible-absent-{{ run_suffix }}"
+  register: _negative_days
+  ignore_errors: true
+
+- name: Assert the deferred deletion requires a day count
+  ansible.builtin.assert:
+    that:
+      - _negative_days is failed
+      - >-
+        "missing required arguments" in (_negative_days.msg | default(""))
+    fail_msg: >-
+      OCI deletion is scheduled, so days is required. Got --
+      {{ _negative_days.msg | default("no message") }}
+
+- name: "Create a key in check mode against a vault that does not exist"
+  thalesgroup.ciphertrust.cckm_oci_key:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    vault: "ansible-absent-{{ run_suffix }}"
+    name: "ansible-check-{{ run_suffix }}"
+    algorithm: AES
+    length: 32
+    protection_mode: HSM
+    compartment_id: "ocid1.compartment.oc1..absent"
+  check_mode: true
+  register: _check_key
+
+- name: Verify check mode predicted a change
+  ansible.builtin.assert:
+    that:
+      - _check_key is not failed
+      - _check_key is changed
+
+- name: "Look for the key check mode claimed it would create"
+  thalesgroup.ciphertrust.cckm_oci_key_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+    key_name: "ansible-check-{{ run_suffix }}"
+  register: _check_absent
+
+- name: Verify check mode wrote nothing
+  ansible.builtin.assert:
+    that:
+      - _check_absent is not failed
+      - (_check_absent.response.resources | default([])) | length == 0
+    fail_msg: "check mode created the key it only predicted"
+
+# ---------------------------------------------------------------------------
+# Live half. Needs an OCI tenancy reachable through a connection.
+# ---------------------------------------------------------------------------
+
+- name: "Exercise the live OCI path"
+  when: cckm_oci_run_live | default(false) | bool
+  block:
+    - name: "Read the regions the tenancy subscribes to"
+      thalesgroup.ciphertrust.cckm_oci_tenancy_info:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: regions
+        connection: "{{ cckm_oci_connection_name }}"
+      register: _regions
+
+    - name: Verify regions were read
+      ansible.builtin.assert:
+        that:
+          - _regions is not failed
+          - _regions is not changed
+
+    - name: "Discover the compartments the connection can reach"
+      thalesgroup.ciphertrust.cckm_oci_compartment_info:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: available
+        connection: "{{ cckm_oci_connection_name }}"
+      register: _compartments
+
+    - name: Verify compartments were discovered
+      ansible.builtin.assert:
+        that:
+          - _compartments is not failed
+          - _compartments is not changed

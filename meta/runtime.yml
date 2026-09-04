@@ -57,6 +57,20 @@ action_groups:
     - cckm_gcp_synchronization_job_info
     - cckm_gcp_update_all_versions_job
     - cckm_gcp_update_all_versions_job_info
+    - cckm_oci_compartment
+    - cckm_oci_compartment_info
+    - cckm_oci_issuer
+    - cckm_oci_issuer_info
+    - cckm_oci_key
+    - cckm_oci_key_info
+    - cckm_oci_report
+    - cckm_oci_report_info
+    - cckm_oci_synchronization_job
+    - cckm_oci_synchronization_job_info
+    - cckm_oci_tenancy
+    - cckm_oci_tenancy_info
+    - cckm_oci_vault
+    - cckm_oci_vault_info
     - cm_certificate_authority
     - cm_cluster
     - cm_regtoken

@@ -1,6 +1,6 @@
 # Modules Documentation
 
-This collection ships 88 modules for CipherTrust Manager. The catalogue below
+This collection ships 102 modules for CipherTrust Manager. The catalogue below
 groups them by area.
 
 ## Where the reference documentation lives
@@ -96,6 +96,25 @@ Google Cloud puts key material in *versions*, so enabling, disabling and
 destroying act on a version rather than on the key. Cloud KMS never deletes a
 key or a key ring, only destroys versions, so these modules remove CCKM's
 record rather than the cloud resource.
+
+### CCKM OCI Modules
+
+CCKM manages Oracle Cloud Infrastructure Vault keys from CipherTrust Manager.
+OCI's containment model is tenancy, then compartment, then vault, so discovery
+runs in that order.
+
+- `cckm_oci_tenancy` / `cckm_oci_tenancy_info` - tenancies, and the regions one subscribes to
+- `cckm_oci_compartment` / `cckm_oci_compartment_info` - compartments, defined tags and Object Storage buckets
+- `cckm_oci_vault` / `cckm_oci_vault_info` - vaults, including external vaults backed by CipherTrust Manager
+- `cckm_oci_issuer` / `cckm_oci_issuer_info` - the OIDC issuers external vaults authenticate with
+- `cckm_oci_key` / `cckm_oci_key_info` - keys and their versions
+- `cckm_oci_report` / `cckm_oci_report_info` - reports
+- `cckm_oci_synchronization_job` / `cckm_oci_synchronization_job_info` - synchronising keys into CCKM
+
+OCI deletion is deferred: a key or version is *scheduled* for deletion some
+days ahead and can be cancelled until then. `block` and `unblock` stop and
+resume CCKM serving a key or vault without deleting anything, which is the
+lever for an external vault.
 
 ### Cloud Connection Modules
 

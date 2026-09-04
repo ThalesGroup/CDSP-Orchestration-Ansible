@@ -1,0 +1,41 @@
+major_changes:
+  - >-
+    Added fourteen modules for CCKM's Oracle Cloud Infrastructure service,
+    covering the whole of the API CipherTrust Manager publishes for it.
+    ``cckm_oci_tenancy``, ``cckm_oci_compartment``, ``cckm_oci_vault``,
+    ``cckm_oci_issuer``, ``cckm_oci_key``, ``cckm_oci_report`` and
+    ``cckm_oci_synchronization_job`` act, and each has an ``_info``
+    counterpart that reads. With these the collection covers CCKM for all four
+    clouds -- AWS, Azure, Google Cloud and OCI -- through the same shapes.
+
+minor_changes:
+  - >-
+    ``cckm_oci_key`` follows OCI's deferred deletion rather than pretending it
+    is immediate. ``schedule_deletion`` sets a date some number of days ahead
+    and ``cancel_deletion`` calls it off until then, for a key or for a single
+    version. ``block`` and ``unblock`` stop and resume CCKM serving a key or a
+    vault without deleting anything, which is the lever an external vault
+    needs.
+  - >-
+    ``cckm_oci_vault`` handles both kinds of OCI vault. One is *added* from
+    OCI; the other is an *external* vault whose key material stays in
+    CipherTrust Manager and which OCI reaches over an endpoint, authenticated
+    by an issuer from ``cckm_oci_issuer``. The modules document which fields
+    belong to which.
+  - >-
+    ``cckm_oci_compartment_info`` reads the three things a playbook needs
+    before it can add a vault -- the compartments a connection can reach, the
+    defined tags the tenancy offers, and the Object Storage buckets a
+    compartment holds, which is where an added vault's backups are written.
+  - >-
+    Added ``tests/unit/module_utils/test_cckm_oci_endpoints.py`` and the
+    ``module_cckm_oci`` integration target, following the AWS, Azure and
+    Google Cloud ones.
+
+bugfixes:
+  - >-
+    CCKM serves one OCI path with a trailing slash --
+    ``keys/{id}/versions/{version}/`` -- while every sibling path has none.
+    ``key_version_get`` keeps it deliberately, and a unit test pins both the
+    presence of that path and the absence of the slashless spelling, because
+    trimming it produces a 404 that nothing else would catch.

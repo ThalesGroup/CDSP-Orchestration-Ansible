@@ -78,3 +78,8 @@ cckm_gcp_run_live: false
 cckm_gcp_connection_name: "gcp-connection"
 cckm_gcp_project_id: "my-gcp-project"
 
+# cckm_oci_run_live needs a CipherTrust Manager with the CCKM licence and an
+# OCI connection that already works -- create one with connection_oci_save.
+cckm_oci_run_live: false
+cckm_oci_connection_name: "oci-connection"
+
