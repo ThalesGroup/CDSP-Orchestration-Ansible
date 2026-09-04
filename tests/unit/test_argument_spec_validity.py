@@ -49,6 +49,12 @@ def _set_args(args):
     """Feed parameters in the way AnsibleModule reads them."""
     payload = {"ANSIBLE_MODULE_ARGS": dict(args, localNode=NODE)}
     basic._ANSIBLE_ARGS = to_bytes(json.dumps(payload))
+    # ansible-core 2.19 reads args and a serialization profile together, and
+    # raises "No serialization profile was specified" if only the args are
+    # set. "legacy" is what ansible-core itself defaults to when a module is
+    # invoked directly.
+    if hasattr(basic, "_ANSIBLE_PROFILE"):
+        basic._ANSIBLE_PROFILE = "legacy"
 
 
 class _Exit(Exception):
@@ -274,8 +280,7 @@ def _walk_spec(spec, prefix=""):
             continue
         yield prefix + name, name, entry
         if isinstance(entry.get("options"), dict):
-            for item in _walk_spec(entry["options"], prefix + name + "."):
-                yield item
+            yield from _walk_spec(entry["options"], prefix + name + ".")
 
 
 @pytest.mark.parametrize("path", MODULE_FILES, ids=IDS)

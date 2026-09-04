@@ -444,6 +444,18 @@
         that:
           - _result_delete_key is not failed
 
+  always:
+    # The NAE interface is keyed by its port, so one left behind by a failed
+    # run makes every later create on that port fail with 409 -- including
+    # module_interface_save, which runs after this target. Remove it whatever
+    # happened above.
+    - name: "Remove the NAE interface this target created"
+      thalesgroup.ciphertrust.cm_resource_delete:
+        key: "nae_all_{{ dpg_nae_interface_number }}"
+        resource_type: "interfaces"
+        localNode: "{{ this_node_connection_string }}"
+      failed_when: false
+
 # Negative test - required params validation
 - name: Negative test - missing required parameters should fail
   thalesgroup.ciphertrust.dpg_client_profile_save: {}

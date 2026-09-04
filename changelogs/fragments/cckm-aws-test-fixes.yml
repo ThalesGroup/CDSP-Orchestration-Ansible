@@ -1,0 +1,25 @@
+bugfixes:
+  - >-
+    ``tests/unit/test_argument_spec_validity.py`` could never pass. It builds
+    a real ``AnsibleModule`` to catch specs the unit harness cannot -- a
+    ``required_if`` naming a parameter that does not exist, ``choices`` on a
+    ``dict`` -- but set only ``_ANSIBLE_ARGS``, and ansible-core 2.19 reads the
+    arguments and a serialization profile together, raising "No serialization
+    profile was specified". All 300 of its checks errored out. With the
+    profile set they pass, so every module's argument spec is now known to
+    survive real validation rather than only the harness.
+  - >-
+    ``module_dpg_client_profile_save`` deleted the NAE interface it creates
+    only on the success path. A failure before that point left the interface
+    behind, and because an interface is keyed by its port, every later create
+    on that port failed with 409 -- including ``module_interface_save``, which
+    runs after it. The deletion moved to an ``always`` block. This is how one
+    failure in the suite turned into two.
+
+minor_changes:
+  - >-
+    ``module_cckm_aws``, ``module_cte_client`` and ``module_cte_client_group``
+    probe for their feature licence and skip with an explanation instead of
+    failing. CipherTrust Manager reports an unlicensed feature as 403
+    ``NCERRInsufficientPermissions``, so without the probe an unlicensed
+    manager makes three targets look like broken modules.

@@ -242,7 +242,7 @@ def test_every_public_helper_is_covered():
         # payload helpers, not request helpers
         and name not in ("prune", "remap_keys", "aws_key_params")
     }
-    covered = {name for name, _ in CALLS}
+    covered = {name for name, _endpoint in CALLS}
     assert not public - covered, (
         "request helpers with no endpoint check: %s" % sorted(public - covered))
 

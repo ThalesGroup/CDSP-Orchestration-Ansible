@@ -39,6 +39,35 @@
       - this_node_connection_string is defined
     fail_msg: "cm_connection_string must be set in integration_config.yml"
 
+# CCKM is separately licensed. Without the licence CipherTrust Manager answers
+# every one of these endpoints with 403, which would report as a broken module
+# rather than an unlicensed manager. Probe once and skip with an explanation,
+# the way the other licence-dependent targets do.
+- name: "Probe whether CCKM is licensed on this manager"
+  thalesgroup.ciphertrust.cckm_aws_custom_key_store_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _cckm_probe
+  ignore_errors: true
+
+- name: Decide whether this target can run here
+  ansible.builtin.set_fact:
+    _can_run: >-
+      {{ _cckm_probe is not failed
+         or 'License' not in (_cckm_probe.msg | default('')) }}
+
+- name: Explain why this target is being skipped
+  ansible.builtin.debug:
+    msg: >-
+      Skipping module_cckm_aws: CipherTrust Manager reports the CCKM licence
+      is not installed, so every CCKM endpoint answers 403. Install the CCKM
+      licence to run this target.
+  when: not _can_run
+
+- name: End the play when CCKM is not licensed
+  ansible.builtin.meta: end_play
+  when: not _can_run
+
 # ---------------------------------------------------------------------------
 # Reads. A manager with no CCKM AWS resources must answer with an empty
 # collection, not an error -- a module whose endpoint is wrong fails here.

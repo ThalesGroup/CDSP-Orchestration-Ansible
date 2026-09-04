@@ -28,6 +28,54 @@
           - client_group_name is defined
           - new_client_group_name is defined
 
+# Transparent Encryption is separately licensed. Without the licence
+# CipherTrust Manager answers the CTE client endpoints with 403, which would
+# report as a broken module rather than an unlicensed manager. Probe once and
+# skip with an explanation, as the other licence-dependent targets do.
+- name: Give this probe a unique name
+  ansible.builtin.set_fact:
+    _cte_probe_name: "cte-licence-probe-{{ 99999999 | random }}"
+
+# CipherTrust Manager gates Transparent Encryption on the licence for writes
+# only -- a GET on the clients collection succeeds without it -- so the probe
+# has to attempt a write. Creating a client needs nothing but a name, and
+# nothing is created when the licence is missing, so this leaves no residue.
+- name: "Probe whether Transparent Encryption is licensed on this manager"
+  thalesgroup.ciphertrust.cte_client:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    name: "{{ _cte_probe_name }}"
+  register: _cte_probe
+  ignore_errors: true
+
+- name: Decide whether this target can run here
+  ansible.builtin.set_fact:
+    _can_run: >-
+      {{ 'License' not in (_cte_probe.msg | default('')) }}
+
+- name: "Remove the probe client when the manager is licensed"
+  thalesgroup.ciphertrust.cte_client:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: delete_id
+    id: "{{ _cte_probe.response.id }}"
+  when:
+    - _can_run
+    - _cte_probe is not failed
+    - _cte_probe.response.id is defined
+  failed_when: false
+
+- name: Explain why this target is being skipped
+  ansible.builtin.debug:
+    msg: >-
+      Skipping: CipherTrust Manager reports the TransparentEncryption licence
+      is not installed, so writes to the CTE endpoints answer 403. Install the
+      CTE licence to run this target.
+  when: not _can_run
+
+- name: End the play when Transparent Encryption is not licensed
+  ansible.builtin.meta: end_play
+  when: not _can_run
+
 # # Validate the create group module
 - name: Get User ID from Name
   block:
