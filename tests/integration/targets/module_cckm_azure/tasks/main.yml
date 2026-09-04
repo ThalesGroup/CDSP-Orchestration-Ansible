@@ -1,0 +1,333 @@
+---
+# (c) 2023-2026 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ###################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+# ###################################################################
+#
+# CCKM's Azure service reaches Azure for anything that touches a vault, and
+# creating a key there creates a billable resource. So this target is in two
+# halves, as the AWS one is:
+#
+#   * Unconditional -- the read-only modules, argument validation and check
+#     mode. These need a CipherTrust Manager with the CCKM licence but no
+#     Azure subscription, and they are what catches a module that cannot
+#     reach its own endpoint.
+#   * Guarded by cckm_azure_run_live -- add a vault and create material in it
+#     against a real Azure subscription. Off by default.
+
+- name: Give this run a unique suffix
+  ansible.builtin.set_fact:
+    run_suffix: "{{ 99999999 | random }}"
+
+- name: Verify integration_config was supplied
+  ansible.builtin.assert:
+    that:
+      - this_node_connection_string is defined
+    fail_msg: "cm_connection_string must be set in integration_config.yml"
+
+# CCKM is separately licensed. Without the licence CipherTrust Manager answers
+# every one of these endpoints with 403, which would report as a broken module
+# rather than an unlicensed manager.
+- name: "Probe whether CCKM is licensed on this manager"
+  thalesgroup.ciphertrust.cckm_azure_vault_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _cckm_probe
+  ignore_errors: true
+
+- name: Decide whether this target can run here
+  ansible.builtin.set_fact:
+    _can_run: >-
+      {{ _cckm_probe is not failed
+         or 'License' not in (_cckm_probe.msg | default('')) }}
+
+- name: Explain why this target is being skipped
+  ansible.builtin.debug:
+    msg: >-
+      Skipping module_cckm_azure: CipherTrust Manager reports the CCKM licence
+      is not installed, so every CCKM endpoint answers 403. Install the CCKM
+      licence to run this target.
+  when: not _can_run
+
+- name: End the play when CCKM is not licensed
+  ansible.builtin.meta: end_play
+  when: not _can_run
+
+# ---------------------------------------------------------------------------
+# Reads. A manager with no CCKM Azure resources must answer with an empty
+# collection, not an error -- a module whose endpoint is wrong fails here.
+# ---------------------------------------------------------------------------
+
+- name: "List vaults"
+  thalesgroup.ciphertrust.cckm_azure_vault_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_vault
+
+- name: Verify listing vaults answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_vault is not failed
+      - _list_vault is not changed
+      - _list_vault.response is defined
+    fail_msg: >-
+      Listing vaults failed -- {{ _list_vault.msg | default('') }}
+
+- name: "List keys"
+  thalesgroup.ciphertrust.cckm_azure_key_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_key
+
+- name: Verify listing keys answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_key is not failed
+      - _list_key is not changed
+      - _list_key.response is defined
+    fail_msg: >-
+      Listing keys failed -- {{ _list_key.msg | default('') }}
+
+- name: "List secrets"
+  thalesgroup.ciphertrust.cckm_azure_secret_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_secret
+
+- name: Verify listing secrets answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_secret is not failed
+      - _list_secret is not changed
+      - _list_secret.response is defined
+    fail_msg: >-
+      Listing secrets failed -- {{ _list_secret.msg | default('') }}
+
+- name: "List certificates"
+  thalesgroup.ciphertrust.cckm_azure_certificate_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_certificate
+
+- name: Verify listing certificates answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_certificate is not failed
+      - _list_certificate is not changed
+      - _list_certificate.response is defined
+    fail_msg: >-
+      Listing certificates failed -- {{ _list_certificate.msg | default('') }}
+
+- name: "List subscriptions"
+  thalesgroup.ciphertrust.cckm_azure_subscription_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_subscription
+
+- name: Verify listing subscriptions answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_subscription is not failed
+      - _list_subscription is not changed
+      - _list_subscription.response is defined
+    fail_msg: >-
+      Listing subscriptions failed -- {{ _list_subscription.msg | default('') }}
+
+- name: "List reports"
+  thalesgroup.ciphertrust.cckm_azure_report_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_report
+
+- name: Verify listing reports answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_report is not failed
+      - _list_report is not changed
+      - _list_report.response is defined
+    fail_msg: >-
+      Listing reports failed -- {{ _list_report.msg | default('') }}
+
+- name: "List bulk jobs"
+  thalesgroup.ciphertrust.cckm_azure_bulkjob_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+  register: _list_bulkjob
+
+- name: Verify listing bulk jobs answered with a collection
+  ansible.builtin.assert:
+    that:
+      - _list_bulkjob is not failed
+      - _list_bulkjob is not changed
+      - _list_bulkjob.response is defined
+    fail_msg: >-
+      Listing bulk jobs failed -- {{ _list_bulkjob.msg | default('') }}
+
+- name: "List synchronisation jobs for each scope"
+  thalesgroup.ciphertrust.cckm_azure_synchronization_job_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+    scope: "{{ item }}"
+  register: _sync_list
+  loop:
+    - keys
+    - certificates
+    - secrets
+
+- name: Verify each synchronisation scope answered
+  ansible.builtin.assert:
+    that:
+      - item is not failed
+      - item.response is defined
+      - item is not changed
+    fail_msg: >-
+      Listing synchronisation jobs failed for one scope --
+      {{ item.msg | default('') }}
+  loop: "{{ _sync_list.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+# ---------------------------------------------------------------------------
+# Argument validation. These need no Azure account and no CCKM resources.
+# ---------------------------------------------------------------------------
+
+- name: Negative test - a create with no parameters must be rejected
+  thalesgroup.ciphertrust.cckm_azure_key: {}
+  register: _negative_key
+  ignore_errors: true
+
+- name: Assert the key module names its missing arguments
+  ansible.builtin.assert:
+    that:
+      - _negative_key is failed
+      - >-
+        "missing required arguments" in (_negative_key.msg | default(""))
+    fail_msg: >-
+      Expected cckm_azure_key to reject an empty task, got --
+      {{ _negative_key.msg | default("no message") }}
+
+- name: Negative test - an unsupported synchronisation scope must be rejected
+  thalesgroup.ciphertrust.cckm_azure_synchronization_job:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: start
+    scope: vaults
+  register: _negative_scope
+  ignore_errors: true
+
+- name: Assert the scope is rejected by the argument spec
+  ansible.builtin.assert:
+    that:
+      - _negative_scope is failed
+      - >-
+        "value of scope must be one of" in (_negative_scope.msg | default(""))
+    fail_msg: >-
+      Expected an unsupported scope to be rejected, got --
+      {{ _negative_scope.msg | default("no message") }}
+
+- name: Negative test - an unknown key type must be rejected
+  thalesgroup.ciphertrust.cckm_azure_key:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    key_name: "ansible-{{ run_suffix }}"
+    key_vault: no-such-vault
+    azure_param:
+      kty: DSA
+  register: _negative_kty
+  ignore_errors: true
+
+- name: Assert the key type is rejected by the argument spec
+  ansible.builtin.assert:
+    that:
+      - _negative_kty is failed
+      - >-
+        "must be one of" in (_negative_kty.msg | default(""))
+    fail_msg: >-
+      Expected an unsupported key type to be rejected, got --
+      {{ _negative_kty.msg | default("no message") }}
+
+- name: "Create a key in check mode against a vault that does not exist"
+  thalesgroup.ciphertrust.cckm_azure_key:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: create
+    key_name: "ansible-check-{{ run_suffix }}"
+    key_vault: "ansible-absent-{{ run_suffix }}"
+    azure_param:
+      kty: RSA
+      key_size: 2048
+  check_mode: true
+  register: _check_key
+  ignore_errors: true
+
+# Check mode predicting a change is correct -- the key is not there, so a
+# real run would create one. What must not happen is the write itself.
+- name: Verify check mode predicted a change
+  ansible.builtin.assert:
+    that:
+      - _check_key is not failed
+      - _check_key is changed
+    fail_msg: >-
+      Check mode should report the create it would perform. Result --
+      changed={{ _check_key.changed | default('?') }},
+      msg={{ _check_key.msg | default('') }}
+
+- name: "Look for the key check mode claimed it would create"
+  thalesgroup.ciphertrust.cckm_azure_key_info:
+    localNode: "{{ this_node_connection_string }}"
+    op_type: list
+    key_name: "ansible-check-{{ run_suffix }}"
+  register: _check_absent
+
+- name: Verify check mode wrote nothing
+  ansible.builtin.assert:
+    that:
+      - _check_absent is not failed
+      - (_check_absent.response.resources | default([])) | length == 0
+    fail_msg: "check mode created the key it only predicted"
+
+# ---------------------------------------------------------------------------
+# Live half. Needs a real Azure subscription reachable through a connection.
+# ---------------------------------------------------------------------------
+
+- name: "Exercise the live Azure path"
+  when: cckm_azure_run_live | default(false) | bool
+  block:
+    - name: "Discover the subscriptions the connection can reach"
+      thalesgroup.ciphertrust.cckm_azure_subscription_info:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: available
+        connection: "{{ cckm_azure_connection_name }}"
+      register: _subs
+
+    - name: Verify subscriptions were discovered
+      ansible.builtin.assert:
+        that:
+          - _subs is not failed
+          - _subs is not changed
+
+    - name: "Discover the vaults in the subscription"
+      thalesgroup.ciphertrust.cckm_azure_vault_info:
+        localNode: "{{ this_node_connection_string }}"
+        op_type: available
+        connection: "{{ cckm_azure_connection_name }}"
+        subscription_id: "{{ cckm_azure_subscription_id }}"
+      register: _vaults
+
+    - name: Verify vaults were discovered
+      ansible.builtin.assert:
+        that:
+          - _vaults is not failed
+          - _vaults is not changed

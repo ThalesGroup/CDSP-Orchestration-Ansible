@@ -1,0 +1,49 @@
+major_changes:
+  - >-
+    Added sixteen modules for CCKM's Azure service, covering the whole of the
+    API CipherTrust Manager publishes for it. ``cckm_azure_vault``,
+    ``cckm_azure_key``, ``cckm_azure_secret``, ``cckm_azure_certificate``,
+    ``cckm_azure_subscription``, ``cckm_azure_report``,
+    ``cckm_azure_bulkjob`` and ``cckm_azure_synchronization_job`` act, and
+    each has an ``_info`` counterpart that reads. They follow the shape the
+    CCKM AWS modules established, so a playbook that manages both clouds reads
+    the same way.
+
+minor_changes:
+  - >-
+    The Azure modules cover the parts of the service that are easy to miss --
+    the two-stage Azure deletion lifecycle (``soft_delete``, ``recover``,
+    ``hard_delete``, ``restore``), cloud key backups and the scheduled backup
+    and rotation jobs, certificate import, key upload from CipherTrust
+    Manager, Luna, DSM or an external manager, and the three separate
+    synchronisation services for keys, certificates and secrets.
+  - >-
+    ``plugins/module_utils/cckm_common.py`` holds the request conventions CCKM
+    uses whichever cloud is behind it -- recursively pruned payloads,
+    multi-valued query filters, and the whitelist that guards an action name
+    forming part of a URL. ``cckm_aws`` and ``cckm_azure`` now share one
+    implementation instead of two that could drift; the AWS module keeps its
+    own spellings as local aliases, so nothing about its behaviour changes.
+  - >-
+    Added ``tests/unit/module_utils/test_cckm_azure_endpoints.py``, the
+    counterpart of the AWS endpoint test. It pins every path the Azure
+    helpers can build against the set CCKM publishes, checks that no public
+    helper and no whitelisted action escapes coverage, and asserts that an
+    identifier containing ``/`` stays inside its own path segment.
+  - >-
+    Added the ``module_cckm_azure`` integration target. Its read-only half
+    needs only a licensed CipherTrust Manager and is what catches a module
+    that cannot reach its own endpoint; the half that touches a real Azure
+    subscription is guarded by ``cckm_azure_run_live``. Like the AWS target it
+    probes for the CCKM licence and skips with an explanation rather than
+    reporting an unlicensed manager as a broken module.
+
+bugfixes:
+  - >-
+    Two Azure field names needed translating rather than passing through. The
+    swagger definition writes the ``kty`` enum as prose -- ``EC- "Soft"
+    Elliptic Curve key.`` -- so the accepted values are spelled out rather
+    than copied, and ``contentType`` on a secret is remapped from the
+    ``content_type`` this collection normalises every option name to. Copying
+    either verbatim would have produced a module that cannot create a key or a
+    secret.

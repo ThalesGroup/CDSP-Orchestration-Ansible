@@ -1,6 +1,6 @@
 # Modules Documentation
 
-This collection ships 60 modules for CipherTrust Manager. The catalogue below
+This collection ships 76 modules for CipherTrust Manager. The catalogue below
 groups them by area.
 
 ## Where the reference documentation lives
@@ -60,6 +60,24 @@ ansible-doc thalesgroup.ciphertrust.vault_keys2_save
 - `cte_resource_set` - CTE resource set management
 - `cte_signature_set` - CTE signature set management
 - `cte_user_set` - CTE user set management
+
+### CCKM Azure Modules
+
+CCKM manages Azure Key Vault material from CipherTrust Manager. A vault is
+added to CCKM rather than created, so the usual first step is discovery with
+`cckm_azure_subscription_info` and `cckm_azure_vault_info`.
+
+- `cckm_azure_vault` / `cckm_azure_vault_info` - vaults, and discovery of vaults and managed HSMs
+- `cckm_azure_key` / `cckm_azure_key_info` - keys, their cloud backups, and the rotation and backup jobs
+- `cckm_azure_secret` / `cckm_azure_secret_info` - Key Vault secrets
+- `cckm_azure_certificate` / `cckm_azure_certificate_info` - Key Vault certificates
+- `cckm_azure_subscription` / `cckm_azure_subscription_info` - Azure subscriptions
+- `cckm_azure_report` / `cckm_azure_report_info` - reports
+- `cckm_azure_bulkjob` / `cckm_azure_bulkjob_info` - bulk jobs
+- `cckm_azure_synchronization_job` / `cckm_azure_synchronization_job_info` - synchronising keys, certificates or secrets
+
+Azure deletion is two-stage: `soft_delete` moves an object to the vault's
+recycle bin, `recover` restores it, and `hard_delete` purges it.
 
 ### Cloud Connection Modules
 

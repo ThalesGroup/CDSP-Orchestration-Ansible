@@ -29,6 +29,22 @@ action_groups:
     - cckm_aws_synchronization_job
     - cckm_aws_synchronization_job_info
     - cckm_aws_xks_proxy
+    - cckm_azure_bulkjob
+    - cckm_azure_bulkjob_info
+    - cckm_azure_certificate
+    - cckm_azure_certificate_info
+    - cckm_azure_key
+    - cckm_azure_key_info
+    - cckm_azure_report
+    - cckm_azure_report_info
+    - cckm_azure_secret
+    - cckm_azure_secret_info
+    - cckm_azure_subscription
+    - cckm_azure_subscription_info
+    - cckm_azure_synchronization_job
+    - cckm_azure_synchronization_job_info
+    - cckm_azure_vault
+    - cckm_azure_vault_info
     - cm_certificate_authority
     - cm_cluster
     - cm_regtoken

@@ -62,3 +62,11 @@ cckm_aws_key_admins: []
 # the key until its waiting period elapses, and the shortest AWS allows is
 # seven days, so this stays off unless the account is a test account.
 cckm_aws_run_key_lifecycle: false
+
+# cckm_azure_run_live needs a CipherTrust Manager with the CCKM licence,
+# network egress, and an Azure connection that already works -- create one
+# with connection_azure_save. Off by default: adding a vault and creating
+# material in it touches a real Azure subscription.
+cckm_azure_run_live: false
+cckm_azure_connection_name: "azure-connection"
+cckm_azure_subscription_id: "00000000-0000-0000-0000-000000000000"

@@ -45,15 +45,16 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from ansible.module_utils.six.moves.urllib.parse import urlencode
-
 from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cm_api import (
     CipherTrustClient,
     build_request_payload,
     quote_segment,
 )
-from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.exceptions import (
-    AnsibleCMParameterException,
+from ansible_collections.thalesgroup.ciphertrust.plugins.module_utils.cckm_common import (
+    build_query as _query,
+    guard as _guard,
+    prune,
+    remap_keys,
 )
 
 # -- endpoints --------------------------------------------------------------
@@ -78,53 +79,6 @@ SYNC_SCOPES = {
 # ---------------------------------------------------------------------------
 # Payloads
 # ---------------------------------------------------------------------------
-
-def prune(value):
-    """Drop ``None`` recursively from dicts and lists.
-
-    ``AnsibleModule`` materialises every declared suboption, so a playbook
-    that sets only ``aws_param.alias`` still produces a dict with a ``None``
-    for each field it did not set. Sending those nulls is not the same as
-    omitting them: AWS reads an explicit ``Description: null`` as a request to
-    clear the description.
-
-    A dict or list that is empty *after* pruning is dropped as well, so an
-    untouched ``aws_param`` disappears instead of being sent as ``{}``.
-    """
-    if isinstance(value, dict):
-        pruned = {}
-        for key, item in value.items():
-            if item is None:
-                continue
-            cleaned = prune(item)
-            if cleaned is None:
-                continue
-            pruned[key] = cleaned
-        return pruned or None
-    if isinstance(value, list):
-        cleaned = [prune(item) for item in value if item is not None]
-        cleaned = [item for item in cleaned if item is not None]
-        return cleaned or None
-    return value
-
-
-def remap_keys(source, mapping):
-    """Rename the keys of *source* through *mapping*, dropping ``None`` values.
-
-    Used where the API's field names are not the names the modules expose.
-    AWS key parameters are PascalCase on the wire (``CustomerMasterKeySpec``);
-    the modules spell them snake_case, as Ansible options are spelled
-    everywhere else in this collection.
-    """
-    if not isinstance(source, dict):
-        return None
-    out = {}
-    for name, value in source.items():
-        if value is None:
-            continue
-        out[mapping.get(name, name)] = value
-    return out or None
-
 
 # Key parameters, as the modules spell them -> as AWS spells them.
 AWS_KEY_PARAM_MAP = {
@@ -158,46 +112,6 @@ def aws_key_params(params):
 def _payload(fields):
     """JSON body for *fields*, with nested nulls removed."""
     return build_request_payload(prune(fields) or {})
-
-
-def _query(params):
-    """Build an encoded query string, repeating a key for each list element.
-
-    CCKM's list endpoints declare their multi-valued filters as
-    ``collectionFormat: multi`` -- ``?region=us-east-1&region=eu-west-1``, not
-    a comma-joined value -- so a list has to become one pair per element.
-    Booleans are lowercased, because ``?enabled=True`` is not what the API
-    reads as true.
-    """
-    pairs = []
-    for key, value in params.items():
-        if value is None:
-            continue
-        items = value if isinstance(value, list) else [value]
-        for item in items:
-            if item is None:
-                continue
-            if isinstance(item, bool):
-                item = "true" if item else "false"
-            pairs.append((key, item))
-    if not pairs:
-        return ""
-    return "?" + urlencode(pairs)
-
-
-def _guard(value, allowed, parameter):
-    """Reject a URL-forming value that is not in *allowed*.
-
-    The modules constrain these with ``choices``, so a rejection here means a
-    caller inside the collection passed something the API does not serve.
-    """
-    if value not in allowed:
-        raise AnsibleCMParameterException(
-            message="unsupported {0} for a CCKM AWS request".format(parameter),
-            parameter=parameter,
-            valid_values=", ".join(sorted(allowed)),
-        )
-    return value
 
 
 def _sync_root(scope):
